@@ -1,3 +1,10 @@
+## Traduction Française
+
+Ce repository a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. Il n'est pas encore disponible en ligne à ce jour. Par ailleurs, le nom de domaine nestjs.fr étant déjà pris, il conviendra d'en trouver un autre.
+
+Ci dessous se trouve le README original (bientôt traduit ;).
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
