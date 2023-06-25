@@ -1,0 +1,482 @@
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
+
+:host {
+  position: fixed;
+  z-index: 10000;
+  width: 100%;
+  height: 105px;
+
+  @media print {
+    position: relative;
+  }
+}
+
+.top-bar {
+  background: #0a0a0a;
+  text-align: center;
+  height: 35px;
+  padding: 4px;
+  letter-spacing: 0.2px;
+  box-sizing: border-box;
+
+  span {
+    margin: 0;
+  }
+
+  a {
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    @include media(small) {
+      font-size: 15px;
+    }
+  }
+}
+
+.new {
+  background: #232323;
+  color: #ea2845;
+  border: 1px solid #ea2845;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  margin-right: 2px;
+}
+
+header {
+  display: block;
+  position: relative;
+  background: $black-color;
+  width: 100%;
+  height: 70px;
+  z-index: 10000;
+}
+
+.icon-wrapper {
+  @extend .transition;
+  height: 100%;
+  width: 80px;
+  top: 0;
+  bottom: 0;
+  display: inline-block;
+  position: relative;
+  z-index: 10000;
+  border: none;
+  background: transparent;
+
+  &:hover {
+    cursor: pointer;
+    background: #212121;
+  }
+  &.opened {
+    width: 250px;
+
+    @include media(large) {
+      width: 250px;
+    }
+    @include media(normal) {
+      width: 80px;
+    }
+  }
+  .nav-icon {
+    @extend .center-element;
+
+    svg {
+      width: 30px;
+      height: 30px;
+      fill: #fff;
+    }
+  }
+  @include media(medium) {
+    background: transparent;
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+:host ::ng-deep .logo-wrapper {
+  display: inline-block;
+  height: 100%;
+  text-align: center;
+  vertical-align: top;
+  padding-left: 85px;
+
+  @include media(large) {
+    padding-left: 15px;
+  }
+  @include media(medium) {
+    padding-left: 10px;
+  }
+
+  a {
+    display: inline-block;
+    padding-top: 10px;
+  }
+  @media print {
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0%);
+    padding: 0;
+  }
+}
+
+.menu-wrapper {
+  @extend .center-top;
+  position: relative;
+  float: right;
+  padding: 14px 25px;
+
+  @media (min-width: 1500px) {
+    margin-right: 80px;
+  }
+
+  @media (max-width: 1499px) {
+    li:first-of-type {
+      display: none;
+    }
+
+    .search-wrapper {
+      margin-right: 0;
+    }
+  }
+
+  @media (max-width: 1250px) {
+    padding: 14px 5px;
+  }
+
+  @media (max-width: 1150px) {
+    ul {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .search-wrapper {
+      display: none;
+    }
+  }
+
+  @include media(large) {
+    margin-right: 0;
+    padding: 14px 5px;
+  }
+
+  @include media(normal) {
+    ul {
+      display: none !important;
+    }
+  }
+
+  @include media(small) {
+    .search-wrapper {
+      display: none;
+    }
+  }
+  ul {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0;
+  }
+
+  li {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 30px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type a {
+      @include radius(2px);
+      padding: 4px 6px;
+      background: $red-color;
+
+      &:hover {
+        background: #262626;
+      }
+    }
+
+    @include media(large) {
+      margin-left: 20px;
+    }
+  }
+
+  a {
+    @extend .transition-fast;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+
+    &:hover {
+      color: $red-color;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+.workshop-wrapper {
+  float: right;
+  padding: 14px 25px;
+
+  @include media(medium) {
+    padding: 23px 15px;
+  }
+
+  @include media(small) {
+    display: none;
+  }
+
+  img {
+    margin-right: 10px;
+    width: 55px;
+    @include media(medium) {
+      display: none !important;
+    }
+  }
+
+  img,
+  .workshop-info {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 400;
+    color: #fff;
+    margin: 0;
+  }
+
+  .short-title {
+    display: none;
+    @include media(medium) {
+      display: block;
+    }
+  }
+
+  .long-title {
+    @include media(medium) {
+      display: none;
+    }
+  }
+
+  a {
+    color: #03a9f4;
+    font-weight: 600;
+    font-size: 12px;
+    position: relative;
+
+    &:hover {
+      color: $red-color;
+      &::after {
+        background: $red-color;
+      }
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      background: #246081;
+      height: 2px;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      position: absolute;
+    }
+  }
+
+  span {
+    display: inline-block;
+    padding: 1px 2px;
+    font-weight: 700;
+    background: -webkit-linear-gradient(#ee2943, #d31e5a);
+    background: -o-linear-gradient(#ee2943, #d31e5a);
+    background: -moz-linear-gradient(#ee2943, #d31e5a);
+    background: linear-gradient(#ee2943, #d31e5a); /* Standard syntax */
+  }
+}
+
+@media (max-width: 480px) {
+  .workshop-wrapper {
+    display: none;
+  }
+
+  :host ::ng-deep .logo-wrapper {
+    width: 100%;
+  }
+
+  .icon-wrapper {
+    position: absolute;
+  }
+}
+
+.fa-stack-overflow {
+  font-size: 18px;
+}
+
+.mobile-nav-icon {
+  display: none;
+  width: 25px;
+  margin-top: 5px;
+  cursor: pointer;
+
+  @include media(large) {
+    display: inline-block;
+  }
+
+  span,
+  &::after,
+  &::before {
+    content: '';
+    background: #fff;
+    display: block;
+    height: 2px;
+    width: 100%;
+  }
+
+  span {
+    margin: 6px 0;
+  }
+}
+
+.desktop-nav-icon {
+  @include media(large) {
+    display: none;
+  }
+}
+
+.search-wrapper {
+  margin-right: 2em;
+  height: 100%;
+  display: inline-block;
+  position: relative;
+}
+
+.search-icon,
+:host ::ng-deep .DocSearch-Search-Icon {
+  position: absolute;
+  margin-top: 7px;
+  color: #a5a5a5 !important;
+  font-size: 14px;
+  width: 14px;
+}
+
+:host ::ng-deep .DocSearch-Search-Icon {
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+.search-input,
+::ng-deep .DocSearch-Button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #414141;
+  padding: 5px 20px 5px 28px;
+  color: #fff;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+  font-display: swap;
+  font-size: 14px;
+  outline: 0 !important;
+  transition: all 90ms ease-in-out;
+  width: 215px;
+
+  &:active,
+  &:focus {
+    border-bottom-color: $red-color;
+    width: 190px;
+  }
+
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
+}
+
+::ng-deep .DocSearch-Button:hover,
+::ng-deep .DocSearch-Button:active
+::ng-deep .DocSearch-Button:focus {
+  border-bottom-color: $red-color;
+  width: 240px;
+  
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
+}
+
+.search-input::placeholder {
+  color: #a5a5a5;
+  opacity: 1;
+}
+
+::ng-deep .DocSearch-Button {
+  border-radius: 0;
+  color: #a5a5a5;
+  padding: 5px;
+}
+
+::ng-deep .DocSearch-Button-Placeholder {
+  padding-left: 30px;
+  font-size: 14px;
+  margin-top: 7px;
+  display: block !important;
+
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+::ng-deep .DocSearch-Button-Keys {
+  display: none;
+}
+
+::ng-deep .DocSearch-Button:active, 
+::ng-deep .DocSearch-Button:focus, 
+::ng-deep.DocSearch-Button:hover {
+  color: #a5a5a5;
+}
+
+.close-icon {
+  position: absolute;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  top: 10px;
+  cursor: pointer;
+  visibility: hidden;
+  transition: all 90ms ease-in-out;
+
+  &.visible {
+    visibility: visible;
+  }
+
+  &::after,
+  &::before {
+    content: '';
+    background: $red-color;
+    display: block;
+    height: 2px;
+    position: absolute;
+    width: 15px;
+  }
+
+  &::after {
+    transform: rotate(45deg) translateY(3px);
+  }
+
+  &::before {
+    transform: rotate(-45deg) translateY(3px);
+  }
+}
+
+@media (max-width: 1300px) {
+  .shop-link {
+    display: none !important;
+  }
+}

@@ -1,0 +1,113 @@
+@import '../../../../scss/variables.scss';
+@import '../../../../scss/utils.scss';
+
+:host {
+  position: relative;
+  display: block;
+}
+
+h3 {
+  @extend .transition;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: $black-color;
+  font-size: 15px;
+  margin: 10px 0;
+  &:hover {
+    color: $red-color;
+  }
+}
+
+.new {
+  color: #fff;
+  background: $red-color;
+  font-size: 11px;
+  padding: 2px 4px;
+  margin-right: 5px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.active h3 {
+  color: $red-color;
+}
+
+.material-icons {
+  margin-right: 5px;
+}
+
+.arrow-icon {
+  @extend .transition;
+  @include transform(rotate(90deg));
+
+  position: absolute;
+  top: 1px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+li {
+  display: block;
+  padding: 2.5px 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+
+  a {
+    color: $black-color;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      color: $red-color;
+    }
+    &.active {
+      font-weight: 600;
+      color: $red-color;
+    }
+  }
+
+  .pending {
+    color: #afafaf !important;
+    pointer-events: none;
+  }
+}
+
+.nav-item {
+  ul {
+    margin: 10px 0 15px;
+  }
+
+  &.opened {
+    .arrow-icon {
+      @include transform(rotate(-90deg));
+      fill: $red-color;
+    }
+  }
+}
+
+.heading {
+  cursor: pointer;
+  &:hover {
+    .arrow-icon {
+      color: $red-color;
+    }
+  }
+}
+
+ul {
+  padding-left: 15px;
+}
+
+.material-icons {
+  font-size: 14px;
+  margin-left: 3px;
+  vertical-align: middle;
+  padding-bottom: 4px;
+}
+
+.has-icon h3 {
+  color: $red-color;
+}

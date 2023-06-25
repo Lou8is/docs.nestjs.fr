@@ -1,0 +1,96 @@
+<app-header (toggle)="toggleSidebar()" [isSidebarOpened]="isSidebarOpened">
+  <div class="logo-wrapper">
+    <a
+      href="https://docs.nestjs.com/"
+      title="Documentation | NestJS - A node.js framework built on top of TypeScript"
+    >
+      <img alt="NestJS Logo" src="/assets/logo-small.svg" />
+    </a>
+  </div>
+</app-header>
+<div class="container-fluid">
+  <app-menu [class.opened]="isSidebarOpened" perfectScrollbar></app-menu>
+  <div class="container" [class.wide]="!isSidebarOpened">
+    <div class="page-wrapper">
+      <app-toc [contentReference]="contentRef"></app-toc>
+      <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
+    </div>
+    <div class="sponsors-wrapper">
+      <div class="sponsors-container">
+        <h3>Support us</h3>
+        <p>
+          Nest is an MIT-licensed open source project. It can grow thanks to the
+          support by these awesome people. If you'd like to join them, please
+          read more <a routerLink="/support">here</a>.
+        </p>
+        <div class="row clearfix">
+          <div class="inline-column">
+            <h4 class="title">Principal Sponsors</h4>
+            <a href="https://trilon.io/" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/trilon.svg"
+                alt="Trilon Logo" 
+                class="logo-sponsor"
+              />
+            </a>
+            <a href="https://www.redhat.com/" target="_blank" class="logo-sponsor-container">
+              <img src="/assets/sponsors/red-hat-logo.svg" alt="Red Hat Logo" class="logo-sponsor" />
+            </a>
+            <a href="https://valor-software.com/" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/valor-software.png"
+                alt="Valor Software Logo"
+                class="logo-sponsor logo-sponsor--high"
+              />
+            </a>
+            <a href="https://github.com/Sanofi-IADC" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/sanofi.png"
+                alt="Sanofi Logo"
+                class="logo-sponsor"
+              />
+            </a>
+            <a href="https://nx.dev/" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/nx-logo.png"
+                alt="Nx Logo"
+                class="logo-sponsor logo-sponsor--slim"
+              />
+            </a>
+            <a href="https://amplication.com/" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/amplication.svg"
+                alt="Amplication Logo"
+                class="logo-sponsor"
+              />
+            </a>
+          </div>
+          <div class="inline-column">
+            <h4 class="title">Sponsors / Partners</h4>
+            <a
+              href="https://opencollective.com/nest"
+              class="btn btn-primary"
+              target="_blank"
+              rel="nofollow"
+            >
+              Become a sponsor
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-newsletter></app-newsletter>
+    <app-footer>
+      <p>
+        Made by
+        <a
+          href="https://kamilmysliwiec.com"
+          target="_blank"
+          title="Kamil Mysliwiec Blog | Full-Stack Software Engineer"
+        >
+          Kamil Myśliwiec
+        </a>
+      </p>
+    </app-footer>
+  </div>
+</div>

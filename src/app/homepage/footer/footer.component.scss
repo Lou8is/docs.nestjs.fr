@@ -1,0 +1,84 @@
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
+
+:host {
+  @extend .transition;
+  @extend .box-sizing;
+  background: $black-color;
+  display: block;
+  padding: 40px 0;
+  margin: 0 -85px;
+  width: auto;
+  font-size: 14px;
+  position: relative;
+  z-index: 12;
+
+  @include media(large) {
+    margin: 0 -50px;
+  }
+
+  @include media(medium) {
+    padding: 15px;
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+    position: static;
+    height: auto;
+    text-align: center;
+  }
+}
+
+footer {
+  display: block;
+  position: relative;
+  color: #929292;
+  text-align: center;
+
+  a {
+    @extend .transition;
+    color: $red-color;
+    font-weight: 600;
+    &:hover {
+      color: $red-color;
+    }
+  }
+
+  .separator {
+    display: inline-block;
+    width: 2px;
+    height: 12px;
+    margin: 0 3px 0 5px;
+    vertical-align: middle;
+    background: #313131;
+  }
+
+  p {
+    line-height: 25px;
+    margin-bottom: 0;
+  }
+}
+
+.social-wrapper {
+  text-align: center;
+  right: 40px;
+
+  a {
+    @extend .transition;
+    display: inline-block;
+    vertical-align: middle;
+    color: $silver-color;
+    font-size: 20px;
+    margin-left: 15px;
+    cursor: pointer;
+
+    &:first-of-type {
+      font-size: 20px;
+    }
+    &:hover {
+      color: $red-color;
+    }
+  }
+
+  @media print {
+    display: none;
+  }
+}
