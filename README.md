@@ -1,15 +1,16 @@
 ## Traduction Française
 
-Ce repository a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. Il n'est pas encore disponible en ligne à ce jour. Par ailleurs, le nom de domaine nestjs.fr étant déjà pris, il conviendra d'en trouver un autre.
+Ce dépôt a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. Il n'est pas encore disponible en ligne à ce jour. Par ailleurs, le nom de domaine nestjs.fr étant déjà pris, il conviendra d'en trouver un autre.
 
-Ci dessous se trouve le README original (bientôt traduit ;).
+Ci dessous se trouve le README original traduit en français.
+Le README original est accessible <a href="https://github.com/nestjs/docs.nestjs.com/blob/master/README.md">à ce lien</a>.
 
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">Un framework  <a href="http://nodejs.org" target="_blank">Node.js</a> progressif pour construire des applications côté serveur efficaces et évolutives.</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -27,39 +28,40 @@ Ci dessous se trouve le README original (bientôt traduit ;).
 
 ## Description
 
-This project is built on top of the [Angular CLI](https://github.com/angular/angular-cli). It uses the [Dgeni documentation generator](https://github.com/angular/dgeni) to compile source documentation in markdown format into the published format. The Repository contains [docs.nestjs.com](https://docs.nestjs.com) source code, the official Nest documentation.
+Ce projet est construit sur la [CLI Angular] (https://github.com/angular/angular-cli). Il utilise le [générateur de documentation Dgeni](https://github.com/angular/dgeni) pour compiler la documentation source au format markdown dans le format publié. Le dépôt contient le code source de la traduction de [docs.nestjs.com](https://docs.nestjs.com), la documentation officielle de Nest.
 
-## Installing
+## Installation
 
-Install project dependencies and start a local server with the following terminal commands:
+Installez les dépendances du projet et démarrez un serveur local à l'aide des commandes suivantes :
 
 ```bash
 $ npm install
 $ npm run start
 ```
 
-Navigate to [`http://localhost:4200/`](http://localhost:4200/).
+Naviguez jusqu'à [`http://localhost:4200/`](http://localhost:4200/).
 
-All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory.
+Toutes les pages sont écrites en [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) et se trouvent dans le répertoire `content`.
 
 ## Build
 
-Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Lancez `npm run build` pour construire le projet. Les artefacts de construction seront stockés dans le répertoire `dist/`.
 
-To run build in _watch mode_, run `npm run build:watch`. Any content changes will be recompiled and rebuilt, and the content served at [`http://localhost:4200/`](http://localhost:4200/).
+Pour lancer la compilation en mode _watch_, lancez `npm run build:watch`. Tout changement de contenu sera recompilé et reconstruit, et le contenu sera servi sur [`http://localhost:4200/`] (http://localhost:4200/).
 
-Use `npm run build:prod` for a production build.
+Utilisez `npm run build:prod` pour une compilation de production.
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://opencollective.com/nest).
+Nest est un projet open source sous licence MIT. Il peut se développer grâce aux sponsors et au soutien des donateurs. Si vous souhaitez vous joindre à eux, veuillez [lire la suite ici](https://opencollective.com/nest).
 
-## Stay in touch
+## Rester en contact
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
+- Auteur - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Site internet - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
+- Traduction française - ici :)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Nest est sous [licence MIT](LICENSE).
