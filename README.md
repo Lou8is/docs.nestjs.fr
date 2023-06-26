@@ -47,7 +47,7 @@ Toutes les pages sont écrites en [markdown](https://github.com/adam-p/markdown-
 
 Lancez `npm run build` pour construire le projet. Les artefacts de construction seront stockés dans le répertoire `dist/`.
 
-Pour lancer la compilation en mode _watch_, lancez `npm run build:watch`. Tout changement de contenu sera recompilé et reconstruit, et le contenu sera servi sur [`http://localhost:4200/`] (http://localhost:4200/).
+Pour lancer la compilation en mode _watch_, lancez `npm run build:watch`. Tout changement de contenu sera recompilé et reconstruit, et le contenu sera servi sur [`http://localhost:4200/`](http://localhost:4200/).
 
 Utilisez `npm run build:prod` pour une compilation de production.
 
