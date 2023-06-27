@@ -72,17 +72,19 @@
     ></script>
     <link href="https://cdn.jsdelivr.net" rel="preconnect" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y14JELNTZV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y14JELNTZV', { 'cookieFlags': 'SameSite=None; Secure' });
+    </script>
   </head>
   
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y14JELNTZV"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-Y14JELNTZV', { 'cookieFlags': 'SameSite=None; Secure' });
-  </script>
+  
 
   <body>
     <app-root></app-root>
