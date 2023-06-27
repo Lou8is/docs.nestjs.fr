@@ -1,16 +1,16 @@
-### Circular dependency
+### Dépendance circulaire
 
-A circular dependency occurs when two classes depend on each other. For example, class A needs class B, and class B also needs class A. Circular dependencies can arise in Nest between modules and between providers.
+Une dépendance circulaire se produit lorsque deux classes dépendent l'une de l'autre. Par exemple, la classe A a besoin de la classe B, et la classe B a également besoin de la classe A. Les dépendances circulaires peuvent apparaître dans Nest entre les modules et entre les fournisseurs.
 
-While circular dependencies should be avoided where possible, you can't always do so. In such cases, Nest enables resolving circular dependencies between providers in two ways. In this chapter, we describe using **forward referencing** as one technique, and using the **ModuleRef** class to retrieve a provider instance from the DI container as another.
+Les dépendances circulaires doivent être évitées dans la mesure du possible, mais ce n'est pas toujours possible. Dans ce cas, Nest permet de résoudre les dépendances circulaires entre les fournisseurs de deux manières. Dans ce chapitre, nous décrivons l'utilisation de **références avancées** comme une technique, et l'utilisation de la classe **ModuleRef** pour récupérer une instance de fournisseur dans le conteneur DI comme une autre technique.
 
-We also describe resolving circular dependencies between modules.
+Nous décrivons également la résolution des dépendances circulaires entre les modules.
 
-> warning **Warning** A circular dependency might also be caused when using "barrel files"/index.ts files to group imports. Barrel files should be omitted when it comes to module/provider classes. For example, barrel files should not be used when importing files within the same directory as the barrel file, i.e. `cats/cats.controller` should not import `cats` to import the `cats/cats.service` file. For more details please also see [this github issue](https://github.com/nestjs/nest/issues/1181#issuecomment-430197191).
+> warning **Attention** Une dépendance circulaire peut également être causée par l'utilisation de "barrel files"/index.ts pour regrouper les importations. Les "barrel files" doivent être omis lorsqu'il s'agit de classes de modules/fournisseurs. Par exemple, les barrel files ne devraient pas être utilisés lors de l'importation de fichiers dans le même répertoire que le barrel file, c'est-à-dire que `cats/cats.controller` ne devrait pas importer `cats` pour importer le fichier `cats/cats.service`. Pour plus de détails, veuillez également consulter [ce problème github](https://github.com/nestjs/nest/issues/1181#issuecomment-430197191).
 
-#### Forward reference
+#### Référence avancée
 
-A **forward reference** allows Nest to reference classes which aren't yet defined using the `forwardRef()` utility function. For example, if `CatsService` and `CommonService` depend on each other, both sides of the relationship can use `@Inject()` and the `forwardRef()` utility to resolve the circular dependency. Otherwise Nest won't instantiate them because all of the essential metadata won't be available. Here's an example:
+Une **référence avancée** permet à Nest de référencer des classes qui ne sont pas encore définies en utilisant la fonction utilitaire `forwardRef()`. Par exemple, si `CatsService` et `CommonService` dépendent l'un de l'autre, les deux parties de la relation peuvent utiliser `@Inject()` et l'utilitaire `forwardRef()` pour résoudre la dépendance circulaire. Sinon Nest ne les instanciera pas car toutes les métadonnées essentielles ne seront pas disponibles. Voici un exemple :
 
 ```typescript
 @@filename(cats.service)
@@ -31,9 +31,9 @@ export class CatsService {
 }
 ```
 
-> info **Hint** The `forwardRef()` function is imported from the `@nestjs/common` package.
+> info **Astuce** La fonction `forwardRef()` est importée du paquet `@nestjs/common`.
 
-That covers one side of the relationship. Now let's do the same with `CommonService`:
+Cela couvre un côté de la relation. Faisons maintenant la même chose avec `CommonService` :
 
 ```typescript
 @@filename(common.service)
@@ -54,15 +54,15 @@ export class CommonService {
 }
 ```
 
-> warning **Warning** The order of instantiation is indeterminate. Make sure your code does not depend on which constructor is called first. Having circular dependencies depend on providers with `Scope.REQUEST` can lead to undefined dependencies. More information available [here](https://github.com/nestjs/nest/issues/5778)
+> warning **Attention** L'ordre d'instanciation est indéterminé. Assurez-vous que votre code ne dépend pas du constructeur appelé en premier. Avoir des dépendances circulaires qui dépendent de providers avec `Scope.REQUEST` peut conduire à des dépendances non définies. Plus d'informations disponibles [ici](https://github.com/nestjs/nest/issues/5778)
 
-#### ModuleRef class alternative
+#### Alternative de la classe ModuleRef
 
-An alternative to using `forwardRef()` is to refactor your code and use the `ModuleRef` class to retrieve a provider on one side of the (otherwise) circular relationship. Learn more about the `ModuleRef` utility class [here](/fundamentals/module-ref).
+Une alternative à l'utilisation de `forwardRef()` est de remanier votre code et d'utiliser la classe `ModuleRef` pour récupérer un fournisseur d'un côté de la relation (autrement) circulaire. Pour en savoir plus sur la classe utilitaire `ModuleRef`, cliquez [ici](/fundamentals/module-ref).
 
-#### Module forward reference
+#### Référence avancée de module
 
-In order to resolve circular dependencies between modules, use the same `forwardRef()` utility function on both sides of the modules association. For example:
+Afin de résoudre les dépendances circulaires entre les modules, utilisez la même fonction utilitaire `forwardRef()` des deux côtés de l'association des modules. Par exemple :
 
 ```typescript
 @@filename(common.module)
@@ -72,7 +72,7 @@ In order to resolve circular dependencies between modules, use the same `forward
 export class CommonModule {}
 ```
 
-That covers one side of the relationship. Now let's do the same with `CatsModule`:
+Cela couvre un aspect de la relation. Faisons maintenant la même chose avec `CatsModule` :
 
 ```typescript
 @@filename(cats.module)
