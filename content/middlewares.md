@@ -1,26 +1,26 @@
 ### Middleware
 
-Middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](https://expressjs.com/en/4x/api.html#req) and [response](https://expressjs.com/en/4x/api.html#res) objects, and the `next()` middleware function in the application’s request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
+Un middleware est une fonction qui est appelée **avant** le handler de route. Les fonctions intermédiaires ont accès aux objets [request](https://expressjs.com/en/4x/api.html#req) et [response](https://expressjs.com/en/4x/api.html#res), ainsi qu'à la fonction intermédiaire `next()` dans le cycle requête-réponse de l'application. La fonction **next** de l'intergiciel est généralement désignée par une variable nommée `next`.
 
 <figure><img src="/assets/Middlewares_1.png" /></figure>
 
-Nest middleware are, by default, equivalent to [express](https://expressjs.com/en/guide/using-middleware.html) middleware. The following description from the official express documentation describes the capabilities of middleware:
+Les middlewares Nest sont, par défaut, équivalents aux middlewares [express](https://expressjs.com/en/guide/using-middleware.html). La description suivante, tirée de la documentation officielle d'express, décrit les capacités des middlewares :
 
 <blockquote class="external">
-  Middleware functions can perform the following tasks:
+  Les fonctions middleware peuvent effectuer les tâches suivantes :
   <ul>
-    <li>execute any code.</li>
-    <li>make changes to the request and the response objects.</li>
-    <li>end the request-response cycle.</li>
-    <li>call the next middleware function in the stack.</li>
-    <li>if the current middleware function does not end the request-response cycle, it must call <code>next()</code> to
-      pass control to the next middleware function. Otherwise, the request will be left hanging.</li>
+    <li>exécuter n'importe quel code.</li>
+    <li>apporter des modifications aux objets "requête" et "réponse".</li>
+    <li>mettre fin au cycle requête-réponse.</li>
+    <li>appeler la fonction middleware suivante dans la pile.</li>
+    <li>si la fonction middleware actuelle ne met pas fin au cycle requête-réponse, elle doit appeler <code>next()</code> pour
+      passer le contrôle à la fonction middleware suivante. Dans le cas contraire, la requête sera laissée en suspens.</li>
   </ul>
 </blockquote>
 
-You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
+Vous implémentez un middleware Nest personnalisé soit dans une fonction, soit dans une classe avec un décorateur `@Injectable()`. La classe doit implémenter l'interface `NestMiddleware`, tandis que la fonction n'a pas d'exigences particulières. Commençons par implémenter un middleware simple en utilisant une classe.
 
->  warning **Warning** `Express` and `fastify` handle middleware differently and provide different method signatures, read more [here](/techniques/performance#middleware).
+>  warning **Attention** `Express` et `fastify` gèrent les middlewares différemment et fournissent des signatures de méthodes différentes, apprenez-en plus [ici](/techniques/performance#middleware).
 
 
 ```typescript
@@ -47,13 +47,13 @@ export class LoggerMiddleware {
 }
 ```
 
-#### Dependency injection
+#### Injection de dépendances
 
-Nest middleware fully supports Dependency Injection. Just as with providers and controllers, they are able to **inject dependencies** that are available within the same module. As usual, this is done through the `constructor`.
+Le middleware Nest prend entièrement en charge l'injection de dépendances. Tout comme les fournisseurs et les contrôleurs, ils sont capables **d'injecter des dépendances** qui sont disponibles dans le même module. Comme d'habitude, cela se fait à travers le `constructeur`.
 
-#### Applying middleware
+#### Appliquer le middleware
 
-There is no place for middleware in the `@Module()` decorator. Instead, we set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `AppModule` level.
+Il n'y a pas de place pour les middlewares dans le décorateur `@Module()`. A la place, nous les configurons en utilisant la méthode `configure()` de la classe du module. Les modules qui incluent un middleware doivent implémenter l'interface `NestModule`. Configurons l'intergiciel `LoggerMiddleware` au niveau de `AppModule`.
 
 ```typescript
 @@filename(app.module)
@@ -88,7 +88,7 @@ export class AppModule {
 }
 ```
 
-In the above example we have set up the `LoggerMiddleware` for the `/cats` route handlers that were previously defined inside the `CatsController`. We may also further restrict a middleware to a particular request method by passing an object containing the route `path` and request `method` to the `forRoutes()` method when configuring the middleware. In the example below, notice that we import the `RequestMethod` enum to reference the desired request method type.
+Dans l'exemple ci-dessus, nous avons configuré le `LoggerMiddleware` pour les gestionnaires de routes `/cats` qui ont été précédemment définis dans le `CatsController`. Nous pouvons également restreindre un middleware à une méthode de requête particulière en passant un objet contenant la route `path` et la requête `method` à la méthode `forRoutes()` lors de la configuration du middleware. Dans l'exemple ci-dessous, nous avons importé l'enum `RequestMethod` pour référencer le type de méthode de requête désiré.
 
 ```typescript
 @@filename(app.module)
@@ -123,25 +123,25 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
+> info **Astuce** La méthode `configure()` peut être rendue asynchrone en utilisant `async/await` (par exemple, vous pouvez `await` la fin d'une opération asynchrone dans le corps de la méthode `configure()`).
 
-> warning **Warning** When using the `express` adapter, the NestJS app will register `json` and `urlencoded` from the package `body-parser` by default. This means if you want to customize that middleware via the `MiddlewareConsumer`, you need to turn off the global middleware by setting the `bodyParser` flag to `false` when creating the application with `NestFactory.create()`.
+> warning **Attention** Lorsque vous utilisez l'adaptateur `express`, l'application NestJS va enregistrer `json` et `urlencoded` à partir du paquet `body-parser` par défaut. Cela signifie que si vous voulez personnaliser ce middleware via le `MiddlewareConsumer`, vous devez désactiver le middleware global en mettant le drapeau `bodyParser` à `false` lors de la création de l'application avec `NestFactory.create()`.
 
-#### Route wildcards
+#### Jokers de route
 
-Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
+Les itinéraires basés sur des motifs sont également pris en charge. Par exemple, l'astérisque est utilisé comme **caractère générique**, et correspondra à n'importe quelle combinaison de caractères :
 
 ```typescript
 forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 ```
 
-The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
+Le chemin d'accès `'ab*cd'` correspondra à `abcd`, `ab_cd`, `abecd`, et ainsi de suite. Les caractères `?`, `+`, `*`, et `()` peuvent être utilisés dans un chemin d'accès, et sont des sous-ensembles de leurs expressions régulières correspondantes. Le trait d'union ( `-`) et le point (`.`) sont interprétés littéralement par les chemins basés sur des chaînes de caractères.
 
-> warning **Warning** The `fastify` package uses the latest version of the `path-to-regexp` package, which no longer supports wildcard asterisks `*`. Instead, you must use parameters (e.g., `(.*)`, `:splat*`).
+> warning **Attention** Le paquet `fastify` utilise la dernière version du paquet `path-to-regexp`, qui ne supporte plus les astérisques `*`. A la place, vous devez utiliser des paramètres (par exemple, `(.*)`, `:splat*`).
 
-#### Middleware consumer
+#### Consommateur de middleware
 
-The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be simply **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method can take a single string, multiple strings, a `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass a list of **controllers** separated by commas. Below is an example with a single controller:
+Le `MiddlewareConsumer` est une classe "helper". Elle fournit plusieurs méthodes intégrées pour gérer les middlewares. Toutes peuvent être simplement **chaînées** dans le [style fluide](https://en.wikipedia.org/wiki/Fluent_interface). La méthode `forRoutes()` peut prendre une seule chaîne, plusieurs chaînes, un objet `RouteInfo`, une classe de contrôleur et même plusieurs classes de contrôleur. Dans la plupart des cas, vous passerez simplement une liste de **contrôleurs** séparés par des virgules. Voici un exemple avec un seul contrôleur :
 
 ```typescript
 @@filename(app.module)
@@ -178,11 +178,11 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middlewares</a>.
+> info **Astuce** La méthode `apply()` peut prendre un seul middleware, ou plusieurs arguments pour spécifier <a href="/middleware#middlewares-multiples">plusieurs middlewares</a>.
 
-#### Excluding routes
+#### Exclure des routes
 
-At times we want to **exclude** certain routes from having the middleware applied. We can easily exclude certain routes with the `exclude()` method. This method can take a single string, multiple strings, or a `RouteInfo` object identifying routes to be excluded, as shown below:
+Parfois, nous voulons **exclure** certaines routes de l'application du middleware. Nous pouvons facilement exclure certaines routes avec la méthode `exclude()`. Cette méthode peut prendre une seule chaîne de caractères, plusieurs chaînes de caractères, ou un objet `RouteInfo` identifiant les routes à exclure, comme montré ci-dessous :
 
 ```typescript
 consumer
@@ -195,13 +195,13 @@ consumer
   .forRoutes(CatsController);
 ```
 
-> info **Hint** The `exclude()` method supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package.
+> info **Astuce** La méthode `exclude()` prend en charge les paramètres joker en utilisant le paquet [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters).
 
-With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the three passed to the `exclude()` method.
+Dans l'exemple ci-dessus, `LoggerMiddleware` sera lié à toutes les routes définies dans `CatsController` **excepté** les trois passées à la méthode `exclude()`.
 
-#### Functional middleware
+#### Middleware fonctionnel
 
-The `LoggerMiddleware` class we've been using is quite simple. It has no members, no additional methods, and no dependencies. Why can't we just define it in a simple function instead of a class? In fact, we can. This type of middleware is called **functional middleware**. Let's transform the logger middleware from class-based into functional middleware to illustrate the difference:
+La classe `LoggerMiddleware` que nous avons utilisée est assez simple. Elle n'a pas de membres, pas de méthodes supplémentaires, et pas de dépendances. Pourquoi ne pas la définir dans une simple fonction au lieu d'une classe ? En fait, c'est possible. Ce type de middleware est appelé ** middleware fonctionnel**. Pour illustrer la différence, transformons le middleware du logger, basé sur une classe, en middleware fonctionnel :
 
 ```typescript
 @@filename(logger.middleware)
@@ -218,7 +218,7 @@ export function logger(req, res, next) {
 };
 ```
 
-And use it within the `AppModule`:
+Et utilisons-le dans le `AppModule` :
 
 ```typescript
 @@filename(app.module)
@@ -227,19 +227,19 @@ consumer
   .forRoutes(CatsController);
 ```
 
-> info **Hint** Consider using the simpler **functional middleware** alternative any time your middleware doesn't need any dependencies.
+> info **Astuce** Envisagez d'utiliser l'alternative plus simple du ** middleware fonctionnel** chaque fois que votre middleware n'a besoin d'aucune dépendance.
 
-#### Multiple middleware
+#### Middlewares multiples
 
-As mentioned above, in order to bind multiple middleware that are executed sequentially, simply provide a comma separated list inside the `apply()` method:
+Comme mentionné ci-dessus, afin de lier plusieurs middleware qui sont exécutés séquentiellement, il suffit de fournir une liste séparée par des virgules dans la méthode `apply()` :
 
 ```typescript
 consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 ```
 
-#### Global middleware
+#### Middleware global
 
-If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
+Si nous voulons lier le middleware à chaque route enregistrée en une seule fois, nous pouvons utiliser la méthode `use()` qui est fournie par l'instance `INestApplication` :
 
 ```typescript
 @@filename(main)
@@ -248,4 +248,4 @@ app.use(logger);
 await app.listen(3000);
 ```
 
-> info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).
+> info **Astuce** L'accès au conteneur DI dans un middleware global n'est pas possible. Vous pouvez utiliser un [middleware fonctionnel](middleware#middleware-fonctionnel) à la place en utilisant `app.use()`. Alternativement, vous pouvez utiliser un middleware de classe et le consommer avec `.forRoutes('*')` dans le `AppModule` (ou tout autre module).
