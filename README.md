@@ -1,6 +1,7 @@
 ## Traduction Française
 
-Ce dépôt a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. Il n'est pas encore disponible en ligne à ce jour. Par ailleurs, le nom de domaine nestjs.fr étant déjà pris, il conviendra d'en trouver un autre.
+Ce dépôt a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. 
+La traduction dans son état actuel est disponible à ce lien: https://docs-nestjs-fr.netlify.app/
 
 Ci dessous se trouve le README original traduit en français.
 Le README original est accessible <a href="https://github.com/nestjs/docs.nestjs.com/blob/master/README.md">à ce lien</a>.
