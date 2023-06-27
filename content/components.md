@@ -1,16 +1,16 @@
-### Providers
+### Fournisseurs
 
-Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system.
+Les fournisseurs sont un concept fondamental de Nest. De nombreuses classes de base de Nest peuvent être considérées comme des fournisseurs : services, répertoires, usines, aides, etc. L'idée principale d'un fournisseur est qu'il peut être **injecté** en tant que dépendance ; cela signifie que les objets peuvent créer diverses relations les uns avec les autres et que la fonction de "câblage" des instances d'objets peut être largement déléguée au système d'exécution Nest.
 
 <figure><img src="/assets/Components_1.png" /></figure>
 
-In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes that are declared as `providers` in a [module](/modules).
+Dans le chapitre précédent, nous avons construit un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples qui sont déclarées comme `providers` dans un [module](/modules).
 
-> info **Hint** Since Nest enables the possibility to design and organize dependencies in a more OO way, we strongly recommend following the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles.
+> info **Astuce** Étant donné que Nest offre la possibilité de concevoir et d'organiser les dépendances d'une manière plus OO, nous recommandons vivement de suivre les principes [SOLID](https://en.wikipedia.org/wiki/SOLID).
 
 #### Services
 
-Let's start by creating a simple `CatsService`. This service will be responsible for data storage and retrieval, and is designed to be used by the `CatsController`, so it's a good candidate to be defined as a provider.
+Commençons par créer un simple `CatsService`. Ce service sera responsable du stockage et de la récupération des données, et est conçu pour être utilisé par le `CatsController`, c'est donc un bon candidat pour être défini en tant que fournisseur.
 
 ```typescript
 @@filename(cats.service)
@@ -48,9 +48,9 @@ export class CatsService {
 }
 ```
 
-> info **Hint** To create a service using the CLI, simply execute the `$ nest g service cats` command.
+> info **Astuce** Pour créer un service à l'aide de la CLI, il suffit d'exécuter la commande `$ nest g service cats`.
 
-Our `CatsService` is a basic class with one property and two methods. The only new feature is that it uses the `@Injectable()` decorator. The `@Injectable()` decorator attaches metadata, which declares that `CatsService`  is a class that can be managed by the Nest [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) container. By the way, this example also uses a `Cat` interface, which probably looks something like this:
+Notre `CatsService` est une classe basique avec une propriété et deux méthodes. La seule nouveauté est qu'elle utilise le décorateur `@Injectable()`. Le décorateur `@Injectable()` attache des métadonnées, qui déclarent que `CatsService` est une classe qui peut être gérée par le conteneur Nest [IoC](https://en.wikipedia.org/wiki/Inversion_of_control). D'ailleurs, cet exemple utilise aussi une interface `Cat`, qui ressemble probablement à quelque chose comme ça :
 
 ```typescript
 @@filename(interfaces/cat.interface)
@@ -61,7 +61,7 @@ export interface Cat {
 }
 ```
 
-Now that we have a service class to retrieve cats, let's use it inside the `CatsController`:
+Maintenant que nous avons une classe de service pour récupérer les chats, utilisons-la dans le `CatsController` :
 
 ```typescript
 @@filename(cats.controller)
@@ -108,33 +108,33 @@ export class CatsController {
 }
 ```
 
-The `CatsService` is **injected** through the class constructor. Notice the use of the `private` syntax. This shorthand allows us to both declare and initialize the `catsService` member immediately in the same location.
+Le `CatsService` est **injecté** à travers le constructeur de la classe. Notez l'utilisation de la syntaxe `private`. Ce raccourci nous permet de déclarer et d'initialiser le membre `catsService` immédiatement au même endroit.
 
-#### Dependency injection
+#### Injection de dépendance
 
-Nest is built around the strong design pattern commonly known as **Dependency injection**. We recommend reading a great article about this concept in the official [Angular](https://angular.io/guide/dependency-injection) documentation.
+Nest est construit autour du modèle de conception communément appelé **Injection de dépendance**. Nous vous recommandons de lire un excellent article sur ce concept dans la documentation officielle [Angular](https://angular.io/guide/dependency-injection).
 
-In Nest, thanks to TypeScript capabilities, it's extremely easy to manage dependencies because they are resolved just by type. In the example below, Nest will resolve the `catsService` by creating and returning an instance of `CatsService` (or, in the normal case of a singleton, returning the existing instance if it has already been requested elsewhere). This dependency is resolved and passed to your controller's constructor (or assigned to the indicated property):
+Dans Nest, grâce aux capacités de TypeScript, il est extrêmement facile de gérer les dépendances parce qu'elles sont résolues simplement par type. Dans l'exemple ci-dessous, Nest va résoudre la dépendance `catsService` en créant et en retournant une instance de `CatsService` (ou, dans le cas normal d'un singleton, en retournant l'instance existante si elle a déjà été demandée ailleurs). Cette dépendance est résolue et passée au constructeur de votre contrôleur (ou assignée à la propriété indiquée) :
 
 ```typescript
 constructor(private catsService: CatsService) {}
 ```
 
-#### Scopes
+#### Portées
 
-Providers normally have a lifetime ("scope") synchronized with the application lifecycle. When the application is bootstrapped, every dependency must be resolved, and therefore every provider has to be instantiated. Similarly, when the application shuts down, each provider will be destroyed. However, there are ways to make your provider lifetime **request-scoped** as well. You can read more about these techniques [here](/fundamentals/injection-scopes).
+Les fournisseurs ont normalement une durée de vie ("portée") synchronisée avec le cycle de vie de l'application. Lorsque l'application est démarrée, chaque dépendance doit être résolue et, par conséquent, chaque fournisseur doit être instancié. De même, lorsque l'application s'arrête, chaque fournisseur est détruit. Cependant, il existe des moyens de rendre la durée de vie de votre fournisseur **limitée à une requête**. Vous pouvez en savoir plus sur ces techniques [ici](/fundamentals/injection-scopes).
 
 <app-banner-courses></app-banner-courses>
 
-#### Custom providers
+#### Fournisseurs personnalisés
 
-Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far. There are several ways to define a provider: you can use plain values, classes, and either asynchronous or synchronous factories. More examples are provided [here](/fundamentals/dependency-injection).
+Nest dispose d'un conteneur d'inversion de contrôle ("IoC") intégré qui résout les relations entre les fournisseurs. Cette fonction sous-tend la fonction d'injection de dépendance décrite ci-dessus, mais elle est en fait beaucoup plus puissante que ce que nous avons décrit jusqu'à présent. Il existe plusieurs façons de définir un fournisseur : vous pouvez utiliser des valeurs simples, des classes et des factories asynchrones ou synchrones. D'autres exemples sont fournis [ici](/fundamentals/dependency-injection).
 
-#### Optional providers
+#### Fournisseurs optionnels
 
-Occasionally, you might have dependencies which do not necessarily have to be resolved. For instance, your class may depend on a **configuration object**, but if none is passed, the default values should be used. In such a case, the dependency becomes optional, because lack of the configuration provider wouldn't lead to errors.
+Occasionnellement, vous pouvez avoir des dépendances qui ne doivent pas nécessairement être résolues. Par exemple, votre classe peut dépendre d'un **objet de configuration**, mais si aucun n'est fourni, les valeurs par défaut doivent être utilisées. Dans ce cas, la dépendance devient facultative, car l'absence du fournisseur de configuration n'entraîne pas d'erreurs.
 
-To indicate a provider is optional, use the `@Optional()` decorator in the constructor's signature.
+Pour indiquer qu'un fournisseur est optionnel, utilisez le décorateur `@Optional()` dans la signature du constructeur.
 
 ```typescript
 import { Injectable, Optional, Inject } from '@nestjs/common';
@@ -145,11 +145,11 @@ export class HttpService<T> {
 }
 ```
 
-Note that in the example above we are using a custom provider, which is the reason we include the `HTTP_OPTIONS` custom **token**. Previous examples showed constructor-based injection indicating a dependency through a class in the constructor. Read more about custom providers and their associated tokens [here](/fundamentals/custom-providers).
+Notez que dans l'exemple ci-dessus, nous utilisons un fournisseur personnalisé, ce qui est la raison pour laquelle nous incluons le **jeton** personnalisé `HTTP_OPTIONS`. Les exemples précédents montraient une injection basée sur un constructeur, indiquant une dépendance à travers une classe dans le constructeur. Pour en savoir plus sur les fournisseurs personnalisés et leurs jetons associés, cliquez [ici](/fundamentals/custom-providers).
 
-#### Property-based injection
+#### Injection basée sur les propriétés
 
-The technique we've used so far is called constructor-based injection, as providers are injected via the constructor method. In some very specific cases, **property-based injection** might be useful. For instance, if your top-level class depends on either one or multiple providers, passing them all the way up by calling `super()` in sub-classes from the constructor can be very tedious. In order to avoid this, you can use the `@Inject()` decorator at the property level.
+La technique que nous avons utilisée jusqu'à présent est appelée injection basée sur le constructeur, car les fournisseurs sont injectés via la méthode du constructeur. Dans certains cas très spécifiques, **l'injection basée sur les propriétés** peut s'avérer utile. Par exemple, si votre classe de premier niveau dépend d'un ou de plusieurs fournisseurs, les faire remonter en appelant `super()` dans les sous-classes à partir du constructeur peut être très fastidieux. Pour éviter cela, vous pouvez utiliser le décorateur `@Inject()` au niveau de la propriété.
 
 ```typescript
 import { Injectable, Inject } from '@nestjs/common';
@@ -161,11 +161,11 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Warning** If your class doesn't extend another provider, you should always prefer using **constructor-based** injection.
+> warning **Attention** Si votre classe n'étend pas un autre fournisseur, vous devriez toujours préférer utiliser l'injection basée sur le constructeur.
 
-#### Provider registration
+#### Enregistrement des fournisseurs
 
-Now that we have defined a provider (`CatsService`), and we have a consumer of that service (`CatsController`), we need to register the service with Nest so that it can perform the injection. We do this by editing our module file (`app.module.ts`) and adding the service to the `providers` array of the `@Module()` decorator.
+Maintenant que nous avons défini un fournisseur (`CatsService`), et que nous avons un consommateur de ce service (`CatsController`), nous devons enregistrer le service avec Nest pour qu'il puisse effectuer l'injection. Nous faisons cela en éditant notre fichier de module (`app.module.ts`) et en ajoutant le service à la liste des `providers` du décorateur `@Module()`.
 
 ```typescript
 @@filename(app.module)
@@ -180,9 +180,9 @@ import { CatsService } from './cats/cats.service';
 export class AppModule {}
 ```
 
-Nest will now be able to resolve the dependencies of the `CatsController` class.
+Nest sera maintenant capable de résoudre les dépendances de la classe `CatsController`.
 
-This is how our directory structure should look now:
+Voici à quoi devrait ressembler la structure de notre répertoire :
 
 <div class="file-tree">
 <div class="item">src</div>
@@ -205,10 +205,10 @@ This is how our directory structure should look now:
 </div>
 </div>
 
-#### Manual instantiation
+#### Instanciation manuelle
 
-Thus far, we've discussed how Nest automatically handles most of the details of resolving dependencies. In certain circumstances, you may need to step outside of the built-in Dependency Injection system and manually retrieve or instantiate providers. We briefly discuss two such topics below.
+Jusqu'à présent, nous avons vu comment Nest gère automatiquement la plupart des détails de la résolution des dépendances. Dans certaines circonstances, il peut être nécessaire de sortir du système d'injection de dépendances intégré et de récupérer ou d'instancier manuellement des fournisseurs. Nous abordons brièvement deux de ces sujets ci-dessous.
 
-To get existing instances, or instantiate providers dynamically, you can use [Module reference](https://docs.nestjs.com/fundamentals/module-ref).
+Pour obtenir des instances existantes ou instancier des fournisseurs de manière dynamique, vous pouvez utiliser la [Référence de module](https://docs.nestjs.com/fundamentals/module-ref).
 
-To get providers within the `bootstrap()` function (for example for standalone applications without controllers, or to utilize a configuration service during bootstrapping) see [Standalone applications](https://docs.nestjs.com/standalone-applications).
+Pour obtenir des fournisseurs dans la fonction `bootstrap()` (par exemple pour les applications autonomes sans contrôleurs, ou pour utiliser un service de configuration pendant le bootstrapping), voir [Applications indépendantes](https://docs.nestjs.com/standalone-applications).
