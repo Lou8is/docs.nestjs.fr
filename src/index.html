@@ -70,35 +70,19 @@
       defer
       src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
     ></script>
-    <link href="https://cdn.carbonads.com" rel="preconnect" crossorigin>
     <link href="https://cdn.jsdelivr.net" rel="preconnect" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3" />
-
-    <script>
-      (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        (i[r] =
-          i[r] ||
-          function() {
-            (i[r].q = i[r].q || []).push(arguments);
-          }),
-          (i[r].l = 1 * new Date());
-        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-      })(
-        window,
-        document,
-        'script',
-        'https://www.google-analytics.com/analytics.js',
-        'ga',
-      );
-
-      ga('create', 'UA-30617038-5', 'auto');
-      ga('send', 'pageview');
-    </script>
   </head>
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y14JELNTZV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Y14JELNTZV');
+  </script>
 
   <body>
     <app-root></app-root>
