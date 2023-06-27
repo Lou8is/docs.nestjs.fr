@@ -1,8 +1,8 @@
-### Asynchronous providers
+### Fournisseurs asynchrones
 
-At times, the application start should be delayed until one or more **asynchronous tasks** are completed. For example, you may not want to start accepting requests until the connection with the database has been established. You can achieve this using asynchronous providers.
+Parfois, le démarrage de l'application doit être retardé jusqu'à ce qu'une ou plusieurs **tâches asynchrones** soient terminées. Par exemple, il se peut que vous ne souhaitiez pas commencer à accepter des requêtes tant que la connexion avec la base de données n'a pas été établie. Vous pouvez y parvenir en utilisant des fournisseurs asynchrones.
 
-The syntax for this is to use `async/await` with the `useFactory` syntax. The factory returns a `Promise`, and the factory function can `await` asynchronous tasks. Nest will await resolution of the promise before instantiating any class that depends on (injects) such a provider.
+La syntaxe pour cela est d'utiliser `async/await` avec la syntaxe `useFactory`. La factory renvoie une `Promise`, et la fonction factory peut `await` les tâches asynchrones. Nest attendra la résolution de la promesse avant d'instancier toute classe qui dépend d'un tel fournisseur (qui l'injecte).
 
 ```typescript
 {
@@ -14,12 +14,12 @@ The syntax for this is to use `async/await` with the `useFactory` syntax. The fa
 }
 ```
 
-> info **Hint** Learn more about custom provider syntax [here](/fundamentals/custom-providers).
+> info **Astuce** Apprenez-en plus sur la syntaxe des fournisseurs personnalisés [ici](/fundamentals/custom-providers).
 
 #### Injection
 
-Asynchronous providers are injected to other components by their tokens, like any other provider. In the example above, you would use the construct `@Inject('ASYNC_CONNECTION')`.
+Les fournisseurs asynchrones sont injectés dans d'autres composants par leurs jetons, comme n'importe quel autre fournisseur. Dans l'exemple ci-dessus, vous utiliseriez la construction `@Inject('ASYNC_CONNECTION')`.
 
-#### Example
+#### Exemple
 
-[The TypeORM recipe](/recipes/sql-typeorm) has a more substantial example of an asynchronous provider.
+[The TypeORM recipe](/recipes/sql-typeorm) présente un exemple plus substantiel de fournisseur asynchrone.
