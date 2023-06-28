@@ -18,6 +18,10 @@ export class MenuComponent implements OnInit {
   isSidebarOpened = true;
   readonly items = [
     {
+      title: 'Aidez à la traduction',
+      externalUrl: 'https://github.com/Lou8is/docs.nestjs.fr',
+    },
+    {
       title: 'Introduction',
       isOpened: false,
       path: '/',
