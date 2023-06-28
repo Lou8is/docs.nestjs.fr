@@ -51,7 +51,7 @@ Cette méthode renverra un code de réponse 200 et la réponse associée, qui da
     <td>
       Grâce à cette méthode intégrée, lorsqu'un gestionnaire de requête renvoie un objet ou un tableau JavaScript, il sera <strong>automatiquement</strong> sérialisé en JSON. En revanche, lorsqu'il renvoie un type primitif JavaScript (par exemple, <code>string</code>, <code>number</code>, <code>boolean</code>), Nest envoie uniquement la valeur sans tenter de la sérialiser. Cela simplifie la gestion des réponses : il suffit de renvoyer la valeur et Nest s'occupe du reste.
       <br />
-      <br /> De plus, le <strong>code d'état</strong> de la réponse est toujours 200 par défaut, sauf pour les requêtes POST qui utilisent 201. Nous pouvons facilement modifier ce comportement en ajoutant le décorateur <code>@HttpCode(...)</code>au niveau d'un handler (voir <a href='controllers#status-code'>Codes d'état</a>).
+      <br /> De plus, le <strong>code d'état</strong> de la réponse est toujours 200 par défaut, sauf pour les requêtes POST qui utilisent 201. Nous pouvons facilement modifier ce comportement en ajoutant le décorateur <code>@HttpCode(...)</code>au niveau d'un handler (voir <a href='controllers#code-de-retour'>Codes d'état</a>).
     </td>
   </tr>
   <tr>

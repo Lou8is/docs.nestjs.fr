@@ -11,7 +11,7 @@ Les pipes ont deux cas d'utilisation typiques :
 - **transformation**: transformer les données d'entrée dans la forme souhaitée (par exemple, d'une chaîne de caractères à un nombre entier)
 - **validation**: évalue les données d'entrée et, si elles sont valides, les transmet sans modification ; dans le cas contraire, lance une exception
 
-Dans les deux cas, les pipes opèrent sur les `arguments` traités par un <a href="controllers#route-parameters">contrôleur gestionnaire de route</a>. Nest interpose un pipe juste avant l'invocation d'une méthode, et le pipe reçoit les arguments destinés à la méthode et opère sur eux. Toute opération de transformation ou de validation a lieu à ce moment-là, après quoi le gestionnaire de route est invoqué avec tous les arguments (potentiellement) transformés.
+Dans les deux cas, les pipes opèrent sur les `arguments` traités par un <a href="controllers#routes-paramétrées">contrôleur gestionnaire de route</a>. Nest interpose un pipe juste avant l'invocation d'une méthode, et le pipe reçoit les arguments destinés à la méthode et opère sur eux. Toute opération de transformation ou de validation a lieu à ce moment-là, après quoi le gestionnaire de route est invoqué avec tous les arguments (potentiellement) transformés.
 
 Nest est livré avec un certain nombre de pipes intégrées que vous pouvez utiliser immédiatement. Vous pouvez également créer vos propres pipes. Dans ce chapitre, nous allons présenter les pipes intégrés et montrer comment les lier à des gestionnaires de routes. Nous examinerons ensuite plusieurs pipes personnalisés afin de montrer comment vous pouvez en créer un à partir de zéro.
 

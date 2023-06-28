@@ -227,7 +227,7 @@ consumer
   .forRoutes(CatsController);
 ```
 
-> info **Astuce** Envisagez d'utiliser l'alternative plus simple du ** middleware fonctionnel** chaque fois que votre middleware n'a besoin d'aucune dépendance.
+> info **Astuce** Envisagez d'utiliser l'alternative plus simple du **middleware fonctionnel** chaque fois que votre middleware n'a besoin d'aucune dépendance.
 
 #### Middlewares multiples
 
