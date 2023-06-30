@@ -1,12 +1,12 @@
-### Custom providers
+### Fournisseurs personnalisés
 
-In earlier chapters, we touched on various aspects of **Dependency Injection (DI)** and how it is used in Nest. One example of this is the [constructor based](https://docs.nestjs.com/providers#dependency-injection) dependency injection used to inject instances (often service providers) into classes. You won't be surprised to learn that Dependency Injection is built into the Nest core in a fundamental way. So far, we've only explored one main pattern. As your application grows more complex, you may need to take advantage of the full features of the DI system, so let's explore them in more detail.
+Dans les chapitres précédents, nous avons abordé divers aspects de **l'injection de dépendances (ID)** et la façon dont elle est utilisée dans Nest. Un exemple est l'injection de dépendance [basée sur le constructeur](/providers#injection-de-dépendance) utilisée pour injecter des instances (souvent des fournisseurs de services) dans les classes. Vous ne serez pas surpris d'apprendre que l'injection de dépendances est intégrée de manière fondamentale dans le noyau de Nest. Jusqu'à présent, nous n'avons exploré qu'un seul modèle principal. Au fur et à mesure que votre application se complexifie, vous aurez peut-être besoin de tirer parti de toutes les fonctionnalités du système d'injection de dépendances, alors explorons-les plus en détail.
 
-#### DI fundamentals
+#### Principes de base de l'ID
 
-Dependency injection is an [inversion of control (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) technique wherein you delegate instantiation of dependencies to the IoC container (in our case, the NestJS runtime system), instead of doing it in your own code imperatively. Let's examine what's happening in this example from the [Providers chapter](https://docs.nestjs.com/providers).
+L'injection de dépendances est une technique [d'inversion de contrôle (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) dans laquelle vous déléguez l'instanciation des dépendances au conteneur IoC (dans notre cas, le système d'exécution NestJS), au lieu de le faire impérativement dans votre propre code. Examinons ce qui se passe dans cet exemple tiré du chapitre sur les [fournisseurs](https://docs.nestjs.com/providers).
 
-First, we define a provider. The `@Injectable()` decorator marks the `CatsService` class as a provider.
+Tout d'abord, nous définissons un fournisseur. Le décorateur `@Injectable()` marque la classe `CatsService` comme fournisseur.
 
 ```typescript
 @@filename(cats.service)
@@ -36,7 +36,7 @@ export class CatsService {
 }
 ```
 
-Then we request that Nest inject the provider into our controller class:
+Ensuite, nous demandons à Nest d'injecter le fournisseur dans notre classe de contrôleur :
 
 ```typescript
 @@filename(cats.controller)
@@ -71,7 +71,7 @@ export class CatsController {
 }
 ```
 
-Finally, we register the provider with the Nest IoC container:
+Enfin, nous enregistrons le fournisseur auprès du conteneur Nest IoC :
 
 ```typescript
 @@filename(app.module)
@@ -86,26 +86,26 @@ import { CatsService } from './cats/cats.service';
 export class AppModule {}
 ```
 
-What exactly is happening under the covers to make this work? There are three key steps in the process:
+Que se passe-t-il exactement en coulisses pour que cela fonctionne ? Il y a trois étapes clés dans le processus :
 
-1. In `cats.service.ts`, the `@Injectable()` decorator declares the `CatsService` class as a class that can be managed by the Nest IoC container.
-2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` token with constructor injection:
+1. Dans `cats.service.ts`, le décorateur `@Injectable()` déclare la classe `CatsService` comme une classe qui peut être gérée par le conteneur IoC Nest.
+2. Dans `cats.controller.ts`, `CatsController` déclare une dépendance sur le jeton `CatsService` avec injection de constructeur :
 
 ```typescript
   constructor(private catsService: CatsService)
 ```
 
-3. In `app.module.ts`, we associate the token `CatsService` with the class `CatsService` from the `cats.service.ts` file. We'll <a href="/fundamentals/custom-providers#standard-providers">see below</a> exactly how this association (also called _registration_) occurs.
+3. Dans `app.module.ts`, nous associons le jeton `CatsService` avec la classe `CatsService` du fichier `cats.service.ts`. Nous allons <a href="/fundamentals/custom-providers#fournisseurs-standards">voir ci-dessous</a> comment cette association (aussi appelée _enregistrement_) se produit.
 
-When the Nest IoC container instantiates a `CatsController`, it first looks for any dependencies\*. When it finds the `CatsService` dependency, it performs a lookup on the `CatsService` token, which returns the `CatsService` class, per the registration step (#3 above). Assuming `SINGLETON` scope (the default behavior), Nest will then either create an instance of `CatsService`, cache it, and return it, or if one is already cached, return the existing instance.
+Quand le conteneur Nest IoC instancie un `CatsController`, il recherche d'abord les dépendances. Quand il trouve la dépendance `CatsService`, il effectue une recherche sur le jeton `CatsService`, qui retourne la classe `CatsService`, selon l'étape d'enregistrement (#3 ci-dessus). En supposant une portée `SINGLETON` (le comportement par défaut), Nest va alors soit créer une instance de `CatsService`, la mettre en cache, et la retourner, ou si une instance est déjà mise en cache, retourner l'instance existante.
 
-\*This explanation is a bit simplified to illustrate the point. One important area we glossed over is that the process of analyzing the code for dependencies is very sophisticated, and happens during application bootstrapping. One key feature is that dependency analysis (or "creating the dependency graph"), is **transitive**. In the above example, if the `CatsService` itself had dependencies, those too would be resolved. The dependency graph ensures that dependencies are resolved in the correct order - essentially "bottom up". This mechanism relieves the developer from having to manage such complex dependency graphs.
+\*Cette explication est un peu simplifiée pour illustrer le propos. Un point important que nous avons négligé est que le processus d'analyse du code pour les dépendances est très sophistiqué et se déroule pendant l'amorçage de l'application. Une caractéristique clé est que l'analyse des dépendances (ou "création du graphe des dépendances") est **transitive**. Dans l'exemple ci-dessus, si le `CatsService` lui-même avait des dépendances, celles-ci seraient également résolues. Le graphe de dépendance garantit que les dépendances sont résolues dans le bon ordre - essentiellement "de bas en haut". Ce mécanisme évite au développeur d'avoir à gérer des graphes de dépendances aussi complexes.
 
 <app-banner-courses></app-banner-courses>
 
-#### Standard providers
+#### Fournisseurs standards
 
-Let's take a closer look at the `@Module()` decorator. In `app.module`, we declare:
+Regardons de plus près le décorateur `@Module()`. Dans `app.module`, nous déclarons :
 
 ```typescript
 @Module({
@@ -114,7 +114,7 @@ Let's take a closer look at the `@Module()` decorator. In `app.module`, we decla
 })
 ```
 
-The `providers` property takes an array of `providers`. So far, we've supplied those providers via a list of class names. In fact, the syntax `providers: [CatsService]` is short-hand for the more complete syntax:
+La propriété `providers` prend une liste de `providers`. Jusqu'à présent, nous avons fourni ces fournisseurs via une liste de noms de classes. En fait, la syntaxe `providers : [CatsService]` est un raccourci pour la syntaxe plus complète :
 
 ```typescript
 providers: [
@@ -125,29 +125,29 @@ providers: [
 ];
 ```
 
-Now that we see this explicit construction, we can understand the registration process. Here, we are clearly associating the token `CatsService` with the class `CatsService`. The short-hand notation is merely a convenience to simplify the most common use-case, where the token is used to request an instance of a class by the same name.
+Maintenant que nous voyons cette construction explicite, nous pouvons comprendre le processus d'enregistrement. Ici, nous associons clairement le jeton `CatsService` à la classe `CatsService`. La notation abrégée est simplement une commodité pour simplifier le cas d'utilisation le plus courant, où le jeton est utilisé pour requérir une instance d'une classe portant le même nom.
 
-#### Custom providers
+#### Fournisseurs personnalisés
 
-What happens when your requirements go beyond those offered by _Standard providers_? Here are a few examples:
+Que se passe-t-il lorsque vos besoins vont au-delà de ce que proposent les _fournisseurs standard_ ? Voici quelques exemples :
 
-- You want to create a custom instance instead of having Nest instantiate (or return a cached instance of) a class
-- You want to re-use an existing class in a second dependency
-- You want to override a class with a mock version for testing
+- Vous souhaitez créer une instance personnalisée au lieu de demander à Nest d'instancier (ou de renvoyer une instance mise en cache) une classe.
+- Vous souhaitez réutiliser une classe existante dans une deuxième dépendance
+- Vous souhaitez remplacer une classe par une version factice à des fins de test.
 
-Nest allows you to define Custom providers to handle these cases. It provides several ways to define custom providers. Let's walk through them.
+Nest vous permet de définir des fournisseurs personnalisés pour traiter ces cas. Il existe plusieurs façons de définir des fournisseurs personnalisés. Passons-les en revue.
 
-> info **Hint** If you are having problems with dependency resolution you can set the `NEST_DEBUG` environment variable and get extra dependency resolution logs during startup.
+> info **Astuce** Si vous avez des problèmes avec la résolution des dépendances, vous pouvez définir la variable d'environnement `NEST_DEBUG` et obtenir des logs supplémentaires de résolution des dépendances pendant le démarrage.
 
-#### Value providers: `useValue`
+#### Fournisseurs de valeur : `useValue`
 
-The `useValue` syntax is useful for injecting a constant value, putting an external library into the Nest container, or replacing a real implementation with a mock object. Let's say you'd like to force Nest to use a mock `CatsService` for testing purposes.
+La syntaxe `useValue` est utile pour injecter une valeur constante, mettre une bibliothèque externe dans le conteneur Nest, ou remplacer une implémentation réelle par un objet factice. Supposons que vous souhaitiez forcer Nest à utiliser un simulacre de `CatsService` à des fins de test.
 
 ```typescript
 import { CatsService } from './cats.service';
 
 const mockCatsService = {
-  /* mock implementation
+  /* implémentation factice
   ...
   */
 };
@@ -164,11 +164,11 @@ const mockCatsService = {
 export class AppModule {}
 ```
 
-In this example, the `CatsService` token will resolve to the `mockCatsService` mock object. `useValue` requires a value - in this case a literal object that has the same interface as the `CatsService` class it is replacing. Because of TypeScript's [structural typing](https://www.typescriptlang.org/docs/handbook/type-compatibility.html), you can use any object that has a compatible interface, including a literal object or a class instance instantiated with `new`.
+Dans cet exemple, le jeton `CatsService` résoudra l'objet factice `mockCatsService`. `useValue` requiert une valeur - dans ce cas un objet littéral qui a la même interface que la classe `CatsService` qu'il remplace. Grâce au [typage structurel](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) de TypeScript , vous pouvez utiliser n'importe quel objet ayant une interface compatible, y compris un objet littéral ou une instance de classe instanciée avec `new`.
 
-#### Non-class-based provider tokens
+#### Jetons de fournisseur non basés sur une classe
 
-So far, we've used class names as our provider tokens (the value of the `provide` property in a provider listed in the `providers` array). This is matched by the standard pattern used with [constructor based injection](https://docs.nestjs.com/providers#dependency-injection), where the token is also a class name. (Refer back to <a href="/fundamentals/custom-providers#di-fundamentals">DI Fundamentals</a> for a refresher on tokens if this concept isn't entirely clear). Sometimes, we may want the flexibility to use strings or symbols as the DI token. For example:
+Jusqu'à présent, nous avons utilisé des noms de classe comme jetons de fournisseur (la valeur de la propriété `provide` d'un fournisseur listé dans le tableau `providers`). Ceci correspond au modèle standard utilisé avec l'[injection basée sur le constructeur](/providers#injection-de-dépendance), où le jeton est également un nom de classe. ( Voir <a href="/fundamentals/custom-providers#principes-de-base-de-lid">Principes de base de l'ID</a> pour un rappel sur les tokens si ce concept n'est pas tout à fait clair). Parfois, nous pouvons souhaiter avoir la possibilité d'utiliser des chaînes ou des symboles comme jeton ID. Par exemple :
 
 ```typescript
 import { connection } from './connection';
@@ -184,11 +184,11 @@ import { connection } from './connection';
 export class AppModule {}
 ```
 
-In this example, we are associating a string-valued token (`'CONNECTION'`) with a pre-existing `connection` object we've imported from an external file.
+Dans cet exemple, nous associons un jeton à valeur de chaîne (`'CONNECTION'`) à un objet `connection' préexistant que nous avons importé d'un fichier externe.
 
-> warning **Notice** In addition to using strings as token values, you can also use JavaScript [symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) or TypeScript [enums](https://www.typescriptlang.org/docs/handbook/enums.html).
+> warning **Remarque** Outre l'utilisation de chaînes comme valeurs de jeton, vous pouvez également utiliser des [symboles JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) ou des [enums TypeScript](https://www.typescriptlang.org/docs/handbook/enums.html).
 
-We've previously seen how to inject a provider using the standard [constructor based injection](https://docs.nestjs.com/providers#dependency-injection) pattern. This pattern **requires** that the dependency be declared with a class name. The `'CONNECTION'` custom provider uses a string-valued token. Let's see how to inject such a provider. To do so, we use the `@Inject()` decorator. This decorator takes a single argument - the token.
+Nous avons vu précédemment comment injecter un fournisseur en utilisant le modèle standard d'[injection basée sur le constructeur](https://docs.nestjs.com/providers#dependency-injection). Ce schéma **exige** que la dépendance soit déclarée avec un nom de classe. Le fournisseur personnalisé `'CONNECTION'` utilise une chaîne de caractères. Voyons comment injecter un tel fournisseur. Pour ce faire, nous utilisons le décorateur `@Inject()`. Ce décorateur prend un seul argument - le jeton.
 
 ```typescript
 @@filename()
@@ -204,13 +204,13 @@ export class CatsRepository {
 }
 ```
 
-> info **Hint** The `@Inject()` decorator is imported from `@nestjs/common` package.
+> info **Astuce** Le décorateur `@Inject()` est importé du package `@nestjs/common`.
 
-While we directly use the string `'CONNECTION'` in the above examples for illustration purposes, for clean code organization, it's best practice to define tokens in a separate file, such as `constants.ts`. Treat them much as you would symbols or enums that are defined in their own file and imported where needed.
+Bien que nous utilisions directement la chaîne `'CONNECTION'` dans les exemples ci-dessus à des fins d'illustration, pour une organisation propre du code, il est préférable de définir les tokens dans un fichier séparé, tel que `constants.ts`. Traitez-les comme vous le feriez avec des symboles ou des enums qui sont définis dans leur propre fichier et importés là où c'est nécessaire.
 
-#### Class providers: `useClass`
+#### Fournisseurs de classe : `useClass`
 
-The `useClass` syntax allows you to dynamically determine a class that a token should resolve to. For example, suppose we have an abstract (or default) `ConfigService` class. Depending on the current environment, we want Nest to provide a different implementation of the configuration service. The following code implements such a strategy.
+La syntaxe `useClass` vous permet de déterminer dynamiquement une classe à laquelle un jeton doit être résolu. Par exemple, supposons que nous ayons une classe abstraite (ou par défaut) `ConfigService`. En fonction de l'environnement actuel, nous voulons que Nest fournisse une implémentation différente du service de configuration. Le code suivant implémente une telle stratégie.
 
 ```typescript
 const configServiceProvider = {
@@ -227,16 +227,16 @@ const configServiceProvider = {
 export class AppModule {}
 ```
 
-Let's look at a couple of details in this code sample. You'll notice that we define `configServiceProvider` with a literal object first, then pass it in the module decorator's `providers` property. This is just a bit of code organization, but is functionally equivalent to the examples we've used thus far in this chapter.
+Examinons quelques détails de cet exemple de code. Vous remarquerez que nous définissons `configServiceProvider` avec un objet littéral d'abord, puis nous le passons dans la propriété `providers` du décorateur de module. C'est juste un peu d'organisation de code, mais c'est fonctionnellement équivalent aux exemples que nous avons utilisés jusqu'à présent dans ce chapitre.
 
-Also, we have used the `ConfigService` class name as our token. For any class that depends on `ConfigService`, Nest will inject an instance of the provided class (`DevelopmentConfigService` or `ProductionConfigService`) overriding any default implementation that may have been declared elsewhere (e.g., a `ConfigService` declared with an `@Injectable()` decorator).
+De plus, nous avons utilisé le nom de la classe `ConfigService` comme token. Pour toute classe qui dépend de `ConfigService`, Nest injectera une instance de la classe fournie (`DevelopmentConfigService` ou `ProductionConfigService`) en remplaçant toute implémentation par défaut qui aurait pu être déclarée ailleurs (par exemple, un `ConfigService` déclaré avec un décorateur `@Injectable()`).
 
-#### Factory providers: `useFactory`
+#### Fournisseurs de factory : `useFactory`
 
-The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
+La syntaxe `useFactory` permet de créer des fournisseurs **dynamiquement**. Le fournisseur réel sera fourni par la valeur renvoyée par une fonction "factory". La fonction factory peut être aussi simple ou complexe que nécessaire. Une fabrique simple ne peut dépendre d'aucun autre fournisseur. Une fabrique plus complexe peut elle-même injecter d'autres fournisseurs dont elle a besoin pour calculer son résultat. Dans ce dernier cas, la syntaxe du fournisseur d'usine dispose d'une paire de mécanismes connexes :
 
-1. The factory function can accept (optional) arguments.
-2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. Also, these providers can be marked as optional. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order. The example below demonstrates this.
+1. La fonction factory peut accepter des arguments (facultatifs).
+2. La propriété (optionnelle) `inject` accepte un tableau de fournisseurs que Nest va résoudre et passer comme arguments à la fonction factory pendant le processus d'instanciation. De plus, ces fournisseurs peuvent être marqués comme optionnels. Les deux listes doivent être corrélées : Nest passera les instances de la liste `inject` comme arguments à la fonction factory dans le même ordre. L'exemple ci-dessous le démontre.
 
 ```typescript
 @@filename()
@@ -248,8 +248,8 @@ const connectionProvider = {
   },
   inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
   //       \_____________/            \__________________/
-  //        This provider              The provider with this
-  //        is mandatory.              token can resolve to `undefined`.
+  //        Ce fournisseur         Le fournisseur avec ce jeton
+  //       est obligatoire        peut être résolu en `undefined`.
 };
 
 @Module({
@@ -269,8 +269,8 @@ const connectionProvider = {
   },
   inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
   //       \_____________/            \__________________/
-  //        This provider              The provider with this
-  //        is mandatory.              token can resolve to `undefined`.
+  //        Ce fournisseur         Le fournisseur avec ce jeton
+  //       est obligatoire        peut être résolu en `undefined`.
 };
 
 @Module({
@@ -283,9 +283,9 @@ const connectionProvider = {
 export class AppModule {}
 ```
 
-#### Alias providers: `useExisting`
+#### Fournisseurs d'alias : `useExisting`
 
-The `useExisting` syntax allows you to create aliases for existing providers. This creates two ways to access the same provider. In the example below, the (string-based) token `'AliasedLoggerService'` is an alias for the (class-based) token `LoggerService`. Assume we have two different dependencies, one for `'AliasedLoggerService'` and one for `LoggerService`. If both dependencies are specified with `SINGLETON` scope, they'll both resolve to the same instance.
+La syntaxe `useExisting` vous permet de créer des alias pour des fournisseurs existants. Cela crée deux façons d'accéder au même fournisseur. Dans l'exemple ci-dessous, le jeton (basé sur une chaîne) `'AliasedLoggerService'` est un alias pour le jeton (basé sur une classe) `LoggerService`. Supposons que nous ayons deux dépendances différentes, une pour `'AliasedLoggerService'' et une pour `LoggerService`. Si les deux dépendances sont spécifiées avec la portée `SINGLETON`, elles seront toutes deux résolues dans la même instance.
 
 ```typescript
 @Injectable()
@@ -304,9 +304,9 @@ const loggerAliasProvider = {
 export class AppModule {}
 ```
 
-#### Non-service based providers
+#### Fournisseurs non basés sur les services
 
-While providers often supply services, they are not limited to that usage. A provider can supply **any** value. For example, a provider may supply an array of configuration objects based on the current environment, as shown below:
+Si les fournisseurs proposent souvent des services, ils ne sont pas limités à cet usage. Un fournisseur peut fournir **n'importe quelle** valeur. Par exemple, un fournisseur peut fournir un tableau d'objets de configuration basés sur l'environnement actuel, comme indiqué ci-dessous :
 
 ```typescript
 const configFactory = {
@@ -322,11 +322,11 @@ const configFactory = {
 export class AppModule {}
 ```
 
-#### Export custom provider
+#### Exporter un fournisseur personnalisé
 
-Like any provider, a custom provider is scoped to its declaring module. To make it visible to other modules, it must be exported. To export a custom provider, we can either use its token or the full provider object.
+Comme tout fournisseur, un fournisseur personnalisé est limité au module qui le déclare. Pour qu'il soit visible par d'autres modules, il doit être exporté. Pour exporter un fournisseur personnalisé, nous pouvons utiliser son jeton ou l'objet complet du fournisseur.
 
-The following example shows exporting using the token:
+L'exemple suivant montre l'exportation à l'aide du jeton :
 
 ```typescript
 @@filename()
@@ -361,7 +361,7 @@ const connectionFactory = {
 export class AppModule {}
 ```
 
-Alternatively, export with the full provider object:
+Il est également possible d'exporter avec l'objet complet du fournisseur :
 
 ```typescript
 @@filename()
