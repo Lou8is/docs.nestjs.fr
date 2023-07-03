@@ -18,7 +18,7 @@ export class MenuComponent implements OnInit {
   isSidebarOpened = true;
   readonly items = [
     {
-      title: 'Aidez à la traduction',
+      title: '🇫🇷 Aidez à la traduction',
       externalUrl: 'https://github.com/Lou8is/docs.nestjs.fr',
     },
     {
@@ -284,7 +284,7 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
-      title: 'Cours officiels',
+      title: '[EN] Cours officiels',
       externalUrl: 'https://courses.nestjs.com/',
     },
     {
