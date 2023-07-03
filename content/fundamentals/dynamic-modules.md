@@ -1,14 +1,14 @@
-### Dynamic modules
+### Modules dynamiques
 
-The [Modules chapter](/modules) covers the basics of Nest modules, and includes a brief introduction to [dynamic modules](https://docs.nestjs.com/modules#dynamic-modules). This chapter expands on the subject of dynamic modules. Upon completion, you should have a good grasp of what they are and how and when to use them.
+Le [chapitre Modules](/modules) couvre les bases des modules Nest et comprend une brève introduction aux [modules dynamiques](https://docs.nestjs.com/modules#dynamic-modules). Ce chapitre développe le sujet des modules dynamiques. À l'issue de ce chapitre, vous devriez avoir une bonne compréhension de ce que sont les modules dynamiques, ainsi que de la manière et du moment de les utiliser.
 
 #### Introduction
 
-Most application code examples in the **Overview** section of the documentation make use of regular, or static, modules. Modules define groups of components like [providers](/providers) and [controllers](/controllers) that fit together as a modular part of an overall application. They provide an execution context, or scope, for these components. For example, providers defined in a module are visible to other members of the module without the need to export them. When a provider needs to be visible outside of a module, it is first exported from its host module, and then imported into its consuming module.
+La plupart des exemples de code d'application présentés dans la section **Aperçu** de la documentation utilisent des modules réguliers ou statiques. Les modules définissent des groupes de composants tels que les [fournisseurs](/providers) et les [contrôleurs](/controllers) qui s'intègrent en tant que partie modulaire d'une application globale. Ils fournissent un contexte d'exécution, ou champ d'application, pour ces composants. Par exemple, les fournisseurs définis dans un module sont visibles par les autres membres du module sans qu'il soit nécessaire de les exporter. Lorsqu'un fournisseur doit être visible en dehors d'un module, il est d'abord exporté de son module hôte, puis importé dans son module consommateur.
 
-Let's walk through a familiar example.
+Prenons un exemple familier.
 
-First, we'll define a `UsersModule` to provide and export a `UsersService`. `UsersModule` is the **host** module for `UsersService`.
+Tout d'abord, nous allons définir un `UsersModule` pour fournir et exporter un `UsersService`. `UsersModule` est le module **hôte** de `UsersService`.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -21,7 +21,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-Next, we'll define an `AuthModule`, which imports `UsersModule`, making `UsersModule`'s exported providers available inside `AuthModule`:
+Ensuite, nous allons définir un `AuthModule`, qui importe `UsersModule`, rendant les fournisseurs exportés par `UsersModule` disponibles dans `AuthModule` :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -36,7 +36,7 @@ import { UsersModule } from '../users/users.module';
 export class AuthModule {}
 ```
 
-These constructs allow us to inject `UsersService` in, for example, the `AuthService` that is hosted in `AuthModule`:
+Ces constructions nous permettent d'injecter `UsersService` dans, par exemple, le `AuthService` qui est hébergé dans `AuthModule` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -46,36 +46,36 @@ import { UsersService } from '../users/users.service';
 export class AuthService {
   constructor(private usersService: UsersService) {}
   /*
-    Implementation that makes use of this.usersService
+    Implémentation qui utilise this.usersService
   */
 }
 ```
 
-We'll refer to this as **static** module binding. All the information Nest needs to wire together the modules has already been declared in the host and consuming modules. Let's unpack what's happening during this process. Nest makes `UsersService` available inside `AuthModule` by:
+C'est ce que nous appellerons la liaison **statique** des modules. Toutes les informations dont Nest a besoin pour relier les modules entre eux ont déjà été déclarées dans les modules hôte et consommateur. Décortiquons ce qui se passe durant ce processus. Nest rend `UsersService` disponible dans `AuthModule` par :
 
-1. Instantiating `UsersModule`, including transitively importing other modules that `UsersModule` itself consumes, and transitively resolving any dependencies (see [Custom providers](https://docs.nestjs.com/fundamentals/custom-providers)).
-2. Instantiating `AuthModule`, and making `UsersModule`'s exported providers available to components in `AuthModule` (just as if they had been declared in `AuthModule`).
-3. Injecting an instance of `UsersService` in `AuthService`.
+1. L'instanciation de `UsersModule`, y compris l'importation transitive d'autres modules que `UsersModule` consomme lui-même, et la résolution transitive de toutes les dépendances (voir les [fournisseurs personnalisés](https://docs.nestjs.com/fundamentals/custom-providers)).
+2. L'instanciation de `AuthModule`, et la mise à disposition des fournisseurs exportés de `UsersModule` aux composants de `AuthModule` (comme s'ils avaient été déclarés dans `AuthModule`).
+3. L'injection d'une instance de `UsersService` dans `AuthService`.
 
-#### Dynamic module use case
+#### Cas d'utilisation d'un module dynamique
 
-With static module binding, there's no opportunity for the consuming module to **influence** how providers from the host module are configured. Why does this matter? Consider the case where we have a general purpose module that needs to behave differently in different use cases. This is analogous to the concept of a "plugin" in many systems, where a generic facility requires some configuration before it can be used by a consumer.
+Avec la liaison statique des modules, le module consommateur n'a pas la possibilité d'influer sur la configuration des fournisseurs du module hôte. En quoi cela est-il important ? Prenons le cas d'un module à usage général qui doit se comporter différemment selon les cas d'utilisation. Ce cas est analogue au concept de "plugin" dans de nombreux systèmes, où une fonction générique nécessite une certaine configuration avant de pouvoir être utilisée par un consommateur.
 
-A good example with Nest is a **configuration module**. Many applications find it useful to externalize configuration details by using a configuration module. This makes it easy to dynamically change the application settings in different deployments: e.g., a development database for developers, a staging database for the staging/testing environment, etc. By delegating the management of configuration parameters to a configuration module, the application source code remains independent of configuration parameters.
+Un bon exemple avec Nest est un **module de configuration**. De nombreuses applications trouvent utile d'externaliser les détails de la configuration en utilisant un module de configuration. Cela facilite la modification dynamique des paramètres de l'application dans différents déploiements : par exemple, une base de données de développement pour les développeurs, une base de données de mise en scène pour l'environnement de mise en scène/de test, etc. En déléguant la gestion des paramètres de configuration à un module de configuration, le code source de l'application reste indépendant des paramètres de configuration.
 
-The challenge is that the configuration module itself, since it's generic (similar to a "plugin"), needs to be customized by its consuming module. This is where _dynamic modules_ come into play. Using dynamic module features, we can make our configuration module **dynamic** so that the consuming module can use an API to control how the configuration module is customized at the time it is imported.
+Le problème est que le module de configuration lui-même, puisqu'il est générique (semblable à un "plugin"), doit être personnalisé par le module qui le consomme. C'est là que les _modules dynamiques_ entrent en jeu. En utilisant les caractéristiques des modules dynamiques, nous pouvons rendre notre module de configuration **dynamique** afin que le module consommateur puisse utiliser une API pour contrôler la façon dont le module de configuration est personnalisé au moment où il est importé.
 
-In other words, dynamic modules provide an API for importing one module into another, and customizing the properties and behavior of that module when it is imported, as opposed to using the static bindings we've seen so far.
+En d'autres termes, les modules dynamiques fournissent une API permettant d'importer un module dans un autre et de personnaliser les propriétés et le comportement de ce module lorsqu'il est importé, contrairement aux liaisons statiques que nous avons vues jusqu'à présent.
 
 <app-banner-devtools></app-banner-devtools>
 
-#### Config module example
+#### Exemple de module de configuration
 
-We'll be using the basic version of the example code from the [configuration chapter](https://docs.nestjs.com/techniques/configuration#service) for this section. The completed version as of the end of this chapter is available as a working [example here](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+Nous utiliserons la version de base du code d'exemple du [chapitre sur la configuration](https://docs.nestjs.com/techniques/configuration#service) pour cette section. La version complétée à la fin de ce chapitre est disponible sous la forme d'un [exemple ici](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
 
-Our requirement is to make `ConfigModule` accept an `options` object to customize it. Here's the feature we want to support. The basic sample hard-codes the location of the `.env` file to be in the project root folder. Let's suppose we want to make that configurable, such that you can manage your `.env` files in any folder of your choosing. For example, imagine you want to store your various `.env` files in a folder under the project root called `config` (i.e., a sibling folder to `src`). You'd like to be able to choose different folders when using the `ConfigModule` in different projects.
+Notre exigence est de faire en sorte que `ConfigModule` accepte un objet `options` pour le personnaliser. Voici la fonctionnalité que nous voulons supporter. L'exemple de base code en dur l'emplacement du fichier `.env` dans le dossier racine du projet. Supposons que nous voulions rendre cela configurable, de sorte que vous puissiez gérer vos fichiers `.env` dans n'importe quel dossier de votre choix. Par exemple, imaginez que vous vouliez stocker vos différents fichiers `.env` dans un dossier sous la racine du projet appelé `config` (c'est-à-dire un dossier frère de `src`). Vous aimeriez pouvoir choisir des dossiers différents lorsque vous utilisez le module `ConfigModule` dans différents projets.
 
-Dynamic modules give us the ability to pass parameters into the module being imported so we can change its behavior. Let's see how this works. It's helpful if we start from the end-goal of how this might look from the consuming module's perspective, and then work backwards. First, let's quickly review the example of _statically_ importing the `ConfigModule` (i.e., an approach which has no ability to influence the behavior of the imported module). Pay close attention to the `imports` array in the `@Module()` decorator:
+Les modules dynamiques nous donnent la possibilité de passer des paramètres au module importé afin de modifier son comportement. Voyons comment cela fonctionne. Il est utile de partir de l'objectif final, c'est à dire de la façon dont cela peut se présenter du point de vue du module consommateur, et de travailler ensuite en sens inverse. Tout d'abord, revoyons rapidement l'exemple de l'importation _statique_ du `ConfigModule` (c'est à dire une approche qui n'a aucune capacité à influencer le comportement du module importé). Portez une attention particulière au tableau `imports` dans le décorateur `@Module()` :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -91,7 +91,7 @@ import { ConfigModule } from './config/config.module';
 export class AppModule {}
 ```
 
-Let's consider what a _dynamic module_ import, where we're passing in a configuration object, might look like. Compare the difference in the `imports` array between these two examples:
+Considérons ce à quoi pourrait ressembler un import de _module dynamique_, où nous passons un objet de configuration. Comparez la différence dans le tableau `imports` entre ces deux exemples :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -107,13 +107,13 @@ import { ConfigModule } from './config/config.module';
 export class AppModule {}
 ```
 
-Let's see what's happening in the dynamic example above. What are the moving parts?
+Voyons ce qui se passe dans l'exemple dynamique ci-dessus. Quelles-en sont les parties mobiles ?
 
-1. `ConfigModule` is a normal class, so we can infer that it must have a **static method** called `register()`. We know it's static because we're calling it on the `ConfigModule` class, not on an **instance** of the class. Note: this method, which we will create soon, can have any arbitrary name, but by convention we should call it either `forRoot()` or `register()`.
-2. The `register()` method is defined by us, so we can accept any input arguments we like. In this case, we're going to accept a simple `options` object with suitable properties, which is the typical case.
-3. We can infer that the `register()` method must return something like a `module` since its return value appears in the familiar `imports` list, which we've seen so far includes a list of modules.
+1. `ConfigModule` est une classe normale, nous pouvons donc en déduire qu'elle doit avoir une **méthode statique** appelée `register()`. Nous savons qu'elle est statique parce que nous l'appelons sur la classe `ConfigModule`, et non sur une **instance** de la classe. Note : cette méthode, que nous allons créer bientôt, peut avoir n'importe quel nom arbitraire, mais par convention nous devrions l'appeler soit `forRoot()` soit `register()`.
+2. La méthode `register()` est définie par nous, donc nous pouvons accepter n'importe quel argument d'entrée. Dans ce cas, nous allons accepter un simple objet `options` avec les propriétés appropriées, ce qui est le cas typique.
+3. Nous pouvons en déduire que la méthode `register()` doit retourner quelque chose comme un `module` puisque sa valeur de retour apparaît dans la liste familière `imports`, qui, comme nous l'avons vu jusqu'à présent, inclut une liste de modules.
 
-In fact, what our `register()` method will return is a `DynamicModule`. A dynamic module is nothing more than a module created at run-time, with the same exact properties as a static module, plus one additional property called `module`. Let's quickly review a sample static module declaration, paying close attention to the module options passed in to the decorator:
+En fait, ce que notre méthode `register()` retournera est un `DynamicModule`. Un module dynamique n'est rien d'autre qu'un module créé à l'exécution, avec les mêmes propriétés qu'un module statique, plus une propriété supplémentaire appelée `module`. Passons rapidement en revue un exemple de déclaration de module statique, en prêtant une attention particulière aux options de module passées au décorateur :
 
 ```typescript
 @Module({
@@ -124,18 +124,18 @@ In fact, what our `register()` method will return is a `DynamicModule`. A dynami
 })
 ```
 
-Dynamic modules must return an object with the exact same interface, plus one additional property called `module`. The `module` property serves as the name of the module, and should be the same as the class name of the module, as shown in the example below.
+Les modules dynamiques doivent renvoyer un objet ayant exactement la même interface, plus une propriété supplémentaire appelée `module`. La propriété `module` sert de nom au module et doit être identique au nom de la classe du module, comme le montre l'exemple ci-dessous.
 
-> info **Hint** For a dynamic module, all properties of the module options object are optional **except** `module`.
+> info **Astuce** Pour un module dynamique, toutes les propriétés de l'objet module options sont optionnelles **sauf** `module`.
 
-What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Module` decorator, we specify them programmatically.
+Qu'en est-il de la méthode statique `register()` ? Nous pouvons maintenant voir que son rôle est de retourner un objet qui possède l'interface `DynamicModule`. Lorsque nous l'appelons, nous fournissons effectivement un module à la liste `imports`, de la même manière que nous le ferions dans le cas statique en listant le nom de la classe du module. En d'autres termes, l'API de module dynamique retourne simplement un module, mais plutôt que de fixer les propriétés dans le décorateur `@Module`, nous les spécifions programmatiquement.
 
-There are still a couple of details to cover to help make the picture complete:
+Il reste encore quelques détails à couvrir pour que le tout soit bien complet :
 
-1. We can now state that the `@Module()` decorator's `imports` property can take not only a module class name (e.g., `imports: [UsersModule]`), but also a function **returning** a dynamic module (e.g., `imports: [ConfigModule.register(...)]`).
-2. A dynamic module can itself import other modules. We won't do so in this example, but if the dynamic module depends on providers from other modules, you would import them using the optional `imports` property. Again, this is exactly analogous to the way you'd declare metadata for a static module using the `@Module()` decorator.
+1. Nous pouvons maintenant affirmer que la propriété `@Module()` du décorateur `@imports` peut prendre non seulement un nom de classe de module (par exemple, `imports : [UsersModule]`), mais aussi une fonction **renvoyant** un module dynamique (par exemple, `imports : [ConfigModule.register(...)]`).
+2. Un module dynamique peut lui-même importer d'autres modules. Nous ne le ferons pas dans cet exemple, mais si le module dynamique dépend de fournisseurs d'autres modules, vous les importerez en utilisant la propriété optionnelle `imports`. Encore une fois, c'est exactement analogue à la façon dont vous déclareriez des métadonnées pour un module statique en utilisant le décorateur `@Module()`.
 
-Armed with this understanding, we can now look at what our dynamic `ConfigModule` declaration must look like. Let's take a crack at it.
+Forts de cette compréhension, nous pouvons maintenant voir à quoi doit ressembler notre déclaration dynamique `ConfigModule`. Essayons de le faire.
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
@@ -153,15 +153,15 @@ export class ConfigModule {
 }
 ```
 
-It should now be clear how the pieces tie together. Calling `ConfigModule.register(...)` returns a `DynamicModule` object with properties which are essentially the same as those that, until now, we've provided as metadata via the `@Module()` decorator.
+Il devrait maintenant être clair de quelle manière les différents éléments s'articulent entre eux. L'appel à `ConfigModule.register(...)` renvoie un objet `DynamicModule` avec des propriétés qui sont essentiellement les mêmes que celles que, jusqu'à présent, nous avons fournies comme métadonnées via le décorateur `@Module()`.
 
-> info **Hint** Import `DynamicModule` from `@nestjs/common`.
+> info **Astuce** Importez `DynamicModule` depuis `@nestjs/common`.
 
-Our dynamic module isn't very interesting yet, however, as we haven't introduced any capability to **configure** it as we said we would like to do. Let's address that next.
+Notre module dynamique n'est pas encore très intéressant, cependant, car nous n'avons pas introduit de capacité à **configurer** le module comme nous avons dit que nous aimerions le faire. Nous allons y remédier.
 
-#### Module configuration
+#### Configuration du module
 
-The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method, as we guessed above. Let's look once again at our consuming module's `imports` property:
+La solution évidente pour personnaliser le comportement du `ConfigModule` est de lui passer un objet `options` dans la méthode statique `register()`, comme nous l'avons deviné plus haut. Regardons encore une fois la propriété `imports` de notre module de consommation :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -177,7 +177,7 @@ import { ConfigModule } from './config/config.module';
 export class AppModule {}
 ```
 
-That nicely handles passing an `options` object to our dynamic module. How do we then use that `options` object in the `ConfigModule`? Let's consider that for a minute. We know that our `ConfigModule` is basically a host for providing and exporting an injectable service - the `ConfigService` - for use by other providers. It's actually our `ConfigService` that needs to read the `options` object to customize its behavior. Let's assume for the moment that we know how to somehow get the `options` from the `register()` method into the `ConfigService`. With that assumption, we can make a few changes to the service to customize its behavior based on the properties from the `options` object. (**Note**: for the time being, since we _haven't_ actually determined how to pass it in, we'll just hard-code `options`. We'll fix this in a minute).
+Cela permet de passer un objet `options` à notre module dynamique. Comment utiliser ensuite cet objet `options` dans le `Module de Configuration` ? Réfléchissons-y un instant. Nous savons que notre `ConfigModule` est fondamentalement un hôte pour fournir et exporter un service injectable - le `ConfigService` - pour qu'il soit utilisé par d'autres fournisseurs. C'est en fait notre `ConfigService` qui a besoin de lire l'objet `options` pour personnaliser son comportement. Supposons pour l'instant que nous sachions comment obtenir les `options` de la méthode `register()` dans le `ConfigService`. Avec cette supposition, nous pouvons faire quelques changements au service pour personnaliser son comportement basé sur les propriétés de l'objet `options`. (**Remarque** : pour l'instant, puisque nous n'avons pas encore déterminé comment le passer, nous allons coder en dur `options`. Nous corrigerons cela dans une minute).
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -204,11 +204,11 @@ export class ConfigService {
 }
 ```
 
-Now our `ConfigService` knows how to find the `.env` file in the folder we've specified in `options`.
+Maintenant notre `ConfigService` sait comment trouver le fichier `.env` dans le dossier que nous avons spécifié dans `options`.
 
-Our remaining task is to somehow inject the `options` object from the `register()` step into our `ConfigService`. And of course, we'll use _dependency injection_ to do it. This is a key point, so make sure you understand it. Our `ConfigModule` is providing `ConfigService`. `ConfigService` in turn depends on the `options` object that is only supplied at run-time. So, at run-time, we'll need to first bind the `options` object to the Nest IoC container, and then have Nest inject it into our `ConfigService`. Remember from the **Custom providers** chapter that providers can [include any value](https://docs.nestjs.com/fundamentals/custom-providers#non-service-based-providers) not just services, so we're fine using dependency injection to handle a simple `options` object.
+Notre tâche restante est d'injecter d'une manière ou d'une autre l'objet `options` de l'étape `register()` dans notre `ConfigService`. Et bien sûr, nous allons utiliser l'injection de dépendance pour le faire. C'est un point clé, alors assurez-vous de bien le comprendre. Notre `ConfigModule` fournit `ConfigService`. Le `ConfigService` dépend à son tour de l'objet `options` qui n'est fourni qu'à l'exécution. Donc, à l'exécution, nous devrons d'abord lier l'objet `options` au conteneur IoC de Nest, et ensuite l'injecter dans notre `ConfigService`. Rappelez-vous du chapitre **Fournisseurs personnalisés** que les fournisseurs peuvent [inclure n'importe quelle valeur](https://docs.nestjs.com/fundamentals/custom-providers#fournisseurs-non-basés-sur-les-services) et pas seulement les services, donc nous pouvons utiliser l'injection de dépendances pour gérer un simple objet `options`.
 
-Let's tackle binding the options object to the IoC container first. We do this in our static `register()` method. Remember that we are dynamically constructing a module, and one of the properties of a module is its list of providers. So what we need to do is define our options object as a provider. This will make it injectable into the `ConfigService`, which we'll take advantage of in the next step. In the code below, pay attention to the `providers` array:
+Commençons par lier l'objet options au conteneur IoC. Nous le faisons dans notre méthode statique `register()`. Souvenez-vous que nous construisons dynamiquement un module, et qu'une des propriétés d'un module est sa liste de fournisseurs. Nous devons donc définir notre objet options comme un fournisseur. Cela le rendra injectable dans le `ConfigService`, ce dont nous profiterons dans l'étape suivante. Dans le code ci-dessous, faites attention à la liste `providers` :
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
@@ -232,7 +232,7 @@ export class ConfigModule {
 }
 ```
 
-Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService`. Recall that when we define a provider using a non-class token we need to use the `@Inject()` decorator [as described here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
+Maintenant nous pouvons terminer le processus en injectant le fournisseur `'CONFIG_OPTIONS'` dans le `ConfigService`. Rappelons que lorsque nous définissons un fournisseur en utilisant un jeton qui n'est pas une classe, nous devons utiliser le décorateur `@Inject()` [comme décrit ici](https://docs.nestjs.com/fundamentals/custom-providers#jetons-de-fournisseur-non-basés-sur-une-classe).
 
 ```typescript
 import * as dotenv from 'dotenv';
@@ -257,33 +257,33 @@ export class ConfigService {
 }
 ```
 
-One final note: for simplicity we used a string-based injection token (`'CONFIG_OPTIONS'`) above, but best practice is to define it as a constant (or `Symbol`) in a separate file, and import that file. For example:
+Une dernière note : pour des raisons de simplicité, nous avons utilisé un jeton d'injection basé sur une chaîne de caractères (`'CONFIG_OPTIONS'`) ci-dessus, mais la meilleure pratique est de le définir comme une constante (ou `Symbol`) dans un fichier séparé, et d'importer ce fichier. Par exemple :
 
 ```typescript
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 ```
 
-#### Example
+#### Exemple
 
-A full example of the code in this chapter can be found [here](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+Un exemple complet du code de ce chapitre est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
 
-#### Community guidelines
+#### Lignes directrices pour la communauté
 
-You may have seen the use for methods like `forRoot`, `register`, and `forFeature` around some of the `@nestjs/` packages and may be wondering what the difference for all of these methods are. There is no hard rule about this, but the `@nestjs/` packages try to follow these guidelines:
+Vous avez peut-être vu l'utilisation de méthodes comme `forRoot`, `register`, et `forFeature` dans certains des packages `@nestjs/` et vous vous demandez peut-être quelle est la différence entre toutes ces méthodes. Il n'y a pas de règle stricte à ce sujet, mais les packages `@nestjs/` essaient de suivre ces lignes directrices :
 
-When creating a module with:
+Lors de la création d'un module avec :
 
-- `register`, you are expecting to configure a dynamic module with a specific configuration for use only by the calling module. For example, with Nest's `@nestjs/axios`: `HttpModule.register({{ '{' }} baseUrl: 'someUrl' {{ '}' }})`. If, in another module you use `HttpModule.register({{ '{' }} baseUrl: 'somewhere else' {{ '}' }})`, it will have the different configuration. You can do this for as many modules as you want.
+- `register`, vous vous attendez à configurer un module dynamique avec une configuration spécifique qui ne sera utilisée que par le module appelant. Par exemple, avec Nest `@nestjs/axios` : `HttpModule.register({{ '{' }} baseUrl : 'someUrl' {{ '}' }})`. Si, dans un autre module, vous utilisez `HttpModule.register({{ '{' }} baseUrl : 'somewhere else' {{ '}' }})`, il aura une configuration différente. Vous pouvez faire cela pour autant de modules que vous le souhaitez.
 
-- `forRoot`, you are expecting to configure a dynamic module once and reuse that configuration in multiple places (though possibly unknowingly as it's abstracted away). This is why you have one `GraphQLModule.forRoot()`, one `TypeOrmModule.forRoot()`, etc.
+- `forRoot`, vous vous attendez à configurer un module dynamique une seule fois et à réutiliser cette configuration à de multiples endroits (bien qu'à votre insu puisque c'est abstrait). C'est pourquoi vous avez un `GraphQLModule.forRoot()`, un `TypeOrmModule.forRoot()`, etc.
 
-- `forFeature`, you are expecting to use the configuration of a dynamic module's `forRoot` but need to modify some configuration specific to the calling module's needs (i.e. which repository this module should have access to, or the context that a logger should use.)
+- `forFeature`, vous vous attendez à utiliser la configuration d'un module dynamique `forRoot` mais vous devez modifier une configuration spécifique aux besoins du module appelant (par exemple, le référentiel auquel ce module doit avoir accès, ou le contexte qu'un logger doit utiliser).
 
-All of these, usually, have their `async` counterparts as well, `registerAsync`, `forRootAsync`, and `forFeatureAsync`, that mean the same thing, but use Nest's Dependency Injection for the configuration as well.
+Tous ces éléments ont généralement leur équivalent `async`, `registerAsync`, `forRootAsync`, et `forFeatureAsync`, qui signifient la même chose, mais qui utilisent l'injection de dépendance de Nest pour la configuration.
 
-#### Configurable module builder
+#### Constructeur de modules configurables
 
-As manually creating highly configurable, dynamic modules that expose `async` methods (`registerAsync`, `forRootAsync`, etc.) is quite complicated, especially for newcomers, Nest exposes the `ConfigurableModuleBuilder` class that facilitates this process and lets you construct a module "blueprint" in just a few lines of code.
+Comme la création manuelle de modules dynamiques hautement configurables qui exposent des méthodes `async` (`registerAsync`, `forRootAsync`, etc.) est assez compliquée, en particulier pour les nouveaux venus, Nest expose la classe `ConfigurableModuleBuilder` qui facilite ce processus et vous permet de construire un " plan " de module en seulement quelques lignes de code.
 
 For example, let's take the example we used above (`ConfigModule`) and convert it to use the `ConfigurableModuleBuilder`. Before we start, let's make sure we create a dedicated interface that represents what options our `ConfigModule` takes in.
 
@@ -293,7 +293,7 @@ export interface ConfigModuleOptions {
 }
 ```
 
-With this in place, create a new dedicated file (alongside the existing `config.module.ts` file) and name it `config.module-definition.ts`. In this file, let's utilize the `ConfigurableModuleBuilder` to construct `ConfigModule` definition.
+Avec ceci en place, créez un nouveau fichier dédié (à côté du fichier `config.module.ts` existant) et nommez-le `config.module-definition.ts`. Dans ce fichier, utilisons le `ConfigurableModuleBuilder` pour construire la définition du `ConfigModule`.
 
 ```typescript
 @@filename(config.module-definition)
@@ -309,7 +309,7 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder().build();
 ```
 
-Now let's open up the `config.module.ts` file and modify its implementation to leverage the auto-generated `ConfigurableModuleClass`:
+Maintenant, ouvrons le fichier `config.module.ts` et modifions son implémentation pour tirer parti de la `ConfigurableModuleClass` auto-générée :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -323,7 +323,7 @@ import { ConfigurableModuleClass } from './config.module-definition';
 export class ConfigModule extends ConfigurableModuleClass {}
 ```
 
-Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now not only the `register` method (as previously with the custom implementation), but also the `registerAsync` method which allows consumers asynchronously configure that module, for example, by supplying async factories:
+L'extension de la classe `ConfigurableModuleClass` signifie que `ConfigModule` fournit maintenant non seulement la méthode `register` (comme précédemment avec l'implémentation personnalisée), mais aussi la méthode `registerAsync` qui permet aux consommateurs de configurer ce module de manière asynchrone, par exemple, en fournissant des factories asynchrones :
 
 ```typescript
 @Module({
@@ -343,7 +343,7 @@ Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now n
 export class AppModule {}
 ```
 
-Lastly, let's update the `ConfigService` class to inject the generated module options' provider instead of the `'CONFIG_OPTIONS'` that we used so far.
+Enfin, mettons à jour la classe `ConfigService` pour injecter le fournisseur d'options du module généré au lieu de `'CONFIG_OPTIONS'` que nous avons utilisé jusqu'à présent.
 
 ```typescript
 @Injectable()
@@ -352,9 +352,9 @@ export class ConfigService {
 }
 ```
 
-#### Custom method key
+#### Clé de méthode personnalisée
 
-`ConfigurableModuleClass` by default provides the `register` and its counterpart `registerAsync` methods. To use a different method name, use the `ConfigurableModuleBuilder#setClassMethodName` method, as follows:
+La classe `ConfigurableModuleClass` fournit par défaut les méthodes `register` et son équivalent `registerAsync`. Pour utiliser un nom de méthode différent, utilisez la méthode `ConfigurableModuleBuilder#setClassMethodName`, comme suit :
 
 ```typescript
 @@filename(config.module-definition)
@@ -365,7 +365,7 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder().setClassMethodName('forRoot').build();
 ```
 
-This construction will instruct `ConfigurableModuleBuilder` to generate a class that exposes `forRoot` and `forRootAsync` instead. Example:
+Cette construction demandera à `ConfigurableModuleBuilder` de générer une classe qui expose `forRoot` et `forRootAsync` à la place. Exemple :
 
 ```typescript
 @Module({
@@ -385,9 +385,9 @@ This construction will instruct `ConfigurableModuleBuilder` to generate a class 
 export class AppModule {}
 ```
 
-#### Custom options factory class
+#### Classe usine d'options personnalisées
 
-Since the `registerAsync` method (or `forRootAsync` or any other name, depending on the configuration) lets consumer pass a provider definition that resolves to the module configuration, a library consumer could potentially supply a class to be used to construct the configuration object.
+Puisque la méthode `registerAsync` (ou `forRootAsync` ou tout autre nom, selon la configuration) permet au consommateur de passer une définition de fournisseur qui résout la configuration du module, un consommateur de bibliothèque pourrait potentiellement fournir une classe à utiliser pour construire l'objet de configuration.
 
 ```typescript
 @Module({
@@ -400,7 +400,7 @@ Since the `registerAsync` method (or `forRootAsync` or any other name, depending
 export class AppModule {}
 ```
 
-This class, by default, must provide the `create()` method that returns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
+Cette classe, par défaut, doit fournir la méthode `create()` qui retourne un objet de configuration de module. Cependant, si votre bibliothèque suit une convention de nommage différente, vous pouvez changer ce comportement et indiquer à `ConfigurableModuleBuilder` de s'attendre à une méthode différente, par exemple, `createConfigOptions`, en utilisant la méthode `ConfigurableModuleBuilder#setFactoryMethodName` :
 
 ```typescript
 @@filename(config.module-definition)
@@ -411,7 +411,7 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder().setFactoryMethodName('createConfigOptions').build();
 ```
 
-Now, `ConfigModuleOptionsFactory` class must expose the `createConfigOptions` method (instead of `create`):
+Désormais, la classe `ConfigModuleOptionsFactory` doit exposer la méthode `createConfigOptions` (au lieu de `create`) :
 
 ```typescript
 @Module({
@@ -424,11 +424,11 @@ Now, `ConfigModuleOptionsFactory` class must expose the `createConfigOptions` me
 export class AppModule {}
 ```
 
-#### Extra options
+#### Options supplémentaires
 
-There are edge-cases when your module may need to take extra options that determine how it is supposed to behave (a nice example of such an option is the `isGlobal` flag - or just `global`) that at the same time, shouldn't be included in the `MODULE_OPTIONS_TOKEN` provider (as they are irrelevant to services/providers registered within that module, for example, `ConfigService` does not need to know whether its host module is registered as a global module).
+Il y a des cas limites où votre module peut avoir besoin de prendre des options supplémentaires qui déterminent comment il est supposé se comporter (un bon exemple d'une telle option est le drapeau `isGlobal` - ou juste `global`) qui, en même temps, ne devrait pas être inclus dans le fournisseur `MODULE_OPTIONS_TOKEN` (car ils ne sont pas pertinents pour les services/fournisseurs enregistrés dans ce module, par exemple, `ConfigService` n'a pas besoin de savoir si son module hôte est enregistré en tant que module global).
 
-In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following example:
+Dans ce cas, la méthode `ConfigurableModuleBuilder#setExtras` peut être utilisée. Voir l'exemple suivant :
 
 ```typescript
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<ConfigModuleOptions>()
@@ -444,9 +444,9 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new Configurabl
   .build();
 ```
 
-In the example above, the first argument passed into the `setExtras` method is an object containing default values for the "extra" properties. The second argument is a function that takes an auto-generated module definitions (with `provider`, `exports`, etc.) and `extras` object which represents extra properties (either specified by the consumer or defaults). The returned value of this function is a modified module definition. In this specific example, we're taking the `extras.isGlobal` property and assigning it to the `global` property of the module definition (which in turn determines whether a module is global or not, read more [here](/modules#dynamic-modules)).
+Dans l'exemple ci-dessus, le premier argument passé à la méthode `setExtras` est un objet contenant les valeurs par défaut des propriétés "extra". Le second argument est une fonction qui prend une définition de module auto-générée (avec `provider`, `exports`, etc.) et l'objet `extras` qui représente les propriétés supplémentaires (soit spécifiées par le consommateur, soit par défaut). La valeur retournée par cette fonction est une définition de module modifiée. Dans cet exemple spécifique, nous prenons la propriété `extras.isGlobal` et l'assignons à la propriété `global` de la définition du module (qui à son tour détermine si un module est global ou non, en savoir plus [ici](/modules#modules-dynamiques)).
 
-Now when consuming this module, the additional `isGlobal` flag can be passed in, as follows:
+Maintenant, lorsque l'on consomme ce module, le drapeau supplémentaire `isGlobal` peut être passé, comme suit :
 
 ```typescript
 @Module({
@@ -460,21 +460,21 @@ Now when consuming this module, the additional `isGlobal` flag can be passed in,
 export class AppModule {}
 ```
 
-However, since `isGlobal` is declared as an "extra" property, it won't be available in the `MODULE_OPTIONS_TOKEN` provider:
+Cependant, puisque `isGlobal` est déclarée comme une propriété "extra", elle ne sera pas disponible dans le fournisseur `MODULE_OPTIONS_TOKEN` :
 
 ```typescript
 @Injectable()
 export class ConfigService {
   constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions) {
-    // "options" object will not have the "isGlobal" property
+    // L'objet "options" n'aura pas la propriété "isGlobal".
     // ...
   }
 }
 ```
 
-#### Extending auto-generated methods
+#### Étendre les méthodes générées automatiquement
 
-The auto-generated static methods (`register`, `registerAsync`, etc.) can be extended if needed, as follows:
+Les méthodes statiques auto-générées (`register`, `registerAsync`, etc.) peuvent être étendues si nécessaire, comme suit :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -488,21 +488,21 @@ import { ConfigurableModuleClass, ASYNC_OPTIONS_TYPE, OPTIONS_TYPE } from './con
 export class ConfigModule extends ConfigurableModuleClass {
   static register(options: typeof OPTIONS_TYPE): DynamicModule {
     return {
-      // your custom logic here
+      // votre logique personnalisée ici
       ...super.register(options),
     };
   }
 
   static registerAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     return {
-      // your custom logic here
+      // votre logique personnalisée ici
       ...super.registerAsync(options),
     };
   }
 }
 ```
 
-Note the use of `OPTIONS_TYPE` and `ASYNC_OPTIONS_TYPE` types that must be exported from the module definition file:
+Notez l'utilisation des types `OPTIONS_TYPE` et `ASYNC_OPTIONS_TYPE` qui doivent être exportés depuis le fichier de définition du module :
 
 ```typescript
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE, ASYNC_OPTIONS_TYPE } = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
