@@ -1,13 +1,13 @@
-### Platform agnosticism
+### Agnosticisme de plateforme
 
-Nest is a platform-agnostic framework. This means you can develop **reusable logical parts** that can be used across different types of applications. For example, most components can be re-used without change across different underlying HTTP server frameworks (e.g., Express and Fastify), and even across different _types_ of applications (e.g., HTTP server frameworks, Microservices with different transport layers, and Web Sockets).
+Nest est un framework indépendant de toute plateforme. Cela signifie que vous pouvez développer des **parties logiques réutilisables** qui peuvent être utilisées dans différents types d'applications. Par exemple, la plupart des composants peuvent être réutilisés sans changement à travers différents frameworks de serveurs HTTP sous-jacents (par exemple, Express et Fastify), et même à travers différents _types_ d'applications (par exemple, des frameworks de serveurs HTTP, des microservices avec différentes couches de transport, et des WebSockets).
 
-#### Build once, use everywhere
+#### Construire une fois, utiliser partout
 
-The **Overview** section of the documentation primarily shows coding techniques using HTTP server frameworks (e.g., apps providing a REST API or providing an MVC-style server-side rendered app). However, all those building blocks can be used on top of different transport layers ([microservices](/microservices/basics) or [websockets](/websockets/gateways)).
+La section **Vue d'ensemble** de la documentation montre principalement des techniques de codage utilisant des frameworks de serveurs HTTP (par exemple, des applications fournissant une API REST ou fournissant une application rendue côté serveur de style MVC). Cependant, tous ces blocs de construction peuvent être utilisés au-dessus de différentes couches de transport ([microservices](/microservices/basics) ou [websockets](/websockets/gateways)).
 
-Furthermore, Nest comes with a dedicated [GraphQL](/graphql/quick-start) module. You can use GraphQL as your API layer interchangeably with providing a REST API.
+En outre, Nest est livré avec un module [GraphQL](/graphql/quick-start) dédié. Vous pouvez utiliser GraphQL comme couche d'API de manière interchangeable avec une API REST.
 
-In addition, the [application context](/application-context) feature helps to create any kind of Node.js application - including things like CRON jobs and CLI apps - on top of Nest.
+En outre, la fonctionnalité de [contexte d'application](/application-context) permet de créer n'importe quel type d'application Node.js - y compris des tâches CRON et des applications CLI - au-dessus de Nest.
 
-Nest aspires to be a full-fledged platform for Node.js apps that brings a higher-level of modularity and reusability to your applications. Build once, use everywhere!
+Nest aspire à être une plateforme à part entière pour les applications Node.js qui apporte un niveau supérieur de modularité et de réutilisation à vos applications. Construisez une fois, utilisez partout !
