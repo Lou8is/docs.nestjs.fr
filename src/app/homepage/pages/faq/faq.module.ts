@@ -15,37 +15,37 @@ const routes: Routes = [
   {
     path: 'global-prefix',
     component: GlobalPrefixComponent,
-    data: { title: 'Global prefix - FAQ' },
+    data: { title: 'Préfixe de chemin global - FAQ' },
   },
   {
     path: 'hybrid-application',
     component: HybridApplicationComponent,
-    data: { title: 'Hybrid application - FAQ' },
+    data: { title: 'Application hybride - FAQ' },
   },
   {
     path: 'multiple-servers',
     component: MultipleServersComponent,
-    data: { title: 'HTTPS & Multiple Servers - FAQ' },
+    data: { title: 'HTTPS et serveurs multiples - FAQ' },
   },
   {
     path: 'http-adapter',
     component: HttpAdapterComponent,
-    data: { title: 'HTTP adapter - FAQ' },
+    data: { title: 'Adaptateur HTTP - FAQ' },
   },
   {
     path: 'raw-body',
     component: RawBodyComponent,
-    data: { title: 'Raw Body' },
+    data: { title: 'Corps brut' },
   },
   {
     path: 'request-lifecycle',
     component: RequestLifecycleComponent,
-    data: { title: 'Request lifecycle - FAQ' },
+    data: { title: 'Cycle de vie de la requête - FAQ' },
   },
   {
     path: 'common-errors',
     component: ErrorsComponent,
-    data: { title: 'Common errors - FAQ' },
+    data: { title: 'Erreurs fréquentes - FAQ' },
   },
   {
     path: 'serverless',

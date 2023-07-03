@@ -21,42 +21,42 @@ const routes: Routes = [
   {
     path: 'types-and-parameters',
     component: TypesAndParametersComponent,
-    data: { title: 'Types and Parameters - OpenAPI' },
+    data: { title: 'Types et paramètres - OpenAPI' },
   },
   {
     path: 'operations',
     component: OperationsComponent,
-    data: { title: 'Operations - OpenAPI' },
+    data: { title: 'Opérations - OpenAPI' },
   },
   {
     path: 'security',
     component: OpenApiSecurityComponent,
-    data: { title: 'Security - OpenAPI' },
+    data: { title: 'Sécurité - OpenAPI' },
   },
   {
     path: 'decorators',
     component: DecoratorsComponent,
-    data: { title: 'Decorators - OpenAPI' },
+    data: { title: 'Décorateurs - OpenAPI' },
   },
   {
     path: 'mapped-types',
     component: MappedTypesComponent,
-    data: { title: 'Mapped Types - OpenAPI' },
+    data: { title: 'Types mappés - OpenAPI' },
   },
   {
     path: 'cli-plugin',
     component: CliPluginComponent,
-    data: { title: 'CLI Plugin - OpenAPI' },
+    data: { title: 'Plugin CLI - OpenAPI' },
   },
   {
     path: 'other-features',
     component: OpenApiOtherFeaturesComponent,
-    data: { title: 'Other features - OpenAPI' },
+    data: { title: 'Autres fonctionnalités - OpenAPI' },
   },
   {
     path: 'migration-guide',
     component: OpenApiMigrationGuideComponent,
-    data: { title: 'Migration guide - OpenAPI' },
+    data: { title: 'Guide de migration - OpenAPI' },
   },
 ];
 

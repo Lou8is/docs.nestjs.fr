@@ -31,12 +31,12 @@ const routes: Routes = [
       {
         path: 'first-steps',
         component: FirstStepsComponent,
-        data: { title: 'First steps' },
+        data: { title: 'Premiers pas' },
       },
       {
         path: 'controllers',
         component: ControllersComponent,
-        data: { title: 'Controllers' },
+        data: { title: 'Fournisseurs' },
       },
       {
         path: 'components',
@@ -45,7 +45,7 @@ const routes: Routes = [
       {
         path: 'providers',
         component: ComponentsComponent,
-        data: { title: 'Providers' },
+        data: { title: 'Fournisseurs' },
       },
       {
         path: 'modules',
@@ -65,27 +65,27 @@ const routes: Routes = [
       {
         path: 'guards',
         component: GuardsComponent,
-        data: { title: 'Guards' },
+        data: { title: 'Gardes' },
       },
       {
         path: 'exception-filters',
         component: ExceptionFiltersComponent,
-        data: { title: 'Exception filters' },
+        data: { title: 'Filtres d\'exception' },
       },
       {
         path: 'interceptors',
         component: InterceptorsComponent,
-        data: { title: 'Interceptors' },
+        data: { title: 'Intercepteurs' },
       },
       {
         path: 'custom-decorators',
         component: CustomDecoratorsComponent,
-        data: { title: 'Custom decorators' },
+        data: { title: 'Décorateurs personnalisés' },
       },
       {
         path: 'standalone-applications',
         component: ApplicationContextComponent,
-        data: { title: 'Standalone applications' },
+        data: { title: 'Applications indépendantes' },
       },
       {
         path: 'application-context',
@@ -94,12 +94,12 @@ const routes: Routes = [
       {
         path: 'discover/companies',
         component: WhoUsesComponent,
-        data: { title: 'Discover - Who is using Nest?' },
+        data: { title: 'Découvrir - Qui utilise Nest ?' },
       },
       {
         path: 'migration-guide',
         component: MigrationComponent,
-        data: { title: 'Migration guide - FAQ' },
+        data: { title: 'Guide de migration - FAQ' },
       },
       {
         path: 'support',

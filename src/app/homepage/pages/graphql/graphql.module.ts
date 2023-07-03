@@ -35,7 +35,7 @@ const routes: Routes = [
   {
     path: 'resolvers',
     component: ResolversMapComponent,
-    data: { title: 'GraphQL + TypeScript - Resolvers' },
+    data: { title: 'GraphQL + TypeScript - Résolveurs' },
   },
   {
     path: 'mutations',
@@ -45,12 +45,12 @@ const routes: Routes = [
   {
     path: 'scalars',
     component: ScalarsComponent,
-    data: { title: 'GraphQL + TypeScript - Scalars' },
+    data: { title: 'GraphQL + TypeScript - Scalaires' },
   },
   {
     path: 'subscriptions',
     component: SubscriptionsComponent,
-    data: { title: 'GraphQL + TypeScript - Subscriptions' },
+    data: { title: 'GraphQL + TypeScript - Abonnements' },
   },
   {
     path: 'guards-interceptors',
@@ -63,12 +63,12 @@ const routes: Routes = [
   {
     path: 'other-features',
     component: GuardsInterceptorsComponent,
-    data: { title: 'GraphQL + TypeScript - Other features' },
+    data: { title: 'GraphQL + TypeScript - Autres fonctionnalités' },
   },
   {
     path: 'federation',
     component: FederationComponent,
-    data: { title: 'GraphQL + TypeScript - Federation' },
+    data: { title: 'GraphQL + TypeScript - Fédération' },
   },
   {
     path: 'directives',
@@ -78,7 +78,7 @@ const routes: Routes = [
   {
     path: 'migration-guide',
     component: MigrationComponent,
-    data: { title: 'GraphQL + TypeScript - Migration guide' },
+    data: { title: 'GraphQL + TypeScript - Guide de migration' },
   },
   {
     path: 'field-middleware',
@@ -88,7 +88,7 @@ const routes: Routes = [
   {
     path: 'complexity',
     component: ComplexityComponent,
-    data: { title: 'GraphQL + TypeScript - Complexity' },
+    data: { title: 'GraphQL + TypeScript - Complexité' },
   },
   {
     path: 'extensions',
@@ -106,7 +106,7 @@ const routes: Routes = [
   {
     path: 'unions-and-enums',
     component: UnionsAndEnumsComponent,
-    data: { title: 'GraphQL + TypeScript - Unions and Enums' },
+    data: { title: 'GraphQL + TypeScript - Unions et Enums' },
   },
   {
     path: 'plugins',
@@ -121,22 +121,22 @@ const routes: Routes = [
   {
     path: 'sharing-models',
     component: SharingModelsComponent,
-    data: { title: "GraphQL + TypeScript - Sharing models"}
+    data: { title: "GraphQL + TypeScript - Partage de modèles"}
   },
   {
     path: 'mapped-types',
     component: MappedTypesComponent,
-    data: { title: 'GraphQL + TypeScript - Mapped types' },
+    data: { title: 'GraphQL + TypeScript - Types mappés' },
   },
   {
     path: 'cli-plugin',
     component: CliPluginComponent,
-    data: { title: 'GraphQL + TypeScript - CLI Plugin' },
+    data: { title: 'GraphQL + TypeScript - Plugin CLI' },
   },
   {
     path: 'generating-sdl',
     component: SchemaGeneratorComponent,
-    data: { title: 'GraphQL + TypeScript - Generating SDL' },
+    data: { title: 'GraphQL + TypeScript - Générer le SDL' },
   },
 ];
 

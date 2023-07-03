@@ -31,17 +31,17 @@ const routes: Routes = [
   {
     path: 'mvc',
     component: MvcComponent,
-    data: { title: 'MVC' },
+    data: { title: 'Modèle-Vue-Contrôleur' },
   },
   {
     path: 'serialization',
     component: SerializationComponent,
-    data: { title: 'Serialization' },
+    data: { title: 'Sérialisation' },
   },
   {
     path: 'caching',
     component: CachingComponent,
-    data: { title: 'Caching' },
+    data: { title: 'Gestion du cache' },
   },
   {
     path: 'validation',
@@ -55,7 +55,7 @@ const routes: Routes = [
   {
     path: 'database',
     component: SqlComponent,
-    data: { title: 'Database' },
+    data: { title: 'Base de données' },
   },
   {
     path: 'mongodb',
@@ -65,17 +65,17 @@ const routes: Routes = [
   {
     path: 'file-upload',
     component: FileUploadComponent,
-    data: { title: 'File upload' },
+    data: { title: 'Téléchargement de fichiers' },
   },
   {
     path: 'streaming-files',
     component: StreamingFilesComponent,
-    data: { title: 'Streaming Files' },
+    data: { title: 'Flux de fichier' },
   },
   {
     path: 'logger',
     component: LoggerComponent,
-    data: { title: 'Logger' },
+    data: { title: 'Journalisation' },
   },
   {
     path: 'performance',
@@ -85,7 +85,7 @@ const routes: Routes = [
   {
     path: 'http-module',
     component: HttpModuleComponent,
-    data: { title: 'HTTP module' },
+    data: { title: 'Module HTTP' },
   },
   {
     path: 'configuration',
@@ -104,7 +104,7 @@ const routes: Routes = [
   {
     path: 'task-scheduling',
     component: TaskSchedulingComponent,
-    data: { title: 'Task Scheduling' },
+    data: { title: 'Planification des tâches' },
   },
   {
     path: 'compression',
@@ -123,17 +123,17 @@ const routes: Routes = [
   {
     path: 'server-sent-events',
     component: ServerSentEventsComponent,
-    data: { title: 'Server-Sent Events' },
+    data: { title: 'Événements envoyés par le serveur' },
   },
   {
     path: 'versioning',
     component: VersioningComponent,
-    data: { title: 'Versioning' },
+    data: { title: 'Gestion des versions' },
   },
   {
     path: 'events',
     component: EventsComponent,
-    data: { title: 'Events' },
+    data: { title: 'Événements' },
   },
   {
     path: 'session',

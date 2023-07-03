@@ -13,7 +13,7 @@ const routes: Routes = [
     path: 'overview',
     component: CliOverviewComponent,
     data: {
-      title: 'Overview - CLI',
+      title: 'Vue d\'ensemble - CLI',
     },
   },
   {
@@ -31,7 +31,7 @@ const routes: Routes = [
     path: 'libraries',
     component: CliLibrariesComponent,
     data: {
-      title: 'Libraries - CLI',
+      title: 'Bibliothèques - CLI',
     },
   },
   {

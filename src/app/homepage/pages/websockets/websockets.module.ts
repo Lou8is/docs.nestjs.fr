@@ -23,22 +23,22 @@ const routes: Routes = [
   {
     path: 'exception-filters',
     component: WsExceptionFiltersComponent,
-    data: { title: 'Exception Filters - Gateways' },
+    data: { title: 'Filtres d\'exception - Gateways' },
   },
   {
     path: 'guards',
     component: WsGuardsComponent,
-    data: { title: 'Guards - Gateways' },
+    data: { title: 'Gardes - Gateways' },
   },
   {
     path: 'interceptors',
     component: WsInterceptorsComponent,
-    data: { title: 'Interceptors - Gateways' },
+    data: { title: 'Intercepteurs - Gateways' },
   },
   {
     path: 'adapter',
     component: AdapterComponent,
-    data: { title: 'Adapter - Gateways' },
+    data: { title: 'Adaptateurs - Gateways' },
   },
 ];
 

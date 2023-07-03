@@ -9,12 +9,12 @@ const routes: Routes = [
   {
     path: 'overview',
     component: DevtoolsOverviewComponent,
-    data: { title: 'Devtools - Overview' },
+    data: { title: 'Devtools - Vue d\'ensemble' },
   },
   {
     path: 'ci-cd-integration',
     component: DevtoolsCiCdComponent,
-    data: { title: 'Devtools - CI/CD integration' },
+    data: { title: 'Devtools - Intégration CI/CD' },
   },
 ];
 

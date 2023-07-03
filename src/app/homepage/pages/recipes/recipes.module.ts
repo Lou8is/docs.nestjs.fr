@@ -59,7 +59,7 @@ const routes: Routes = [
   {
     path: 'terminus',
     component: TerminusComponent,
-    data: { title: 'Health checks (Terminus)' },
+    data: { title: 'Contrôles de santé (Terminus)' },
   },
   {
     path: 'documentation',
@@ -77,12 +77,12 @@ const routes: Routes = [
   {
     path: 'crud-generator',
     component: CrudGeneratorComponent,
-    data: { title: 'CRUD generator' },
+    data: { title: 'Générateur CRUD' },
   },
   {
     path: 'hot-reload',
     component: HotReloadComponent,
-    data: { title: 'Hot reload' },
+    data: { title: 'Rechargement à chaud' },
   },
   {
     path: 'serve-static',
@@ -92,7 +92,7 @@ const routes: Routes = [
   {
     path: 'router-module',
     component: RouterModuleComponent,
-    data: { title: 'Router module' },
+    data: { title: 'Module Router' },
   },
   {
     path: 'nest-commander',

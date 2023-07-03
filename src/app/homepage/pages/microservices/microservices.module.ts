@@ -59,22 +59,22 @@ const routes: Routes = [
   {
     path: 'exception-filters',
     component: MicroservicesExceptionFiltersComponent,
-    data: { title: 'Exception Filters - Microservices' },
+    data: { title: 'Filtres d\'exception - Microservices' },
   },
   {
     path: 'guards',
     component: MicroservicesGuardsComponent,
-    data: { title: 'Guards - Microservices' },
+    data: { title: 'Gardes - Microservices' },
   },
   {
     path: 'interceptors',
     component: MicroservicesInterceptorsComponent,
-    data: { title: 'Interceptors - Microservices' },
+    data: { title: 'Intercepteurs - Microservices' },
   },
   {
     path: 'custom-transport',
     component: CustomTransportComponent,
-    data: { title: 'Custom transporters - Microservices' },
+    data: { title: 'Transporteurs personnalisés - Microservices' },
   },
 ];
 

@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path: 'authentication',
     component: AuthenticationComponent,
-    data: { title: 'Authentication' },
+    data: { title: 'Authentification' },
   },
   {
     path: 'cors',
@@ -29,7 +29,7 @@ const routes: Routes = [
   {
     path: 'encryption-and-hashing',
     component: EncryptionHashingComponent,
-    data: { title: 'Encryption and Hashing' },
+    data: { title: 'Chiffrement et hachage' },
   },
   {
     path: 'csrf',
@@ -39,12 +39,12 @@ const routes: Routes = [
   {
     path: 'rate-limiting',
     component: RateLimitingComponent,
-    data: { title: 'Rate Limiting' },
+    data: { title: 'Limitation du débit' },
   },
   {
     path: 'authorization',
     component: AuthorizationComponent,
-    data: { title: 'Authorization' },
+    data: { title: 'Autorisation' },
   },
 ];
 

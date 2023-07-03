@@ -18,7 +18,7 @@ const routes: Routes = [
   {
     path: 'dynamic-modules',
     component: DynamicModulesComponent,
-    data: { title: 'Dynamic modules' },
+    data: { title: 'Modules dynamiques' },
   },
   {
     path: 'dependency-injection',
@@ -27,12 +27,12 @@ const routes: Routes = [
   {
     path: 'custom-providers',
     component: DependencyInjectionComponent,
-    data: { title: 'Custom providers' },
+    data: { title: 'Fournisseurs personnalisés' },
   },
   {
     path: 'platform-agnosticism',
     component: PlatformAgnosticismComponent,
-    data: { title: 'Platform agnosticism' },
+    data: { title: 'Agnosticisme de plateforme' },
   },
   {
     path: 'async-components',
@@ -41,17 +41,17 @@ const routes: Routes = [
   {
     path: 'async-providers',
     component: AsyncComponentsComponent,
-    data: { title: 'Async providers' },
+    data: { title: 'Fournisseurs asynchrones' },
   },
   {
     path: 'module-ref',
     component: ModuleRefComponent,
-    data: { title: 'Module reference' },
+    data: { title: 'Référence de module' },
   },
   {
     path: 'lazy-loading-modules',
     component: LazyLoadingModulesComponent,
-    data: { title: 'Lazy-loading modules' },
+    data: { title: 'Lazy-loading de modules' },
   },
   {
     path: 'unit-testing',
@@ -64,27 +64,27 @@ const routes: Routes = [
   {
     path: 'testing',
     component: UnitTestingComponent,
-    data: { title: 'Testing' },
+    data: { title: 'Tests' },
   },
   {
     path: 'injection-scopes',
     component: ProviderScopesComponent,
-    data: { title: 'Injection scopes' },
+    data: { title: 'Portées d\'injection' },
   },
   {
     path: 'execution-context',
     component: ExecutionContextComponent,
-    data: { title: 'Execution context' },
+    data: { title: 'Contexte d\'exécution' },
   },
   {
     path: 'lifecycle-events',
     component: LifecycleEventsComponent,
-    data: { title: 'Lifecycle events' },
+    data: { title: 'Événements du cycle de vie' },
   },
   {
     path: 'circular-dependency',
     component: CircularDependencyComponent,
-    data: { title: 'Circular Dependency' },
+    data: { title: 'Dépendance circulaire' },
   },
 ];
 
