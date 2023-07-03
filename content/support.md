@@ -1,13 +1,13 @@
-### Support
+### Soutien
 
-Nest is an MIT-licensed open source project with its ongoing development made possible thanks to the support by the community. This framework is a result of the long road, full of sleepless nights, working **after hours**, and busy weekends.
+Nest est un projet open source sous licence MIT dont le développement continu est rendu possible grâce au soutien de la communauté. Ce framework est le résultat d'un long chemin, rempli de nuits blanches, de travail **après les heures**, et de week-ends bien remplis.
 
-#### How can you help?
+#### Comment pouvez-vous nous aider ?
 
-Nest doesn't have a large company that sits behind and is continuously paying for hours spent on the development. I fully rely on the **goodness** ❤️ of the people. However, I would love to make this framework even more **powerful**, to be fully focused on delivering you great solutions that make coding process enjoyable: In order to help me, I run few supporting platforms:
+Nest n'a pas de grande entreprise qui s'assoit derrière et qui paie continuellement pour les heures passées sur le développement. Je me fie entièrement à la **bonté** ❤️ des gens. Cependant, j'aimerais rendre ce framework encore plus **puissant**, pour qu'il se concentre entièrement sur la livraison de bonnes solutions qui rendent le processus de développement agréable : Afin de m'aider, j'ai mis en place quelques plateformes de soutien :
 
-- become a backer or sponsor on [OpenCollective](https://opencollective.com/nest)
-- use [PayPal](https://paypal.me/kamilmysliwiec) to send a one-time donation
-- or reach me directly: [mail@kamilmysliwiec.com](mailto:mail@kamilmysliwiec.com)
+- devenir un backer ou un sponsor sur [OpenCollective](https://opencollective.com/nest)
+- utilisez [PayPal](https://paypal.me/kamilmysliwiec) pour envoyer un don unique
+- ou me contacter directement : [mail@kamilmysliwiec.com](mailto:mail@kamilmysliwiec.com)
 
-If you fell in love with Nest, or you run a business which is using Nest, consider sponsoring its development to ensure that the project which your product relies on is **actively maintained** and improved. Also, your support could help me to work more on content that benefits whole Nest community, writing either educational blog posts or recording videos.
+Si vous êtes tombé amoureux de Nest, ou si vous dirigez une entreprise qui utilise Nest, envisagez de sponsoriser son développement pour vous assurer que le projet sur lequel votre produit s'appuie est **activement maintenu** et amélioré. De plus, votre soutien pourrait m'aider à travailler davantage sur le contenu qui profite à l'ensemble de la communauté Nest, en écrivant des articles de blog éducatifs ou en enregistrant des vidéos.
