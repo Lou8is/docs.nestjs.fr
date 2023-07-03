@@ -1,16 +1,16 @@
-### Lazy-loading modules
+### Lazy-loading de modules
 
-By default, modules are eagerly loaded, which means that as soon as the application loads, so do all the modules, whether or not they are immediately necessary. While this is fine for most applications, it may become a bottleneck for apps/workers running in the **serverless environment**, where the startup latency ("cold start") is crucial.
+Par défaut, les modules sont chargés avec avidité, ce qui signifie que dès que l'application est chargée, tous les modules le sont aussi, qu'ils soient nécessaires ou non dans l'immédiat. Bien que cela convienne à la plupart des applications, cela peut devenir un goulot d'étranglement pour les applications/travailleurs fonctionnant dans un **environnement sans serveur**, où la latence de démarrage ("démarrage à froid") est cruciale.
 
-Lazy loading can help decrease bootstrap time by loading only modules required by the specific serverless function invocation. In addition, you could also load other modules asynchronously once the serverless function is "warm" to speed-up the bootstrap time for subsequent calls even further (deferred modules registration).
+Le lazy loading peut aider à réduire le temps de démarrage en chargeant uniquement les modules requis par l'invocation spécifique de la fonction serverless. En outre, vous pouvez également charger d'autres modules de manière asynchrone une fois que la fonction sans serveur est "chaude" afin d'accélérer encore davantage le temps d'amorçage pour les appels ultérieurs (enregistrement différé des modules).
 
-> info **Hint** If you're familiar with the **Angular** framework, you might have seen the "lazy-loading modules" term before. Be aware that this technique is **functionally different** in Nest and so think about this as an entirely different feature that shares similar naming conventions.
+> info **Astuce** Si vous êtes familier avec le framework **Angular**, vous avez peut-être déjà vu le terme " modules lazy-loading ". Sachez que cette technique est **fonctionnellement différente** dans Nest et qu'il s'agit donc d'une fonctionnalité entièrement différente qui partage des conventions de dénomination similaires.
 
-> warning **Warning** Do note that [lifecycle hooks methods](https://docs.nestjs.com/fundamentals/lifecycle-events) are not invoked in lazy loaded modules and services.
+> warning **Attention** Notez que les [méthodes d'accrochage au cycle de vie](https://docs.nestjs.com/fundamentals/lifecycle-events) ne sont pas invoquées dans les modules et services chargés paresseusement.
 
-#### Getting started
+#### Pour commencer
 
-To load modules on-demand, Nest provides the `LazyModuleLoader` class that can be injected into a class in the normal way:
+Pour charger les modules à la demande, Nest fournit la classe `LazyModuleLoader` qui peut être injectée dans une classe de la manière habituelle :
 
 ```typescript
 @@filename(cats.service)
@@ -28,40 +28,39 @@ export class CatsService {
 }
 ```
 
-> info **Hint** The `LazyModuleLoader` class is imported from the `@nestjs/core` package.
+> info **Astuce** La classe `LazyModuleLoader` est importée du package `@nestjs/core`.
 
-Alternatively, you can obtain a reference to the `LazyModuleLoader` provider from within your application bootstrap file (`main.ts`), as follows:
+Alternativement, vous pouvez obtenir une référence au fournisseur `LazyModuleLoader` depuis le fichier de démarrage de votre application (`main.ts`), comme suit :
 
 ```typescript
-// "app" represents a Nest application instance
+// "app" représente une instance d'application Nest
 const lazyModuleLoader = app.get(LazyModuleLoader);
 ```
 
-With this in place, you can now load any module using the following construction:
+Une fois cette étape franchie, vous pouvez charger n'importe quel module à l'aide de la construction suivante :
 
 ```typescript
 const { LazyModule } = await import('./lazy.module');
 const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
 ```
 
-> info **Hint** "Lazy-loaded" modules are **cached** upon the first `LazyModuleLoader#load` method invocation. That means, each consecutive attempt to load `LazyModule` will be **very fast** and will return a cached instance, instead of loading the module again.
+> info **Astuce** Les modules "chargés paresseusement" sont **mis en cache** lors de la première invocation de la méthode `LazyModuleLoader#load`. Cela signifie que chaque tentative consécutive de chargement de `LazyModule` sera **très rapide** et retournera une instance mise en cache, au lieu de charger à nouveau le module.
 >
 > ```bash
-> Load "LazyModule" attempt: 1
-> time: 2.379ms
-> Load "LazyModule" attempt: 2
-> time: 0.294ms
-> Load "LazyModule" attempt: 3
-> time: 0.303ms
+> Tentative de chargement de "LazyModule" : 1
+> durée: 2.379ms
+> Tentative de chargement de "LazyModule" : 2
+> durée: 0.294ms
+> Tentative de chargement de "LazyModule" : 3
+> durée: 0.303ms
 > ```
 >
-> Also, "lazy-loaded" modules share the same modules graph as those eagerly loaded on the application bootstrap as well as any other lazy modules registered later in your app.
-
+> En outre, les modules "chargés paresseusement" partagent le même graphe de modules que ceux qui sont chargés avec empressement au démarrage de l'application, ainsi que tous les autres modules paresseux enregistrés ultérieurement dans votre application.
 Where `lazy.module.ts` is a TypeScript file that exports a **regular Nest module** (no extra changes are required).
 
-The `LazyModuleLoader#load` method returns the [module reference](/fundamentals/module-ref) (of `LazyModule`) that lets you navigate the internal list of providers and obtain a reference to any provider using its injection token as a lookup key.
+La méthode `LazyModuleLoader#load` renvoie la [référence de module](/fundamentals/module-ref) (de `LazyModule`) qui vous permet de naviguer dans la liste interne des fournisseurs et d'obtenir une référence à n'importe quel fournisseur en utilisant son jeton d'injection comme clé de recherche.
 
-For example, let's say we have a `LazyModule` with the following definition:
+Par exemple, disons que nous avons un `LazyModule` avec la définition suivante :
 
 ```typescript
 @Module({
@@ -71,9 +70,9 @@ For example, let's say we have a `LazyModule` with the following definition:
 export class LazyModule {}
 ```
 
-> info **Hint** Lazy-loaded modules cannot be registered as **global modules** as it simply makes no sense (since they are registered lazily, on-demand when all the statically registered modules have been already instantiated). Likewise, registered **global enhancers** (guards/interceptors/etc.) **will not work** properly either.
+> info **Astuce** Les modules chargés paresseusement ne peuvent pas être enregistrés en tant que **modules globaux**, car cela n'a aucun sens (puisqu'ils sont enregistrés paresseusement, à la demande, lorsque tous les modules enregistrés statiquement ont déjà été instanciés). De même, les **améliorateurs globaux** enregistrés (gardes/intercepteurs/etc.) **ne fonctionneront pas** correctement non plus.
 
-With this, we could obtain a reference to the `LazyService` provider, as follows:
+Avec cela, nous pouvons obtenir une référence au fournisseur `LazyService`, comme suit :
 
 ```typescript
 const { LazyModule } = await import('./lazy.module');
@@ -83,7 +82,7 @@ const { LazyService } = await import('./lazy.service');
 const lazyService = moduleRef.get(LazyService);
 ```
 
-> warning **Warning** If you use **Webpack**, make sure to update your `tsconfig.json` file - setting `compilerOptions.module` to `"esnext"` and adding `compilerOptions.moduleResolution` property with `"node"` as a value:
+> warning **Attention** Si vous utilisez **Webpack**, assurez-vous de mettre à jour votre fichier `tsconfig.json` - en réglant `compilerOptions.module` sur `"esnext"` et en ajoutant la propriété `compilerOptions.moduleResolution` avec `"node"` comme valeur :
 >
 > ```json
 > {
@@ -95,20 +94,20 @@ const lazyService = moduleRef.get(LazyService);
 > }
 > ```
 >
-> With these options set up, you'll be able to leverage the [code splitting](https://webpack.js.org/guides/code-splitting/) feature.
+> Une fois ces options paramétrées, vous pourrez tirer parti de la fonction de [division du code](https://webpack.js.org/guides/code-splitting/).
 
-#### Lazy-loading controllers, gateways, and resolvers
+#### Contrôleurs, passerelles et résolveurs paresseux
 
-Since controllers (or resolvers in GraphQL applications) in Nest represent sets of routes/paths/topics (or queries/mutations), you **cannot lazy load them** using the `LazyModuleLoader` class.
+Puisque les contrôleurs (ou les résolveurs dans les applications GraphQL) dans Nest représentent des ensembles de routes/chemins/sujets (ou requêtes/mutations), vous **ne pouvez pas les charger paresseusement** en utilisant la classe `LazyModuleLoader`.
 
-> error **Warning** Controllers, [resolvers](/graphql/resolvers), and [gateways](/websockets/gateways) registered inside lazy-loaded modules will not behave as expected. Similarly, you cannot register middleware functions (by implementing the `MiddlewareConsumer` interface) on-demand.
+> error **Attention** Les contrôleurs, les [résolveurs](/graphql/resolvers), et les [passerelles](/websockets/gateways) enregistrés dans des modules chargés paresseusement ne se comporteront pas comme prévu. De même, vous ne pouvez pas enregistrer des fonctions middleware (en implémentant l'interface `MiddlewareConsumer`) à la demande.
 
-For example, let's say you're building a REST API (HTTP application) with a Fastify driver under the hood (using the `@nestjs/platform-fastify` package). Fastify does not let you register routes after the application is ready/successfully listening to messages. That means even if we analyzed route mappings registered in the module's controllers, all lazy-loaded routes wouldn't be accessible since there is no way to register them at runtime.
+Par exemple, disons que vous construisez une API REST (application HTTP) avec un pilote Fastify sous le capot (en utilisant le package `@nestjs/platform-fastify`). Fastify ne vous permet pas d'enregistrer des routes après que l'application soit prête à écouter des messages. Cela signifie que même si nous analysons les routes enregistrées dans les contrôleurs du module, toutes les routes chargées paresseusement ne seront pas accessibles puisqu'il n'y a aucun moyen de les enregistrer au moment de l'exécution.
 
-Likewise, some transport strategies we provide as part of the `@nestjs/microservices` package (including Kafka, gRPC, or RabbitMQ) require to subscribe/listen to specific topics/channels before the connection is established. Once your application starts listening to messages, the framework would not be able to subscribe/listen to new topics.
+De même, certaines stratégies de transport que nous fournissons dans le cadre du package `@nestjs/microservices` (y compris Kafka, gRPC, ou RabbitMQ) nécessitent de s'abonner/écouter à des sujets/canaux spécifiques avant que la connexion ne soit établie. Une fois que votre application commence à écouter des messages, le framework ne sera pas en mesure de s'abonner/écouter de nouveaux sujets.
 
-Lastly, the `@nestjs/graphql` package with the code first approach enabled automatically generates the GraphQL schema on-the-fly based on the metadata. That means, it requires all classes to be loaded beforehand. Otherwise, it would not be doable to create the appropriate, valid schema.
+Enfin, le package `@nestjs/graphql` avec l'approche code first activée génère automatiquement le schéma GraphQL à la volée sur la base des métadonnées. Cela signifie que toutes les classes doivent être chargées au préalable. Sinon, il ne serait pas possible de créer un schéma approprié et valide.
 
-#### Common use-cases
+#### Cas d'utilisation courants
 
-Most commonly, you will see lazy loaded modules in situations when your worker/cron job/lambda & serverless function/webhook must trigger different services (different logic) based on the input arguments (route path/date/query parameters, etc.). On the other hand, lazy-loading modules may not make too much sense for monolithic applications, where the startup time is rather irrelevant.
+Le plus souvent, vous verrez des modules chargés paresseusement dans des situations où votre worker/cron job/lambda & serverless fonction/webhook doit déclencher différents services (différentes logiques) en fonction des arguments d'entrée (chemin d'accès/date/paramètres de requête, etc.). D'autre part, les modules à chargement paresseux peuvent ne pas avoir trop de sens pour les applications monolithiques, où le temps de démarrage est plutôt sans importance.
