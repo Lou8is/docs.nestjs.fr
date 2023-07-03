@@ -1,33 +1,33 @@
-### Injection scopes
+### Portées d'injection
 
-For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
+Pour les personnes issues de différents langages de programmation, il peut être inattendu d'apprendre que dans Nest, presque tout est partagé entre les requêtes entrantes. Nous avons un pool de connexion à la base de données, des services singleton avec un état global, etc. N'oubliez pas que Node.js ne suit pas le modèle sans état multithreadé requête/réponse dans lequel chaque requête est traitée par un thread distinct. Par conséquent, l'utilisation d'instances singleton est totalement **sécurisée** pour nos applications.
 
-However, there are edge-cases when request-based lifetime may be the desired behavior, for instance per-request caching in GraphQL applications, request tracking, and multi-tenancy. Injection scopes provide a mechanism to obtain the desired provider lifetime behavior.
+Cependant, il existe des cas limites où la durée de vie basée sur les requêtes peut être le comportement souhaité, par exemple la mise en cache par requête dans les applications GraphQL, le suivi des requêtes et la multi-location. Les champs d'application d'injection fournissent un mécanisme permettant d'obtenir le comportement souhaité pour la durée de vie du fournisseur.
 
-#### Provider scope
+#### Portée du fournisseur
 
-A provider can have any of the following scopes:
+Un fournisseur peut avoir l'une des portées suivantes :
 
 <table>
   <tr>
     <td><code>DEFAULT</code></td>
-    <td>A single instance of the provider is shared across the entire application. The instance lifetime is tied directly to the application lifecycle. Once the application has bootstrapped, all singleton providers have been instantiated. Singleton scope is used by default.</td>
+    <td>Une seule instance du fournisseur est partagée par l'ensemble de l'application. La durée de vie de l'instance est directement liée au cycle de vie de l'application. Une fois que l'application a démarré, tous les fournisseurs singleton ont été instanciés. La portée du singleton est utilisée par défaut.</td>
   </tr>
   <tr>
     <td><code>REQUEST</code></td>
-    <td>A new instance of the provider is created exclusively for each incoming <strong>request</strong>.  The instance is garbage-collected after the request has completed processing.</td>
+    <td>Une nouvelle instance du fournisseur est créée exclusivement pour chaque <strong>requête</strong> entrante.  L'instance est mise au rebut une fois le traitement de la requête terminé.</td>
   </tr>
   <tr>
     <td><code>TRANSIENT</code></td>
-    <td>Transient providers are not shared across consumers. Each consumer that injects a transient provider will receive a new, dedicated instance.</td>
+    <td>Les fournisseurs transitoires ne sont pas partagés entre les consommateurs. Chaque consommateur qui injecte un fournisseur transitoire reçoit une nouvelle instance dédiée.</td>
   </tr>
 </table>
 
-> info **Hint** Using singleton scope is **recommended** for most use cases. Sharing providers across consumers and across requests means that an instance can be cached and its initialization occurs only once, during application startup.
+> info **Astuce** L'utilisation d'une portée singleton est **recommandée** dans la plupart des cas d'utilisation. Le partage des fournisseurs entre les consommateurs et les requêtes signifie qu'une instance peut être mise en cache et que son initialisation n'a lieu qu'une seule fois, lors du démarrage de l'application.
 
 #### Usage
 
-Specify injection scope by passing the `scope` property to the `@Injectable()` decorator options object:
+Spécifiez la portée de l'injection en passant la propriété `scope` à l'objet d'options du décorateur `@Injectable()` :
 
 ```typescript
 import { Injectable, Scope } from '@nestjs/common';
@@ -36,7 +36,7 @@ import { Injectable, Scope } from '@nestjs/common';
 export class CatsService {}
 ```
 
-Similarly, for [custom providers](/fundamentals/custom-providers), set the `scope` property in the long-hand form for a provider registration:
+De même, pour les [fournisseurs personnalisés](/fundamentals/custom-providers), définissez la propriété `scope` dans le format long pour l'enregistrement d'un fournisseur :
 
 ```typescript
 {
@@ -46,17 +46,17 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `scop
 }
 ```
 
-> info **Hint** Import the `Scope` enum from `@nestjs/common`
+> info **Astuce** Importer l'enum `Scope` depuis `@nestjs/common`
 
-Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+La portée singleton est utilisée par défaut et n'a pas besoin d'être déclarée. Si vous voulez déclarer un provider comme singleton scoped, utilisez la valeur `Scope.DEFAULT` pour la propriété `scope`.
 
-> warning **Notice** Websocket Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times. The limitation also applies to some other providers, like [_Passport strategies_](../security/authentication#request-scoped-strategies) or _Cron controllers_.
+> warning **Remarque** Les passerelles Websocket ne doivent pas utiliser de fournisseurs à portée de requête, car elles doivent agir comme des singletons. Chaque passerelle encapsule une véritable socket et ne peut être instanciée plusieurs fois. Cette limitation s'applique également à d'autres fournisseurs, comme les [_Stratégies de passeport_](../security/authentication#request-scoped-strategies) ou les _contrôleurs Cron_.
 
-#### Controller scope
+#### Portée du contrôleur
 
-Controllers can also have scope, which applies to all request method handlers declared in that controller. Like provider scope, the scope of a controller declares its lifetime. For a request-scoped controller, a new instance is created for each inbound request, and garbage-collected when the request has completed processing.
+Les contrôleurs peuvent également avoir une portée, qui s'applique à tous les gestionnaires de méthodes de requête déclarés dans ce contrôleur. Tout comme la portée du fournisseur, la portée d'un contrôleur détermine sa durée de vie. Dans le cas d'un contrôleur à portée de requête, une nouvelle instance est créée pour chaque requête entrante, et la poubelle est ramassée lorsque le traitement de la requête est terminé.
 
-Declare controller scope with the `scope` property of the `ControllerOptions` object:
+Déclarez la portée du contrôleur avec la propriété `scope` de l'objet `ControllerOptions` :
 
 ```typescript
 @Controller({
@@ -66,19 +66,19 @@ Declare controller scope with the `scope` property of the `ControllerOptions` ob
 export class CatsController {}
 ```
 
-#### Scope hierarchy
+#### Hiérarchie des portées
 
-The `REQUEST` scope bubbles up the injection chain. A controller that depends on a request-scoped provider will, itself, be request-scoped.
+La portée `REQUEST` remonte la chaîne d'injection. Un contrôleur qui dépend d'un fournisseur à portée de requête sera lui-même à portée de requête.
 
-Imagine the following dependency graph: `CatsController <- CatsService <- CatsRepository`. If `CatsService` is request-scoped (and the others are default singletons), the `CatsController` will become request-scoped as it is dependent on the injected service. The `CatsRepository`, which is not dependent, would remain singleton-scoped.
+Imaginez le graphe de dépendance suivant : `CatsController <- CatsService <- CatsRepository`. Si `CatsService` est à portée de requête (et que les autres sont des singletons par défaut), `CatsController` deviendra à portée de requête car il dépend du service injecté. Le `CatsRepository`, qui n'est pas dépendant, restera à portée de singleton.
 
-Transient-scoped dependencies don't follow that pattern. If a singleton-scoped `DogsService` injects a transient `LoggerService` provider, it will receive a fresh instance of it. However, `DogsService` will stay singleton-scoped, so injecting it anywhere would _not_ resolve to a new instance of `DogsService`. In case it's desired behavior, `DogsService` must be explicitly marked as `TRANSIENT` as well.
+Les dépendances transitoires ne suivent pas ce modèle. Si un `DogsService` à portée de singleton injecte un fournisseur transitoire `LoggerService`, il recevra une nouvelle instance de ce dernier. Cependant, `DogsService` restera à portée de singleton, donc l'injecter n'importe où ne résoudra _pas_ une nouvelle instance de `DogsService`. Au cas où ce serait le comportement désiré, `DogsService` doit être explicitement marqué comme `TRANSIENT`.
 
 <app-banner-courses></app-banner-courses>
 
-#### Request provider
+#### Requête au fournisseur
 
-In an HTTP server-based application (e.g., using `@nestjs/platform-express` or `@nestjs/platform-fastify`), you may want to access a reference to the original request object when using request-scoped providers. You can do this by injecting the `REQUEST` object.
+Dans une application basée sur un serveur HTTP (par exemple, en utilisant `@nestjs/platform-express` ou `@nestjs/platform-fastify`), vous pouvez vouloir accéder à une référence à l'objet de requête original lorsque vous utilisez des fournisseurs à portée de requête. Vous pouvez le faire en injectant l'objet `REQUEST`.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -91,7 +91,7 @@ export class CatsService {
 }
 ```
 
-Because of underlying platform/protocol differences, you access the inbound request slightly differently for Microservice or GraphQL applications. In [GraphQL](/graphql/quick-start) applications, you inject `CONTEXT` instead of `REQUEST`:
+En raison des différences de plateforme/protocole sous-jacentes, vous accédez à la requête entrante légèrement différemment pour les applications Microservice ou GraphQL. Dans les applications [GraphQL](/graphql/quick-start), vous injectez `CONTEXT` au lieu de `REQUEST` :
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -103,11 +103,11 @@ export class CatsService {
 }
 ```
 
-You then configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
+Vous configurez ensuite votre valeur `context` (dans le `GraphQLModule`) pour qu'elle contienne `request` comme propriété.
 
-#### Inquirer provider
+#### Fournisseur d'Inquirer
 
-If you want to get the class where a provider was constructed, for instance in logging or metrics providers, you can inject the `INQUIRER` token.
+Si vous voulez obtenir la classe dans laquelle un fournisseur a été construit, par exemple dans les fournisseurs de logs ou de métriques, vous pouvez injecter le jeton `INQUIRER`.
 
 ```typescript
 import { Inject, Injectable, Scope } from '@nestjs/common';
@@ -123,7 +123,7 @@ export class HelloService {
 }
 ```
 
-And then use it as follows:
+Puis utilisez-le comme suit :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -134,34 +134,34 @@ export class AppService {
   constructor(private helloService: HelloService) {}
 
   getRoot(): string {
-    this.helloService.sayHello('My name is getRoot');
+    this.helloService.sayHello('Mon nom est getRoot');
 
     return 'Hello world!';
   }
 }
 ```
 
-In the example above when `AppService#getRoot` is called, `"AppService: My name is getRoot"` will be logged to the console.
+Dans l'exemple ci-dessus, lorsque `AppService#getRoot` est appelé, `"AppService : Mon nom est getRoot"` sera enregistré dans la console.
 
 #### Performance
 
-Using request-scoped providers will have an impact on application performance. While Nest tries to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. Unless a provider must be request-scoped, it is strongly recommended that you use the default singleton scope.
+L'utilisation de fournisseurs à portée de requête aura un impact sur les performances de l'application. Bien que Nest essaie de mettre en cache autant de métadonnées que possible, il devra toujours créer une instance de votre classe à chaque requête. Cela ralentira donc le temps de réponse moyen et le résultat global de l'analyse comparative. À moins qu'un fournisseur ne doive être à portée de requête, il est fortement recommandé d'utiliser la portée singleton par défaut.
 
-> info **Hint** Although it all sounds quite intimidating, a properly designed application that leverages request-scoped providers should not slow down by more than ~5% latency-wise.
+> info **Astuce** Bien que tout cela semble assez intimidant, une application correctement conçue qui exploite des fournisseurs de services adaptés aux requêtes ne devrait pas être ralentie de plus de 5 % en termes de temps de latence.
 
-#### Durable providers
+#### Fournisseurs durables
 
-Request-scoped providers, as mentioned in the section above, may lead to increased latency since having at least 1 request-scoped provider (injected into the controller instance, or deeper - injected into one of its providers) makes the controller request-scoped as well. That means, it must be recreated (instantiated) per each individual request (and garbage collected afterwards). Now, that also means, that for let's say 30k requests in parallel, there will be 30k ephemeral instances of the controller (and its request-scoped providers).
+Les fournisseurs à portée de requête, comme mentionné dans la section ci-dessus, peuvent entraîner une augmentation de la latence car le fait d'avoir au moins un fournisseur à portée de requête (injecté dans l'instance du contrôleur, ou plus profondément - injecté dans l'un de ses fournisseurs) fait que le contrôleur est également à portée de requête. Cela signifie qu'il doit être recréé (instancié) pour chaque requête individuelle (et ramassé par la suite). Cela signifie également que pour, disons, 30k requêtes en parallèle, il y aura 30k instances éphémères du contrôleur (et de ses fournisseurs adaptés aux requêtes).
 
-Having a common provider that most providers depend on (think of a database connection, or a logger service), automatically converts all those providers to request-scoped providers as well. This can pose a challenge in **multi-tenant applications**, especially for those that have a central request-scoped "data source" provider that grabs headers/token from the request object and based on its values, retrieves the corresponding database connection/schema (specific to that tenant).
+Le fait d'avoir un fournisseur commun dont dépendent la plupart des fournisseurs (par exemple, une connexion à une base de données ou un service d'enregistrement) convertit automatiquement tous ces fournisseurs en fournisseurs à portée de requête. Cela peut poser un problème dans les **applications multi-tenants**, en particulier pour celles qui ont un fournisseur central de "source de données" à portée de requête qui récupère les en-têtes/tokens de l'objet de requête et, en fonction de ses valeurs, récupère la connexion/le schéma de base de données correspondant(e) (spécifique à ce locataire).
 
-For instance, let's say you have an application alternately used by 10 different customers. Each customer has its **own dedicated data source**, and you want to make sure customer A will never be able to reach customer's B database. One way to achieve this could be to declare a request-scoped "data source" provider that - based on the request object - determines what's the "current customer" and retrieves its corresponding database. With this approach, you can turn your application into a multi-tenant application in just a few minutes. But, a major downside to this approach is that since most likely a large chunk of your application' components rely on the "data source" provider, they will implicitly become "request-scoped", and therefore you will undoubtedly see an impact in your apps performance.
+Par exemple, supposons que vous ayez une application utilisée alternativement par 10 clients différents. Chaque client a sa **propre source de données dédiée**, et vous voulez vous assurer que le client A ne pourra jamais accéder à la base de données du client B. Une façon d'y parvenir serait de déclarer un fournisseur de "source de données" à l'échelle de la requête qui, sur la base de l'objet de la requête, détermine quel est le "client actuel" et récupère la base de données correspondante. Avec cette approche, vous pouvez transformer votre application en une application multi-tenant en quelques minutes seulement. Mais l'inconvénient majeur de cette approche est que, comme il est très probable qu'une grande partie des composants de votre application repose sur le fournisseur "source de données", ils deviendront implicitement "à l'échelle de la requête", et donc vous verrez sans aucun doute un impact sur les performances de votre application.
 
-But what if we had a better solution? Since we only have 10 customers, couldn't we have 10 individual [DI sub-trees](/fundamentals/module-ref#resolving-scoped-providers) per customer (instead of recreating each tree per request)? If your providers don't rely on any property that's truly unique for each consecutive request (e.g., request UUID) but instead there're some specific attributes that let us aggregate (classify) them, there's no reason to _recreate DI sub-tree_ on every incoming request.
+Et si nous avions une meilleure solution ? Puisque nous n'avons que 10 clients, ne pourrions-nous pas avoir 10 [sous-arbres d'ID](/fundamentals/module-ref#resolving-scoped-providers) individuels par client (au lieu de recréer chaque arbre par requête) ? Si vos fournisseurs ne s'appuient sur aucune propriété qui soit réellement unique pour chaque requête consécutive (par exemple, l'UUID de la requête), mais qu'il existe des attributs spécifiques qui nous permettent de les agréger (les classer), il n'y a aucune raison de _recréer un sous-arbre DI_ pour chaque requête entrante ?
 
-And that's exactly when the **durable providers** come in handy.
+Et c'est justement là que les **fournisseurs durables** se révèlent utiles.
 
-Before we start flagging providers as durable, we must first register a **strategy** that instructs Nest what are those "common request attributes", provide logic that groups requests - associates them with their corresponding DI sub-trees.
+Avant de commencer à signaler les fournisseurs comme durables, nous devons d'abord enregistrer une **stratégie** qui indique à Nest quels sont ces "attributs de requête communs", fournir une logique qui regroupe les requêtes - les associe à leurs sous-arbres ID correspondants.
 
 ```typescript
 import {
@@ -186,20 +186,20 @@ export class AggregateByTenantContextIdStrategy implements ContextIdStrategy {
       tenants.set(tenantId, tenantSubTreeId);
     }
 
-    // If tree is not durable, return the original "contextId" object
+    // Si l'arbre n'est pas durable, retourner l'objet "contextId" original
     return (info: HostComponentInfo) =>
       info.isTreeDurable ? tenantSubTreeId : contextId;
   }
 }
 ```
 
-> info **Hint** Similar to the request scope, durability bubbles up the injection chain. That means if A depends on B which is flagged as `durable`, A implicitly becomes durable too (unless `durable` is explicitly set to `false` for A provider).
+> info **Astuce** De la même manière que pour la portée de la requête, la durabilité s'étend jusqu'à la chaîne d'injection. Cela signifie que si A dépend de B qui est marqué comme `durable`, A devient implicitement durable aussi (à moins que `durable` ne soit explicitement mis à `false` pour le fournisseur A).
 
-> warning **Warning** Note this strategy is not ideal for applications operating with a large number of tenants.
+> warning **Attention** Notez que cette stratégie n'est pas idéale pour les applications fonctionnant avec un grand nombre de clients.
 
-The value returned from the `attach` method instructs Nest what context identifier should be used for a given host. In this case, we specified that the `tenantSubTreeId` should be used instead of the original, auto-generated `contextId` object, when the host component (e.g., request-scoped controller) is flagged as durable (you can learn how to mark providers as durable below). Also, in the above example, **no payload** would be registered (where payload = `REQUEST`/`CONTEXT` provider that represents the "root" - parent of the sub-tree).
+La valeur retournée par la méthode `attach` indique à Nest quel identifiant de contexte doit être utilisé pour un hôte donné. Dans ce cas, nous avons spécifié que le `tenantSubTreeId` devrait être utilisé à la place de l'objet `contextId` original, auto-généré, lorsque le composant hôte (par exemple, un contrôleur à portée de requête) est marqué comme durable (vous pouvez apprendre comment marquer les fournisseurs comme durables ci-dessous). De plus, dans l'exemple ci-dessus, **aucun payload** ne serait enregistré (où payload = fournisseur `REQUEST`/`CONTEXT` qui représente la "racine" - parent de la sous-arborescence).
 
-If you want to register the payload for a durable tree, use the following construction instead:
+Si vous souhaitez enregistrer la charge utile pour un arbre durable, utilisez plutôt la construction suivante :
 
 ```typescript
 // The return of `AggregateByTenantContextIdStrategy#attach` method:
@@ -210,19 +210,19 @@ return {
   }
 ```
 
-Now whenever you inject the `REQUEST` provider (or `CONTEXT` for GraphQL applications) using the `@Inject(REQUEST)`/`@Inject(CONTEXT)`, the `payload` object would be injected (consisting of a single property - `tenantId` in this case).
+Maintenant, chaque fois que vous injectez le fournisseur `REQUEST` (ou `CONTEXT` pour les applications GraphQL) en utilisant `@Inject(REQUEST)`/`@Inject(CONTEXT)`, l'objet `payload` sera injecté (composé d'une seule propriété - `tenantId` dans ce cas).
 
-Alright so with this strategy in place, you can register it somewhere in your code (as it applies globally anyway), so for example, you could place it in the `main.ts` file:
+D'accord, avec cette stratégie en place, vous pouvez l'enregistrer quelque part dans votre code (puisqu'elle s'applique globalement de toute façon), donc par exemple, vous pourriez la placer dans le fichier `main.ts` :
 
 ```typescript
 ContextIdFactory.apply(new AggregateByTenantContextIdStrategy());
 ```
 
-> info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
+> info **Astuce** La classe `ContextIdFactory` est importée du package `@nestjs/core`.
 
-As long as the registration occurs before any request hits your application, everything will work as intended.
+Tant que l'enregistrement a lieu avant qu'une requête n'arrive dans votre application, tout fonctionnera comme prévu.
 
-Lastly, to turn a regular provider into a durable provider, simply set the `durable` flag to `true` and change its scope to `Scope.REQUEST` (not needed if the REQUEST scope is in the injection chain already):
+Enfin, pour transformer un fournisseur régulier en fournisseur durable, il suffit de mettre le flag `durable` à `true` et de changer sa portée en `Scope.REQUEST` ( inutile si la portée REQUEST est déjà dans la chaîne d'injection) :
 
 ```typescript
 import { Injectable, Scope } from '@nestjs/common';
@@ -231,7 +231,7 @@ import { Injectable, Scope } from '@nestjs/common';
 export class CatsService {}
 ```
 
-Similarly, for [custom providers](/fundamentals/custom-providers), set the `durable` property in the long-hand form for a provider registration:
+De même, pour les [fournisseurs personnalisés](/fundamentals/custom-providers), définissez la propriété `durable` dans le format long pour l'enregistrement d'un fournisseur :
 
 ```typescript
 {
