@@ -1,66 +1,66 @@
-### Execution context
+### Contexte d'exécution
 
-Nest provides several utility classes that help make it easy to write applications that function across multiple application contexts (e.g., Nest HTTP server-based, microservices and WebSockets application contexts). These utilities provide information about the current execution context which can be used to build generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) that can work across a broad set of controllers, methods, and execution contexts.
+Nest fournit plusieurs classes d'utilitaires qui facilitent l'écriture d'applications fonctionnant dans plusieurs contextes d'application (par exemple, les contextes d'application basés sur le serveur HTTP, les microservices et les WebSockets de Nest). Ces utilitaires fournissent des informations sur le contexte d'exécution actuel qui peuvent être utilisées pour construire des [gardes](/guards), des [filtres](/exception-filters) et des [intercepteurs](/interceptors) génériques qui peuvent fonctionner à travers un large éventail de contrôleurs, de méthodes et de contextes d'exécution.
 
-We cover two such classes in this chapter: `ArgumentsHost` and `ExecutionContext`.
+Nous couvrons deux de ces classes dans ce chapitre : `ArgumentsHost` et `ExecutionContext`.
 
-#### ArgumentsHost class
+#### Classe ArgumentsHost
 
-The `ArgumentsHost` class provides methods for retrieving the arguments being passed to a handler. It allows choosing the appropriate context (e.g., HTTP, RPC (microservice), or WebSockets) to retrieve the arguments from. The framework provides an instance of `ArgumentsHost`, typically referenced as a `host` parameter, in places where you may want to access it. For example, the `catch()` method of an [exception filter](https://docs.nestjs.com/exception-filters#arguments-host) is called with an `ArgumentsHost`instance.
+La classe `ArgumentsHost` fournit des méthodes pour récupérer les arguments passés à un handler. Elle permet de choisir le contexte approprié (par exemple, HTTP, RPC (microservice), ou WebSockets) pour récupérer les arguments. Le framework fournit une instance de `ArgumentsHost`, typiquement référencée comme un paramètre `host`, dans les endroits où vous pouvez vouloir y accéder. Par exemple, la méthode `catch()` d'un [filtre d'exception](exception-filters#argumentshost) est appelée avec une instance `ArgumentsHost`.
 
-`ArgumentsHost` simply acts as an abstraction over a handler's arguments. For example, for HTTP server applications (when `@nestjs/platform-express` is being used), the `host` object encapsulates Express's `[request, response, next]` array, where `request` is the request object, `response` is the response object, and `next` is a function that controls the application's request-response cycle. On the other hand, for [GraphQL](/graphql/quick-start) applications, the `host` object contains the `[root, args, context, info]` array.
+`ArgumentsHost` agit simplement comme une abstraction sur les arguments d'un gestionnaire. Par exemple, pour les applications serveur HTTP (quand `@nestjs/platform-express` est utilisé), l'objet `host` encapsule la liste `[request, response, next]` d'Express, où `request` est l'objet requête, `response` est l'objet réponse, et `next` est une fonction qui contrôle le cycle requête-réponse de l'application. En revanche, pour les applications [GraphQL](/graphql/quick-start), l'objet `host` contient le tableau `[root, args, context, info]`.
 
-#### Current application context
+#### Contexte actuel de l'application
 
-When building generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) which are meant to run across multiple application contexts, we need a way to determine the type of application that our method is currently running in. Do this with the `getType()` method of `ArgumentsHost`:
+Lorsque l'on construit des [gardes](/guards), des [filtres](/exception-filters) et des [intercepteurs](/interceptors) génériques qui sont censés s'exécuter à travers de multiples contextes d'application, nous avons besoin d'un moyen de déterminer le type d'application dans lequel notre méthode s'exécute actuellement. C'est ce que nous faisons avec la méthode `getType()` de `ArgumentsHost` :
 
 ```typescript
 if (host.getType() === 'http') {
-  // do something that is only important in the context of regular HTTP requests (REST)
+  // faire quelque chose qui n'est important que dans le contexte des requêtes HTTP ordinaires (REST).
 } else if (host.getType() === 'rpc') {
-  // do something that is only important in the context of Microservice requests
+  // faire quelque chose qui n'est important que dans le contexte des requêtes de microservices.
 } else if (host.getType<GqlContextType>() === 'graphql') {
-  // do something that is only important in the context of GraphQL requests
+  // faire quelque chose qui n'est important que dans le contexte des requêtes GraphQL
 }
 ```
 
-> info **Hint** The `GqlContextType` is imported from the `@nestjs/graphql` package.
+> info **Astuce** Le type `GqlContextType` est importé du package `@nestjs/graphql`.
 
-With the application type available, we can write more generic components, as shown below.
+Avec le type d'application disponible, nous pouvons écrire des composants plus génériques, comme indiqué ci-dessous.
 
-#### Host handler arguments
+#### Arguments du gestionnaire d'hôte
 
-To retrieve the array of arguments being passed to the handler, one approach is to use the host object's `getArgs()` method.
+Pour récupérer la liste des arguments passés au gestionnaire, une approche consiste à utiliser la méthode `getArgs()` de l'objet hôte.
 
 ```typescript
 const [req, res, next] = host.getArgs();
 ```
 
-You can pluck a particular argument by index using the `getArgByIndex()` method:
+Vous pouvez extraire un argument particulier par son index en utilisant la méthode `getArgByIndex()` :
 
 ```typescript
 const request = host.getArgByIndex(0);
 const response = host.getArgByIndex(1);
 ```
 
-In these examples we retrieved the request and response objects by index, which is not typically recommended as it couples the application to a particular execution context. Instead, you can make your code more robust and reusable by using one of the `host` object's utility methods to switch to the appropriate application context for your application. The context switch utility methods are shown below.
+Dans ces exemples, nous avons récupéré les objets requête et réponse par index, ce qui n'est généralement pas recommandé car cela couple l'application à un contexte d'exécution particulier. Au lieu de cela, vous pouvez rendre votre code plus robuste et réutilisable en utilisant l'une des méthodes utilitaires de l'objet `host` pour basculer vers le contexte d'application approprié pour votre application. Les méthodes utilitaires de changement de contexte sont présentées ci-dessous.
 
 ```typescript
 /**
- * Switch context to RPC.
+ * Passer à un contexte RPC.
  */
 switchToRpc(): RpcArgumentsHost;
 /**
- * Switch context to HTTP.
+ * Passer au contexte HTTP.
  */
 switchToHttp(): HttpArgumentsHost;
 /**
- * Switch context to WebSockets.
+ * Passer au contexte WebSockets.
  */
 switchToWs(): WsArgumentsHost;
 ```
 
-Let's rewrite the previous example using the `switchToHttp()` method. The `host.switchToHttp()` helper call returns an `HttpArgumentsHost` object that is appropriate for the HTTP application context. The `HttpArgumentsHost` object has two useful methods we can use to extract the desired objects. We also use the Express type assertions in this case to return native Express typed objects:
+Réécrivons l'exemple précédent en utilisant la méthode `switchToHttp()`. La méthode utilitaire `host.switchToHttp()` renvoie un objet `HttpArgumentsHost` approprié au contexte de l'application HTTP. L'objet `HttpArgumentsHost` possède deux méthodes utiles que nous pouvons utiliser pour extraire les objets désirés. Nous utilisons également les assertions de type Express dans ce cas pour retourner des objets nativement typés Express :
 
 ```typescript
 const ctx = host.switchToHttp();
@@ -68,22 +68,22 @@ const request = ctx.getRequest<Request>();
 const response = ctx.getResponse<Response>();
 ```
 
-Similarly `WsArgumentsHost` and `RpcArgumentsHost` have methods to return appropriate objects in the microservices and WebSockets contexts. Here are the methods for `WsArgumentsHost`:
+De même, `WsArgumentsHost` et `RpcArgumentsHost` ont des méthodes pour retourner les objets appropriés dans les contextes microservices et WebSockets. Voici les méthodes de `WsArgumentsHost` :
 
 ```typescript
 export interface WsArgumentsHost {
   /**
-   * Returns the data object.
+   * Renvoie l'objet de données.
    */
   getData<T>(): T;
   /**
-   * Returns the client object.
+   * Renvoie l'objet client.
    */
   getClient<T>(): T;
 }
 ```
 
-Following are the methods for `RpcArgumentsHost`:
+Voici les méthodes de `RpcArgumentsHost` :
 
 ```typescript
 export interface RpcArgumentsHost {
@@ -99,38 +99,38 @@ export interface RpcArgumentsHost {
 }
 ```
 
-#### ExecutionContext class
+#### Classe ExecutionContext
 
-`ExecutionContext` extends `ArgumentsHost`, providing additional details about the current execution process. Like `ArgumentsHost`, Nest provides an instance of `ExecutionContext` in places you may need it, such as in the `canActivate()` method of a [guard](https://docs.nestjs.com/guards#execution-context) and the `intercept()` method of an [interceptor](https://docs.nestjs.com/interceptors#execution-context). It provides the following methods:
+`ExecutionContext` étend `ArgumentsHost`, fournissant des détails supplémentaires sur le processus d'exécution en cours. Comme `ArgumentsHost`, Nest fournit une instance de `ExecutionContext` là où vous en avez besoin, comme dans la méthode `canActivate()` d'une [garde](https://docs.nestjs.com/guards#execution-context) et la méthode `intercept()` d'un [intercepteur](/interceptors#contexte-dexécution). Il fournit les méthodes suivantes :
 
 ```typescript
 export interface ExecutionContext extends ArgumentsHost {
   /**
-   * Returns the type of the controller class which the current handler belongs to.
+   * Renvoie le type de la classe de contrôleur à laquelle appartient le gestionnaire actuel.
    */
   getClass<T>(): Type<T>;
   /**
-   * Returns a reference to the handler (method) that will be invoked next in the
-   * request pipeline.
+   * Renvoie une référence au gestionnaire (méthode) qui sera invoqué
+   * ensuite dans le pipeline de requêtes.
    */
   getHandler(): Function;
 }
 ```
 
-The `getHandler()` method returns a reference to the handler about to be invoked. The `getClass()` method returns the type of the `Controller` class which this particular handler belongs to. For example, in an HTTP context, if the currently processed request is a `POST` request, bound to the `create()` method on the `CatsController`, `getHandler()` returns a reference to the `create()` method and `getClass()` returns the `CatsController` **type** (not instance).
+La méthode `getHandler()` renvoie une référence au gestionnaire qui va être invoqué. La méthode `getClass()` renvoie le type de la classe `Controller` à laquelle appartient ce handler particulier. Par exemple, dans un contexte HTTP, si la requête en cours de traitement est une requête `POST`, liée à la méthode `create()` du `CatsController`, `getHandler()` renvoie une référence à la méthode `create()` et `getClass()` renvoie le **type** (et non l'instance) du `CatsController`.
 
 ```typescript
 const methodKey = ctx.getHandler().name; // "create"
 const className = ctx.getClass().name; // "CatsController"
 ```
 
-The ability to access references to both the current class and handler method provides great flexibility. Most importantly, it gives us the opportunity to access the metadata set through the `@SetMetadata()` decorator from within guards or interceptors. We cover this use case below.
+La possibilité d'accéder aux références à la fois à la classe courante et à la méthode du handler offre une grande flexibilité. Plus important encore, cela nous donne la possibilité d'accéder aux métadonnées définies par le décorateur `@SetMetadata()` depuis les gardiens ou les intercepteurs. Nous couvrons ce cas d'utilisation ci-dessous.
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Reflection and metadata
+#### Réflexion et métadonnées
 
-Nest provides the ability to attach **custom metadata** to route handlers through the `@SetMetadata()` decorator. We can then access this metadata from within our class to make certain decisions.
+Nest offre la possibilité d'attacher des **métadonnées personnalisées** aux gestionnaires de routes grâce au décorateur `@SetMetadata()`. Nous pouvons alors accéder à ces métadonnées depuis notre classe pour prendre certaines décisions.
 
 ```typescript
 @@filename(cats.controller)
@@ -148,9 +148,9 @@ async create(createCatDto) {
 }
 ```
 
-> info **Hint** The `@SetMetadata()` decorator is imported from the `@nestjs/common` package.
+> info **Astuce** Le décorateur `@SetMetadata()` est importé du package `@nestjs/common`.
 
-With the construction above, we attached the `roles` metadata (`roles` is a metadata key and `['admin']` is the associated value) to the `create()` method. While this works, it's not good practice to use `@SetMetadata()` directly in your routes. Instead, create your own decorators, as shown below:
+Avec la construction ci-dessus, nous avons attaché les métadonnées `roles` (`roles` est une clé de métadonnées et `['admin']` est la valeur associée) à la méthode `create()`. Bien que cela fonctionne, ce n'est pas une bonne pratique d'utiliser `@SetMetadata()` directement dans vos routes. A la place, créez vos propres décorateurs, comme montré ci-dessous :
 
 ```typescript
 @@filename(roles.decorator)
@@ -163,7 +163,7 @@ import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles) => SetMetadata('roles', roles);
 ```
 
-This approach is much cleaner and more readable, and is strongly typed. Now that we have a custom `@Roles()` decorator, we can use it to decorate the `create()` method.
+Cette approche est beaucoup plus propre et lisible, et est fortement typée. Maintenant que nous avons un décorateur `@Roles()` personnalisé, nous pouvons l'utiliser pour décorer la méthode `create()`.
 
 ```typescript
 @@filename(cats.controller)
@@ -181,7 +181,7 @@ async create(createCatDto) {
 }
 ```
 
-To access the route's role(s) (custom metadata), we'll use the `Reflector` helper class, which is provided out of the box by the framework and exposed from the `@nestjs/core` package. `Reflector` can be injected into a class in the normal way:
+Pour accéder au(x) rôle(s) de la route (métadonnées personnalisées), nous allons utiliser la classe utilitaire `Reflector`, qui est fournie par le framework et exposée dans le package `@nestjs/core`. `Reflector` peut être injecté dans une classe de la manière habituelle :
 
 ```typescript
 @@filename(roles.guard)
@@ -199,17 +199,17 @@ export class CatsService {
 }
 ```
 
-> info **Hint** The `Reflector` class is imported from the `@nestjs/core` package.
+> info **Astuce** La classe `Reflector` est importée du package `@nestjs/core`.
 
-Now, to read the handler metadata, use the `get()` method.
+Maintenant, pour lire les métadonnées du gestionnaire, utilisez la méthode `get()`.
 
 ```typescript
 const roles = this.reflector.get<string[]>('roles', context.getHandler());
 ```
 
-The `Reflector#get` method allows us to easily access the metadata by passing in two arguments: a metadata **key** and a **context** (decorator target) to retrieve the metadata from. In this example, the specified **key** is `'roles'` (refer back to the `roles.decorator.ts` file above and the `SetMetadata()` call made there). The context is provided by the call to `context.getHandler()`, which results in extracting the metadata for the currently processed route handler. Remember, `getHandler()` gives us a **reference** to the route handler function.
+La méthode `Reflector#get` nous permet d'accéder facilement aux métadonnées en passant deux arguments : une **clé** de métadonnées et un **contexte** (cible du décorateur) pour récupérer les métadonnées. Dans cet exemple, la **clé** spécifiée est `'roles'` (référez-vous au fichier `roles.decorator.ts` ci-dessus et à l'appel `SetMetadata()` qui y a été fait). Le contexte est fourni par l'appel à `context.getHandler()`, qui permet d'extraire les métadonnées du gestionnaire de route en cours de traitement. Rappelez-vous, `getHandler()` nous donne une **référence** à la fonction du gestionnaire de route.
 
-Alternatively, we may organize our controller by applying metadata at the controller level, applying to all routes in the controller class.
+Nous pouvons également organiser notre contrôleur en appliquant des métadonnées au niveau du contrôleur, qui s'appliquent à toutes les routes de la classe du contrôleur.
 
 ```typescript
 @@filename(cats.controller)
@@ -222,7 +222,7 @@ export class CatsController {}
 export class CatsController {}
 ```
 
-In this case, to extract controller metadata, we pass `context.getClass()` as the second argument (to provide the controller class as the context for metadata extraction) instead of `context.getHandler()`:
+Dans ce cas, pour extraire les métadonnées du contrôleur, nous passons `context.getClass()` comme second argument (pour fournir la classe du contrôleur comme contexte pour l'extraction des métadonnées) au lieu de `context.getHandler()` :
 
 ```typescript
 @@filename(roles.guard)
@@ -231,9 +231,9 @@ const roles = this.reflector.get<string[]>('roles', context.getClass());
 const roles = this.reflector.get('roles', context.getClass());
 ```
 
-Given the ability to provide metadata at multiple levels, you may need to extract and merge metadata from several contexts. The `Reflector` class provides two utility methods used to help with this. These methods extract **both** controller and method metadata at once, and combine them in different ways.
+Etant donné la possibilité de fournir des métadonnées à plusieurs niveaux, vous pouvez avoir besoin d'extraire et de fusionner des métadonnées provenant de plusieurs contextes. La classe `Reflector` fournit deux méthodes utilitaires utilisées pour aider à cela. Ces méthodes extraient **à la fois** les métadonnées du contrôleur et de la méthode, et les combinent de différentes manières.
 
-Consider the following scenario, where you've supplied `'roles'` metadata at both levels.
+Considérons le scénario suivant, dans lequel vous avez fourni des métadonnées `'roles'` aux deux niveaux.
 
 ```typescript
 @@filename(cats.controller)
@@ -259,7 +259,7 @@ export class CatsController {}
 }
 ```
 
-If your intent is to specify `'user'` as the default role, and override it selectively for certain methods, you would probably use the `getAllAndOverride()` method.
+Si votre intention est de spécifier `'user'` comme rôle par défaut, et de le surcharger sélectivement pour certaines méthodes, vous devriez probablement utiliser la méthode `getAllAndOverride()`.
 
 ```typescript
 const roles = this.reflector.getAllAndOverride<string[]>('roles', [
@@ -268,9 +268,9 @@ const roles = this.reflector.getAllAndOverride<string[]>('roles', [
 ]);
 ```
 
-A guard with this code, running in the context of the `create()` method, with the above metadata, would result in `roles` containing `['admin']`.
+Une garde avec ce code, exécutée dans le contexte de la méthode `create()`, avec les métadonnées ci-dessus, résulterait en un `roles` contenant `['admin']`.
 
-To get metadata for both and merge it (this method merges both arrays and objects), use the `getAllAndMerge()` method:
+Pour obtenir les métadonnées des deux et les fusionner (cette méthode fusionne à la fois les tableaux et les objets), utilisez la méthode `getAllAndMerge()` :
 
 ```typescript
 const roles = this.reflector.getAllAndMerge<string[]>('roles', [
@@ -279,6 +279,6 @@ const roles = this.reflector.getAllAndMerge<string[]>('roles', [
 ]);
 ```
 
-This would result in `roles` containing `['user', 'admin']`.
+Le résultat serait que `roles` contiendrait `['user', 'admin']`.
 
-For both of these merge methods, you pass the metadata key as the first argument, and an array of metadata target contexts (i.e., calls to the `getHandler()` and/or `getClass())` methods) as the second argument.
+Pour ces deux méthodes de fusion, vous passez la clé de métadonnées comme premier argument, et un tableau de contextes cibles de métadonnées (c'est-à-dire les appels aux méthodes `getHandler()` et/ou `getClass())`) comme second argument.
