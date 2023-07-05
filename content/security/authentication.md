@@ -1,14 +1,14 @@
-### Authentication
+### Authentification
 
-Authentication is an **essential** part of most applications. There are many different approaches and strategies to handle authentication. The approach taken for any project depends on its particular application requirements. This chapter presents several approaches to authentication that can be adapted to a variety of different requirements.
+L'authentification est un élément **essentiel** de la plupart des applications. Il existe de nombreuses approches et stratégies différentes pour gérer l'authentification. L'approche adoptée pour un projet dépend des exigences particulières de l'application. Ce chapitre présente plusieurs approches de l'authentification qui peuvent être adaptées à un grand nombre d'exigences différentes.
 
-Let's flesh out our requirements. For this use case, clients will start by authenticating with a username and password. Once authenticated, the server will issue a JWT that can be sent as a [bearer token](https://tools.ietf.org/html/rfc6750) in an authorization header on subsequent requests to prove authentication. We'll also create a protected route that is accessible only to requests that contain a valid JWT.
+Précisons nos exigences. Pour ce cas d'utilisation, les clients commenceront par s'authentifier à l'aide d'un nom d'utilisateur et d'un mot de passe. Une fois authentifié, le serveur émettra un JWT qui pourra être envoyé en tant que [bearer token](https://tools.ietf.org/html/rfc6750) (littéralement "jeton porteur") dans un en-tête d'autorisation sur les requêtes ultérieures afin de prouver l'authentification. Nous allons également créer une route protégée qui n'est accessible qu'aux requêtes contenant un JWT valide.
 
-We'll start with the first requirement: authenticating a user. We'll then extend that by issuing a JWT. Finally, we'll create a protected route that checks for a valid JWT on the request.
+Nous commencerons par la première exigence : l'authentification d'un utilisateur. Nous l'étendrons ensuite en émettant un JWT. Enfin, nous allons créer une route protégée qui vérifie que la requête contient un JWT valide.
 
-#### Creating an authentication module
+#### Créer un module d'authentification
 
-We'll start by generating an `AuthModule` and in it, an `AuthService` and an `AuthController`. We'll use the `AuthService` to implement the authentication logic, and the `AuthController` to expose the authentication endpoints.
+Nous allons commencer par générer un `AuthModule` et dans celui-ci, un `AuthService` et un `AuthController`. Nous allons utiliser le `AuthService` pour implémenter la logique d'authentification, et le `AuthController` pour exposer les terminaux d'authentification.
 
 ```bash
 $ nest g module auth
@@ -16,20 +16,20 @@ $ nest g controller auth
 $ nest g service auth
 ```
 
-As we implement the `AuthService`, we'll find it useful to encapsulate user operations in a `UsersService`, so let's generate that module and service now:
+Comme nous implémentons le `AuthService`, nous trouverons utile d'encapsuler les opérations des utilisateurs dans un `UsersService`, donc générons ce module et ce service maintenant :
 
 ```bash
 $ nest g module users
 $ nest g service users
 ```
 
-Replace the default contents of these generated files as shown below. For our sample app, the `UsersService` simply maintains a hard-coded in-memory list of users, and a find method to retrieve one by username. In a real app, this is where you'd build your user model and persistence layer, using your library of choice (e.g., TypeORM, Sequelize, Mongoose, etc.).
+Remplacez le contenu par défaut de ces fichiers générés comme indiqué ci-dessous. Pour notre exemple d'application, le `UsersService` maintient simplement une liste d'utilisateurs en mémoire codée en dur, et une méthode de recherche pour récupérer un utilisateur par son nom d'utilisateur. Dans une application réelle, c'est ici que vous construiriez votre modèle d'utilisateur et votre couche de persistance, en utilisant la bibliothèque de votre choix (par exemple, TypeORM, Sequelize, Mongoose, etc.).
 
 ```typescript
 @@filename(users/users.service)
 import { Injectable } from '@nestjs/common';
 
-// This should be a real class/interface representing a user entity
+// Il doit s'agir d'une véritable classe/interface représentant une entité utilisateur.
 export type User = any;
 
 @Injectable()
@@ -77,7 +77,7 @@ export class UsersService {
 }
 ```
 
-In the `UsersModule`, the only change needed is to add the `UsersService` to the exports array of the `@Module` decorator so that it is visible outside this module (we'll soon use it in our `AuthService`).
+Dans le `UsersModule`, le seul changement nécessaire est d'ajouter le `UsersService` au tableau des exportations du décorateur `@Module` afin qu'il soit visible en dehors de ce module (nous l'utiliserons bientôt dans notre `AuthService`).
 
 ```typescript
 @@filename(users/users.module)
@@ -100,9 +100,9 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-#### Implementing the "Sign in" endpoint
+#### Implémentation du point d'accès "Se connecter"
 
-Our `AuthService` has the job of retrieving a user and verifying the password. We create a `signIn()` method for this purpose. In the code below, we use a convenient ES6 spread operator to strip the password property from the user object before returning it. This is a common practice when returning user objects, as you don't want to expose sensitive fields like passwords or other security keys.
+Notre `AuthService` a pour tâche de récupérer un utilisateur et de vérifier son mot de passe. Nous créons une méthode `signIn()` dans ce but. Dans le code ci-dessous, nous utilisons un opérateur d'étalement ES6 pratique pour retirer la propriété password de l'objet user avant de le renvoyer. Il s'agit d'une pratique courante lors du retour d'objets utilisateurs, car vous ne souhaitez pas exposer des champs sensibles tels que des mots de passe ou d'autres clés de sécurité.
 
 ```typescript
 @@filename(auth/auth.service)
@@ -119,8 +119,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const { password, ...result } = user;
-    // TODO: Generate a JWT and return it here
-    // instead of the user object
+    // TODO : Générer un JWT et le renvoyer ici
+    // au lieu de l'objet utilisateur
     return result;
   }
 }
@@ -141,16 +141,16 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const { password, ...result } = user;
-    // TODO: Generate a JWT and return it here
-    // instead of the user object
+    // TODO : Générer un JWT et le renvoyer ici
+    // au lieu de l'objet utilisateur
     return result;
   }
 }
 ```
 
-> Warning **Warning** Of course in a real application, you wouldn't store a password in plain text. You'd instead use a library like [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), with a salted one-way hash algorithm. With that approach, you'd only store hashed passwords, and then compare the stored password to a hashed version of the **incoming** password, thus never storing or exposing user passwords in plain text. To keep our sample app simple, we violate that absolute mandate and use plain text. **Don't do this in your real app!**
+> Warning **Attention** Bien entendu, dans une application réelle, vous ne stockeriez pas un mot de passe en texte brut. Vous utiliseriez plutôt une bibliothèque comme [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), avec un algorithme de hachage à sens unique avec salage. Avec cette approche, vous ne stockeriez que des mots de passe hachés, et compareriez ensuite le mot de passe stocké à une version hachée du mot de passe **entrant**, ne stockant ou n'exposant donc jamais les mots de passe des utilisateurs en texte brut. Pour que notre exemple d'application reste simple, nous violons cette règle absolue et utilisons du texte en clair. **Ne faites pas cela dans votre application réelle !**
 
-Now, we update our `AuthModule` to import the `UsersModule`.
+Maintenant, nous mettons à jour notre `AuthModule` pour importer le `UsersModule`.
 
 ```typescript
 @@filename(auth/auth.module)
@@ -179,7 +179,7 @@ import { UsersModule } from '../users/users.module';
 export class AuthModule {}
 ```
 
-With this in place, let's open up the `AuthController` and add a `signIn()` method to it. This method will be called by the client to authenticate a user. It will receive the username and password in the request body, and will return a JWT token if the user is authenticated.
+Avec ceci en place, ouvrons le `AuthController` et ajoutons lui une méthode `signIn()`. Cette méthode sera appelée par le client pour authentifier un utilisateur. Elle recevra le nom d'utilisateur et le mot de passe dans le corps de la requête, et retournera un jeton JWT si l'utilisateur est authentifié.
 
 ```typescript
 @@filename(auth/auth.controller)
@@ -198,26 +198,26 @@ export class AuthController {
 }
 ```
 
-> info **Hint** Ideally, instead of using the `Record<string, any>` type, we should use a DTO class to define the shape of the request body. See the [validation](/techniques/validation) chapter for more information.
+> info **Astuce** Idéalement, au lieu d'utiliser le type `Record<string, any>`, nous devrions utiliser une classe DTO pour définir la forme du corps de la requête. Voir le chapitre [validation](/techniques/validation) pour plus d'informations.
 
 <app-banner-courses-auth></app-banner-courses-auth>
 
-#### JWT token
+#### Jeton JWT
 
-We're ready to move on to the JWT portion of our auth system. Let's review and refine our requirements:
+Nous sommes prêts à passer à la partie JWT de notre système d'authentification. Passons en revue et affinons nos exigences :
 
-- Allow users to authenticate with username/password, returning a JWT for use in subsequent calls to protected API endpoints. We're well on our way to meeting this requirement. To complete it, we'll need to write the code that issues a JWT.
-- Create API routes which are protected based on the presence of a valid JWT as a bearer token
+- Permettre aux utilisateurs de s'authentifier avec leur nom d'utilisateur et leur mot de passe, en renvoyant un JWT à utiliser lors d'appels ultérieurs à des points d'extrémité d'API protégés. Nous sommes sur la bonne voie pour répondre à cette exigence. Pour la compléter, nous devons écrire le code qui émet un JWT.
+- Créer des itinéraires API protégés en fonction de la présence d'un JWT valide en tant que jeton porteur.
 
-We'll need to install one additional package to support our JWT requirements:
+Nous devrons installer un package supplémentaire pour répondre à nos besoins en matière de JWT :
 
 ```bash
 $ npm install --save @nestjs/jwt
 ```
 
-> info **Hint** The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. This includes generating and verifying JWT tokens.
+> info **Astuce** Le package `@nestjs/jwt` (voir plus [ici](https://github.com/nestjs/jwt)) est un package utilitaire qui aide à la manipulation des JWT. Cela inclut la génération et la vérification des jetons JWT.
 
-To keep our services cleanly modularized, we'll handle generating the JWT in the `authService`. Open the `auth.service.ts` file in the `auth` folder, inject the `JwtService`, and update the `signIn` method to generate a JWT token as shown below:
+Pour garder nos services modulaires de manière propre, nous allons nous occuper de la génération du JWT dans le `authService`. Ouvrez le fichier `auth.service.ts` dans le dossier `auth`, injectez le `JwtService`, et mettez à jour la méthode `signIn` pour générer un jeton JWT comme montré ci-dessous :
 
 ```typescript
 @@filename(auth/auth.service)
@@ -269,28 +269,28 @@ export class AuthService {
 }
 ```
 
-We're using the `@nestjs/jwt` library, which supplies a `signAsync()` function to generate our JWT from a subset of the `user` object properties, which we then return as a simple object with a single `access_token` property. Note: we choose a property name of `sub` to hold our `userId` value to be consistent with JWT standards. Don't forget to inject the JwtService provider into the `AuthService`.
+Nous utilisons la librairie `@nestjs/jwt`, qui fournit une fonction `signAsync()` pour générer notre JWT à partir d'un sous-ensemble de propriétés de l'objet `user`, que nous retournons ensuite comme un simple objet avec une seule propriété `access_token`. Note : nous avons choisi le nom de propriété `sub` pour contenir notre valeur `userId` afin d'être cohérent avec les standards JWT. N'oubliez pas d'injecter le fournisseur JwtService dans le `AuthService`.
 
-We now need to update the `AuthModule` to import the new dependencies and configure the `JwtModule`.
+Nous devons maintenant mettre à jour le `AuthModule` pour importer les nouvelles dépendances et configurer le `JwtModule`.
 
-First, create `constants.ts` in the `auth` folder, and add the following code:
+Tout d'abord, créez `constants.ts` dans le dossier `auth`, et ajoutez le code suivant :
 
 ```typescript
 @@filename(auth/constants)
 export const jwtConstants = {
-  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+  secret: 'N UTILISEZ PAS CETTE VALEUR. CRÉEZ PLUTÔT UN SECRET COMPLEXE ET GARDEZ-LE EN SÉCURITÉ EN DEHORS DU CODE SOURCE.',
 };
 @@switch
 export const jwtConstants = {
-  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+  secret: 'N UTILISEZ PAS CETTE VALEUR. CRÉEZ PLUTÔT UN SECRET COMPLEXE ET GARDEZ-LE EN SÉCURITÉ EN DEHORS DU CODE SOURCE.',
 };
 ```
 
-We'll use this to share our key between the JWT signing and verifying steps.
+Nous l'utiliserons pour partager notre clé entre les étapes de signature et de vérification du JWT.
 
-> Warning **Warning** **Do not expose this key publicly**. We have done so here to make it clear what the code is doing, but in a production system **you must protect this key** using appropriate measures such as a secrets vault, environment variable, or configuration service.
+> Warning **Attention** **Ne pas exposer cette clé publiquement**. Nous l'avons fait ici pour que le code soit clair, mais dans un système de production **vous devez protéger cette clé** en utilisant des mesures appropriées telles qu'un coffre-fort de secrets, une variable d'environnement ou un service de configuration.
 
-Now, open `auth.module.ts` in the `auth` folder and update it to look like this:
+Maintenant, ouvrez `auth.module.ts` dans le dossier `auth` et mettez-le à jour pour qu'il ressemble à ceci :
 
 ```typescript
 @@filename(auth/auth.module)
@@ -339,22 +339,22 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 ```
 
-> hint **Hint** We're registering the `JwtModule` as global to make things easier for us. This means that we don't need to import the `JwtModule` anywhere else in our application.
+> hint **Astuce** Nous enregistrons le `JwtModule` comme global pour nous faciliter la tâche. Cela signifie que nous n'avons pas besoin d'importer le `JwtModule` ailleurs dans notre application.
 
-We configure the `JwtModule` using `register()`, passing in a configuration object. See [here](https://github.com/nestjs/jwt/blob/master/README.md) for more on the Nest `JwtModule` and [here](https://github.com/auth0/node-jsonwebtoken#usage) for more details on the available configuration options.
+Nous configurons le `JwtModule` en utilisant `register()`, en passant un objet de configuration. Voir [ici](https://github.com/nestjs/jwt/blob/master/README.md) pour plus de détails sur le Nest `JwtModule` et [ici](https://github.com/auth0/node-jsonwebtoken#usage) pour plus de détails sur les options de configuration disponibles.
 
-Let's go ahead and test our routes using cURL again. You can test with any of the `user` objects hard-coded in the `UsersService`.
+Testons à nouveau nos routes en utilisant cURL. Vous pouvez tester avec n'importe quel objet `user` codé en dur dans le `UsersService`.
 
 ```bash
-$ # POST to /auth/login
+$ # POST vers /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
 {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
-$ # Note: above JWT truncated
+$ # Note : le JWT ci-dessus a été tronqué.
 ```
 
-#### Implementing the authentication guard
+#### Mise en œuvre de la garde d'authentification
 
-We can now address our final requirement: protecting endpoints by requiring a valid JWT be present on the request. We'll do this by creating an `AuthGuard` that we can use to protect our routes.
+Nous pouvons maintenant aborder notre dernière exigence : protéger les endpoints en exigeant qu'un JWT valide soit présent dans la requête. Nous allons le faire en créant une `AuthGuard` que nous pourrons utiliser pour protéger nos routes.
 
 ```typescript
 @@filename(auth/auth.guard)
@@ -385,8 +385,8 @@ export class AuthGuard implements CanActivate {
           secret: jwtConstants.secret
         }
       );
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
+      // 💡 Nous attribuons ici le payload à l'objet de la requête
+      // afin que nous puissions y accéder dans nos gestionnaires de routes
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();
@@ -401,9 +401,9 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
-We can now implement our protected route and register our `AuthGuard` to protect it.
+Nous pouvons maintenant implémenter notre route protégée et enregistrer notre `AuthGuard` pour la protéger.
 
-Open the `auth.controller.ts` file and update it as shown below:
+Ouvrez le fichier `auth.controller.ts` et mettez-le à jour comme indiqué ci-dessous :
 
 ```typescript
 @@filename(auth.controller)
@@ -438,9 +438,9 @@ export class AuthController {
 }
 ```
 
-We're applying the `AuthGuard` that we just created to the `GET /profile` route so that it will be protected.
+Nous appliquons le `AuthGuard` que nous venons de créer à la route `GET /profile` afin qu'elle soit protégée.
 
-Ensure the app is running, and test the routes using `cURL`.
+Assurez-vous que l'application est lancée, et testez les routes en utilisant `cURL`.
 
 ```bash
 $ # GET /profile
@@ -451,20 +451,20 @@ $ # POST /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
 {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm..."}
 
-$ # GET /profile using access_token returned from previous step as bearer code
+$ # GET /profile en utilisant le jeton d'accès (access_token) renvoyé à l'étape précédente comme jeton porteur
 $ curl http://localhost:3000/auth/profile -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm..."
 {"sub":1,"username":"john","iat":...,"exp":...}
 ```
 
-Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs. If you wait 60 seconds after authenticating before attempting a `GET /auth/profile` request, you'll receive a `401 Unauthorized` response. This is because `@nestjs/jwt` automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
+Notez que dans le `AuthModule`, nous avons configuré le JWT pour avoir une expiration de `60 seconds`. C'est une expiration trop courte, et traiter les détails de l'expiration et du rafraîchissement des jetons dépasse le cadre de cet article. Cependant, nous avons choisi cela pour démontrer une qualité importante des JWTs. Si vous attendez 60 secondes après l'authentification avant de tenter une requête `GET /auth/profile`, vous recevrez une réponse `401 Unauthorized`. C'est parce que `@nestjs/jwt` vérifie automatiquement le délai d'expiration du JWT, vous évitant ainsi d'avoir à le faire dans votre application.
 
-We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server.
+Nous avons maintenant terminé la mise en œuvre de l'authentification JWT. Les clients JavaScript (tels que Angular/React/Vue) et autres applications JavaScript peuvent désormais s'authentifier et communiquer en toute sécurité avec notre serveur API.
 
-#### Enable authentication globally
+#### Activer l'authentification globalement
 
-If the vast majority of your endpoints should be protected by default, you can register the authentication guard as a [global guard](/guards#binding-guards) and instead of using `@UseGuards()` decorator on top of each controller, you could simply flag which routes should be public.
+Si la grande majorité de vos points d'accès doivent être protégés par défaut, vous pouvez enregistrer la garde d'authentification comme une [garde globale](/guards#liaison-des-gardes) et au lieu d'utiliser le décorateur `@UseGuards()` au-dessus de chaque contrôleur, vous pouvez simplement indiquer quelles routes doivent être publiques.
 
-First, register the `AuthGuard` as a global guard using the following construction (in any module, for example, in the `AuthModule`):
+Tout d'abord, enregistrez le `AuthGuard` en tant que garde globale en utilisant la construction suivante (dans n'importe quel module, par exemple, dans le `AuthModule`) :
 
 ```typescript
 providers: [
@@ -475,9 +475,9 @@ providers: [
 ],
 ```
 
-With this in place, Nest will automatically bind `AuthGuard` to all endpoints.
+Avec ceci en place, Nest va automatiquement lier `AuthGuard` à tous les endpoints.
 
-Now we must provide a mechanism for declaring routes as public. For this, we can create a custom decorator using the `SetMetadata` decorator factory function.
+Nous devons maintenant fournir un mécanisme pour déclarer les routes comme publiques. Pour cela, nous pouvons créer un décorateur personnalisé en utilisant la fonction d'usine de décorateur `SetMetadata`.
 
 ```typescript
 import { SetMetadata } from '@nestjs/common';
@@ -486,9 +486,9 @@ export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 ```
 
-In the file above, we exported two constants. One being our metadata key named `IS_PUBLIC_KEY`, and the other being our new decorator itself that we’re going to call `Public` (you can alternatively name it `SkipAuth` or `AllowAnon`, whatever fits your project).
+Dans le fichier ci-dessus, nous avons exporté deux constantes. L'une est notre clé de métadonnées nommée `IS_PUBLIC_KEY`, et l'autre est notre nouveau décorateur que nous allons appeler `Public` (vous pouvez alternativement le nommer `SkipAuth` ou `AllowAnon`, selon ce qui convient à votre projet).
 
-Now that we have a custom `@Public()` decorator, we can use it to decorate any method, as follows:
+Maintenant que nous avons un décorateur personnalisé `@Public()`, nous pouvons l'utiliser pour décorer n'importe quelle méthode, comme suit :
 
 ```typescript
 @Public()
@@ -498,7 +498,7 @@ findAll() {
 }
 ```
 
-Lastly, we need the `AuthGuard` to return `true` when the `"isPublic"` metadata is found. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
+Enfin, nous avons besoin que le `AuthGuard` retourne `true` lorsque la métadonnée `"isPublic"` est trouvée. Pour cela, nous allons utiliser la classe `Reflector` (en lire plus [ici](/guards#mettre-en-place-lensemble)).
 
 ```typescript
 @Injectable()
@@ -511,7 +511,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
     if (isPublic) {
-      // 💡 See this condition
+      // 💡 Voir cette condition
       return true;
     }
 
@@ -524,8 +524,8 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
+      // 💡 Nous attribuons ici le payload à l'objet de la requête
+      // afin que nous puissions y accéder dans nos gestionnaires de routes
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();
@@ -540,12 +540,12 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
-#### Passport integration
+#### Intégration de Passport
 
-[Passport](https://github.com/jaredhanson/passport) is the most popular node.js authentication library, well-known by the community and successfully used in many production applications. It's straightforward to integrate this library with a **Nest** application using the `@nestjs/passport` module.
+[Passport](https://github.com/jaredhanson/passport) est la bibliothèque d'authentification node.js la plus populaire, bien connue de la communauté et utilisée avec succès dans de nombreuses applications de production. Il est facile d'intégrer cette bibliothèque dans une application **Nest** en utilisant le module `@nestjs/passport`.
 
-To learn how you can integrate Passport with NestJS, check out this [chapter](/recipes/passport).
+Pour savoir comment intégrer Passport à NestJS, consultez ce [chapitre](/recipes/passport).
 
-#### Example
+#### Exemple
 
-You can find a complete version of the code in this chapter [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
+Vous trouverez une version complète du code de ce chapitre [ici](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
