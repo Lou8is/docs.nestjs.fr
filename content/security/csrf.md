@@ -1,43 +1,43 @@
-### CSRF Protection
+### Protection CSRF
 
-Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attack you can use the [csurf](https://github.com/expressjs/csurf) package.
+Cross-site request forgery (également connu sous le nom de CSRF ou XSRF) est un type d'exploitation malveillante d'un site web où des commandes **non autorisées** sont transmises par un utilisateur en qui l'application web a confiance. Pour atténuer ce type d'attaque, vous pouvez utiliser le package [csurf](https://github.com/expressjs/csurf).
 
-#### Use with Express (default)
+#### Utilisation avec Express (par défaut)
 
-Start by installing the required package:
+Commencez par installer le package requis :
 
 ```bash
 $ npm i --save csurf
 ```
 
-> warning **Warning** This package is deprecated, refer to [`csurf` docs](https://github.com/expressjs/csurf#csurf) for more information.
+> warning **Attention** Ce package est obsolète, référez-vous à la [documentation `csurf`](https://github.com/expressjs/csurf#csurf) pour plus d'informations.
 
-> warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
+> warning **Attention** Comme expliqué dans la [documentation `csurf`](https://github.com/expressjs/csurf#csurf), ce middleware nécessite que le middleware de session ou le `cookie-parser` soit initialisé en premier. Veuillez consulter cette documentation pour plus d'instructions.
 
-Once the installation is complete, apply the `csurf` middleware as global middleware.
+Une fois l'installation terminée, appliquez le middleware `csurf` en tant que middleware global.
 
 ```typescript
 import * as csurf from 'csurf';
 // ...
-// somewhere in your initialization file
+// quelque part dans votre fichier d'initialisation
 app.use(csurf());
 ```
 
-#### Use with Fastify
+#### Utilisation avec Fastify
 
-Start by installing the required package:
+Commencez par installer le package requis :
 
 ```bash
 $ npm i --save @fastify/csrf-protection
 ```
 
-Once the installation is complete, register the `@fastify/csrf-protection` plugin, as follows:
+Une fois l'installation terminée, enregistrez le plugin `@fastify/csrf-protection`, comme suit :
 
 ```typescript
 import fastifyCsrf from '@fastify/csrf-protection';
 // ...
-// somewhere in your initialization file after registering some storage plugin
+// quelque part dans votre fichier d'initialisation après l'enregistrement d'un plugin de stockage
 await app.register(fastifyCsrf);
 ```
 
-> warning **Warning** As explained in the `@fastify/csrf-protection` docs [here](https://github.com/fastify/csrf-protection#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.
+> warning **Attention** Comme expliqué dans la documentation `@fastify/csrf-protection` [ici](https://github.com/fastify/csrf-protection#usage), ce plugin nécessite l'initialisation préalable d'un plugin de stockage. Veuillez consulter cette documentation pour plus d'instructions.
