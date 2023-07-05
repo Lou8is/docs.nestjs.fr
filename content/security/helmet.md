@@ -1,26 +1,26 @@
 ### Helmet
 
-[Helmet](https://github.com/helmetjs/helmet) can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of smaller middleware functions that set security-related HTTP headers (read [more](https://github.com/helmetjs/helmet#how-it-works)).
+[Helmet](https://github.com/helmetjs/helmet) peut vous aider à protéger votre application contre certaines vulnérabilités Web bien connues en définissant les en-têtes HTTP de manière appropriée. En général, Helmet est juste une collection de fonctions middleware plus petites qui définissent des en-têtes HTTP liés à la sécurité (en lire [plus](https://github.com/helmetjs/helmet#how-it-works)).
 
-> info **Hint** Note that applying `helmet` as global or registering it must come before other calls to `app.use()` or setup functions that may call `app.use()`. This is due to the way the underlying platform (i.e., Express or Fastify) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to routes defined after the middleware.
+> info **Astuce** Notez que l'application de `helmet` en tant que global ou son enregistrement doit venir avant d'autres appels à `app.use()` ou des fonctions de configuration qui peuvent appeler `app.use()`. Ceci est dû à la façon dont la plateforme sous-jacente (c'est-à-dire Express ou Fastify) fonctionne, où l'ordre dans lequel les middlewares/routes sont définis est important. Si vous utilisez un middleware comme `helmet` ou `cors` après avoir défini une route, alors ce middleware ne s'appliquera pas à cette route, il ne s'appliquera qu'aux routes définies après le middleware.
 
-#### Use with Express (default)
+#### Utilisation avec Express (par défaut)
 
-Start by installing the required package.
+Commencez par installer le package requis.
 
 ```bash
 $ npm i --save helmet
 ```
 
-Once the installation is complete, apply it as a global middleware.
+Une fois l'installation terminée, appliquez-le en tant que middleware global.
 
 ```typescript
 import helmet from 'helmet';
-// somewhere in your initialization file
+// quelque part dans votre fichier d'initialisation
 app.use(helmet());
 ```
 
-> warning **Warning** When using `helmet`, `@apollo/server` (4.x), and the [Apollo Sandbox](https://docs.nestjs.com/graphql/quick-start#apollo-sandbox), there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the Apollo Sandbox. To solve this issue configure the CSP as shown below:
+> warning **Attention** Lorsque vous utilisez `helmet`, `@apollo/server` (4.x), et la [Sandbox Apollo](https://docs.nestjs.com/graphql/quick-start#apollo-sandbox), il peut y avoir un problème avec [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sur la Sandbox Apollo. Pour résoudre ce problème, configurez le CSP comme indiqué ci-dessous :
 >
 > ```typescript
 > app.use(helmet({
@@ -35,23 +35,23 @@ app.use(helmet());
 >   },
 > }));
 
-#### Use with Fastify
+#### Utilisation avec Fastify
 
-If you are using the `FastifyAdapter`, install the [@fastify/helmet](https://github.com/fastify/fastify-helmet) package:
+Si vous utilisez `FastifyAdapter`, installez le package [@fastify/helmet](https://github.com/fastify/fastify-helmet) :
 
 ```bash
 $ npm i --save @fastify/helmet
 ```
 
-[fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Reference/Plugins/), i.e., by using `app.register()`:
+[fastify-helmet](https://github.com/fastify/fastify-helmet) ne doit pas être utilisé comme un middleware, mais comme un [plugin Fastify](https://www.fastify.io/docs/latest/Reference/Plugins/), c'est-à-dire en utilisant `app.register()` :
 
 ```typescript
 import helmet from '@fastify/helmet'
-// somewhere in your initialization file
+// quelque part dans votre fichier d'initialisation
 await app.register(helmet)
 ```
 
-> warning **Warning** When using `apollo-server-fastify` and `@fastify/helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the GraphQL playground, to solve this collision, configure the CSP as shown below:
+> warning **Attention** Lors de l'utilisation de `apollo-server-fastify` et `@fastify/helmet`, il peut y avoir un problème avec [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sur le terrain de jeu GraphQL, pour résoudre cette collision, configurez le CSP comme indiqué ci-dessous :
 >
 > ```typescript
 > await app.register(fastifyHelmet, {
@@ -77,7 +77,7 @@ await app.register(helmet)
 >    },
 >  });
 >
-> // If you are not going to use CSP at all, you can use this:
+> // Si vous n'avez pas l'intention d'utiliser CSP, vous pouvez utiliser ceci :
 > await app.register(fastifyHelmet, {
 >   contentSecurityPolicy: false,
 > });
