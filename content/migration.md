@@ -1,29 +1,29 @@
-### Migration guide
+### Guide de migration
 
-This article provides a set of guidelines for migrating from Nest version 9 to version 10.
-To learn more about the new features we've added in v10, check out this [article](https://trilon.io/blog/nestjs-10-is-now-available).
-There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/releases/tag/v10.0.0).
+Cet article fournit un ensemble de lignes directrices pour la migration de la version 9 de Nest vers la version 10.
+Pour en savoir plus sur les nouvelles fonctionnalités de la version 10, consultez cet [article](https://trilon.io/blog/nestjs-10-is-now-available).
+Il y a eu quelques changements très mineurs qui ne devraient pas affecter la plupart des utilisateurs - vous pouvez en trouver la liste complète [ici](https://github.com/nestjs/nest/releases/tag/v10.0.0).
 
-### Upgrading packages
+### Mise à jour des packages
 
-While you can upgrade your packages manually, we recommend using [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
+Bien que vous puissiez mettre à jour vos packages manuellement, nous vous recommandons d'utiliser [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
 
-### Cache module
+### Module de cache
 
-The `CacheModule` has been removed from the `@nestjs/common` package and is now available as a standalone package - `@nestjs/cache-manager`. This change was made to avoid unnecessary dependencies in the `@nestjs/common` package. You can learn more about the `@nestjs/cache-manager` package [here](https://docs.nestjs.com/techniques/caching).
+Le `CacheModule` a été supprimé du package `@nestjs/common` et est maintenant disponible en tant que package autonome - `@nestjs/cache-manager`. Ce changement a été fait pour éviter des dépendances inutiles dans le package `@nestjs/common`. Vous pouvez en savoir plus sur le package `@nestjs/cache-manager` [ici](https://docs.nestjs.com/techniques/caching).
 
-### Deprecations
+### Dépréciations
 
-All deprecated methods & modules have been removed.
+Toutes les méthodes et modules obsolètes ont été supprimés.
 
-### CLI Plugins and TypeScript >= 4.8
+### Plugins CLI et TypeScript >= 4.8
 
-NestJS CLI Plugins (available for `@nestjs/swagger` and `@nestjs/graphql` packages) will now require TypeScript >= v4.8 and so older versions of TypeScript will no longer be supported. The reason for this change is that in [TypeScript v4.8 introduced several breaking changes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-8.html#decorators-are-placed-on-modifiers-on-typescripts-syntax-trees) in its Abstract Syntax Tree (AST) which we use to auto-generate OpenAPI and GraphQL schemas.
+Les plugins NestJS CLI (disponibles pour les packages `@nestjs/swagger` et `@nestjs/graphql`) nécessiteront désormais TypeScript >= v4.8 et donc les versions plus anciennes de TypeScript ne seront plus supportées. La raison de ce changement est que [TypeScript v4.8 a introduit plusieurs changements importants](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-8.html#decorators-are-placed-on-modifiers-on-typescripts-syntax-trees) dans son arbre syntaxique abstrait (AST) que nous utilisons pour générer automatiquement les schémas OpenAPI et GraphQL.
 
-### Dropping support for Node.js v12
+### Abandon du support de Node.js v12
 
-As of NestJS 10, we no longer support Node.js v12, as [v12 went EOL](https://twitter.com/nodejs/status/1524081123579596800) on April 30, 2022. This means that NestJS 10 requires Node.js v16 or higher. This decision was made to allow us to finally set target to `ES2021` in our TypeScript configuration, instead of shipping polyfills as we did in the past.
+À partir de NestJS 10, nous ne supportons plus Node.js v12, car [v12 est devenu EOL](https://twitter.com/nodejs/status/1524081123579596800) le 30 avril 2022 (EOL signifie End Of Life, littéralement fin de vie). Cela signifie que NestJS 10 nécessite Node.js v16 ou plus. Cette décision a été prise pour nous permettre de fixer enfin la cible à `ES2021` dans notre configuration TypeScript, au lieu d'envoyer des polyfills comme nous le faisions dans le passé.
 
-From now on, every official NestJS package will be compiled to `ES2021` by default, which should result in a smaller library size and sometimes even (slightly) better performance.
+A partir de maintenant, chaque package officiel de NestJS sera compilé en `ES2021` par défaut, ce qui devrait se traduire par une taille de bibliothèque plus petite et parfois même par des performances (légèrement) meilleures.
 
-We also strongly recommend using the latest LTS version.
+Il est également fortement recommandé d'utiliser la dernière version LTS (Long-Time Support, littéralement Support Longue-Durée).
