@@ -1,21 +1,21 @@
-### Standalone applications
+### Applications indépendantes
 
-There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest **standalone application** (without any network listeners). The Nest standalone application is a wrapper around the Nest **IoC container**, which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the standalone application object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted **CRON** jobs. You can even build a **CLI** on top of it.
+Il existe plusieurs façons de monter une application Nest. Vous pouvez créer une application web, un microservice ou simplement une **application autonome** Nest (sans aucun écouteur réseau). L'application autonome Nest est une enveloppe autour du **conteneur IoC** Nest, qui contient toutes les classes instanciées. Nous pouvons obtenir une référence à n'importe quelle instance existante à partir de n'importe quel module importé en utilisant directement l'objet de l'application autonome. Ainsi, vous pouvez tirer parti du cadre de travail Nest partout, y compris, par exemple, dans des tâches **CRON** scriptées. Vous pouvez même construire une **CLI** par-dessus.
 
-#### Getting started
+#### Pour commencer
 
-To create a Nest standalone application, use the following construction:
+Pour créer une application autonome Nest, utilisez la construction suivante :
 
 ```typescript
 @@filename()
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  // application logic...
+  // logique d'application...
 }
 bootstrap();
 ```
 
-The standalone application object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of methods that we want to call from within a CRON job.
+L'objet d'application autonome vous permet d'obtenir une référence à n'importe quelle instance enregistrée dans l'application Nest. Imaginons que nous ayons un `TasksService` dans le `TasksModule`. Cette classe fournit un ensemble de méthodes que nous voulons appeler à partir d'un travail CRON.
 
 ```typescript
 @@filename()
@@ -23,7 +23,7 @@ const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.get(TasksService);
 ```
 
-To access the `TasksService` instance we use the `get()` method. The `get()` method acts like a **query** that searches for an instance in each registered module. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
+Pour accéder à l'instance de `TasksService`, nous utilisons la méthode `get()`. La méthode `get()` agit comme une **requête** qui recherche une instance dans chaque module enregistré. Alternativement, pour une vérification stricte du contexte, passez un objet options avec la propriété `strict : true`. Avec cette option en vigueur, vous devez naviguer à travers des modules spécifiques pour obtenir une instance particulière du contexte sélectionné.
 
 ```typescript
 @@filename()
@@ -31,7 +31,7 @@ const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
-Following is a summary of the methods available for retrieving instance references from the standalone application object.
+Voici un résumé des méthodes disponibles pour récupérer les références d'instance de l'objet d'application autonome.
 
 <table>
   <tr>
@@ -39,7 +39,7 @@ Following is a summary of the methods available for retrieving instance referenc
       <code>get()</code>
     </td>
     <td>
-      Retrieves an instance of a controller or provider (including guards, filters, and so on) available in the application context.
+      Récupère une instance d'un contrôleur ou d'un fournisseur (y compris les gardes, les filtres, etc.) disponible dans le contexte de l'application.
     </td>
   </tr>
   <tr>
@@ -47,25 +47,25 @@ Following is a summary of the methods available for retrieving instance referenc
       <code>select()</code>
     </td>
     <td>
-      Navigates through the module's graph to pull out a specific instance of the selected module (used together with strict mode as described above).
+      Navigue dans le graphe du module pour extraire une instance spécifique du module sélectionné (utilisé avec le mode strict décrit ci-dessus).
     </td>
   </tr>
 </table>
 
-> info **Hint** In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
+> info **Astuce** En mode non strict, le module racine est sélectionné par défaut. Pour sélectionner un autre module, vous devez naviguer manuellement dans le graphe des modules, étape par étape.
 
-If you want the node application to close after the script finishes (e.g., for a script running CRON jobs), add `await app.close()` to the end of your `bootstrap` function:
+Si vous voulez que l'application node se ferme après la fin du script (par exemple, pour un script exécutant des tâches CRON), ajoutez `await app.close()` à la fin de votre fonction `bootstrap` :
 
 ```typescript
 @@filename()
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  // application logic...
+  // logique d'application...
   await app.close();
 }
 bootstrap();
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/18-context).
+Un exemple fonctionnel est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/18-context).
