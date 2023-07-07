@@ -1,46 +1,46 @@
 ### Cookies
 
-An **HTTP cookie** is a small piece of data stored by the user's browser. Cookies were designed to be a reliable mechanism for websites to remember stateful information. When the user visits the website again, the cookie is automatically sent with the request.
+Un **cookie HTTP** est un petit élément de données stocké par le navigateur de l'utilisateur. Les cookies ont été conçus comme un mécanisme fiable permettant aux sites web de se souvenir d'informations relatives à un état. Lorsque l'utilisateur visite à nouveau le site web, le cookie est automatiquement envoyé avec la requête.
 
-#### Use with Express (default)
+#### Utiliser avec Express (par défaut)
 
-First install the [required package](https://github.com/expressjs/cookie-parser) (and its types for TypeScript users):
+Commencez par installer le [package requis](https://github.com/expressjs/cookie-parser) (et ses types pour les utilisateurs de TypeScript) :
 
 ```shell
 $ npm i cookie-parser
 $ npm i -D @types/cookie-parser
 ```
 
-Once the installation is complete, apply the `cookie-parser` middleware as global middleware (for example, in your `main.ts` file).
+Une fois l'installation terminée, appliquez le middleware `cookie-parser` comme middleware global (par exemple, dans votre fichier `main.ts`).
 
 ```typescript
 import cookieParser from 'cookie-parser';
-// somewhere in your initialization file
+// quelque part dans votre fichier d'initialisation
 app.use(cookieParser());
 ```
 
-You can pass several options to the `cookieParser` middleware:
+Vous pouvez passer plusieurs options au middleware `cookieParser` :
 
-- `secret` a string or array used for signing cookies. This is optional and if not specified, will not parse signed cookies. If a string is provided, this is used as the secret. If an array is provided, an attempt will be made to unsign the cookie with each secret in order.
-- `options` an object that is passed to `cookie.parse` as the second option. See [cookie](https://www.npmjs.org/package/cookie) for more information.
+- `secret` : une chaîne de caractères ou un tableau utilisé pour signer les cookies. Ceci est optionnel et si ce n'est pas spécifié, les cookies signés ne seront pas analysés. Si une chaîne de caractères est fournie, elle est utilisée comme secret. Si un tableau est fourni, une tentative sera faite pour vérifier le cookie avec chaque secret dans l'ordre.
+- `options` : un objet qui est passé à `cookie.parse` comme deuxième option. Voir [cookie](https://www.npmjs.org/package/cookie) pour plus d'informations.
 
-The middleware will parse the `Cookie` header on the request and expose the cookie data as the property `req.cookies` and, if a secret was provided, as the property `req.signedCookies`. These properties are name value pairs of the cookie name to cookie value.
+Le middleware va analyser l'en-tête `Cookie` de la requête et exposer les données du cookie en tant que propriété `req.cookies` et, si un secret a été fourni, en tant que propriété `req.signedCookies`. Ces propriétés sont des paires nom-valeur du nom du cookie et de la valeur du cookie.
 
-When secret is provided, this module will unsign and validate any signed cookie values and move those name value pairs from `req.cookies` into `req.signedCookies`. A signed cookie is a cookie that has a value prefixed with `s:`. Signed cookies that fail signature validation will have the value `false` instead of the tampered value.
+Lorsque secret est fourni, ce module désignera et validera toutes les valeurs des cookies signés et déplacera ces paires nom-valeur de `req.cookies` dans `req.signedCookies`. Un cookie signé est un cookie dont la valeur est préfixée par `s:`. Les cookies signés qui échouent à la validation de la signature auront la valeur `false` à la place de la valeur altérée.
 
-With this in place, you can now read cookies from within the route handlers, as follows:
+Ainsi, vous pouvez maintenant lire les cookies à partir des gestionnaires de routes, comme suit :
 
 ```typescript
 @Get()
 findAll(@Req() request: Request) {
-  console.log(request.cookies); // or "request.cookies['cookieKey']"
-  // or console.log(request.signedCookies);
+  console.log(request.cookies); // ou "request.cookies['cookieKey']"
+  // ou console.log(request.signedCookies);
 }
 ```
 
-> info **Hint** The `@Req()` decorator is imported from the `@nestjs/common`, while `Request` from the `express` package.
+> info **Astuce** Le décorateur `@Req()` est importé du package `@nestjs/common`, tandis que `Request` est importé du package `express`.
 
-To attach a cookie to an outgoing response, use the `Response#cookie()` method:
+Pour attacher un cookie à une réponse sortante, utilisez la méthode `Response#cookie()` :
 
 ```typescript
 @Get()
@@ -49,45 +49,45 @@ findAll(@Res({ passthrough: true }) response: Response) {
 }
 ```
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez ici (/controllers#approche-spécifique-aux-bibliothèques).
 
-> info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `Response` from the `express` package.
+> info **Astuce** Le décorateur `@Res()` est importé du package `@nestjs/common`, tandis que `Response` est importé du package `express`.
 
-#### Use with Fastify
+#### Utilisation avec Fastify
 
-First install the required package:
+Installez d'abord le package requis :
 
 ```shell
 $ npm i @fastify/cookie
 ```
 
-Once the installation is complete, register the `@fastify/cookie` plugin:
+Une fois l'installation terminée, enregistrez le plugin `@fastify/cookie` :
 
 ```typescript
 import fastifyCookie from '@fastify/cookie';
 
-// somewhere in your initialization file
+// quelque part dans votre fichier d'initialisation
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 );
 await app.register(fastifyCookie, {
-  secret: 'my-secret', // for cookies signature
+  secret: 'my-secret', // pour la signature des cookies
 });
 ```
 
-With this in place, you can now read cookies from within the route handlers, as follows:
+Ceci étant fait, vous pouvez maintenant lire les cookies à partir des gestionnaires d'itinéraires, comme suit :
 
 ```typescript
 @Get()
 findAll(@Req() request: FastifyRequest) {
-  console.log(request.cookies); // or "request.cookies['cookieKey']"
+  console.log(request.cookies); // ou "request.cookies['cookieKey']"
 }
 ```
 
-> info **Hint** The `@Req()` decorator is imported from the `@nestjs/common`, while `FastifyRequest` from the `fastify` package.
+> info **Astuce** Le décorateur `@Req()` est importé du paquet `@nestjs/common`, tandis que `FastifyRequest` est importé du paquet `fastify`.
 
-To attach a cookie to an outgoing response, use the `FastifyReply#setCookie()` method:
+Pour attacher un cookie à une réponse sortante, utilisez la méthode `FastifyReply#setCookie()` :
 
 ```typescript
 @Get()
@@ -96,15 +96,15 @@ findAll(@Res({ passthrough: true }) response: FastifyReply) {
 }
 ```
 
-To read more about `FastifyReply#setCookie()` method, check out this [page](https://github.com/fastify/fastify-cookie#sending).
+Pour en savoir plus sur la méthode `FastifyReply#setCookie()`, consultez cette [page](https://github.com/fastify/fastify-cookie#sending).
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez ici (/controllers#approche-spécifique-aux-bibliothèques).
 
-> info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `FastifyReply` from the `fastify` package.
+> info **Astuce** Le décorateur `@Res()` est importé du paquet `@nestjs/common`, tandis que `FastifyReply` est importé du paquet `fastify`.
 
-#### Creating a custom decorator (cross-platform)
+#### Création d'un décorateur personnalisé (multiplateforme)
 
-To provide a convenient, declarative way of accessing incoming cookies, we can create a [custom decorator](/custom-decorators).
+Pour disposer d'un moyen pratique et déclaratif d'accéder aux cookies entrants, nous pouvons créer un [décorateur personnalisé](/custom-decorators).
 
 ```typescript
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
@@ -117,9 +117,9 @@ export const Cookies = createParamDecorator(
 );
 ```
 
-The `@Cookies()` decorator will extract all cookies, or a named cookie from the `req.cookies` object and populate the decorated parameter with that value.
+Le décorateur `@Cookies()` extrait tous les cookies ou un cookie nommé de l'objet `req.cookies` et remplit le paramètre décoré avec cette valeur.
 
-With this in place, we can now use the decorator in a route handler signature, as follows:
+Ceci étant fait, nous pouvons maintenant utiliser le décorateur dans la signature d'un gestionnaire de route, comme suit :
 
 ```typescript
 @Get()
