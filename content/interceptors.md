@@ -14,7 +14,7 @@ Les intercepteurs disposent d'un ensemble de fonctionnalités utiles qui s'inspi
 
 #### Principes de base
 
-Chaque intercepteur implémente la méthode `intercept()`, qui prend deux arguments. Le premier est l'instance `ExecutionContext` (exactement le même objet que pour [les gardes](/guards)). Le `ExecutionContext` hérite de `ArgumentsHost`. Nous avons déjà vu `ArgumentsHost` dans le chapitre sur les filtres d'exception. Là, nous avons vu que c'est une enveloppe autour des arguments qui ont été passés au gestionnaire original, et qui contient différentes listes d'arguments basées sur le type de l'application. Vous pouvez vous référer aux [filtres d'exception](https://docs.nestjs.com/exception-filters#arguments-host) pour plus d'informations sur ce sujet.
+Chaque intercepteur implémente la méthode `intercept()`, qui prend deux arguments. Le premier est l'instance `ExecutionContext` (exactement le même objet que pour [les gardes](/guards)). Le `ExecutionContext` hérite de `ArgumentsHost`. Nous avons déjà vu `ArgumentsHost` dans le chapitre sur les filtres d'exception. Là, nous avons vu que c'est une enveloppe autour des arguments qui ont été passés au gestionnaire original, et qui contient différentes listes d'arguments basées sur le type de l'application. Vous pouvez vous référer aux [filtres d'exception](/exception-filters#argumentshost) pour plus d'informations sur ce sujet.
 
 #### Contexte d'exécution
 

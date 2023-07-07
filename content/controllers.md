@@ -8,7 +8,7 @@ L'objectif d'un contrôleur est de recevoir des requêtes spécifiques pour l'ap
 
 Pour créer un contrôleur de base, nous utilisons des classes et des **décorateurs**. Les décorateurs associent les classes aux métadonnées requises et permettent à Nest de créer une carte de routage (reliant les requêtes aux contrôleurs correspondants).
 
-> info **Astuce** Pour créer rapidement un contrôleur CRUD avec la [validation](https://docs.nestjs.com/techniques/validation) intégrée, vous pouvez utiliser le [générateur CRUD](https://docs.nestjs.com/recipes/crud-generator#crud-generator) de la CLI: `nest g resource [nom]`.
+> info **Astuce** Pour créer rapidement un contrôleur CRUD avec la [validation](/techniques/validation) intégrée, vous pouvez utiliser le [générateur CRUD](/recipes/crud-generator#crud-generator) de la CLI: `nest g resource [nom]`.
 
 #### Routage
 
@@ -408,7 +408,7 @@ async create(createCatDto) {
 }
 ```
 
-> info **Astuce** Notre `ValidationPipe` peut filtrer les propriétés qui ne doivent pas être reçues par le handler de la méthode. Dans ce cas, nous pouvons établir une liste des propriétés acceptables, et toute propriété non incluse dans la liste est automatiquement retirée de l'objet résultant. Dans l'exemple `CreateCatDto`, notre liste est constituée des propriétés `name`, `age`, et `breed`. Pour en savoir plus [ici](https://docs.nestjs.com/techniques/validation#stripping-properties).
+> info **Astuce** Notre `ValidationPipe` peut filtrer les propriétés qui ne doivent pas être reçues par le handler de la méthode. Dans ce cas, nous pouvons établir une liste des propriétés acceptables, et toute propriété non incluse dans la liste est automatiquement retirée de l'objet résultant. Dans l'exemple `CreateCatDto`, notre liste est constituée des propriétés `name`, `age`, et `breed`. Pour en savoir plus [ici](/techniques/validation#stripping-properties).
 
 #### Gestion des erreurs
 

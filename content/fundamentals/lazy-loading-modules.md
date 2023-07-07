@@ -6,7 +6,7 @@ Le lazy loading peut aider à réduire le temps de démarrage en chargeant uniqu
 
 > info **Astuce** Si vous êtes familier avec le framework **Angular**, vous avez peut-être déjà vu le terme " modules lazy-loading ". Sachez que cette technique est **fonctionnellement différente** dans Nest et qu'il s'agit donc d'une fonctionnalité entièrement différente qui partage des conventions de dénomination similaires.
 
-> warning **Attention** Notez que les [méthodes d'accrochage au cycle de vie](https://docs.nestjs.com/fundamentals/lifecycle-events) ne sont pas invoquées dans les modules et services chargés paresseusement.
+> warning **Attention** Notez que les [méthodes d'accrochage au cycle de vie](/fundamentals/lifecycle-events) ne sont pas invoquées dans les modules et services chargés paresseusement.
 
 #### Pour commencer
 

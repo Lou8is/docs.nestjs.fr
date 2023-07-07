@@ -20,7 +20,7 @@ import helmet from 'helmet';
 app.use(helmet());
 ```
 
-> warning **Attention** Lorsque vous utilisez `helmet`, `@apollo/server` (4.x), et la [Sandbox Apollo](https://docs.nestjs.com/graphql/quick-start#apollo-sandbox), il peut y avoir un problème avec [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sur la Sandbox Apollo. Pour résoudre ce problème, configurez le CSP comme indiqué ci-dessous :
+> warning **Attention** Lorsque vous utilisez `helmet`, `@apollo/server` (4.x), et la [Sandbox Apollo](/graphql/quick-start#apollo-sandbox), il peut y avoir un problème avec [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) sur la Sandbox Apollo. Pour résoudre ce problème, configurez le CSP comme indiqué ci-dessous :
 >
 > ```typescript
 > app.use(helmet({

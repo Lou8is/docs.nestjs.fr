@@ -10,7 +10,7 @@ Bien que vous puissiez mettre à jour vos packages manuellement, nous vous recom
 
 ### Module de cache
 
-Le `CacheModule` a été supprimé du package `@nestjs/common` et est maintenant disponible en tant que package autonome - `@nestjs/cache-manager`. Ce changement a été fait pour éviter des dépendances inutiles dans le package `@nestjs/common`. Vous pouvez en savoir plus sur le package `@nestjs/cache-manager` [ici](https://docs.nestjs.com/techniques/caching).
+Le `CacheModule` a été supprimé du package `@nestjs/common` et est maintenant disponible en tant que package autonome - `@nestjs/cache-manager`. Ce changement a été fait pour éviter des dépendances inutiles dans le package `@nestjs/common`. Vous pouvez en savoir plus sur le package `@nestjs/cache-manager` [ici](/techniques/caching).
 
 ### Dépréciations
 

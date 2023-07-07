@@ -101,7 +101,7 @@ export interface RpcArgumentsHost {
 
 #### Classe ExecutionContext
 
-`ExecutionContext` étend `ArgumentsHost`, fournissant des détails supplémentaires sur le processus d'exécution en cours. Comme `ArgumentsHost`, Nest fournit une instance de `ExecutionContext` là où vous en avez besoin, comme dans la méthode `canActivate()` d'une [garde](https://docs.nestjs.com/guards#execution-context) et la méthode `intercept()` d'un [intercepteur](/interceptors#contexte-dexécution). Il fournit les méthodes suivantes :
+`ExecutionContext` étend `ArgumentsHost`, fournissant des détails supplémentaires sur le processus d'exécution en cours. Comme `ArgumentsHost`, Nest fournit une instance de `ExecutionContext` là où vous en avez besoin, comme dans la méthode `canActivate()` d'une [garde](/guards#contexte-dexécution) et la méthode `intercept()` d'un [intercepteur](/interceptors#contexte-dexécution). Il fournit les méthodes suivantes :
 
 ```typescript
 export interface ExecutionContext extends ArgumentsHost {

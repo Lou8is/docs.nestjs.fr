@@ -4,7 +4,7 @@ Dans les chapitres précédents, nous avons abordé divers aspects de **l'inject
 
 #### Principes de base de l'ID
 
-L'injection de dépendances est une technique [d'inversion de contrôle (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) dans laquelle vous déléguez l'instanciation des dépendances au conteneur IoC (dans notre cas, le système d'exécution NestJS), au lieu de le faire impérativement dans votre propre code. Examinons ce qui se passe dans cet exemple tiré du chapitre sur les [fournisseurs](https://docs.nestjs.com/providers).
+L'injection de dépendances est une technique [d'inversion de contrôle (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) dans laquelle vous déléguez l'instanciation des dépendances au conteneur IoC (dans notre cas, le système d'exécution NestJS), au lieu de le faire impérativement dans votre propre code. Examinons ce qui se passe dans cet exemple tiré du chapitre sur les [fournisseurs](/providers).
 
 Tout d'abord, nous définissons un fournisseur. Le décorateur `@Injectable()` marque la classe `CatsService` comme fournisseur.
 
@@ -188,7 +188,7 @@ Dans cet exemple, nous associons un jeton à valeur de chaîne (`'CONNECTION'`) 
 
 > warning **Remarque** Outre l'utilisation de chaînes comme valeurs de jeton, vous pouvez également utiliser des [symboles JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) ou des [enums TypeScript](https://www.typescriptlang.org/docs/handbook/enums.html).
 
-Nous avons vu précédemment comment injecter un fournisseur en utilisant le modèle standard d'[injection basée sur le constructeur](https://docs.nestjs.com/providers#dependency-injection). Ce schéma **exige** que la dépendance soit déclarée avec un nom de classe. Le fournisseur personnalisé `'CONNECTION'` utilise une chaîne de caractères. Voyons comment injecter un tel fournisseur. Pour ce faire, nous utilisons le décorateur `@Inject()`. Ce décorateur prend un seul argument - le jeton.
+Nous avons vu précédemment comment injecter un fournisseur en utilisant le modèle standard d'[injection basée sur le constructeur](/providers#injection-de-dépendance). Ce schéma **exige** que la dépendance soit déclarée avec un nom de classe. Le fournisseur personnalisé `'CONNECTION'` utilise une chaîne de caractères. Voyons comment injecter un tel fournisseur. Pour ce faire, nous utilisons le décorateur `@Inject()`. Ce décorateur prend un seul argument - le jeton.
 
 ```typescript
 @@filename()

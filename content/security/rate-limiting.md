@@ -23,7 +23,7 @@ export class AppModule {}
 
 Ce qui précède définira les options globales pour le `ttl`, le temps de vie, et le `limit`, le nombre maximum de requêtes dans le ttl, pour les routes de votre application qui sont surveillées.
 
-Une fois que le module a été importé, vous pouvez choisir comment vous souhaitez lier le `ThrottlerGuard`. N'importe quel type de liaison tel que mentionné dans la section sur les [gardes](https://docs.nestjs.com/guards) est acceptable. Si vous voulez lier la garde globalement, par exemple, vous pouvez le faire en ajoutant ce fournisseur à n'importe quel module :
+Une fois que le module a été importé, vous pouvez choisir comment vous souhaitez lier le `ThrottlerGuard`. N'importe quel type de liaison tel que mentionné dans la section sur les [gardes](/guards) est acceptable. Si vous voulez lier la garde globalement, par exemple, vous pouvez le faire en ajoutant ce fournisseur à n'importe quel module :
 
 ```typescript
 {

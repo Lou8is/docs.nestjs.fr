@@ -209,6 +209,6 @@ Voici à quoi devrait ressembler la structure de notre répertoire :
 
 Jusqu'à présent, nous avons vu comment Nest gère automatiquement la plupart des détails de la résolution des dépendances. Dans certaines circonstances, il peut être nécessaire de sortir du système d'injection de dépendances intégré et de récupérer ou d'instancier manuellement des fournisseurs. Nous abordons brièvement deux de ces sujets ci-dessous.
 
-Pour obtenir des instances existantes ou instancier des fournisseurs de manière dynamique, vous pouvez utiliser la [Référence de module](https://docs.nestjs.com/fundamentals/module-ref).
+Pour obtenir des instances existantes ou instancier des fournisseurs de manière dynamique, vous pouvez utiliser la [Référence de module](/fundamentals/module-ref).
 
-Pour obtenir des fournisseurs dans la fonction `bootstrap()` (par exemple pour les applications autonomes sans contrôleurs, ou pour utiliser un service de configuration pendant le bootstrapping), voir [Applications indépendantes](https://docs.nestjs.com/standalone-applications).
+Pour obtenir des fournisseurs dans la fonction `bootstrap()` (par exemple pour les applications autonomes sans contrôleurs, ou pour utiliser un service de configuration pendant le bootstrapping), voir [Applications indépendantes](/standalone-applications).

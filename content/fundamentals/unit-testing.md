@@ -315,7 +315,7 @@ Nous simulons des tests HTTP en utilisant la fonction `request()` de Supertest. 
 
 Dans cet exemple, nous fournissons également une implémentation alternative (test-double) de `CatsService` qui retourne simplement une valeur codée en dur que nous pouvons tester. Utilisez `overrideProvider()` pour fournir une telle implémentation alternative. De la même manière, Nest fournit des méthodes pour surcharger les modules, les gardes, les intercepteurs, les filtres et les pipes avec les méthodes `overrideModule()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, et `overridePipe()` respectivement.
 
-Chacune des méthodes de remplacement (à l'exception de `overrideModule()`) renvoie un objet avec 3 méthodes différentes qui reflètent celles décrites pour les [fournisseurs personnalisés](https://docs.nestjs.com/fundamentals/custom-providers) :
+Chacune des méthodes de remplacement (à l'exception de `overrideModule()`) renvoie un objet avec 3 méthodes différentes qui reflètent celles décrites pour les [fournisseurs personnalisés](/fundamentals/custom-providers) :
 
 - `useClass` : vous fournissez une classe qui sera instanciée pour fournir l'instance permettant de surcharger l'objet ( fournisseur, garde, etc.).
 - `useValue` : vous fournissez une instance qui remplacera l'objet.

@@ -1,6 +1,6 @@
 ### Modules dynamiques
 
-Le [chapitre Modules](/modules) couvre les bases des modules Nest et comprend une brève introduction aux [modules dynamiques](https://docs.nestjs.com/modules#dynamic-modules). Ce chapitre développe le sujet des modules dynamiques. À l'issue de ce chapitre, vous devriez avoir une bonne compréhension de ce que sont les modules dynamiques, ainsi que de la manière et du moment de les utiliser.
+Le [chapitre Modules](/modules) couvre les bases des modules Nest et comprend une brève introduction aux [modules dynamiques](/modules#modules-dynamiques). Ce chapitre développe le sujet des modules dynamiques. À l'issue de ce chapitre, vous devriez avoir une bonne compréhension de ce que sont les modules dynamiques, ainsi que de la manière et du moment de les utiliser.
 
 #### Introduction
 
@@ -53,7 +53,7 @@ export class AuthService {
 
 C'est ce que nous appellerons la liaison **statique** des modules. Toutes les informations dont Nest a besoin pour relier les modules entre eux ont déjà été déclarées dans les modules hôte et consommateur. Décortiquons ce qui se passe durant ce processus. Nest rend `UsersService` disponible dans `AuthModule` par :
 
-1. L'instanciation de `UsersModule`, y compris l'importation transitive d'autres modules que `UsersModule` consomme lui-même, et la résolution transitive de toutes les dépendances (voir les [fournisseurs personnalisés](https://docs.nestjs.com/fundamentals/custom-providers)).
+1. L'instanciation de `UsersModule`, y compris l'importation transitive d'autres modules que `UsersModule` consomme lui-même, et la résolution transitive de toutes les dépendances (voir les [fournisseurs personnalisés](/fundamentals/custom-providers)).
 2. L'instanciation de `AuthModule`, et la mise à disposition des fournisseurs exportés de `UsersModule` aux composants de `AuthModule` (comme s'ils avaient été déclarés dans `AuthModule`).
 3. L'injection d'une instance de `UsersService` dans `AuthService`.
 
@@ -71,7 +71,7 @@ En d'autres termes, les modules dynamiques fournissent une API permettant d'impo
 
 #### Exemple de module de configuration
 
-Nous utiliserons la version de base du code d'exemple du [chapitre sur la configuration](https://docs.nestjs.com/techniques/configuration#service) pour cette section. La version complétée à la fin de ce chapitre est disponible sous la forme d'un [exemple ici](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+Nous utiliserons la version de base du code d'exemple du [chapitre sur la configuration](/techniques/configuration#service) pour cette section. La version complétée à la fin de ce chapitre est disponible sous la forme d'un [exemple ici](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
 
 Notre exigence est de faire en sorte que `ConfigModule` accepte un objet `options` pour le personnaliser. Voici la fonctionnalité que nous voulons supporter. L'exemple de base code en dur l'emplacement du fichier `.env` dans le dossier racine du projet. Supposons que nous voulions rendre cela configurable, de sorte que vous puissiez gérer vos fichiers `.env` dans n'importe quel dossier de votre choix. Par exemple, imaginez que vous vouliez stocker vos différents fichiers `.env` dans un dossier sous la racine du projet appelé `config` (c'est-à-dire un dossier frère de `src`). Vous aimeriez pouvoir choisir des dossiers différents lorsque vous utilisez le module `ConfigModule` dans différents projets.
 
@@ -206,7 +206,7 @@ export class ConfigService {
 
 Maintenant notre `ConfigService` sait comment trouver le fichier `.env` dans le dossier que nous avons spécifié dans `options`.
 
-Notre tâche restante est d'injecter d'une manière ou d'une autre l'objet `options` de l'étape `register()` dans notre `ConfigService`. Et bien sûr, nous allons utiliser l'injection de dépendance pour le faire. C'est un point clé, alors assurez-vous de bien le comprendre. Notre `ConfigModule` fournit `ConfigService`. Le `ConfigService` dépend à son tour de l'objet `options` qui n'est fourni qu'à l'exécution. Donc, à l'exécution, nous devrons d'abord lier l'objet `options` au conteneur IoC de Nest, et ensuite l'injecter dans notre `ConfigService`. Rappelez-vous du chapitre **Fournisseurs personnalisés** que les fournisseurs peuvent [inclure n'importe quelle valeur](https://docs.nestjs.com/fundamentals/custom-providers#fournisseurs-non-basés-sur-les-services) et pas seulement les services, donc nous pouvons utiliser l'injection de dépendances pour gérer un simple objet `options`.
+Notre tâche restante est d'injecter d'une manière ou d'une autre l'objet `options` de l'étape `register()` dans notre `ConfigService`. Et bien sûr, nous allons utiliser l'injection de dépendance pour le faire. C'est un point clé, alors assurez-vous de bien le comprendre. Notre `ConfigModule` fournit `ConfigService`. Le `ConfigService` dépend à son tour de l'objet `options` qui n'est fourni qu'à l'exécution. Donc, à l'exécution, nous devrons d'abord lier l'objet `options` au conteneur IoC de Nest, et ensuite l'injecter dans notre `ConfigService`. Rappelez-vous du chapitre **Fournisseurs personnalisés** que les fournisseurs peuvent [inclure n'importe quelle valeur](/fundamentals/custom-providers#fournisseurs-non-basés-sur-les-services) et pas seulement les services, donc nous pouvons utiliser l'injection de dépendances pour gérer un simple objet `options`.
 
 Commençons par lier l'objet options au conteneur IoC. Nous le faisons dans notre méthode statique `register()`. Souvenez-vous que nous construisons dynamiquement un module, et qu'une des propriétés d'un module est sa liste de fournisseurs. Nous devons donc définir notre objet options comme un fournisseur. Cela le rendra injectable dans le `ConfigService`, ce dont nous profiterons dans l'étape suivante. Dans le code ci-dessous, faites attention à la liste `providers` :
 
@@ -232,7 +232,7 @@ export class ConfigModule {
 }
 ```
 
-Maintenant nous pouvons terminer le processus en injectant le fournisseur `'CONFIG_OPTIONS'` dans le `ConfigService`. Rappelons que lorsque nous définissons un fournisseur en utilisant un jeton qui n'est pas une classe, nous devons utiliser le décorateur `@Inject()` [comme décrit ici](https://docs.nestjs.com/fundamentals/custom-providers#jetons-de-fournisseur-non-basés-sur-une-classe).
+Maintenant nous pouvons terminer le processus en injectant le fournisseur `'CONFIG_OPTIONS'` dans le `ConfigService`. Rappelons que lorsque nous définissons un fournisseur en utilisant un jeton qui n'est pas une classe, nous devons utiliser le décorateur `@Inject()` [comme décrit ici](/fundamentals/custom-providers#jetons-de-fournisseur-non-basés-sur-une-classe).
 
 ```typescript
 import * as dotenv from 'dotenv';

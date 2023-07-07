@@ -53,7 +53,7 @@ Chaque garde doit implémenter une fonction `canActivate()`. Cette fonction doit
 
 #### Contexte d'exécution
 
-La fonction `canActivate()` prend un seul argument, l'instance `ExecutionContext`. Le `ExecutionContext` hérite de `ArgumentsHost`. Nous avons vu `ArgumentsHost` précédemment dans le chapitre sur les filtres d'exception. Dans l'exemple ci-dessus, nous utilisons simplement les mêmes méthodes d'aide définies sur `ArgumentsHost` que nous avons utilisées plus tôt, pour obtenir une référence à l'objet `Request`. Vous pouvez vous référer à la section **ArgumentsHost** du chapitre [exception filters](https://docs.nestjs.com/exception-filters#argumentshost) pour plus d'informations sur ce sujet.
+La fonction `canActivate()` prend un seul argument, l'instance `ExecutionContext`. Le `ExecutionContext` hérite de `ArgumentsHost`. Nous avons vu `ArgumentsHost` précédemment dans le chapitre sur les filtres d'exception. Dans l'exemple ci-dessus, nous utilisons simplement les mêmes méthodes d'aide définies sur `ArgumentsHost` que nous avons utilisées plus tôt, pour obtenir une référence à l'objet `Request`. Vous pouvez vous référer à la section **ArgumentsHost** du chapitre [exception filters](/exception-filters#argumentshost) pour plus d'informations sur ce sujet.
 
 En étendant `ArgumentsHost`, `ExecutionContext` ajoute également plusieurs nouvelles méthodes d'aide qui fournissent des détails supplémentaires sur le processus d'exécution en cours. Ces détails peuvent être utiles pour construire des gardes plus génériques qui peuvent fonctionner à travers un large ensemble de contrôleurs, de méthodes et de contextes d'exécution. En savoir plus sur `ExecutionContext` [ici](/fundamentals/execution-context).
 
@@ -143,7 +143,7 @@ export class AppModule {}
 
 Notre `RolesGuard` fonctionne, mais elle n'est pas encore très intelligente. Nous ne profitons pas encore de la caractéristique la plus importante de la garde - le [contexte d'exécution] (/fundamentals/execution-context). Elle ne connaît pas encore les rôles, ni quels rôles sont autorisés pour chaque gestionnaire. Le `CatsController`, par exemple, pourrait avoir différents schémas de permission pour différentes routes. Certaines pourraient n'être accessibles qu'à un utilisateur administrateur, et d'autres pourraient être ouvertes à tout le monde. Comment pouvons-nous faire correspondre les rôles aux routes d'une manière flexible et réutilisable ?
 
-C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata)). Nest offre la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes grâce au décorateur `@SetMetadata()`. Ces métadonnées fournissent la donnée `role` manquante, dont une garde intelligente a besoin pour prendre des décisions. Voyons comment utiliser `@SetMetadata()` :
+C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](/fundamentals/execution-context#réflexion-et-métadonnées)). Nest offre la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes grâce au décorateur `@SetMetadata()`. Ces métadonnées fournissent la donnée `role` manquante, dont une garde intelligente a besoin pour prendre des décisions. Voyons comment utiliser `@SetMetadata()` :
 
 ```typescript
 @@filename(cats.controller)
@@ -244,7 +244,7 @@ export class RolesGuard {
 
 > warning **Attention** La logique à l'intérieur de la fonction `matchRoles()` peut être aussi simple ou sophistiquée que nécessaire. Le but principal de cet exemple est de montrer comment les gardes s'intègrent dans le cycle requête/réponse.
 
-Référez-vous à la section <a href="https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata">Reflection et métadonnées</a> du chapitre **Contexte d'exécution** pour plus de détails sur l'utilisation de `Reflector` en fonction du contexte.
+Référez-vous à la section <a href="/fundamentals/execution-context#réflexion-et-métadonnées">Reflection et métadonnées</a> du chapitre **Contexte d'exécution** pour plus de détails sur l'utilisation de `Reflector` en fonction du contexte.
 
 Lorsqu'un utilisateur ne disposant pas de privilèges suffisants effectue une requête sur un point de terminaison, Nest renvoie automatiquement la réponse suivante :
 
