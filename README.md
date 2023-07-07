@@ -1,5 +1,5 @@
 ## Traduction Française
-<img src="https://img.shields.io/badge/Traduction-~23%25-green" alt="Pourcentage de la traduction" /></a>
+<img src="https://img.shields.io/badge/Traduction-~26%25-green" alt="Pourcentage de la traduction" /></a>
 
 Ce dépôt a pour objectif de proposer une traduction de la documentation de Nestjs à destination de la communauté francophone. Il s'agit d'un travail en cours. 
 La traduction dans son état actuel est disponible à ce lien: https://docs.nest-js.fr/
