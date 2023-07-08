@@ -1,24 +1,24 @@
 ### Performance (Fastify)
 
-By default, Nest makes use of the [Express](https://expressjs.com/) framework. As mentioned earlier, Nest also provides compatibility with other libraries such as, for example, [Fastify](https://github.com/fastify/fastify). Nest achieves this framework independence by implementing a framework adapter whose primary function is to proxy middleware and handlers to appropriate library-specific implementations.
+Par défaut, Nest utilise le framework [Express](https://expressjs.com/). Comme mentionné précédemment, Nest offre également une compatibilité avec d'autres bibliothèques telles que, par exemple, [Fastify](https://github.com/fastify/fastify). Nest réalise cette indépendance vis-à-vis du framework en implémentant un adaptateur de framework dont la fonction principale est de fournir un middleware et des gestionnaires à des implémentations appropriées spécifiques à la bibliothèque.
 
-> info **Hint** Note that in order for a framework adapter to be implemented, the target library has to provide similar request/response pipeline processing as found in Express.
+> info **Astuce** Notez que pour qu'un adaptateur de framework soit mis en œuvre, la bibliothèque cible doit fournir un traitement de pipeline requête/réponse similaire à celui que l'on trouve dans Express.
 
-[Fastify](https://github.com/fastify/fastify) provides a good alternative framework for Nest because it solves design issues in a similar manner to Express. However, fastify is much **faster** than Express, achieving almost two times better benchmarks results. A fair question is why does Nest use Express as the default HTTP provider? The reason is that Express is widely-used, well-known, and has an enormous set of compatible middleware, which is available to Nest users out-of-the-box.
+[Fastify](https://github.com/fastify/fastify) fournit un bon framework alternatif à Nest car il résout les problèmes de conception d'une manière similaire à Express. Cependant, fastify est bien **plus rapide** qu'Express, obtenant des résultats presque deux fois meilleurs. Une question légitime est de savoir pourquoi Nest utilise Express comme fournisseur HTTP par défaut ? La raison est qu'Express est largement utilisé, bien connu, et qu'il dispose d'un énorme ensemble de middlewares compatibles, qui sont disponibles pour les utilisateurs de Nest immédiatement.
 
-But since Nest provides framework-independence, you can easily migrate between them. Fastify can be a better choice when you place high value on very fast performance. To utilize Fastify, simply choose the built-in `FastifyAdapter` as shown in this chapter.
+Mais comme Nest est indépendant du framework, vous pouvez facilement passer de l'un à l'autre. Fastify peut être un meilleur choix lorsque vous accordez une grande importance à des performances très rapides. Pour utiliser Fastify, il suffit de choisir l'adaptateur intégré `FastifyAdapter` comme montré dans ce chapitre.
 
 #### Installation
 
-First, we need to install the required package:
+Tout d'abord, nous devons installer le package requis :
 
 ```bash
 $ npm i --save @nestjs/platform-fastify
 ```
 
-#### Adapter
+#### Adaptateur
 
-Once the Fastify platform is installed, we can use the `FastifyAdapter`.
+Une fois la plateforme Fastify installée, nous pouvons utiliser le `FastifyAdapter`.
 
 ```typescript
 @@filename(main)
@@ -39,7 +39,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Guides/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
+Par défaut, Fastify n'écoute que sur l'interface `localhost 127.0.0.1` ([en savoir plus](https://www.fastify.io/docs/latest/Guides/Getting-Started/#your-first-server)). Si vous voulez accepter des connexions sur d'autres hôtes, vous devez spécifier `'0.0.0.0'` dans l'appel `listen()` :
 
 ```typescript
 async function bootstrap() {
@@ -51,13 +51,13 @@ async function bootstrap() {
 }
 ```
 
-#### Platform specific packages
+#### Packages spécifiques à la plate-forme
 
-Keep in mind that when you use the `FastifyAdapter`, Nest uses Fastify as the **HTTP provider**. This means that each recipe that relies on Express may no longer work. You should, instead, use Fastify equivalent packages.
+Gardez à l'esprit que lorsque vous utilisez le `FastifyAdapter`, Nest utilise Fastify comme **fournisseur HTTP**. Cela signifie que toutes les recettes qui s'appuient sur Express peuvent ne plus fonctionner. Vous devez, à la place, utiliser des packages équivalents à Fastify.
 
-#### Redirect response
+#### Réponse de redirection
 
-Fastify handles redirect responses slightly differently than Express. To do a proper redirect with Fastify, return both the status code and the URL, as follows:
+Fastify gère les réponses de redirection légèrement différemment d'Express. Pour effectuer une redirection correcte avec Fastify, renvoyez le code d'état et l'URL, comme suit :
 
 ```typescript
 @Get()
@@ -66,9 +66,9 @@ index(@Res() res) {
 }
 ```
 
-#### Fastify options
+#### Options Fastify
 
-You can pass options into the Fastify constructor through the `FastifyAdapter` constructor. For example:
+Vous pouvez passer des options au constructeur de Fastify à travers le constructeur `FastifyAdapter`. Par exemple :
 
 ```typescript
 new FastifyAdapter({ logger: true });
@@ -77,7 +77,7 @@ new FastifyAdapter({ logger: true });
 
 #### Middleware
 
-Middleware functions retrieve the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `middie` package works (that's used under the hood) and `fastify` - check out this [page](https://www.fastify.io/docs/latest/Reference/Middleware/) for more information,
+Les fonctions du middleware récupèrent les objets `req` et `res` bruts au lieu des wrappers de Fastify. C'est ainsi que fonctionne le package `middie` (qui est utilisé sous le capot) et `fastify` - consultez cette [page](https://www.fastify.io/docs/latest/Reference/Middleware/) pour plus d'informations,
 
 ```typescript
 @@filename(logger.middleware)
@@ -103,6 +103,6 @@ export class LoggerMiddleware {
 }
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
