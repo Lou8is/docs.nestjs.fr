@@ -1,8 +1,8 @@
-### Streaming files
+### Flux de fichier
 
-> info **Note** This chapter shows how you can stream files from your **HTTP application**. The examples presented below do not apply to GraphQL or Microservice applications.
+> info **Note** Ce chapitre montre comment vous pouvez diffuser des fichiers à partir de votre **application HTTP**. Les exemples présentés ci-dessous ne s'appliquent pas aux applications GraphQL ou Microservice.
 
-There may be times where you would like to send back a file from your REST API to the client. To do this with Nest, normally you'd do the following:
+Il peut arriver que vous souhaitiez renvoyer un fichier au client à partir de votre API REST. Pour ce faire avec Nest, vous devez normalement procéder comme suit :
 
 ```ts
 @Controller('file')
@@ -15,21 +15,21 @@ export class FileController {
 }
 ```
 
-But in doing so you end up losing access to your post-controller interceptor logic. To handle this, you can return a `StreamableFile` instance and under the hood, the framework will take care of piping the response.
+Mais en faisant cela, vous finissez par perdre l'accès à votre logique d'interception post-contrôleur. Pour gérer cela, vous pouvez retourner une instance de `StreamableFile` et sous le capot, le framework s'occupera du piping de la réponse.
 
-#### Streamable File class
+#### Classe StreamableFile
 
-A `StreamableFile` is a class that holds onto the stream that is to be returned. To create a new `StreamableFile`, you can pass either a `Buffer` or a `Stream` to the `StreamableFile` constructor.
+Un `StreamableFile` est une classe qui conserve le flux qui doit être retourné. Pour créer un nouveau `StreamableFile`, vous pouvez passer un `Buffer` ou un `Stream` au constructeur de `StreamableFile`.
 
-> info **hint** The `StreamableFile` class can be imported from `@nestjs/common`.
+> info **Astuce** La classe `StreamableFile` peut être importée depuis `@nestjs/common`.
 
-#### Cross-platform support
+#### Support multi-plateforme
 
-Fastify, by default, can support sending files without needing to call `stream.pipe(res)`, so you don't need to use the `StreamableFile` class at all. However, Nest supports the use of `StreamableFile` in both platform types, so if you end up switching between Express and Fastify there's no need to worry about compatibility between the two engines.
+Fastify, par défaut, peut supporter l'envoi de fichiers sans avoir besoin d'appeler `stream.pipe(res)`, donc vous n'avez pas besoin d'utiliser la classe `StreamableFile`. Cependant, Nest supporte l'utilisation de `StreamableFile` dans les deux types de plateformes, donc si vous passez d'Express à Fastify, il n'y a pas besoin de s'inquiéter de la compatibilité entre les deux moteurs.
 
-#### Example
+#### Exemple
 
-You can find a simple example of returning the `package.json` as a file instead of a JSON below, but the idea extends out naturally to images, documents, and any other file type.
+Vous pouvez trouver un exemple simple de retour du `package.json` comme un fichier au lieu d'un JSON ci-dessous, mais l'idée s'étend naturellement aux images, aux documents, et à tout autre type de fichier.
 
 ```ts
 import { Controller, Get, StreamableFile } from '@nestjs/common';
@@ -46,7 +46,7 @@ export class FileController {
 }
 ```
 
-The default content type is `application/octet-stream`, if you need to customize the response you can use the `res.set` method or the [`@Header()`](/controllers#headers) decorator, like this:
+Le type de contenu par défaut est `application/octet-stream`, si vous avez besoin de personnaliser la réponse, vous pouvez utiliser la méthode `res.set` ou le décorateur [`@Header()`](/controllers#headers), comme ceci :
 
 ```ts
 import { Controller, Get, StreamableFile, Res } from '@nestjs/common';
@@ -66,7 +66,7 @@ export class FileController {
     return new StreamableFile(file);
   }
 
-  // Or even:
+  // Ou même :
   @Get()
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="package.json"')
