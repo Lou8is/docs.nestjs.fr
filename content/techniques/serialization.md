@@ -1,16 +1,16 @@
-### Serialization
+### Sérialisation
 
-Serialization is a process that happens before objects are returned in a network response. This is an appropriate place to provide rules for transforming and sanitizing the data to be returned to the client. For example, sensitive data like passwords should always be excluded from the response. Or, certain properties might require additional transformation, such as sending only a subset of properties of an entity. Performing these transformations manually can be tedious and error prone, and can leave you uncertain that all cases have been covered.
+La sérialisation est un processus qui se déroule avant que les objets ne soient renvoyés dans une réponse réseau. Il s'agit d'un endroit approprié pour fournir des règles de transformation et d'assainissement des données à renvoyer au client. Par exemple, les données sensibles telles que les mots de passe doivent toujours être exclues de la réponse. Par ailleurs, certaines propriétés peuvent nécessiter une transformation supplémentaire, comme l'envoi d'un sous-ensemble de propriétés d'une entité. Effectuer ces transformations manuellement peut s'avérer fastidieux et source d'erreurs, et peut vous laisser dans l'incertitude que tous les cas ont été pris en compte.
 
-#### Overview
+#### Vue d'ensemble
 
-Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `instanceToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
+Nest fournit une fonctionnalité intégrée qui permet de s'assurer que ces opérations peuvent être effectuées de manière simple. L'intercepteur `ClassSerializerInterceptor` utilise le puissant package [class-transformer](https://github.com/typestack/class-transformer) pour fournir un moyen déclaratif et extensible de transformer les objets. L'opération de base qu'il effectue est de prendre la valeur retournée par un gestionnaire de méthode et d'appliquer la fonction `instanceToPlain()` de [class-transformer](https://github.com/typestack/class-transformer). Ce faisant, il peut appliquer les règles exprimées par les décorateurs `class-transformer` sur une classe entité/DTO, comme décrit ci-dessous.
 
-> info **Hint** The serialization does not apply to [StreamableFile](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class) responses.
+> info **Astuce** La sérialisation ne s'applique pas aux réponses [StreamableFile](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class).
 
-#### Exclude properties
+#### Exclure des propriétés
 
-Let's assume that we want to automatically exclude a `password` property from a user entity. We annotate the entity as follows:
+Supposons que nous voulions exclure automatiquement une propriété `password` d'une entité utilisateur. Nous annotons l'entité comme suit :
 
 ```typescript
 import { Exclude } from 'class-transformer';
@@ -29,7 +29,7 @@ export class UserEntity {
 }
 ```
 
-Now consider a controller with a method handler that returns an instance of this class.
+Considérons maintenant un contrôleur avec un gestionnaire de méthode qui renvoie une instance de cette classe.
 
 ```typescript
 @UseInterceptors(ClassSerializerInterceptor)
@@ -44,11 +44,11 @@ findOne(): UserEntity {
 }
 ```
 
-> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
+> **Attention** Notez que nous devons renvoyer une instance de la classe. Si vous renvoyez un simple objet JavaScript, par exemple, `{{ '{' }} user : new UserEntity() {{ '}' }}`, l'objet ne sera pas correctement sérialisé.
 
-> info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
+> info **Astuce** La classe `ClassSerializerInterceptor` est importée de `@nestjs/common`.
 
-When this endpoint is requested, the client receives the following response:
+Lorsque ce point d'accès est sollicité, le client reçoit la réponse suivante :
 
 ```json
 {
@@ -58,11 +58,11 @@ When this endpoint is requested, the client receives the following response:
 }
 ```
 
-Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
+Notez que l'intercepteur peut être appliqué à l'ensemble de l'application (comme indiqué [ici](https://docs.nestjs.com/interceptors#binding-interceptors)). La combinaison de l'intercepteur et de la déclaration de la classe d'entité assure que **n'importe quelle méthode qui retourne une `UserEntity` sera sûre de supprimer la propriété `password`. Cela permet de centraliser l'application de cette règle de gestion.
 
-#### Expose properties
+#### Exposer des propriétés
 
-You can use the `@Expose()` decorator to provide alias names for properties, or to execute a function to calculate a property value (analogous to **getter** functions), as shown below.
+Vous pouvez utiliser le décorateur `@Expose()` pour fournir des noms d'alias pour les propriétés, ou pour exécuter une fonction afin de calculer la valeur d'une propriété (analogue aux fonctions **getter**), comme illustré ci-dessous.
 
 ```typescript
 @Expose()
@@ -71,18 +71,18 @@ get fullName(): string {
 }
 ```
 
-#### Transform
+#### Transformer
 
-You can perform additional data transformation using the `@Transform()` decorator. For example, the following construct returns the name property of the `RoleEntity` instead of returning the whole object.
+Vous pouvez effectuer des transformations de données supplémentaires en utilisant le décorateur `@Transform()`. Par exemple, la construction suivante renvoie la propriété name de l'entité `RoleEntity` au lieu de renvoyer l'objet entier.
 
 ```typescript
 @Transform(({ value }) => value.name)
 role: RoleEntity;
 ```
 
-#### Pass options
+#### Passer des options
 
-You may want to modify the default behavior of the transformation functions. To override default settings, pass them in an `options` object with the `@SerializeOptions()` decorator.
+Vous pouvez vouloir modifier le comportement par défaut des fonctions de transformation. Pour surcharger les paramètres par défaut, passez-les dans un objet `options` avec le décorateur `@SerializeOptions()`.
 
 ```typescript
 @SerializeOptions({
@@ -94,18 +94,18 @@ findOne(): UserEntity {
 }
 ```
 
-> info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
+> info **Astuce** Le décorateur `@SerializeOptions()` est importé de `@nestjs/common`.
 
-Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `instanceToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
+Les options passées via `@SerializeOptions()` sont passées en tant que second argument de la fonction sous-jacente `instanceToPlain()`. Dans cet exemple, nous excluons automatiquement toutes les propriétés qui commencent par le préfixe `_`.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
 
-#### WebSockets and Microservices
+#### WebSockets et Microservices
 
-While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
+Bien que ce chapitre montre des exemples utilisant des applications de type HTTP (par exemple, Express ou Fastify), le `ClassSerializerInterceptor` fonctionne de la même manière pour les WebSockets et les Microservices, quelle que soit la méthode de transport utilisée.
 
-#### Learn more
+#### En savoir plus
 
-Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
+Pour en savoir plus sur les décorateurs et options disponibles dans le package `class-transformer` [lisez ceci](https://github.com/typestack/class-transformer).
