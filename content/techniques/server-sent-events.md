@@ -1,10 +1,10 @@
-### Server-Sent Events
+### Événements envoyés par le serveur
 
-Server-Sent Events (SSE) is a server push technology enabling a client to receive automatic updates from a server via HTTP connection. Each notification is sent as a block of text terminated by a pair of newlines (learn more [here](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)).
+Server-Sent Events (SSE) est une technologie de push serveur permettant à un client de recevoir des mises à jour automatiques d'un serveur via une connexion HTTP. Chaque notification est envoyée sous la forme d'un bloc de texte terminé par une paire de nouvelles lignes (pour en savoir plus [ici](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)).
 
-#### Usage
+#### Utilisation
 
-To enable Server-Sent events on a route (route registered within a **controller class**), annotate the method handler with the `@Sse()` decorator.
+Pour activer les événements envoyés par le serveur sur une route (route enregistrée dans une classe **controller**), annoter le gestionnaire de méthode avec le décorateur `@Sse()`.
 
 ```typescript
 @Sse('sse')
@@ -13,13 +13,13 @@ sse(): Observable<MessageEvent> {
 }
 ```
 
-> info **Hint** The `@Sse()` decorator and `MessageEvent` interface are imported from the `@nestjs/common`, while `Observable`, `interval`, and `map` are imported from the `rxjs` package.
+> info **Astuce** Le décorateur `@Sse()` et l'interface `MessageEvent` sont importés du package `@nestjs/common`, tandis que `Observable`, `interval`, et `map` sont importés du package `rxjs`.
 
-> warning **Warning** Server-Sent Events routes must return an `Observable` stream.
+> warning **Attention** Les routes d'événements envoyés par le serveur doivent renvoyer un flux `Observable`.
 
-In the example above, we defined a route named `sse` that will allow us to propagate real-time updates. These events can be listened to using the [EventSource API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource).
+Dans l'exemple ci-dessus, nous avons défini une route nommée `sse` qui nous permettra de propager des mises à jour en temps réel. Ces événements peuvent être écoutés à l'aide de l'API [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource).
 
-The `sse` method returns an `Observable` that emits multiple `MessageEvent` (in this example, it emits a new `MessageEvent` every second). The `MessageEvent` object should respect the following interface to match the specification:
+La méthode `sse` retourne un `Observable` qui émet plusieurs `MessageEvent` (dans cet exemple, il émet un nouveau `MessageEvent` toutes les secondes). L'objet `MessageEvent` doit respecter l'interface suivante pour correspondre à la spécification :
 
 ```typescript
 export interface MessageEvent {
@@ -30,19 +30,19 @@ export interface MessageEvent {
 }
 ```
 
-With this in place, we can now create an instance of the `EventSource` class in our client-side application, passing the `/sse` route (which matches the endpoint we have passed into the `@Sse()` decorator above) as a constructor argument.
+Avec ceci en place, nous pouvons maintenant créer une instance de la classe `EventSource` dans notre application côté client, en passant la route `/sse` (qui correspond au point de terminaison que nous avons passé dans le décorateur `@Sse()` ci-dessus) comme argument du constructeur.
 
-`EventSource` instance opens a persistent connection to an HTTP server, which sends events in `text/event-stream` format. The connection remains open until closed by calling `EventSource.close()`.
+L'instance `EventSource` ouvre une connexion persistante à un serveur HTTP, qui envoie des événements au format `text/event-stream`. La connexion reste ouverte jusqu'à ce qu'elle soit fermée en appelant `EventSource.close()`.
 
-Once the connection is opened, incoming messages from the server are delivered to your code in the form of events. If there is an event field in the incoming message, the triggered event is the same as the event field value. If no event field is present, then a generic `message` event is fired ([source](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)).
+Une fois la connexion ouverte, les messages entrants du serveur sont transmis à votre code sous la forme d'événements. Si le message entrant contient un champ d'événement, l'événement déclenché est le même que la valeur du champ d'événement. Si aucun champ d'événement n'est présent, un événement générique `message` est déclenché ([source](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)).
 
 ```javascript
 const eventSource = new EventSource('/sse');
 eventSource.onmessage = ({ data }) => {
-  console.log('New message', JSON.parse(data));
+  console.log('Nouveau message', JSON.parse(data));
 };
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/28-sse).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/28-sse).
