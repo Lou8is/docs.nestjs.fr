@@ -1,18 +1,18 @@
-### Events
+### Événements
 
-[Event Emitter](https://www.npmjs.com/package/@nestjs/event-emitter) package (`@nestjs/event-emitter`) provides a simple observer implementation, allowing you to subscribe and listen for various events that occur in your application. Events serve as a great way to decouple various aspects of your application, since a single event can have multiple listeners that do not depend on each other.
+Le package [Event Emitter](https://www.npmjs.com/package/@nestjs/event-emitter) (`@nestjs/event-emitter`) fournit une implémentation simple d'observateur, vous permettant de vous abonner et d'écouter les différents événements qui se produisent dans votre application. Les événements sont un excellent moyen de découpler les différents aspects de votre application, puisqu'un seul événement peut avoir plusieurs auditeurs qui ne dépendent pas les uns des autres.
 
-`EventEmitterModule` internally uses the [eventemitter2](https://github.com/EventEmitter2/EventEmitter2) package.
+`EventEmitterModule` utilise en interne le package [eventemitter2](https://github.com/EventEmitter2/EventEmitter2).
 
-#### Getting started
+#### Pour commencer
 
-First install the required package:
+Installez d'abord le package requis :
 
 ```shell
 $ npm i --save @nestjs/event-emitter
 ```
 
-Once the installation is complete, import the `EventEmitterModule` into the root `AppModule` and run the `forRoot()` static method as shown below:
+Une fois l'installation terminée, importez le module `EventEmitterModule` dans le module racine `AppModule` et exécutez la méthode statique `forRoot()` comme indiqué ci-dessous :
 
 ```typescript
 @@filename(app.module)
@@ -27,40 +27,40 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 export class AppModule {}
 ```
 
-The `.forRoot()` call initializes the event emitter and registers any declarative event listeners that exist within your app. Registration occurs when the `onApplicationBootstrap` lifecycle hook occurs, ensuring that all modules have loaded and declared any scheduled jobs.
+L'appel `.forRoot()` initialise l'émetteur d'événements et enregistre tous les récepteurs d'événements déclaratifs qui existent dans votre application. L'enregistrement a lieu lorsque le hook du cycle de vie `onApplicationBootstrap` se produit, en s'assurant que tous les modules ont été chargés et ont déclaré tous les travaux planifiés.
 
-To configure the underlying `EventEmitter` instance, pass the configuration object to the `.forRoot()` method, as follows:
+Pour configurer l'instance `EventEmitter` sous-jacente, passez l'objet de configuration à la méthode `.forRoot()`, comme suit :
 
 ```typescript
 EventEmitterModule.forRoot({
-  // set this to `true` to use wildcards
+  // mettre ce paramètre à `true` pour utiliser les caractères joker
   wildcard: false,
-  // the delimiter used to segment namespaces
+  // le délimiteur utilisé pour segmenter les espaces de noms
   delimiter: '.',
-  // set this to `true` if you want to emit the newListener event
+  // mettez ceci à `true` si vous voulez émettre l'événement newListener
   newListener: false,
-  // set this to `true` if you want to emit the removeListener event
+  // mettez ceci à `true` si vous voulez émettre l'événement removeListener
   removeListener: false,
-  // the maximum amount of listeners that can be assigned to an event
+  // le nombre maximum d'auditeurs pouvant être affectés à un événement
   maxListeners: 10,
-  // show event name in memory leak message when more than maximum amount of listeners is assigned
+  // afficher le nom de l'événement dans le message de fuite de mémoire lorsque le nombre d'auditeurs attribués est supérieur au nombre maximal.
   verboseMemoryLeak: false,
-  // disable throwing uncaughtException if an error event is emitted and it has no listeners
+  // désactiver le lancement de uncaughtException si un événement d'erreur est émis et qu'il n'a pas d'auditeurs
   ignoreErrors: false,
 });
 ```
 
-#### Dispatching Events
+#### Envoi d'événements
 
-To dispatch (i.e., fire) an event, first inject `EventEmitter2` using standard constructor injection:
+Pour envoyer (c'est-à-dire déclencher) un événement, il faut d'abord injecter `EventEmitter2` en utilisant l'injection de constructeur standard :
 
 ```typescript
 constructor(private eventEmitter: EventEmitter2) {}
 ```
 
-> info **Hint** Import the `EventEmitter2` from the `@nestjs/event-emitter` package.
+> info **Astuce** Importez le `EventEmitter2` depuis le package `@nestjs/event-emitter`.
 
-Then use it in a class as follows:
+Utilisez-le ensuite dans une classe comme suit :
 
 ```typescript
 this.eventEmitter.emit(
@@ -72,9 +72,9 @@ this.eventEmitter.emit(
 );
 ```
 
-#### Listening to Events
+#### Écouter les événements
 
-To declare an event listener, decorate a method with the `@OnEvent()` decorator preceding the method definition containing the code to be executed, as follows:
+Pour déclarer un récepteur d'événements, décorez une méthode avec le décorateur `@OnEvent()` précédant la définition de la méthode contenant le code à exécuter, comme suit :
 
 ```typescript
 @OnEvent('order.created')
@@ -83,40 +83,39 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 }
 ```
 
-> warning **Warning** Event subscribers cannot be request-scoped.
+> warning **Attentinon** Les abonnés aux événements ne peuvent pas faire l'objet d'une requête.
 
-The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter. The second argument (optional) is a listener options object ([read more](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
+Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'événement simple et un `string | symbol | Array<string | symbol>` dans le cas d'un émetteur joker. Le second argument (optionnel) est un objet d'options d'écoute ( [en lire plus](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
 
 ```typescript
 @OnEvent('order.created', { async: true })
 handleOrderCreatedEvent(payload: OrderCreatedEvent) {
-  // handle and process "OrderCreatedEvent" event
+  // gère et traite l'événement "OrderCreatedEvent"
 }
 ```
 
-To use namespaces/wildcards, pass the `wildcard` option into the `EventEmitterModule#forRoot()` method. When namespaces/wildcards are enabled, events can either be strings (`foo.bar`) separated by a delimiter or arrays (`['foo', 'bar']`). The delimiter is also configurable as a configuration property (`delimiter`). With namespaces feature enabled, you can subscribe to events using a wildcard:
+Pour utiliser les espaces de noms et les jokers, passez l'option `wildcard` dans la méthode `EventEmitterModule#forRoot()`. Lorsque les espaces de noms et les caractères génériques sont activés, les événements peuvent être soit des chaînes de caractères (`foo.bar`) séparées par un délimiteur, soit des tableaux (`['foo', 'bar']`). Le délimiteur est également configurable en tant que propriété de configuration (`delimiter`). Avec la fonctionnalité namespaces activée, vous pouvez vous abonner à des événements en utilisant un joker :
 
 ```typescript
 @OnEvent('order.*')
 handleOrderEvents(payload: OrderCreatedEvent | OrderRemovedEvent | OrderUpdatedEvent) {
-  // handle and process an event
+  // gère et traite un événement
 }
 ```
 
-Note that such a wildcard only applies to one block. The argument `order.*` will match, for example, the events `order.created` and `order.shipped` but not `order.delayed.out_of_stock`. In order to listen to such events,
-use the `multilevel wildcard` pattern (i.e, `**`), described in the `EventEmitter2` [documentation](https://github.com/EventEmitter2/EventEmitter2#multi-level-wildcards).
+Notez qu'un tel joker ne s'applique qu'à un seul bloc. L'argument `order.*` correspondra, par exemple, aux événements `order.created` et `order.shipped` mais pas à `order.delayed.out_of_stock`. Afin d'écouter de tels événements, utilisez le motif `multilevel wildcard` (i.e., `**`), décrit dans la [documentation](https://github.com/EventEmitter2/EventEmitter2#multi-level-wildcards) de `EventEmitter2` .
 
-With this pattern, you can, for example, create an event listener that catches all events.
+Grâce à ce modèle, vous pouvez, par exemple, créer un écouteur d'événements qui capture tous les événements.
 
 ```typescript
 @OnEvent('**')
 handleEverything(payload: any) {
-  // handle and process an event
+  // gère et traite un événement
 }
 ```
 
-> info **Hint** `EventEmitter2` class provides several useful methods for interacting with events, like `waitFor` and `onAny`. You can read more about them [here](https://github.com/EventEmitter2/EventEmitter2).
+> info **Astuce** La classe `EventEmitter2` fournit plusieurs méthodes utiles pour interagir avec les événements, comme `waitFor` et `onAny`. Vous pouvez en savoir plus sur ces méthodes [ici](https://github.com/EventEmitter2/EventEmitter2).
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/30-event-emitter).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/30-event-emitter).
