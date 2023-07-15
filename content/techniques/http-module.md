@@ -88,7 +88,7 @@ HttpModule.registerAsync({
 });
 ```
 
-Comme les autres fournisseurs d'usine, notre fonction d'usine peut être [async](https://docs.nestjs.com/fundamentals/custom-providers#fournisseurs-de-factory--usefactory) et peut injecter des dépendances via `inject`.
+Comme les autres fournisseurs d'usine, notre fonction d'usine peut être [async](/fundamentals/custom-providers#fournisseurs-de-factory--usefactory) et peut injecter des dépendances via `inject`.
 
 ```typescript
 HttpModule.registerAsync({

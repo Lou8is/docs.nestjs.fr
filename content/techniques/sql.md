@@ -624,7 +624,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Notre fabrique se comporte comme n'importe quel autre [fournisseur asynchrone](https://docs.nestjs.com/fundamentals/async-providers) (par exemple, il peut être `async` et il est capable d'injecter des dépendances via `inject`).
+Notre fabrique se comporte comme n'importe quel autre [fournisseur asynchrone](/fundamentals/async-providers) (par exemple, il peut être `async` et il est capable d'injecter des dépendances via `inject`).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -1211,7 +1211,7 @@ SequelizeModule.forRootAsync({
 });
 ```
 
-Notre factory se comporte comme n'importe quel autre [fournisseur asynchrone](https://docs.nestjs.com/fundamentals/async-providers) (par exemple, il peut être `async` et il est capable d'injecter des dépendances via `inject`).
+Notre factory se comporte comme n'importe quel autre [fournisseur asynchrone](/fundamentals/async-providers) (par exemple, il peut être `async` et il est capable d'injecter des dépendances via `inject`).
 
 ```typescript
 SequelizeModule.forRootAsync({
