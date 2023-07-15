@@ -1,20 +1,20 @@
-### HTTP module
+### Module HTTP
 
-[Axios](https://github.com/axios/axios) is richly featured HTTP client package that is widely used. Nest wraps Axios and exposes it via the built-in `HttpModule`. The `HttpModule` exports the `HttpService` class, which exposes Axios-based methods to perform HTTP requests. The library also transforms the resulting HTTP responses into `Observables`.
+[Axios](https://github.com/axios/axios) est un package de client HTTP riche en fonctionnalités et largement utilisé. Nest encapsule Axios et l'expose via le `HttpModule` intégré. Le `HttpModule` exporte la classe `HttpService`, qui expose les méthodes basées sur Axios pour effectuer des requêtes HTTP. La bibliothèque transforme également les réponses HTTP résultantes en `Observables`.
 
-> info **Hint** You can also use any general purpose Node.js HTTP client library directly, including [got](https://github.com/sindresorhus/got) or [undici](https://github.com/nodejs/undici).
+> info **Astuce** Vous pouvez également utiliser directement n'importe quelle bibliothèque client HTTP Node.js, y compris [got](https://github.com/sindresorhus/got) ou [undici](https://github.com/nodejs/undici).
 
 #### Installation
 
-To begin using it, we first install required dependencies.
+Pour commencer à l'utiliser, nous devons d'abord installer les dépendances nécessaires.
 
 ```bash
 $ npm i --save @nestjs/axios axios
 ```
 
-#### Getting started
+#### Pour commencer
 
-Once the installation process is complete, to use the `HttpService`, first import `HttpModule`.
+Une fois le processus d'installation terminé, pour utiliser le `HttpService`, il faut d'abord importer le `HttpModule`.
 
 ```typescript
 @Module({
@@ -24,9 +24,9 @@ Once the installation process is complete, to use the `HttpService`, first impor
 export class CatsModule {}
 ```
 
-Next, inject `HttpService` using normal constructor injection.
+Ensuite, injecter `HttpService` en utilisant l'injection normale de constructeur.
 
-> info **Hint** `HttpModule` and `HttpService` are imported from `@nestjs/axios` package.
+> info **Astuce** Les modules `HttpModule` et `HttpService` sont importés du package `@nestjs/axios`.
 
 ```typescript
 @@filename()
@@ -52,13 +52,13 @@ export class CatsService {
 }
 ```
 
-> info **Hint** `AxiosResponse` is an interface exported from the `axios` package (`$ npm i axios`).
+> info **Astuce** `AxiosResponse` est une interface exportée depuis le package `axios` (`$ npm i axios`).
 
-All `HttpService` methods return an `AxiosResponse` wrapped in an `Observable` object.
+Toutes les méthodes `HttpService` retournent un objet `AxiosResponse` enveloppé dans un objet `Observable`.
 
 #### Configuration
 
-[Axios](https://github.com/axios/axios) can be configured with a variety of options to customize the behavior of the `HttpService`. Read more about them [here](https://github.com/axios/axios#request-config). To configure the underlying Axios instance, pass an optional options object to the `register()` method of `HttpModule` when importing it. This options object will be passed directly to the underlying Axios constructor.
+[Axios](https://github.com/axios/axios) peut être configuré avec une variété d'options pour personnaliser le comportement du `HttpService`. Lisez-en plus à leur sujet [ici](https://github.com/axios/axios#request-config). Pour configurer l'instance Axios sous-jacente, passez un objet facultatif d'options à la méthode `register()` de `HttpModule` lors de son importation. Cet objet options sera passé directement au constructeur d'Axios sous-jacent.
 
 ```typescript
 @Module({
@@ -73,11 +73,11 @@ All `HttpService` methods return an `AxiosResponse` wrapped in an `Observable` o
 export class CatsModule {}
 ```
 
-#### Async configuration
+#### Configuration asynchrone
 
-When you need to pass module options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+Lorsque vous avez besoin de passer des options de module de manière asynchrone plutôt que statique, utilisez la méthode `registerAsync()`. Comme pour la plupart des modules dynamiques, Nest fournit plusieurs techniques pour gérer la configuration asynchrone.
 
-One technique is to use a factory function:
+Une technique consiste à utiliser une fonction factory :
 
 ```typescript
 HttpModule.registerAsync({
@@ -88,7 +88,7 @@ HttpModule.registerAsync({
 });
 ```
 
-Like other factory providers, our factory function can be [async](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory) and can inject dependencies through `inject`.
+Comme les autres fournisseurs d'usine, notre fonction d'usine peut être [async](https://docs.nestjs.com/fundamentals/custom-providers#fournisseurs-de-factory--usefactory) et peut injecter des dépendances via `inject`.
 
 ```typescript
 HttpModule.registerAsync({
@@ -101,7 +101,7 @@ HttpModule.registerAsync({
 });
 ```
 
-Alternatively, you can configure the `HttpModule` using a class instead of a factory, as shown below.
+Alternativement, vous pouvez configurer le `HttpModule` en utilisant une classe au lieu d'une fabrique, comme montré ci-dessous.
 
 ```typescript
 HttpModule.registerAsync({
@@ -109,7 +109,7 @@ HttpModule.registerAsync({
 });
 ```
 
-The construction above instantiates `HttpConfigService` inside `HttpModule`, using it to create an options object. Note that in this example, the `HttpConfigService` has to implement `HttpModuleOptionsFactory` interface as shown below. The `HttpModule` will call the `createHttpOptions()` method on the instantiated object of the supplied class.
+La construction ci-dessus instancie `HttpConfigService` dans `HttpModule`, en l'utilisant pour créer un objet options. Notez que dans cet exemple, le `HttpConfigService` doit implémenter l'interface `HttpModuleOptionsFactory` comme montré ci-dessous. Le `HttpModule` appellera la méthode `createHttpOptions()` sur l'objet instancié de la classe fournie.
 
 ```typescript
 @Injectable()
@@ -123,7 +123,7 @@ class HttpConfigService implements HttpModuleOptionsFactory {
 }
 ```
 
-If you want to reuse an existing options provider instead of creating a private copy inside the `HttpModule`, use the `useExisting` syntax.
+Si vous voulez réutiliser un fournisseur d'options existant au lieu de créer une copie privée dans le `HttpModule`, utilisez la syntaxe `useExisting`.
 
 ```typescript
 HttpModule.registerAsync({
@@ -132,9 +132,9 @@ HttpModule.registerAsync({
 });
 ```
 
-#### Using Axios directly
+#### Utilisation directe d'Axios
 
-If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:
+Si vous pensez que les options de `HttpModule.register` ne sont pas suffisantes pour vous, ou si vous voulez juste accéder à l'instance Axios sous-jacente créée par `@nestjs/axios`, vous pouvez y accéder via `HttpService#axiosRef` comme suit :
 
 ```typescript
 @Injectable()
@@ -148,9 +148,9 @@ export class CatsService {
 }
 ```
 
-#### Full example
+#### Exemple complet
 
-Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+Puisque la valeur de retour des méthodes `HttpService` est un Observable, nous pouvons utiliser `rxjs` - `firstValueFrom` ou `lastValueFrom` pour récupérer les données de la requête sous la forme d'une promesse.
 
 ```typescript
 import { catchError, firstValueFrom } from 'rxjs';
@@ -174,4 +174,4 @@ export class CatsService {
 }
 ```
 
-> info **Hint** Visit RxJS's documentation on [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) for differences between them.
+> info **Astuce** Consultez la documentation de RxJS sur [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) et [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) pour connaître les différences entre les deux.
