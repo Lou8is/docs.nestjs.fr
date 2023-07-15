@@ -1,21 +1,21 @@
-### Model-View-Controller
+### Modèle-Vue-Contrôleur
 
-Nest, by default, makes use of the [Express](https://github.com/expressjs/express) library under the hood. Hence, every technique for using the MVC (Model-View-Controller) pattern in Express applies to Nest as well.
+Nest utilise par défaut la bibliothèque [Express](https://github.com/expressjs/express). Par conséquent, toutes les techniques d'utilisation du modèle MVC (Modèle-Vue-Contrôleur) dans Express s'appliquent également à Nest.
 
-First, let's scaffold a simple Nest application using the [CLI](https://github.com/nestjs/nest-cli) tool:
+Commençons par mettre en place une application Nest simple à l'aide de l'outil [CLI](https://github.com/nestjs/nest-cli) :
 
 ```bash
 $ npm i -g @nestjs/cli
 $ nest new project
 ```
 
-In order to create an MVC app, we also need a [template engine](https://expressjs.com/en/guide/using-template-engines.html) to render our HTML views:
+Pour créer une application MVC, nous avons également besoin d'un [moteur de modèle](https://expressjs.com/en/guide/using-template-engines.html) pour générer nos vues HTML :
 
 ```bash
 $ npm install --save hbs
 ```
 
-We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engine, though you can use whatever fits your requirements. Once the installation process is complete, we need to configure the express instance using the following code:
+Nous avons utilisé le moteur `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)), mais vous pouvez utiliser ce qui correspond à vos besoins. Une fois le processus d'installation terminé, nous devons configurer l'instance express en utilisant le code suivant :
 
 ```typescript
 @@filename(main)
@@ -55,11 +55,11 @@ async function bootstrap() {
 bootstrap();
 ```
 
-We told [Express](https://github.com/expressjs/express) that the `public` directory will be used for storing static assets, `views` will contain templates, and the `hbs` template engine should be used to render HTML output.
+Nous avons dit à [Express](https://github.com/expressjs/express) que le répertoire `public` sera utilisé pour stocker les actifs statiques, que `views` contiendra les templates, et que le moteur de template `hbs` sera utilisé pour générer les sorties HTML.
 
-#### Template rendering
+#### Rendu des modèles
 
-Now, let's create a `views` directory and `index.hbs` template inside it. In the template, we'll print a `message` passed from the controller:
+Maintenant, créons un répertoire `views` et un modèle `index.hbs` à l'intérieur. Dans le template, nous allons imprimer un `message` passé par le contrôleur :
 
 ```html
 <!DOCTYPE html>
@@ -74,7 +74,7 @@ Now, let's create a `views` directory and `index.hbs` template inside it. In the
 </html>
 ```
 
-Next, open the `app.controller` file and replace the `root()` method with the following code:
+Ensuite, ouvrez le fichier `app.controller` et remplacez la méthode `root()` par le code suivant :
 
 ```typescript
 @@filename(app.controller)
@@ -90,15 +90,15 @@ export class AppController {
 }
 ```
 
-In this code, we are specifying the template to use in the `@Render()` decorator, and the return value of the route handler method is passed to the template for rendering. Notice that the return value is an object with a property `message`, matching the `message` placeholder we created in the template.
+Dans ce code, nous spécifions le template à utiliser dans le décorateur `@Render()`, et la valeur de retour de la méthode du gestionnaire de route est passée au template pour le rendu. Notez que la valeur de retour est un objet avec une propriété `message`, correspondant à l'espace réservé `message` que nous avons créé dans le modèle.
 
-While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
+Pendant que l'application fonctionne, ouvrez votre navigateur et naviguez jusqu'à `http://localhost:3000`. Vous devriez voir le message `Hello world!`.
 
-#### Dynamic template rendering
+#### Rendu dynamique des modèles
 
-If the application logic must dynamically decide which template to render, then we should use the `@Res()` decorator, and supply the view name in our route handler, rather than in the `@Render()` decorator:
+Si la logique de l'application doit décider dynamiquement du modèle à afficher, alors nous devrions utiliser le décorateur `@Res()`, et fournir le nom de la vue dans notre gestionnaire de route, plutôt que dans le décorateur `@Render()` :
 
-> info **Hint** When Nest detects the `@Res()` decorator, it injects the library-specific `response` object. We can use this object to dynamically render the template. Learn more about the `response` object API [here](https://expressjs.com/en/api.html).
+> info **Astuce** Lorsque Nest détecte le décorateur `@Res()`, il injecte l'objet `response` spécifique à la bibliothèque. Nous pouvons utiliser cet objet pour effectuer un rendu dynamique du modèle. Pour en savoir plus sur l'API de l'objet `response` [lisez ceci](https://expressjs.com/en/api.html).
 
 ```typescript
 @@filename(app.controller)
@@ -120,19 +120,19 @@ export class AppController {
 }
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/15-mvc).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/15-mvc).
 
 #### Fastify
 
-As mentioned in this [chapter](/techniques/performance), we are able to use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). In order to create an MVC application with Fastify, we have to install the following packages:
+Comme indiqué dans ce [chapitre](/techniques/performance), nous pouvons utiliser n'importe quel fournisseur HTTP compatible avec Nest. L'une de ces bibliothèques est [Fastify](https://github.com/fastify/fastify). Afin de créer une application MVC avec Fastify, nous devons installer les packages suivants :
 
 ```bash
 $ npm i --save @fastify/static @fastify/view handlebars
 ```
 
-The next steps cover almost the same process used with Express, with minor differences specific to the platform. Once the installation process is complete, open the `main.ts` file and update its contents:
+Les étapes suivantes couvrent presque le même processus utilisé avec Express, avec des différences mineures spécifiques à la plateforme. Une fois le processus d'installation terminé, ouvrez le fichier `main.ts` et mettez à jour son contenu :
 
 ```typescript
 @@filename(main)
@@ -182,7 +182,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-The Fastify API is slightly different but the end result of those methods calls remains the same. One difference to notice with Fastify is that the template name passed into the `@Render()` decorator must include a file extension.
+L'API Fastify est légèrement différentes mais le résultat final de ces appels aux méthodes reste le même. Une différence notable avec Fastify est que le nom de modèle passé au décorateur `@Render()` doit inclure une extension de fichier.
 
 ```typescript
 @@filename(app.controller)
@@ -198,8 +198,8 @@ export class AppController {
 }
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
+Pendant que l'application fonctionne, ouvrez votre navigateur et naviguez jusqu'à `http://localhost:3000`. Vous devriez voir le message `Hello world!`.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/17-mvc-fastify).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/17-mvc-fastify).
