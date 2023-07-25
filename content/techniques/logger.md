@@ -1,21 +1,21 @@
 ### Logger
 
-Nest comes with a built-in text-based logger which is used during application bootstrapping and several other circumstances such as displaying caught exceptions (i.e., system logging). This functionality is provided via the `Logger` class in the `@nestjs/common` package. You can fully control the behavior of the logging system, including any of the following:
+Nest est livré avec un logger textuel intégré qui est utilisé pendant le démarrage de l'application et dans d'autres circonstances telles que l'affichage des exceptions capturées (c'est-à-dire la journalisation du système). Cette fonctionnalité est fournie par la classe `Logger` dans le package `@nestjs/common`. Vous pouvez entièrement contrôler le comportement du système de journalisation, y compris ce qui suit :
 
-- disable logging entirely
-- specify the log level of detail (e.g., display errors, warnings, debug information, etc.)
-- override timestamp in the default logger (e.g., use ISO8601 standard as date format)
-- completely override the default logger
-- customize the default logger by extending it
-- make use of dependency injection to simplify composing and testing your application
+- désactiver complètement la journalisation
+- spécifier le niveau de détail du journal (par exemple, afficher les erreurs, les avertissements, les informations de débogage, etc.)
+- remplacer l'horodatage dans le logger par défaut (par exemple, utiliser la norme ISO8601 comme format de date)
+- remplacer complètement le logger par défaut
+- personnaliser le logger par défaut en l'étendant
+- utiliser l'injection de dépendances pour simplifier la composition et le test de votre application
 
-You can also make use of the built-in logger, or create your own custom implementation, to log your own application-level events and messages.
+Vous pouvez également utiliser le logger intégré, ou créer votre propre implémentation personnalisée, pour enregistrer vos propres événements et messages au niveau de l'application.
 
-For more advanced logging functionality, you can make use of any Node.js logging package, such as [Winston](https://github.com/winstonjs/winston), to implement a completely custom, production grade logging system.
+Pour des fonctionnalités de journalisation plus avancées, vous pouvez utiliser n'importe quel package de journalisation Node.js, tel que [Winston](https://github.com/winstonjs/winston), pour mettre en œuvre un système de journalisation entièrement personnalisé et de qualité production.
 
-#### Basic customization
+#### Personnalisation de base
 
-To disable logging, set the `logger` property to `false` in the (optional) Nest application options object passed as the second argument to the `NestFactory.create()` method.
+Pour désactiver la journalisation, mettez la propriété `logger` à `false` dans l'objet (optionnel) options de l'application Nest passé comme second argument à la méthode `NestFactory.create()`.
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -24,7 +24,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-To enable specific logging levels, set the `logger` property to an array of strings specifying the log levels to display, as follows:
+Pour activer des niveaux de journalisation spécifiques, définissez la propriété `logger` avec un tableau de caractères spécifiant les niveaux de journalisation à afficher, comme suit :
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -33,13 +33,13 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
+Les valeurs du tableau peuvent être n'importe quelle combinaison de `'log'`, `'error'`, `'warn'`, `'debug'`, et `'verbose'`.
 
-> info **Hint** To disable color in the default logger's messages, set the `NO_COLOR` environment variable to some non-empty string.
+> info **Astuce** Pour désactiver la couleur dans les messages de l'enregistreur par défaut, définissez la variable d'environnement `NO_COLOR` avec une chaîne de caractères non vide.
 
-#### Custom implementation
+#### Implémentation personnalisée
 
-You can provide a custom logger implementation to be used by Nest for system logging by setting the value of the `logger` property to an object that fulfills the `LoggerService` interface. For example, you can tell Nest to use the built-in global JavaScript `console` object (which implements the `LoggerService` interface), as follows:
+Vous pouvez fournir une implémentation de logger personnalisée qui sera utilisée par Nest pour la journalisation du système en définissant la valeur de la propriété `logger` à un objet qui satisfait l'interface `LoggerService`. Par exemple, vous pouvez demander à Nest d'utiliser l'objet JavaScript global intégré `console` (qui implémente l'interface `LoggerService`), comme suit :
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -48,40 +48,40 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-Implementing your own custom logger is straightforward. Simply implement each of the methods of the `LoggerService` interface as shown below.
+L'implémentation de votre propre logger personnalisé est simple. Il suffit d'implémenter chacune des méthodes de l'interface `LoggerService` comme indiqué ci-dessous.
 
 ```typescript
 import { LoggerService } from '@nestjs/common';
 
 export class MyLogger implements LoggerService {
   /**
-   * Write a 'log' level log.
+   * Écrit un journal de niveau "log".
    */
   log(message: any, ...optionalParams: any[]) {}
 
   /**
-   * Write an 'error' level log.
+   * Écrit un journal de niveau "error" (erreur).
    */
   error(message: any, ...optionalParams: any[]) {}
 
   /**
-   * Write a 'warn' level log.
+   * Écrit un journal de niveau "warn" (avertissement).
    */
   warn(message: any, ...optionalParams: any[]) {}
 
   /**
-   * Write a 'debug' level log.
+   * Écrit un journal de niveau "debug" (débogage).
    */
   debug?(message: any, ...optionalParams: any[]) {}
 
   /**
-   * Write a 'verbose' level log.
+   * Écrit un journal de niveau "verbose" (verbeux).
    */
   verbose?(message: any, ...optionalParams: any[]) {}
 }
 ```
 
-You can then supply an instance of `MyLogger` via the `logger` property of the Nest application options object.
+Vous pouvez alors fournir une instance de `MyLogger` via la propriété `logger` de l'objet d'options de l'application Nest.
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -90,35 +90,35 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-This technique, while simple, doesn't utilize dependency injection for the `MyLogger` class. This can pose some challenges, particularly for testing, and limit the reusability of `MyLogger`. For a better solution, see the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below.
+Cette technique, bien que simple, n'utilise pas l'injection de dépendance pour la classe `MyLogger`. Cela peut poser quelques problèmes, en particulier pour les tests, et limiter la réutilisation de `MyLogger`. Pour une meilleure solution, voir la section <a href="techniques/logger#injection-de-dépendance">Injection de dépendances</a> ci-dessous.
 
-#### Extend built-in logger
+#### Étendre le logger intégré
 
-Rather than writing a logger from scratch, you may be able to meet your needs by extending the built-in `ConsoleLogger` class and overriding selected behavior of the default implementation.
+Plutôt que d'écrire un logger à partir de zéro, vous pouvez répondre à vos besoins en étendant la classe intégrée `ConsoleLogger` et en surchargeant certains comportements de l'implémentation par défaut.
 
 ```typescript
 import { ConsoleLogger } from '@nestjs/common';
 
 export class MyLogger extends ConsoleLogger {
   error(message: any, stack?: string, context?: string) {
-    // add your tailored logic here
+    // ajoutez ici votre logique personnalisée
     super.error(...arguments);
   }
 }
 ```
 
-You can use such an extended logger in your feature modules as described in the <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section below.
+Vous pouvez utiliser un tel logger étendu dans vos modules de fonctionnalités comme décrit dans la section <a href="techniques/logger#utilisation-du-logger-pour-la-journalisation-des-applications" >utilisation du logger pour la journalisation des applications</a> ci-dessous.
 
-You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="techniques/logger#custom-logger-implementation">Custom implementation</a> section above), or by using the technique shown in the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below. If you do so, you should take care to call `super`, as shown in the sample code above, to delegate the specific log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
+Vous pouvez demander à Nest d'utiliser votre logger étendu pour la journalisation du système en lui passant une instance via la propriété `logger` de l'objet d'options de l'application (comme indiqué dans la section <a href="techniques/logger#implémentation-personnalisée" >Implémentation personnalisée</a> ci-dessus), ou en utilisant la technique indiquée dans la section <a href="techniques/logger#injection-de-dépendance" >Injection de dépendance</a> ci-dessous. Si vous le faites, vous devez prendre soin d'appeler `super`, comme indiqué dans l'exemple de code ci-dessus, pour déléguer l'appel de la méthode de log spécifique à la classe mère (intégrée) afin que Nest puisse s'appuyer sur les fonctionnalités intégrées qu'il attend.
 
 <app-banner-courses></app-banner-courses>
 
-#### Dependency injection
+#### Injection de dépendance
 
-For more advanced logging functionality, you'll want to take advantage of dependency injection. For example, you may want to inject a `ConfigService` into your logger to customize it, and in turn inject your custom logger into other controllers and/or providers. To enable dependency injection for your custom logger, create a class that implements `LoggerService` and register that class as a provider in some module. For example, you can
+Pour des fonctionnalités de journalisation plus avancées, vous voudrez tirer parti de l'injection de dépendances. Par exemple, vous pouvez injecter un `ConfigService` dans votre logger pour le personnaliser, et à son tour injecter votre logger personnalisé dans d'autres contrôleurs et/ou fournisseurs. Pour activer l'injection de dépendance pour votre logger personnalisé, créez une classe qui implémente `LoggerService` et enregistrez cette classe comme fournisseur dans un module. Par exemple, vous pouvez
 
-1. Define a `MyLogger` class that either extends the built-in `ConsoleLogger` or completely overrides it, as shown in previous sections. Be sure to implement the `LoggerService` interface.
-2. Create a `LoggerModule` as shown below, and provide `MyLogger` from that module.
+1. Définir une classe `MyLogger` qui étend la classe intégrée `ConsoleLogger` ou la remplace complètement, comme montré dans les sections précédentes. Assurez-vous d'implémenter l'interface `LoggerService`.
+2. Créer un `LoggerModule` comme montré ci-dessous, et fournir `MyLogger` à partir de ce module.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -131,11 +131,11 @@ import { MyLogger } from './my-logger.service';
 export class LoggerModule {}
 ```
 
-With this construct, you are now providing your custom logger for use by any other module. Because your `MyLogger` class is part of a module, it can use dependency injection (for example, to inject a `ConfigService`). There's one more technique needed to provide this custom logger for use by Nest for system logging (e.g., for bootstrapping and error handling).
+Avec cette construction, vous fournissez maintenant votre logger personnalisé pour qu'il puisse être utilisé par n'importe quel autre module. Parce que votre classe `MyLogger` fait partie d'un module, elle peut utiliser l'injection de dépendances (par exemple, pour injecter un `ConfigService`). Il y a encore une technique nécessaire pour fournir ce logger personnalisé afin qu'il soit utilisé par Nest pour la journalisation du système (par exemple, pour le bootstrapping et la gestion des erreurs).
 
-Because application instantiation (`NestFactory.create()`) happens outside the context of any module, it doesn't participate in the normal Dependency Injection phase of initialization. So we must ensure that at least one application module imports the `LoggerModule` to trigger Nest to instantiate a singleton instance of our `MyLogger` class.
+Parce que l'instanciation de l'application (`NestFactory.create()`) se produit en dehors du contexte d'un module, elle ne participe pas à la phase normale d'injection de dépendance de l'initialisation. Nous devons donc nous assurer qu'au moins un module d'application importe le `LoggerModule` pour déclencher l'instanciation par Nest d'une instance singleton de notre classe `MyLogger`.
 
-We can then instruct Nest to use the same singleton instance of `MyLogger` with the following construction:
+Nous pouvons alors demander à Nest d'utiliser la même instance singleton de `MyLogger` avec la construction suivante :
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -145,17 +145,17 @@ app.useLogger(app.get(MyLogger));
 await app.listen(3000);
 ```
 
-> info **Note** In the example above, we set the `bufferLogs` to `true` to make sure all logs will be buffered until a custom logger is attached (`MyLogger` in this case) and the application initialisation process either completes or fails. If the initialisation process fails, Nest will fallback to the original `ConsoleLogger` to print out any reported error messages. Also, you can set the `autoFlushLogs` to `false` (default `true`) to manually flush logs (using the `Logger#flush()` method).
+> info **Remarque** Dans l'exemple ci-dessus, nous avons mis `bufferLogs` à `true` pour nous assurer que tous les logs seront mis en mémoire tampon jusqu'à ce qu'un logger personnalisé soit attaché (`MyLogger` dans ce cas) et que le processus d'initialisation de l'application soit terminé ou échoue. Si le processus d'initialisation échoue, Nest se rabattra sur le `ConsoleLogger` original pour imprimer tous les messages d'erreur rapportés. Vous pouvez également définir `autoFlushLogs` à `false` (par défaut `true`) pour vider manuellement les logs (en utilisant la méthode `Logger#flush()`).
 
-Here we use the `get()` method on the `NestApplication` instance to retrieve the singleton instance of the `MyLogger` object. This technique is essentially a way to "inject" an instance of a logger for use by Nest. The `app.get()` call retrieves the singleton instance of `MyLogger`, and depends on that instance being first injected in another module, as described above.
+Ici, nous utilisons la méthode `get()` sur l'instance `NestApplication` pour récupérer l'instance singleton de l'objet `MyLogger`. Cette technique est essentiellement un moyen d'"injecter" une instance d'un logger pour qu'il soit utilisé par Nest. L'appel à `app.get()` récupère l'instance singleton de `MyLogger`, et dépend de l'injection préalable de cette instance dans un autre module, comme décrit ci-dessus.
 
-You can also inject this `MyLogger` provider in your feature classes, thus ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
+Vous pouvez également injecter ce fournisseur `MyLogger` dans vos classes de fonctionnalités, assurant ainsi un comportement de journalisation cohérent à travers la journalisation du système Nest et la journalisation de l'application. Voir <a href="techniques/logger#utilisation-du-logger-pour-la-journalisation-des-applications">Utilisation du logger pour la journalisation des applications</a> et <a href="techniques/logger#injection-dun-logger-personnalisé">Injection d'un logger personnalisé</a> ci-dessous pour plus d'informations.
 
-#### Using the logger for application logging
+#### Utilisation du logger pour la journalisation des applications
 
-We can combine several of the techniques above to provide consistent behavior and formatting across both Nest system logging and our own application event/message logging.
+Nous pouvons combiner plusieurs des techniques ci-dessus pour fournir un comportement et un formatage cohérents à la fois pour la journalisation du système Nest et pour la journalisation des événements/messages de nos propres applications.
 
-A good practice is to instantiate `Logger` class from `@nestjs/common` in each of our services. We can supply our service name as the `context` argument in the `Logger` constructor, like so:
+Une bonne pratique est d'instancier la classe `Logger` de `@nestjs/common` dans chacun de nos services. Nous pouvons fournir le nom de notre service comme argument `context` dans le constructeur de `Logger`, comme ceci :
 
 ```typescript
 import { Logger, Injectable } from '@nestjs/common';
@@ -170,21 +170,21 @@ class MyService {
 }
 ```
 
-In the default logger implementation, `context` is printed in the square brackets, like `NestFactory` in the example below:
+Dans l'implémentation par défaut du logger, `context` est imprimé entre crochets, comme `NestFactory` dans l'exemple ci-dessous :
 
 ```bash
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
 ```
 
-If we supply a custom logger via `app.useLogger()`, it will actually be used by Nest internally. That means that our code remains implementation agnostic, while we can easily substitute the default logger for our custom one by calling `app.useLogger()`.
+Si nous fournissons un logger personnalisé via `app.useLogger()`, il sera en fait utilisé par Nest en interne. Cela signifie que notre code reste agnostique en matière d'implémentation, alors que nous pouvons facilement remplacer le logger par défaut par notre logger personnalisé en appelant `app.useLogger()`.
 
-That way if we follow the steps from the previous section and call `app.useLogger(app.get(MyLogger))`, the following calls to `this.logger.log()` from `MyService` would result in calls to method `log` from `MyLogger` instance.
+Ainsi, si nous suivons les étapes de la section précédente et appelons `app.useLogger(app.get(MyLogger))`, les appels suivants à `this.logger.log()` depuis `MyService` résulteront en des appels à la méthode `log` depuis l'instance `MyLogger`.
 
-This should be suitable for most cases. But if you need more customization (like adding and calling custom methods), move to the next section.
+Cela devrait convenir dans la plupart des cas. Mais si vous avez besoin de plus de personnalisation (comme l'ajout et l'appel de méthodes personnalisées), passez à la section suivante.
 
-#### Injecting a custom logger
+#### Injection d'un logger personnalisé
 
-To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `ConsoleLogger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `ConsoleLogger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
+Pour commencer, étendez le logger intégré avec le code suivant. Nous fournissons l'option `scope` comme métadonnée de configuration pour la classe `ConsoleLogger`, en spécifiant un scope [transient](/fundamentals/injection-scopes), pour s'assurer que nous aurons une instance unique de `MyLogger` dans chaque module de fonctionnalité. Dans cet exemple, nous n'étendons pas les méthodes individuelles de `ConsoleLogger` (comme `log()`, `warn()`, etc.), bien que vous puissiez choisir de le faire.
 
 ```typescript
 import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
@@ -197,7 +197,7 @@ export class MyLogger extends ConsoleLogger {
 }
 ```
 
-Next, create a `LoggerModule` with a construction like this:
+Ensuite, créez un `LoggerModule` avec une construction comme celle-ci :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -210,7 +210,7 @@ import { MyLogger } from './my-logger.service';
 export class LoggerModule {}
 ```
 
-Next, import the `LoggerModule` into your feature module. Since we extended default `Logger` we have the convenience of using `setContext` method. So we can start using the context-aware custom logger, like this:
+Ensuite, importez le `LoggerModule` dans votre module de fonctionnalité. Puisque nous avons étendu le `Logger` par défaut, nous avons la possibilité d'utiliser la méthode `setContext`. Nous pouvons donc commencer à utiliser le logger personnalisé en fonction du contexte, comme ceci :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -221,22 +221,22 @@ export class CatsService {
   private readonly cats: Cat[] = [];
 
   constructor(private myLogger: MyLogger) {
-    // Due to transient scope, CatsService has its own unique instance of MyLogger,
-    // so setting context here will not affect other instances in other services
+    // En raison de la portée transitoire, CatsService possède sa propre instance de MyLogger,
+    // ainsi, la définition du contexte ici n'affectera pas d'autres instances dans d'autres services.
     this.myLogger.setContext('CatsService');
   }
 
   findAll(): Cat[] {
-    // You can call all the default methods
+    // Vous pouvez appeler toutes les méthodes par défaut
     this.myLogger.warn('About to return cats!');
-    // And your custom methods
+    // Et vos méthodes personnalisées
     this.myLogger.customLog();
     return this.cats;
   }
 }
 ```
 
-Finally, instruct Nest to use an instance of the custom logger in your `main.ts` file as shown below. Of course in this example, we haven't actually customized the logger behavior (by extending the `Logger` methods like `log()`, `warn()`, etc.), so this step isn't actually needed. But it **would** be needed if you added custom logic to those methods and wanted Nest to use the same implementation.
+Enfin, demandez à Nest d'utiliser une instance du logger personnalisé dans votre fichier `main.ts` comme montré ci-dessous. Bien sûr, dans cet exemple, nous n'avons pas vraiment personnalisé le comportement du logger (en étendant les méthodes `Logger` comme `log()`, `warn()`, etc), donc cette étape n'est pas vraiment nécessaire. Mais elle **serait** nécessaire si vous ajoutiez une logique personnalisée à ces méthodes et que vous vouliez que Nest utilise la même implémentation.
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -246,8 +246,8 @@ app.useLogger(new MyLogger());
 await app.listen(3000);
 ```
 
-> info **Hint** Alternatively, instead of setting `bufferLogs` to `true`, you could temporarily disable the logger with `logger: false` instruction. Be mindful that if you supply `logger: false` to `NestFactory.create`, nothing will be logged until you call `useLogger`, so you may miss some important initialization errors. If you don't mind that some of your initial messages will be logged with the default logger, you can just omit the `logger: false` option.
+> info **Astuce** Alternativement, au lieu de mettre `bufferLogs` à `true`, vous pouvez désactiver temporairement le logger avec l'instruction `logger : false`. Soyez conscient que si vous fournissez `logger : false` à `NestFactory.create`, rien ne sera enregistré jusqu'à ce que vous appeliez `useLogger`, donc vous pourriez manquer d'importantes erreurs d'initialisation. Si cela ne vous dérange pas que certains de vos messages initiaux soient enregistrés avec le logger par défaut, vous pouvez simplement omettre l'option `logger : false`.
 
-#### Use external logger
+#### Utilisation d'un logger externe
 
-Production applications often have specific logging requirements, including advanced filtering, formatting and centralized logging. Nest's built-in logger is used for monitoring Nest system behavior, and can also be useful for basic formatted text logging in your feature modules while in development, but production applications often take advantage of dedicated logging modules like [Winston](https://github.com/winstonjs/winston). As with any standard Node.js application, you can take full advantage of such modules in Nest.
+Les applications de production ont souvent des exigences spécifiques en matière de journalisation, y compris le filtrage avancé, le formatage et la journalisation centralisée. Le logger intégré de Nest est utilisé pour surveiller le comportement du système Nest et peut également être utile pour la journalisation de texte formaté de base dans vos modules de fonctionnalité pendant le développement, mais les applications de production tirent souvent parti de modules de journalisation dédiés tels que [Winston](https://github.com/winstonjs/winston). Comme pour toute application Node.js standard, vous pouvez tirer pleinement parti de ces modules dans Nest.
