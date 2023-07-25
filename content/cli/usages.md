@@ -1,8 +1,8 @@
-### CLI command reference
+### Référence des commandes de l'interface de ligne de commande (CLI)
 
 #### nest new
 
-Creates a new (standard mode) Nest project.
+Créez un nouveau projet Nest (mode standard).
 
 ```bash
 $ nest new <name> [options]
