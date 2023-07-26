@@ -2,7 +2,7 @@
 
 #### nest new
 
-Créez un nouveau projet Nest (mode standard).
+Crée un nouveau projet Nest (mode standard).
 
 ```bash
 $ nest new <nom> [options]
@@ -11,12 +11,12 @@ $ nest n <nom> [options]
 
 ##### Description
 
-Créez et initialisez un nouveau projet Nest. Prompts pour le gestionnaire de paquets.
+Crée et initialise un nouveau projet Nest. Demande de choisir le gestionnaire de paquets.
 
-- Créez un dossier avec le `<nom>` donné
-- Remplissez le dossier avec les fichiers de configuration
-- Créez des sous-dossiers pour le code source (`/src`) et les tests de bout en bout (end-to-end) (`/test`)
-- Remplissez les sous-dossiers avec les fichiers par défaut pour les composants de l'application et les tests.
+- Crée un dossier avec le `<nom>` donné
+- Remplit le dossier avec les fichiers de configuration
+- Crée des sous-dossiers pour le code source (`/src`) et les tests de bout en bout (end-to-end) (`/test`)
+- Remplisse les sous-dossiers avec les fichiers par défaut pour les composants de l'application et les tests.
 
 ##### Arguments
 
@@ -26,14 +26,14 @@ Créez et initialisez un nouveau projet Nest. Prompts pour le gestionnaire de pa
 
 ##### Options
 
-| Option                                | Description                                                                                                                                                                                          |
-| ------------------------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `--dry-run`                           | Rapporte les changements qui seraient effectués, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d`                                                                   |
-| `--skip-git`                          | Ignore l'initialisation du dépôt Git.<br/> Alias: `-g`                                                                                                                                               |
-| `--skip-install`                      | Ignore l'installation des paquets (ou dépendances).<br/> Alias: `-s`                                                                                                                                 |
-| `--package-manager [package-manager]` | Spécifie le gestionnaire de paquets. Utilisez `npm`, `yarn`, ou `pnpm`. Le gestionnaire de paquets doit être installé globalement.<br/> Alias: `-p`                                                  |
-| `--language [language]`               | Spécifie le language de programmation (`TS` ou `JS`).<br/> Alias: `-l`                                                                                                                               |
-| `--collection [collectionName]`       | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`                                                                            |
+| Option                                | Description                                                                                                                                                                                             |
+| ------------------------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`                           | Signale les changements qui seraient effectués, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d`                                                                       |
+| `--skip-git`                          | Ignore l'initialisation du dépôt Git.<br/> Alias: `-g`                                                                                                                                                  |
+| `--skip-install`                      | Ignore l'installation des paquets (ou dépendances).<br/> Alias: `-s`                                                                                                                                    |
+| `--package-manager [package-manager]` | Spécifie le gestionnaire de paquets. Utilise `npm`, `yarn`, ou `pnpm`. Le gestionnaire de paquets doit être installé globalement.<br/> Alias: `-p`                                                      |
+| `--language [language]`               | Spécifie le language de programmation (`TS` ou `JS`).<br/> Alias: `-l`                                                                                                                                  |
+| `--collection [collectionName]`       | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`                                                                                |
 | `--strict`                            | Démarre le projet avec les indicateurs du compilateur TypeScript suivants: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
 
 #### nest generate
@@ -76,14 +76,14 @@ $ nest g <schéma> <nom> [options]
 
 ##### Options
 
-| Option                          | Description                                                                                                                          |
-| ------------------------------- |--------------------------------------------------------------------------------------------------------------------------------------|
-| `--dry-run`                     | Rapporte les modifications qui seraient apportées, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d` |
-| `--project [project]`           | Le projet auquel cet élément devrait être ajouté.<br/> Alias: `-p`                                                                   |
-| `--flat`                        | Ne génère pas de dossier pour cet élément.                                                                                           |
-| `--collection [collectionName]` | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`             |
-| `--spec`                        | Impose la génération des fichiers de tests (par défaut).                                                                             |
-| `--no-spec`                     | Désactive la génération des fichiers de tests.                                                                                       |
+| Option                          | Description                                                                                                                         |
+| ------------------------------- |-------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`                     | Signale les modifications qui seraient apportées, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d` |
+| `--project [project]`           | Le projet auquel cet élément devrait être ajouté.<br/> Alias: `-p`                                                                  |
+| `--flat`                        | Ne génère pas de dossier pour cet élément.                                                                                          |
+| `--collection [collectionName]` | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`            |
+| `--spec`                        | Impose la génération des fichiers de tests (par défaut).                                                                            |
+| `--no-spec`                     | Désactive la génération des fichiers de tests.                                                                                      |
 
 #### nest build
 
@@ -91,9 +91,9 @@ Compile une application ou un espace de travail dans un dossier de sortie.
 
 La commande `build` est aussi responsable de:
 
-- Mapping des chemins (si l'on utilise des alias de chemins) via `tsconfig-paths`
-- Annotation des DTO avec des décorateurs OpenAPI (si le plugin CLI `@nestjs/swagger` est activé)
-- Annotation des DTO avec des décorateurs GraphQL decorators (si le plugin CLI `@nestjs/graphql` CLI plugin est activé)
+- Mapper des chemins (si l'on utilise des alias de chemins) via `tsconfig-paths`
+- Annoter des DTO avec des décorateurs OpenAPI (si le plugin CLI `@nestjs/swagger` est activé)
+- Annoter des DTO avec des décorateurs GraphQL decorators (si le plugin CLI `@nestjs/graphql` CLI plugin est activé)
 
 ```bash
 $ nest build <nom> [options]
