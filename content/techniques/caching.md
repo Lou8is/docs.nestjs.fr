@@ -1,25 +1,25 @@
-### Caching
+### Gestion du cache
 
-Caching is a great and simple **technique** that helps improve your app's performance. It acts as a temporary data store providing high performance data access.
+La mise en cache est une **technique** simple et efficace qui permet d'améliorer les performances de votre application. Elle agit comme un stockage temporaire de données qui permet un accès performant aux données.
 
 #### Installation
 
-First install required packages:
+Installez d'abord les packages nécessaires :
 
 ```bash
 $ npm install @nestjs/cache-manager cache-manager
 ```
 
-> warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
-> * If using `cache-manager` v4, provide ttl in seconds
-> * If using `cache-manager` v5, provide ttl in milliseconds
-> * Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
+> warning **Attention** La version 4 de `cache-manager` utilise les secondes pour le `TTL (Time-To-Live)`. La version actuelle de `cache-manager` (v5) utilise des millisecondes à la place. NestJS ne convertit pas la valeur, et transmet simplement le ttl que vous fournissez à la bibliothèque. En d'autres termes :
+> * Si vous utilisez `cache-manager` v4, fournissez le ttl en secondes
+> * Si vous utilisez `cache-manager` v5, fournissez le ttl en millisecondes.
+> * La documentation se réfère à des secondes, puisque NestJS a été publié avec la version 4 du gestionnaire de cache.
 
-#### In-memory cache
+#### Cache en mémoire
 
-Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily switch to a more comprehensive solution, like Redis.
+Nest fournit une API unifiée pour différents fournisseurs de stockage de cache. Celui qui est intégré est un stockage de données en mémoire. Cependant, vous pouvez facilement passer à une solution plus complète, comme Redis.
 
-In order to enable caching, import the `CacheModule` and call its `register()` method.
+Pour activer la mise en cache, importez le module `CacheModule` et appelez sa méthode `register()`.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -33,59 +33,59 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-#### Interacting with the Cache store
+#### Interagir avec le stockage de données dans le cache
 
-To interact with the cache manager instance, inject it to your class using the `CACHE_MANAGER` token, as follows:
+Pour interagir avec l'instance du gestionnaire de cache, injectez-la dans votre classe en utilisant le jeton `CACHE_MANAGER`, comme suit :
 
 ```typescript
 constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 ```
 
-> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/cache-manager` package.
+> info **Astuce** La classe `Cache` est importée du package `cache-manager`, tandis que le token `CACHE_MANAGER` provient du package `@nestjs/cache-manager`.
 
-The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
+La méthode `get` de l'instance `Cache` (du package `cache-manager`) est utilisée pour récupérer des éléments du cache. Si l'élément n'existe pas dans le cache, `null` sera retourné.
 
 ```typescript
 const value = await this.cacheManager.get('key');
 ```
 
-To add an item to the cache, use the `set` method:
+Pour ajouter un élément au cache, utilisez la méthode `set` :
 
 ```typescript
 await this.cacheManager.set('key', 'value');
 ```
 
-The default expiration time of the cache is 5 seconds.
+Le délai d'expiration par défaut du cache est de 5 secondes.
 
-You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
+Vous pouvez spécifier manuellement un TTL (délai d'expiration en secondes) pour cette clé spécifique, comme suit :
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
 ```
 
-To disable expiration of the cache, set the `ttl` configuration property to `0`:
+Pour désactiver l'expiration du cache, mettez la propriété de configuration `ttl` à `0` :
 
 ```typescript
 await this.cacheManager.set('key', 'value', 0);
 ```
 
-To remove an item from the cache, use the `del` method:
+Pour supprimer un élément du cache, utilisez la méthode `del` :
 
 ```typescript
 await this.cacheManager.del('key');
 ```
 
-To clear the entire cache, use the `reset` method:
+Pour effacer tout le cache, utilisez la méthode `reset` :
 
 ```typescript
 await this.cacheManager.reset();
 ```
 
-#### Auto-caching responses
+#### Mise en cache automatique des réponses
 
-> warning **Warning** In [GraphQL](/graphql/quick-start) applications, interceptors are executed separately for each field resolver. Thus, `CacheModule` (which uses interceptors to cache responses) will not work properly.
+> warning **Attention** Dans les applications [GraphQL](/graphql/quick-start), les intercepteurs sont exécutés séparément pour chaque résolveur de champs. Ainsi, `CacheModule` (qui utilise les intercepteurs pour mettre en cache les réponses) ne fonctionnera pas correctement.
 
-To enable auto-caching responses, just tie the `CacheInterceptor` where you want to cache data.
+Pour activer la mise en cache automatique des réponses, il suffit de lier le `CacheInterceptor` à l'endroit où vous voulez mettre les données en cache.
 
 ```typescript
 @Controller()
@@ -98,10 +98,10 @@ export class AppController {
 }
 ```
 
-> warning**Warning** Only `GET` endpoints are cached. Also, HTTP server routes that inject the native response object (`@Res()`) cannot use the Cache Interceptor. See
-> <a href="https://docs.nestjs.com/interceptors#response-mapping">response mapping</a> for more details.
+> warning **Attention** Seuls les endpoints `GET` sont mis en cache. De même, les routes de serveur HTTP qui injectent l'objet de réponse natif (`@Res()`) ne peuvent pas utiliser l'intercepteur de cache. Voir
+> <a href="/interceptors#mappage-des-réponses">mappage des réponses</a> pour plus de détails.
 
-To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to all endpoints globally:
+Pour réduire la quantité de code de base nécessaire, vous pouvez lier `CacheInterceptor` à tous les points de terminaison de manière globale :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -122,20 +122,20 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class AppModule {}
 ```
 
-#### Customize caching
+#### Personnalisation de la mise en cache
 
-All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). To customize default values, pass the options object to the `register()` method.
+Toutes les données mises en cache ont leur propre délai d'expiration ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). Pour personnaliser les valeurs par défaut, passez l'objet options à la méthode `register()`.
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
-  max: 10, // maximum number of items in cache
+  ttl: 5, // secondes
+  max: 10, // nombre maximum d'éléments dans le cache
 });
 ```
 
-#### Use module globally
+#### Utilisation globale du module
 
-When you want to use `CacheModule` in other modules, you'll need to import it (as is standard with any Nest module). Alternatively, declare it as a [global module](https://docs.nestjs.com/modules#global-modules) by setting the options object's `isGlobal` property to `true`, as shown below. In that case, you will not need to import `CacheModule` in other modules once it's been loaded in the root module (e.g., `AppModule`).
+Lorsque vous voulez utiliser `CacheModule` dans d'autres modules, vous devez l'importer (comme c'est le cas pour tout module Nest). Vous pouvez aussi le déclarer comme [module global](/modules#modules-globaux) en fixant la propriété `isGlobal` de l'objet options à `true`, comme indiqué ci-dessous. Dans ce cas, vous n'aurez pas besoin d'importer `CacheModule` dans d'autres modules une fois qu'il aura été chargé dans le module racine (par exemple, `AppModule`).
 
 ```typescript
 CacheModule.register({
@@ -143,9 +143,9 @@ CacheModule.register({
 });
 ```
 
-#### Global cache overrides
+#### Surcharges du cache global
 
-While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis, allowing customized caching strategies for individual controller methods. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
+Lorsque le cache global est activé, les entrées du cache sont stockées sous une `CacheKey` qui est générée automatiquement en fonction du chemin de la route. Vous pouvez surcharger certains paramètres de cache (`@CacheKey()` et `@CacheTTL()`) pour chaque méthode, ce qui permet de personnaliser les stratégies de mise en cache pour les méthodes individuelles des contrôleurs. Cela peut s'avérer très utile lors de l'utilisation de [différents stockages de cache](/techniques/caching#différents-stockages).
 
 ```typescript
 @Controller()
@@ -158,13 +158,13 @@ export class AppController {
 }
 ```
 
-> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/cache-manager` package.
+> info **Astuce** Les décorateurs `@CacheKey()` et `@CacheTTL()` sont importés du package `@nestjs/cache-manager`.
 
-The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overridden with a decorator will use the default values as registered globally (see [Customize caching](https://docs.nestjs.com/techniques/caching#customize-caching)).
+The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overridden with a decorator will use the default values as registered globally (see [Customize caching](/techniques/caching#personnalisation-de-la-mise-en-cache)).
 
-#### WebSockets and Microservices
+#### WebSockets et Microservices
 
-You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
+Vous pouvez également appliquer le `CacheInterceptor` aux abonnés WebSocket ainsi qu'aux patterns Microservice (quelle que soit la méthode de transport utilisée).
 
 ```typescript
 @@filename()
@@ -183,9 +183,9 @@ handleEvent(client, data) {
 }
 ```
 
-However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
+Cependant, le décorateur supplémentaire `@CacheKey()` est nécessaire pour spécifier une clé utilisée pour stocker et récupérer ultérieurement les données mises en cache. Notez également qu'il ne faut pas **tout mettre en cache**. Les actions qui effectuent des opérations métier plutôt que de simplement interroger les données ne doivent jamais être mises en cache.
 
-Additionally, you may specify a cache expiration time (TTL) by using the `@CacheTTL()` decorator, which will override the global default TTL value.
+De plus, vous pouvez spécifier un délai d'expiration du cache (TTL) en utilisant le décorateur `@CacheTTL()`, qui remplacera la valeur globale par défaut du TTL.
 
 ```typescript
 @@filename()
@@ -204,13 +204,13 @@ handleEvent(client, data) {
 }
 ```
 
-> info **Hint** The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator.
+> info **Astuce** Le décorateur `@CacheTTL()` peut être utilisé avec ou sans le décorateur `@CacheKey()` correspondant.
 
-#### Adjust tracking
+#### Ajuster le suivi
 
-By default, Nest uses the request URL (in an HTTP app) or cache key (in websockets and microservices apps, set through the `@CacheKey()` decorator) to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. `Authorization` to properly identify `profile` endpoints).
+Par défaut, Nest utilise l'URL de la requête (dans une application HTTP) ou la clé de cache (dans les applications websockets et microservices, définie via le décorateur `@CacheKey()`) pour associer les enregistrements de cache à vos endpoints. Néanmoins, vous pouvez parfois vouloir mettre en place un suivi basé sur différents facteurs, par exemple, en utilisant des en-têtes HTTP (par exemple, `Authorization` pour identifier correctement les points de terminaison `profile`).
 
-In order to accomplish that, create a subclass of `CacheInterceptor` and override the `trackBy()` method.
+Pour ce faire, créez une sous-classe de `CacheInterceptor` et surchargez la méthode `trackBy()`.
 
 ```typescript
 @Injectable()
@@ -221,9 +221,9 @@ class HttpCacheInterceptor extends CacheInterceptor {
 }
 ```
 
-#### Different stores
+#### Différents stockages
 
-This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
+Ce service tire parti de [cache-manager](https://github.com/node-cache-manager/node-cache-manager) sous le capot. Le package `cache-manager` supporte une large gamme de stockages utiles, par exemple, le [stockage Redis](https://github.com/dabroek/node-cache-manager-redis-store). Une liste complète des magasins supportés est disponible [ici](https://github.com/node-cache-manager/node-cache-manager#store-engines). Pour configurer le magasin Redis, il suffit de passer le package avec les options correspondantes à la méthode `register()`.
 
 ```typescript
 import type { RedisClientOptions } from 'redis';
@@ -237,7 +237,7 @@ import { AppController } from './app.controller';
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
 
-      // Store-specific configuration:
+      // Configuration spécifique au stockage :
       host: 'localhost',
       port: 6379,
     }),
@@ -247,14 +247,14 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-> warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
-> latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
+> warning **Attention** `cache-manager-redis-store` ne supporte pas redis v4. Pour que l'interface `ClientOpts` existe et fonctionne correctement, vous devez installer la
+> dernière version majeure de `redis` 3.x.x. Voir cette [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) pour suivre la progression de cette mise à jour.
 
-#### Async configuration
+#### Configuration asynchrone
 
-You may want to asynchronously pass in module options instead of passing them statically at compile time. In this case, use the `registerAsync()` method, which provides several ways to deal with async configuration.
+Vous pouvez vouloir passer des options de module de manière asynchrone au lieu de les passer statiquement au moment de la compilation. Dans ce cas, utilisez la méthode `registerAsync()`, qui fournit plusieurs façons de gérer la configuration asynchrone.
 
-One approach is to use a factory function:
+Une approche consiste à utiliser une fonction factory :
 
 ```typescript
 CacheModule.registerAsync({
@@ -264,7 +264,7 @@ CacheModule.registerAsync({
 });
 ```
 
-Our factory behaves like all other asynchronous module factories (it can be `async` and is able to inject dependencies through `inject`).
+Notre fabrique se comporte comme toutes les autres fabriques de modules asynchrones (elle peut être `async` et est capable d'injecter des dépendances via `inject`).
 
 ```typescript
 CacheModule.registerAsync({
@@ -276,7 +276,7 @@ CacheModule.registerAsync({
 });
 ```
 
-Alternatively, you can use the `useClass` method:
+Vous pouvez également utiliser la méthode `useClass` :
 
 ```typescript
 CacheModule.registerAsync({
@@ -284,7 +284,7 @@ CacheModule.registerAsync({
 });
 ```
 
-The above construction will instantiate `CacheConfigService` inside `CacheModule` and will use it to get the options object. The `CacheConfigService` has to implement the `CacheOptionsFactory` interface in order to provide the configuration options:
+La construction ci-dessus instanciera `CacheConfigService` dans `CacheModule` et l'utilisera pour obtenir l'objet options. Le `CacheConfigService` doit implémenter l'interface `CacheOptionsFactory` afin de fournir les options de configuration :
 
 ```typescript
 @Injectable()
@@ -297,7 +297,7 @@ class CacheConfigService implements CacheOptionsFactory {
 }
 ```
 
-If you wish to use an existing configuration provider imported from a different module, use the `useExisting` syntax:
+Si vous souhaitez utiliser un fournisseur de configuration existant importé d'un module différent, utilisez la syntaxe `useExisting` :
 
 ```typescript
 CacheModule.registerAsync({
@@ -306,10 +306,10 @@ CacheModule.registerAsync({
 });
 ```
 
-This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
+Cela fonctionne de la même manière que `useClass` avec une différence essentielle - `CacheModule` va chercher dans les modules importés pour réutiliser tout `ConfigService` déjà créé, au lieu d'instancier le sien.
 
-> info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
+> info **Astuce** `CacheModule#register` et `CacheModule#registerAsync` et `CacheOptionsFactory` ont un générique optionnel (argument de type) pour restreindre les options de configuration spécifiques au magasin, ce qui les rend sûrs du point de vue du type.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/20-cache).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/20-cache).
