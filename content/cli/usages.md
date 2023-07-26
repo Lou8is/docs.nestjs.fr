@@ -16,7 +16,7 @@ Crée et initialise un nouveau projet Nest. Demande de choisir le gestionnaire d
 - Crée un dossier avec le `<nom>` donné
 - Remplit le dossier avec les fichiers de configuration
 - Crée des sous-dossiers pour le code source (`/src`) et les tests de bout en bout (end-to-end) (`/test`)
-- Remplisse les sous-dossiers avec les fichiers par défaut pour les composants de l'application et les tests.
+- Remplit les sous-dossiers avec les fichiers par défaut pour les composants de l'application et les tests.
 
 ##### Arguments
 
