@@ -5,165 +5,165 @@
 Créez un nouveau projet Nest (mode standard).
 
 ```bash
-$ nest new <name> [options]
-$ nest n <name> [options]
+$ nest new <nom> [options]
+$ nest n <nom> [options]
 ```
 
 ##### Description
 
-Creates and initializes a new Nest project. Prompts for package manager.
+Créez et initialisez un nouveau projet Nest. Prompts pour le gestionnaire de paquets.
 
-- Creates a folder with the given `<name>`
-- Populates the folder with configuration files
-- Creates sub-folders for source code (`/src`) and end-to-end tests (`/test`)
-- Populates the sub-folders with default files for app components and tests
+- Créez un dossier avec le `<nom>` donné
+- Remplissez le dossier avec les fichiers de configuration
+- Créez des sous-dossiers pour le code source (`/src`) et les tests de bout en bout (end-to-end) (`/test`)
+- Remplissez les sous-dossiers avec les fichiers par défaut pour les composants de l'application et les tests.
 
 ##### Arguments
 
 | Argument | Description                 |
-| -------- | --------------------------- |
-| `<name>` | The name of the new project |
+|---------| --------------------------- |
+| `<nom>` | Le nom du nouveau projet |
 
 ##### Options
 
 | Option                                | Description                                                                                                                                                                                          |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                                                                                                             |
-| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                                                                                                                 |
-| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                                                                                                          |
-| `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, or `pnpm`. Package manager must be installed globally.<br/> Alias: `-p`                                                                                  |
-| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                                                                                                        |
-| `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`                                                                                      |
-| `--strict`                            | Start the project with the following TypeScript compiler flags enabled: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
+| ------------------------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`                           | Rapporte les changements qui seraient effectués, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d`                                                                   |
+| `--skip-git`                          | Ignore l'initialisation du dépôt Git.<br/> Alias: `-g`                                                                                                                                               |
+| `--skip-install`                      | Ignore l'installation des paquets (ou dépendances).<br/> Alias: `-s`                                                                                                                                 |
+| `--package-manager [package-manager]` | Spécifie le gestionnaire de paquets. Utilisez `npm`, `yarn`, ou `pnpm`. Le gestionnaire de paquets doit être installé globalement.<br/> Alias: `-p`                                                  |
+| `--language [language]`               | Spécifie le language de programmation (`TS` ou `JS`).<br/> Alias: `-l`                                                                                                                               |
+| `--collection [collectionName]`       | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`                                                                            |
+| `--strict`                            | Démarre le projet avec les indicateurs du compilateur TypeScript suivants: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
 
 #### nest generate
 
-Generates and/or modifies files based on a schematic
+Génère et/ou modifie des fichiers en fonction d'un schéma.
 
 ```bash
-$ nest generate <schematic> <name> [options]
-$ nest g <schematic> <name> [options]
+$ nest generate <schéma> <nom> [options]
+$ nest g <schéma> <nom> [options]
 ```
 
 ##### Arguments
 
-| Argument      | Description                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `<schematic>` | The `schematic` or `collection:schematic` to generate. See the table below for the available schematics. |
-| `<name>`      | The name of the generated component.                                                                     |
+| Argument  | Description                                                                                        |
+|-----------|----------------------------------------------------------------------------------------------------|
+| `<schéma>` | Le `schéma` ou la `collection:schéma` à générer. Veuillez consulter le tableau ci-dessous pour voir les schémas disponibles. |
+| `<nom>`   | Le nom du composant généré.                                                                        |
 
-##### Schematics
+##### Schémas
 
-| Name          | Alias | Description                                                                                                  |
-| ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
-| `app`         |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure).          |
-| `library`     | `lib` | Generate a new library within a monorepo (converting to monorepo if it's a standard structure).              |
-| `class`       | `cl`  | Generate a new class.                                                                                        |
-| `controller`  | `co`  | Generate a controller declaration.                                                                           |
-| `decorator`   | `d`   | Generate a custom decorator.                                                                                 |
-| `filter`      | `f`   | Generate a filter declaration.                                                                               |
-| `gateway`     | `ga`  | Generate a gateway declaration.                                                                              |
-| `guard`       | `gu`  | Generate a guard declaration.                                                                                |
-| `interface`   | `itf` | Generate an interface.                                                                                       |
-| `interceptor` | `itc` | Generate an interceptor declaration.                                                                         |
-| `middleware`  | `mi`  | Generate a middleware declaration.                                                                           |
-| `module`      | `mo`  | Generate a module declaration.                                                                               |
-| `pipe`        | `pi`  | Generate a pipe declaration.                                                                                 |
-| `provider`    | `pr`  | Generate a provider declaration.                                                                             |
-| `resolver`    | `r`   | Generate a resolver declaration.                                                                             |
-| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](/recipes/crud-generator) for more details. |
-| `service`     | `s`   | Generate a service declaration.                                                                              |
+| Nom          | Alias | Description                                                                                                                    |
+|--------------| ----- |--------------------------------------------------------------------------------------------------------------------------------|
+| `app`        |       | Génère une nouvelle application au sein d'un monorépo (conversion en monorépo si c'est une structure standard)..               |
+| `library`    | `lib` | Génère une nouvelle bibliothèque au sein d'un monorépo (conversion en monorépo si c'est une structure standard).               |
+| `class`      | `cl`  | Génère une nouvelle classe.                                                                                                    |
+| `controller` | `co`  | Génère une déclaration de contrôleur.                                                                                          |
+| `decorator`  | `d`   | Génère un décorateur personnalisé.                                                                                             |
+| `filter`     | `f`   | Génère une déclaration de filtre.                                                                                              |
+| `gateway`    | `ga`  | Génère une déclaration de passerelle.                                                                                          |
+| `guard`      | `gu`  | Génère une déclaration de garde.                                                                                               |
+| `interface`  | `itf` | Génère un interface.                                                                                                           |
+| `interceptor` | `itc` | Génère une déclaration d'intercepteur.                                                                                         |
+| `middleware` | `mi`  | Génère une déclaration de middleware.                                                                                          |
+| `module`     | `mo`  | Génère une déclaration de module.                                                                                              |
+| `pipe`       | `pi`  | Génère une déclaration de pipe.                                                                                                |
+| `provider`   | `pr`  | Génère une déclaration de fournisseur.                                                                                         |
+| `resolver`   | `r`   | Génère une déclaration de résolveur.                                                                                           |
+| `resource`   | `res` | Génère une nouvelle ressource CRUD. Pour plus de détails veuillez voir: [CRUD (resource) generator](/recipes/crud-generator) . |
+| `service`    | `s`   | Génère une déclaration de service.                                                                                             |
 
 ##### Options
 
-| Option                          | Description                                                                                                     |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                        |
-| `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                       |
-| `--flat`                        | Do not generate a folder for the element.                                                                       |
-| `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
-| `--spec`                        | Enforce spec files generation (default)                                                                         |
-| `--no-spec`                     | Disable spec files generation                                                                                   |
+| Option                          | Description                                                                                                                          |
+| ------------------------------- |--------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`                     | Rapporte les modifications qui seraient apportées, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d` |
+| `--project [project]`           | Le projet auquel cet élément devrait être ajouté.<br/> Alias: `-p`                                                                   |
+| `--flat`                        | Ne génère pas de dossier pour cet élément.                                                                                           |
+| `--collection [collectionName]` | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`             |
+| `--spec`                        | Impose la génération des fichiers de tests (par défaut).                                                                             |
+| `--no-spec`                     | Désactive la génération des fichiers de tests.                                                                                       |
 
 #### nest build
 
-Compiles an application or workspace into an output folder.
+Compile une application ou un espace de travail dans un dossier de sortie.
 
-Also, the `build` command is responsible for:
+La commande `build` est aussi responsable de:
 
-- mapping paths (if using path aliases) via `tsconfig-paths`
-- annotating DTOs with OpenAPI decorators (if `@nestjs/swagger` CLI plugin is enabled)
-- annotating DTOs with GraphQL decorators (if `@nestjs/graphql` CLI plugin is enabled)
+- Mapping des chemins (si l'on utilise des alias de chemins) via `tsconfig-paths`
+- Annotation des DTO avec des décorateurs OpenAPI (si le plugin CLI `@nestjs/swagger` est activé)
+- Annotation des DTO avec des décorateurs GraphQL decorators (si le plugin CLI `@nestjs/graphql` CLI plugin est activé)
 
 ```bash
-$ nest build <name> [options]
+$ nest build <nom> [options]
 ```
 
 ##### Arguments
 
 | Argument | Description                       |
-| -------- | --------------------------------- |
-| `<name>` | The name of the project to build. |
+|---------| --------------------------------- |
+| `<nom>` | Le nom du projet à construire. |
 
 ##### Options
 
-| Option             | Description                                                                                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--path [path]`    | Path to `tsconfig` file. <br/>Alias `-p`                                                                                                                                                   |
-| `--config [path]`  | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                                                                                                     |
-| `--watch`          | Run in watch mode (live-reload).<br /> If you're using `tsc` for compilation, you can type `rs` to restart the application (when `manualRestart` option is set to `true`). <br/>Alias `-w` |
-| `--builder [name]` | Specify the builder to use for compilation (`tsc`, `swc`, or `webpack`). <br/>Alias `-b`                                                                                                   |
-| `--webpack`        | Use webpack for compilation (deprecated: use `--builder webpack` instead).                                                                                                                 |
-| `--webpackPath`    | Path to webpack configuration.                                                                                                                                                             |
-| `--tsc`            | Force use `tsc` for compilation.                                                                                                                                                           |
+| Option            | Description                                                                                                                                                                                                         |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--path [path]`   | Chemin vers le fichier `tsconfig`. <br/>Alias `-p`                                                                                                                                                                  |
+| `--config [path]` | Chemin vers le fichier de configuration `nest-cli`. <br/>Alias `-c`                                                                                                                                                 |
+| `--watch`         | Exécute en mode "watch" (reload en direct).<br /> Si vous utilisez `tsc` pour compiler, vous pouvez écrire `rs` pour redémarrer l'application (si l'option `manualRestart` est défini avec `true`). <br/>Alias `-w` |
+| `--builder [nom]` | Spécifie le générateur à utiliser pour la compilation. (`tsc`, `swc`, ou `webpack`). <br/>Alias `-b`                                                                                                                |
+| `--webpack`       | Utilise webpack pour la compilation (Obsolète: utilisez `--builder webpack` à la place).                                                                                                                            |
+| `--webpackPath`   | Chemin vers la configuration de webpack.                                                                                                                                                                            |
+| `--tsc`           | Force l'utilisation de `tsc` pour la compilation.                                                                                                                                                                   |
 
 #### nest start
 
-Compiles and runs an application (or default project in a workspace).
+Compile et exécute une application (ou le projet par défaut dans un espace de travail).
 
 ```bash
-$ nest start <name> [options]
+$ nest start <nom> [options]
 ```
 
 ##### Arguments
 
-| Argument | Description                     |
-| -------- | ------------------------------- |
-| `<name>` | The name of the project to run. |
+| Argument | Description                  |
+|---------|------------------------------|
+| `<nom>` | Le nom du projet à éxécuter. |
 
 ##### Options
 
-| Option                  | Description                                                                                                          |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `--path [path]`         | Path to `tsconfig` file. <br/>Alias `-p`                                                                             |
-| `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                               |
-| `--watch`               | Run in watch mode (live-reload) <br/>Alias `-w`                                                                      |
-| `--builder [name]`      | Specify the builder to use for compilation (`tsc`, `swc`, or `webpack`). <br/>Alias `-b`                             |
-| `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen. (`tsc` watch mode only)                   |
-| `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](cli/monorepo#assets) for more details. |
-| `--debug [hostport]`    | Run in debug mode (with --inspect flag) <br/>Alias `-d`                                                              |
-| `--webpack`             | Use webpack for compilation. (deprecated: use `--builder webpack` instead)                                           |
-| `--webpackPath`         | Path to webpack configuration.                                                                                       |
-| `--tsc`                 | Force use `tsc` for compilation.                                                                                     |
-| `--exec [binary]`       | Binary to run (default: `node`). <br/>Alias `-e`                                                                     |
+| Option                 | Description                                                                                                                                  |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| `--path [path]`        | Chemin vers le fichier `tsconfig`. <br/>Alias `-p`                                                                                           |
+| `--config [path]`      | Chemin vers le fichier de configuration `nest-cli`. <br/>Alias `-c`                                                                          |
+| `--watch`              | Exécute en mode "watch" (reload en direct) <br/>Alias `-w`                                                                                   |
+| `--builder [nom]`      | Spécifie le générateur à utiliser pour la compilation. (`tsc`, `swc`, ou `webpack`). <br/>Alias `-b`                                         |
+| `--preserveWatchOutput` | Conserve les anciens messages de la console en mode "watch" au lieu d'effacer' l'écran. (`tsc` mode watch uniquement)                        |
+| `--watchAssets`        | Exécute en mode "watch" (reload en direct), surveille les fichiers non-TS (assets). Voir [Assets](cli/monorepo#assets) pour plus de details. |
+| `--debug [hostport]`   | Exécute en mode debug (avec l'indicateur --inspect) <br/>Alias `-d`                                                                          |
+| `--webpack`            | (Obsolète: utilisez `--builder webpack` à la place).                                                                                         |
+| `--webpackPath`        | Chemin vers la configuration de webpack.                                                                                                     |
+| `--tsc`                | FForce l'utilisation de `tsc` pour la compilation.                                                                                           |
+| `--exec [binary]`      | Exécutable à utiliser (par défaut: `node`). <br/>Alias `-e`                                                                                          |
 
 #### nest add
 
-Imports a library that has been packaged as a **nest library**, running its install schematic.
+Importe une bibliothèque qui a été mise en paquet en tant que  **nest library**, en exécutant son schéma d'installation.
 
 ```bash
-$ nest add <name> [options]
+$ nest add <nom> [options]
 ```
 
 ##### Arguments
 
 | Argument | Description                        |
-| -------- | ---------------------------------- |
-| `<name>` | The name of the library to import. |
+|---------| ---------------------------------- |
+| `<nom>` | Le nom de la bibliothèque à importer. |
 
 #### nest info
 
-Displays information about installed nest packages and other helpful system info. For example:
+Affiche des informations sur les packages Nest installés ainsi que d'autres informations utiles sur le système. Par exemple :
 
 ```bash
 $ nest info
