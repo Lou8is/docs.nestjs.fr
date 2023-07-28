@@ -26,14 +26,14 @@ Crée et initialise un nouveau projet Nest. Demande de choisir le gestionnaire d
 
 ##### Options
 
-| Option                                | Description                                                                                                                                                                                            |
-| ------------------------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `--dry-run`                           | Signale les changements qui seraient effectués, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d`                                                                      |
-| `--skip-git`                          | Ignore l'initialisation du dépôt Git.<br/> Alias: `-g`                                                                                                                                                 |
-| `--skip-install`                      | Ignore l'installation des paquets (ou dépendances).<br/> Alias: `-s`                                                                                                                                   |
-| `--package-manager [package-manager]` | Spécifie le gestionnaire de paquets. Utilise `npm`, `yarn`, ou `npm`. Le gestionnaire de paquets doit être installé globalement.<br/> Alias: `-p`                                                      |
-| `--language [language]`               | Spécifie le language de programmation (`TS` ou `JS`).<br/> Alias: `-l`                                                                                                                                 |
-| `--collection [collectionName]`       | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`                                                                               |
+| Option                                | Description                                                                                                                                                                                             |
+| ------------------------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--dry-run`                           | Signale les changements qui seraient effectués, mais n'effectue pas de modifications sur le système de fichiers.<br/> Alias: `-d`                                                                       |
+| `--skip-git`                          | Ignore l'initialisation du dépôt Git.<br/> Alias: `-g`                                                                                                                                                  |
+| `--skip-install`                      | Ignore l'installation des paquets (ou dépendances).<br/> Alias: `-s`                                                                                                                                    |
+| `--package-manager [package-manager]` | Spécifie le gestionnaire de paquets. Utilise `npm`, `yarn`, ou `pnpm`. Le gestionnaire de paquets doit être installé globalement.<br/> Alias: `-p`                                                      |
+| `--language [language]`               | Spécifie le language de programmation (`TS` ou `JS`).<br/> Alias: `-l`                                                                                                                                  |
+| `--collection [collectionName]`       | Spécifie la collection de schémas. Utilise le nom du package de l'installation npm contenant le schéma.<br/> Alias: `-c`                                                                                |
 | `--strict`                            | Démarre le projet avec les indicateurs du compilateur TypeScript suivants: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
 
 #### nest generate
