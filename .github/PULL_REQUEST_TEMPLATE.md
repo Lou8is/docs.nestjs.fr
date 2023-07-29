@@ -1,38 +1,24 @@
 ## PR Checklist
-Please check if your PR fulfills the following requirements:
+Merci de vérifier que vous suivez bien les recommandations suivantes :
 
-- [ ] The commit message follows our guidelines: https://github.com/nestjs/docs.nestjs.com/blob/master/CONTRIBUTING.md
+- [ ] Les messages de commits suivent bien les recommandations : https://github.com/nestjs/docs.nestjs.com/blob/master/CONTRIBUTING.md
+- [ ] L'homogénéité de la traduction est respectée (guide à venir)
+- [ ] Les erreurs communes sont évitées (redirection vers la version EN, traduction des ancres, ...)
 
-
-## PR Type
-What kind of change does this PR introduce?
+## Types de PR
+Quel est l'objet de cette PR :
 
 <!-- Please check the one that applies to this PR using "x". -->
 
-- [ ] Bugfix
-- [ ] Feature
-- [ ] Code style update (formatting, local variables)
-- [ ] Refactoring (no functional changes, no api changes)
-- [ ] Build related changes
-- [ ] Docs
+- [ ] Traduction d'une nouvelle page
+- [ ] Modification d'une page déjà traduite
 - [ ] Other... Please describe:
 
 
-## What is the current behavior?
+## Liens 
 <!-- Please describe the current behavior that you are modifying, or link to a relevant issue. -->
 
-Issue Number: N/A
+Issue/PR/Discussion : N/A
 
 
-## What is the new behavior?
-
-
-## Does this PR introduce a breaking change?
-- [ ] Yes
-- [ ] No
-
-
-<!-- If this PR contains a breaking change, please describe the impact and migration path for existing applications below. -->
-
-
-## Other information
+## Autres détails (optionnel)
