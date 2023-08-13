@@ -1,6 +1,6 @@
 ### Validation
 
-Il est fortement recommandé de valider la véracité de toutes les données envoyées à une application web. TPour valider automatiquement les requêtes entrantes, Nest propose plusieurs pipes immédiatement prêts à l'emploi:
+Il est fortement recommandé de valider la véracité de toutes les données envoyées à une application web. Pour valider automatiquement les requêtes entrantes, Nest propose plusieurs pipes immédiatement prêts à l'emploi :
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -12,7 +12,7 @@ Le `ValidationPipe` utilise le puissant paquet [class-validator](https://github.
 
 #### Aperçu
 
-Dans le chapitre sur les [Pipes](/pipes), nous avons parcouru le processus de construction de tuyaux simples et de leur liaison avec les contrôleurs, les méthodes ou avec l'application globale pour illustrer comment le processus fonctionne. Assurez-vous de revoir ce chapitre pour mieux comprendre les sujets de ce chapitre. Ici, nous allons nous concentrer sur divers cas d'utilisation du **monde réel** du `ValidationPipe`, et montrer comment utiliser certaines de ses fonctionnalités de personnalisation avancées.
+Dans le chapitre sur les [Pipes](/pipes), nous avons parcouru le processus de construction de pipes simples et de leur liaison avec les contrôleurs, les méthodes ou avec l'application globale pour illustrer comment le processus fonctionne. Assurez-vous de revoir ce chapitre pour mieux comprendre les sujets de ce chapitre. Ici, nous allons nous concentrer sur divers cas d'utilisation du **monde réel** du `ValidationPipe`, et montrer comment utiliser certaines de ses fonctionnalités de personnalisation avancées.
 
 #### Utilisation du ValidationPipe intégré
 
@@ -22,9 +22,9 @@ Pour commencer à l'utiliser, nous installons d'abord la dépendance requise.
 $ npm i --save class-validator class-transformer
 ```
 
-> info **ASTUCE** Le `ValidationPipe` est exporté du paquet `@nestjs/common`.
+> info **Astuce** Le `ValidationPipe` est exporté du paquet `@nestjs/common`.
 
-Comme ce pipe utilise les librairies [`class-validator`](https://github.com/typestack/class-validator) et [`class-transformer`](https://github.com/typestack/class-transformer), il y a beaucoup d'options disponibles. Vous configurez ces paramètres via un objet de configuration transmis au pipe. Voici les options intégrées disponibles:
+Comme ce pipe utilise les librairies [`class-validator`](https://github.com/typestack/class-validator) et [`class-transformer`](https://github.com/typestack/class-transformer), il y a beaucoup d'options disponibles. Vous configurez ces paramètres via un objet de configuration transmis au pipe. Voici les options intégrées disponibles :
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
@@ -34,7 +34,7 @@ export interface ValidationPipeOptions extends ValidatorOptions {
 }
 ```
 
-En plus de celles-ci, toutes les options de `class-validator` (héritées de l'interface `ValidatorOptions`) sont disponibles:
+En plus de celles-ci, toutes les options de `class-validator` (héritées de l'interface `ValidatorOptions`) sont disponibles :
 
 <table>
   <tr>
@@ -85,7 +85,7 @@ En plus de celles-ci, toutes les options de `class-validator` (héritées de l'i
   <tr>
     <td><code>errorHttpStatusCode</code></td>
     <td><code>nombre</code></td>
-    <td>Ce paramètre vous permet de spécifier le type d'exception qui sera utilisé en cas d'erreur. Par défaut, il génère l' exception <code>BadRequestException</code>.</td>
+    <td>Ce paramètre vous permet de spécifier le type d'exception qui sera utilisé en cas d'erreur. Par défaut, il génère l'exception <code>BadRequestException</code>.</td>
   </tr>
   <tr>
     <td><code>exceptionFactory</code></td>
@@ -106,7 +106,7 @@ En plus de celles-ci, toutes les options de `class-validator` (héritées de l'i
   <tr>
     <td><code>strictGroups</code></td>
     <td><code>booléen</code></td>
-    <td>Si <code>groups</code> n'est pas fourni ou est vide, ignorez les décorateurs ayant au moins un groupe.</td>
+    <td>Si <code>groups</code> n'est pas fourni ou est vide, ignore les décorateurs ayant au moins un groupe.</td>
   </tr>
   <tr>
     <td><code>dismissDefaultMessages</code></td>
@@ -134,7 +134,7 @@ En plus de celles-ci, toutes les options de `class-validator` (héritées de l'i
 
 #### Validation automatique
 
-Nous commencerons par lier `ValidationPipe` au niveau de l'application, garantissant ainsi que tous les points d'extrémité sont protégés contre la réception de données incorrectes.
+Nous commencerons par lier `ValidationPipe` au niveau de l'application, garantissant ainsi que tous endpoints sont protégés contre la réception de données incorrectes.
 
 ```typescript
 async function bootstrap() {
@@ -145,7 +145,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Pour tester notre pipe, créons un point d'extrémité basique.
+Pour tester notre pipe, créons un endpoint basique.
 
 ```typescript
 @Post()
@@ -154,11 +154,11 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-> info **Astuce** Étant donné que TypeScript ne stocke pas de métadonnées sur les **generics or interfaces**, lorsque vous les utilisez dans vos DTO, `ValidationPipe` pourrait ne pas être en mesure de valider correctement les données entrantes. Pour cette raison, envisagez d'utiliser des classes concrètes dans vos DTO.
+> info **Astuce** Étant donné que TypeScript ne stocke pas de métadonnées sur les **interfaces ou types génériques**, lorsque vous les utilisez dans vos DTO, `ValidationPipe` pourrait ne pas être en mesure de valider correctement les données entrantes. Pour cette raison, envisagez d'utiliser des classes concrètes dans vos DTO.
 
-> info **Astuce** Lors de l'importation de vos DTO, vous ne pouvez pas utiliser une importation de type uniquement, car cela serait effacé à l'exécution, c'est-à-dire rappelez vous d'importer: `import {{ '{' }} CreateUserDto {{ '}' }}` au lieu de: `import type {{ '{' }} CreateUserDto {{ '}' }}`.
+> info **Astuce** Lors de l'importation de vos DTO, vous ne pouvez pas utiliser une importation de type uniquement, car cela serait effacé à l'exécution, c'est-à-dire rappelez vous d'importer : `import {{ '{' }} CreateUserDto {{ '}' }}` au lieu de : `import type {{ '{' }} CreateUserDto {{ '}' }}`.
 
-Maintenant, nous pouvons ajouter quelques règles de validation dans notre `CreateUserDto`.  Nous le faisons en utilisant des décorateurs fournis par le paquet `class-validator`, décrits en détail [ici](https://github.com/typestack/class-validator#validation-decorators). De cette manière, toute route qui utilise le `CreateUserDto` appliquera automatiquement ces règles de validation.
+Maintenant, nous pouvons ajouter quelques règles de validation dans notre `CreateUserDto`. Nous le faisons en utilisant des décorateurs fournis par le paquet `class-validator`, décrits en détail [ici](https://github.com/typestack/class-validator#validation-decorators). De cette manière, toute route qui utilise le `CreateUserDto` appliquera automatiquement ces règles de validation.
 
 ```typescript
 import { IsEmail, IsNotEmpty } from 'class-validator';
@@ -172,7 +172,7 @@ export class CreateUserDto {
 }
 ```
 
-Avec ces règles en place, si une requête atteint notre point d'extrémité avec une propriété `email` invalide dans le corps de la requête, l'application répondra automatiquement avec un code `400 Bad Request`, ainsi qu'avec le corps de réponse suivant:
+Avec ces règles en place, si une requête atteint notre endpoint avec une propriété `email` invalide dans le corps de la requête, l'application répondra automatiquement avec un code `400 Bad Request`, ainsi qu'avec le corps de réponse suivant :
 
 ```json
 {
@@ -182,7 +182,7 @@ Avec ces règles en place, si une requête atteint notre point d'extrémité ave
 }
 ```
 
-En plus de valider les corps de requête, le `ValidationPipe` peut être utilisé avec d'autres propriétés de l'objet de requête. Imaginons que nous voulions accepter `:id` dans le chemin du point d'extrémité. Pour garantir que seuls les nombres sont acceptés pour ce paramètre de requête, nous pouvons utiliser la construction suivante :
+En plus de valider les corps de requête, le `ValidationPipe` peut être utilisé avec d'autres propriétés de l'objet de requête. Imaginons que nous voulions accepter `:id` dans le chemin du endpoint. Pour garantir que seuls les nombres sont acceptés pour ce paramètre de requête, nous pouvons utiliser la construction suivante :
 
 ```typescript
 @Get(':id')
@@ -191,7 +191,7 @@ findOne(@Param() params: FindOneParams) {
 }
 ```
 
-`FindOneParams`, tout comme un DTO, est simplement une classe qui définit des règles de validation en utilisant `class-validator`. Cela ressemblerait à ça:
+`FindOneParams`, tout comme un DTO, est simplement une classe qui définit des règles de validation en utilisant `class-validator`. Cela ressemblerait à ça :
 
 ```typescript
 import { IsNumberString } from 'class-validator';
@@ -204,7 +204,7 @@ export class FindOneParams {
 
 #### Désactivation des erreurs détaillées.
 
-Les messages d'erreur peuvent être utiles pour expliquer ce qui était incorrect dans une requête. Cependant, certains environnements de production préfèrent désactiver les erreurs détaillées. Faites cela en passant un objet d'options au  `ValidationPipe`:
+Les messages d'erreur peuvent être utiles pour expliquer ce qui était incorrect dans une requête. Cependant, certains environnements de production préfèrent désactiver les erreurs détaillées. Faites cela en passant un objet d'options au `ValidationPipe` :
 
 ```typescript
 app.useGlobalPipes(
@@ -218,7 +218,7 @@ En conséquence, les messages d'erreur détaillés ne seront pas affichés dans 
 
 #### Exclusion de propriétés
 
-Notre `ValidationPipe` peut également filtrer les propriétés qui ne devraient pas être reçues par le gestionnaire de méthode. Dans ce cas, nous pouvons mettre sur la **whitelist** les propriétés acceptables, et toute propriété non incluse dans la liste blanche est automatiquement supprimée de l'objet résultant.Par exemple, si notre gestionnaire attend les propriétés `email` et `password` , mais qu'une requête inclut également une propriété `age`, cette propriété peut être automatiquement supprimée du DTO résultant. Pour activer ce comportement, définissez `whitelist` sur `true`.
+Notre `ValidationPipe` peut également filtrer les propriétés qui ne devraient pas être reçues par le gestionnaire de méthode. Dans ce cas, nous pouvons mettre sur la **whitelist** les propriétés acceptables, et toute propriété non incluse dans la liste d'acceptation est automatiquement supprimée de l'objet résultant.Par exemple, si notre gestionnaire attend les propriétés `email` et `password` , mais qu'une requête inclut également une propriété `age`, cette propriété peut être automatiquement supprimée du DTO résultant. Pour activer ce comportement, définissez `whitelist` sur `true`.
 
 ```typescript
 app.useGlobalPipes(
@@ -228,7 +228,7 @@ app.useGlobalPipes(
 );
 ```
 
-Lorsque c'est défini sur true, cela supprimera automatiquement les propriétés non autorisées (celles sans aucun décorateur dans la classe de validation).
+Lorsque cette valeur est définie sur true, cela supprimera automatiquement les propriétés non autorisées (celles sans aucun décorateur dans la classe de validation).
 
 Alternativement, vous pouvez arrêter le traitement de la requête lorsque des propriétés non autorisées sont présentes, et renvoyer une réponse d'erreur à l'utilisateur. Pour activer cela, définissez la propriété `forbidNonWhitelisted` sur `true`, en combinaison avec le réglage de `whitelist` sur `true`.
 
@@ -236,7 +236,7 @@ Alternativement, vous pouvez arrêter le traitement de la requête lorsque des p
 
 #### Transformer les objets de charge utile (payloads)
 
-Les charges utiles provenant du réseau sont des objets JavaScript simples. Le `ValidationPipe` peut automatiquement transformer les charges utiles en objets typés selon leurs classes de DTO. Pour activer la transformation automatique, définissez  `transform` sur `true`.  Cela peut être fait au niveau de la méthode:
+Les charges utiles provenant du réseau sont des objets JavaScript simples. Le `ValidationPipe` peut automatiquement transformer les charges utiles en objets typés selon leurs classes de DTO. Pour activer la transformation automatique, définissez `transform` sur `true`. Cela peut être fait au niveau de la méthode :
 
 ```typescript
 @@filename(cats.controller)
@@ -247,7 +247,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-Pour activer ce comportement au niveau global, définissez l'option sur un pipe global:
+Pour activer ce comportement au niveau global, définissez l'option sur un pipe global :
 
 ```typescript
 app.useGlobalPipes(
@@ -257,7 +257,7 @@ app.useGlobalPipes(
 );
 ```
 
-Avec l'option auto-transformation activée, le `ValidationPipe` effectuera également la conversion des types primitifs. Dans l'exemple suivant, la méthode `findOne()` prend un argument qui représente un paramètre d'extraction `id` du chemin:
+Avec l'option auto-transformation activée, le `ValidationPipe` effectuera également la conversion des types primitifs. Dans l'exemple suivant, la méthode `findOne()` prend un argument qui représente un paramètre d'extraction `id` du chemin :
 
 ```typescript
 @Get(':id')
@@ -267,13 +267,13 @@ findOne(@Param('id') id: number) {
 }
 ```
 
-Par défaut, chaque paramètre de chemin et paramètre de requête arrive sur le réseau en tant que  `string`. Dans l'exemple ci-dessus, nous avons spécifié le type `id` comme étant un `nombre`  (dans la signature de la méthode). Par conséquent, le `ValidationPipe` tentera de convertir automatiquement un identifiant de type chaîne en un nombre.
+Par défaut, chaque paramètre de chemin et paramètre de requête arrive sur le réseau en tant que `string`. Dans l'exemple ci-dessus, nous avons spécifié le type `id` comme étant un `number` (dans la signature de la méthode). Par conséquent, le `ValidationPipe` tentera de convertir automatiquement un identifiant de type chaîne en un nombre.
 
-####  Conversion explicite
+#### Conversion explicite
 
 Dans la section précédente, nous avons montré comment le `ValidationPipe` peut implicitement transformer les paramètres de requête et de chemin en fonction du type attendu. Cependant, cette fonctionnalité nécessite d'avoir la transformation automatique activée.
 
-Alternativement (avec l' auto-transformation désactivée), vous pouvez caster explicitement les valeurs en utilisant `ParseIntPipe` ou `ParseBoolPipe` (notez que `ParseStringPipe` n'est pas nécessaire car, comme mentionné précédemment, chaque paramètre de chemin et de requête arrive sur le réseau en tant que `string` par défaut).
+Alternativement (avec l'auto-transformation désactivée), vous pouvez caster explicitement les valeurs en utilisant `ParseIntPipe` ou `ParseBoolPipe` (notez que `ParseStringPipe` n'est pas nécessaire car, comme mentionné précédemment, chaque paramètre de chemin et de requête arrive sur le réseau en tant que `string` par défaut).
 
 ```typescript
 @Get(':id')
@@ -299,7 +299,7 @@ Lors de la construction de types de validation d'entrée (également appelés DT
 
 Nest fournit la fonction utilitaire `PartialType()` pour faciliter cette tâche et réduire le code redondant.
 
-La fonction `PartialType()` renvoie un type (classe) avec toutes les propriétés du type d'entrée définies comme facultatives. Par exemple, supposons que nous ayons un type **create** comme suit:
+La fonction `PartialType()` renvoie un type (classe) avec toutes les propriétés du type d'entrée définies comme facultatives. Par exemple, supposons que nous ayons un type **create** comme suit :
 
 ```typescript
 export class CreateCatDto {
@@ -309,7 +309,7 @@ export class CreateCatDto {
 }
 ```
 
-Par défaut, tous ces champs sont obligatoires. Pour créer un type avec les mêmes champs, mais en les rendant tous facultatifs, utilisez `PartialType()` en passant la référence de classe (`CreateCatDto`) en argument:
+Par défaut, tous ces champs sont obligatoires. Pour créer un type avec les mêmes champs, mais en les rendant tous facultatifs, utilisez `PartialType()` en passant la référence de classe (`CreateCatDto`) en argument :
 
 ```typescript
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
@@ -327,7 +327,7 @@ export class CreateCatDto {
 }
 ```
 
-Nous pouvons sélectionner un ensemble de propriétés de cette classe en utilisant la fonction utilitaire `PickType()`:
+Nous pouvons sélectionner un ensemble de propriétés de cette classe en utilisant la fonction utilitaire `PickType()` :
 
 ```typescript
 export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
@@ -335,7 +335,7 @@ export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 
 > info **Astuce** La fonction `PickType()` est importée depuis le paquet `@nestjs/mapped-types`.
 
-La fonction `OmitType()` construit un type en sélectionnant toutes les propriétés d'un type d'entrée, puis en supprimant un ensemble particulier de clés. Par exemple, supposons que nous commençons avec un type comme:
+La fonction `OmitType()` construit un type en sélectionnant toutes les propriétés d'un type d'entrée, puis en supprimant un ensemble particulier de clés. Par exemple, supposons que nous commençons avec un type comme :
 
 ```typescript
 export class CreateCatDto {
@@ -353,7 +353,7 @@ export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 
 > info **Astuce** La fonction `OmitType()` est importée depuis le paquet `@nestjs/mapped-types`.
 
-La fonction `IntersectionType()` combine deux types en un nouveau type (classe). Par exemple, supposons que nous ayons deux types comme suit:
+La fonction `IntersectionType()` combine deux types en un nouveau type (classe). Par exemple, supposons que nous ayons deux types comme suit :
 
 ```typescript
 export class CreateCatDto {
@@ -387,7 +387,7 @@ export class UpdateCatDto extends PartialType(
 
 #### Analyse et validation des tableaux.
 
-TypeScript ne stocke pas de métadonnées sur les génériques ou les interfaces, de sorte que lorsque vous les utilisez dans vos DTO, le `ValidationPipe` peut ne pas être en mesure de valider correctement les données entrantes. Par exemple, dans le code suivant, les `createUserDtos` ne seront pas correctement validés:
+TypeScript ne stocke pas de métadonnées sur les génériques ou les interfaces, de sorte que lorsque vous les utilisez dans vos DTO, le `ValidationPipe` peut ne pas être en mesure de valider correctement les données entrantes. Par exemple, dans le code suivant, les `createUserDtos` ne seront pas correctement validés :
 
 ```typescript
 @Post()
@@ -420,7 +420,7 @@ findByIds(
 }
 ```
 
-Cette construction valide les paramètres de requête entrants d'une requête HTTP `GET` comme suit:
+Cette construction valide les paramètres de requête entrants d'une requête HTTP `GET` comme suit :
 
 ```bash
 GET /?ids=1,2,3
