@@ -1,6 +1,6 @@
 ### Validation
 
-It is best practice to validate the correctness of any data sent into a web application. To automatically validate incoming requests, Nest provides several pipes available right out-of-the-box:
+Il est fortement recommandé de valider la véracité de toutes les données envoyées à une application web. Pour valider automatiquement les requêtes entrantes, Nest propose plusieurs pipes immédiatement prêts à l'emploi :
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -8,23 +8,23 @@ It is best practice to validate the correctness of any data sent into a web appl
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
 
-The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+Le `ValidationPipe` utilise le puissant paquet [class-validator](https://github.com/typestack/class-validator) et ses décorateurs de validation déclaratifs. Le `ValidationPipe` offre une approche pratique pour appliquer des règles de validation à toutes les charges utiles (payloads) clients entrantes, où les règles spécifiques sont déclarées avec des annotations simples dans les déclarations de classe/DTO locales de chaque module.
 
-#### Overview
+#### Aperçu
 
-In the [Pipes](/pipes) chapter, we went through the process of building simple pipes and binding them to controllers, methods or to the global app to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and show how to use some of its advanced customization features.
+Dans le chapitre sur les [Pipes](/pipes), nous avons parcouru le processus de construction de pipes simples et de leur liaison avec les contrôleurs, les méthodes ou avec l'application globale pour illustrer comment le processus fonctionne. Assurez-vous de revoir ce chapitre pour mieux comprendre les sujets de ce chapitre. Ici, nous allons nous concentrer sur divers cas d'utilisation du **monde réel** du `ValidationPipe`, et montrer comment utiliser certaines de ses fonctionnalités de personnalisation avancées.
 
-#### Using the built-in ValidationPipe
+#### Utilisation du ValidationPipe intégré
 
-To begin using it, we first install the required dependency.
+Pour commencer à l'utiliser, nous installons d'abord la dépendance requise.
 
 ```bash
 $ npm i --save class-validator class-transformer
 ```
 
-> info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
+> info **Astuce** Le `ValidationPipe` est exporté du paquet `@nestjs/common`.
 
-Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
+Comme ce pipe utilise les librairies [`class-validator`](https://github.com/typestack/class-validator) et [`class-transformer`](https://github.com/typestack/class-transformer), il y a beaucoup d'options disponibles. Vous configurez ces paramètres via un objet de configuration transmis au pipe. Voici les options intégrées disponibles :
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
@@ -34,7 +34,7 @@ export interface ValidationPipeOptions extends ValidatorOptions {
 }
 ```
 
-In addition to these, all `class-validator` options (inherited from the `ValidatorOptions` interface) are available:
+En plus de celles-ci, toutes les options de `class-validator` (héritées de l'interface `ValidatorOptions`) sont disponibles :
 
 <table>
   <tr>
@@ -44,98 +44,97 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   </tr>
   <tr>
     <td><code>enableDebugMessages</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validator will print extra warning messages to the console when something is not right.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, le validateur affichera des messages d'avertissement supplémentaires dans la console lorsque quelque chose ne va pas.</td>
   </tr>
   <tr>
     <td><code>skipUndefinedProperties</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true then validator will skip validation of all properties that are undefined in the validating object.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, le validateur ignorera la validation de toutes les propriétés qui sont indéfinies dans l'objet à valider.</td>
   </tr>
   <tr>
     <td><code>skipNullProperties</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true then validator will skip validation of all properties that are null in the validating object.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, le validateur ignorera la validation de toutes les propriétés qui sont nulles dans l'objet à valider.</td>
   </tr>
   <tr>
     <td><code>skipMissingProperties</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true then validator will skip validation of all properties that are null or undefined in the validating object.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, le validateur ignorera la validation de toutes les propriétés qui sont nulles ou indéfinies dans l'objet à valider.</td>
   </tr>
   <tr>
     <td><code>whitelist</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validator will strip validated (returned) object of any properties that do not use any validation decorators.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, le validateur supprimera de l'objet validé (retourné) toutes les propriétés qui n'utilisent pas de décorateurs de validation.</td>
   </tr>
   <tr>
     <td><code>forbidNonWhitelisted</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, instead of stripping non-whitelisted properties validator will throw an exception.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, au lieu de supprimer les propriétés non autorisées, le validateur lèvera une exception.</td>
   </tr>
   <tr>
     <td><code>forbidUnknownValues</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, attempts to validate unknown objects fail immediately.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, les tentatives de validation d'objets inconnus échouent immédiatement.</td>
   </tr>
   <tr>
     <td><code>disableErrorMessages</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validation errors will not be returned to the client.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, les erreurs de validation ne seront pas renvoyées au client.</td>
   </tr>
   <tr>
     <td><code>errorHttpStatusCode</code></td>
-    <td><code>number</code></td>
-    <td>This setting allows you to specify which exception type will be used in case of an error. By default it throws <code>BadRequestException</code>.</td>
+    <td><code>nombre</code></td>
+    <td>Ce paramètre vous permet de spécifier le type d'exception qui sera utilisé en cas d'erreur. Par défaut, il génère l'exception <code>BadRequestException</code>.</td>
   </tr>
   <tr>
     <td><code>exceptionFactory</code></td>
-    <td><code>Function</code></td>
-    <td>Takes an array of the validation errors and returns an exception object to be thrown.</td>
+    <td><code>Fonction</code></td>
+    <td>Prend un tableau d'erreurs de validation et renvoie un objet d'exception.</td>
   </tr>
   <tr>
     <td><code>groups</code></td>
     <td><code>string[]</code></td>
-    <td>Groups to be used during validation of the object.</td>
+    <td>Groupes à utiliser lors de la validation de l'objet.</td>
   </tr>
   <tr>
     <td><code>always</code></td>
-    <td><code>boolean</code></td>
-    <td>Set default for <code>always</code> option of decorators. Default can be overridden in decorator options</td>
+    <td><code>booléen</code></td>
+    <td>Défini la valeur par défaut pour l'option <code>always</code> des décorateurs. La valeur par défaut peut être remplacée dans les options du décorateur.</td>
   </tr>
 
   <tr>
     <td><code>strictGroups</code></td>
-    <td><code>boolean</code></td>
-    <td>If <code>groups</code> is not given or is empty, ignore decorators with at least one group.</td>
+    <td><code>booléen</code></td>
+    <td>Si <code>groups</code> n'est pas fourni ou est vide, ignore les décorateurs ayant au moins un groupe.</td>
   </tr>
   <tr>
     <td><code>dismissDefaultMessages</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code>        if
-      its not explicitly set.</td>
+    <td><code>booléen</code></td>
+    <td>Si défini sur true, la validation n'utilisera pas les messages par défaut. Le message d'erreur sera toujours <code>undefined</code> s'il n'est pas défini explicitement.</td>
   </tr>
   <tr>
     <td><code>validationError.target</code></td>
-    <td><code>boolean</code></td>
-    <td>Indicates if target should be exposed in <code>ValidationError</code>.</td>
+    <td><code>booléen</code></td>
+    <td>Indique si la cible doit être exposée dans <code>ValidationError</code>.</td>
   </tr>
   <tr>
     <td><code>validationError.value</code></td>
-    <td><code>boolean</code></td>
-    <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
+    <td><code>booléen</code></td>
+    <td>Indique si la valeur validée doit être exposée dans <code>ValidationError</code>.</td>
   </tr>
   <tr>
     <td><code>stopAtFirstError</code></td>
-    <td><code>boolean</code></td>
-    <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+    <td><code>booléen</code></td>
+    <td>Lorsqu'il est défini sur true, la validation de la propriété donnée s'arrêtera après avoir rencontré la première erreur. Par défaut, il est défini sur false.</td>
   </tr>
 </table>
 
-> info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).
+> info **Remarque** Trouvez plus d'informations sur le paquet `class-validator` dans son [dépôt](https://github.com/typestack/class-validator).
 
-#### Auto-validation
+#### Validation automatique
 
-We'll start by binding `ValidationPipe` at the application level, thus ensuring all endpoints are protected from receiving incorrect data.
+Nous commencerons par lier `ValidationPipe` au niveau de l'application, garantissant ainsi que tous endpoints sont protégés contre la réception de données incorrectes.
 
 ```typescript
 async function bootstrap() {
@@ -146,7 +145,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-To test our pipe, let's create a basic endpoint.
+Pour tester notre pipe, créons un endpoint basique.
 
 ```typescript
 @Post()
@@ -155,11 +154,11 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-> info **Hint** Since TypeScript does not store metadata about **generics or interfaces**, when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data.  For this reason, consider using concrete classes in your DTOs.
+> info **Astuce** Étant donné que TypeScript ne stocke pas de métadonnées sur les **interfaces ou types génériques**, lorsque vous les utilisez dans vos DTO, `ValidationPipe` pourrait ne pas être en mesure de valider correctement les données entrantes. Pour cette raison, envisagez d'utiliser des classes concrètes dans vos DTO.
 
-> info **Hint** When importing your DTOs, you can't use a type-only import as that would be erased at runtime, i.e. remember to `import {{ '{' }} CreateUserDto {{ '}' }}` instead of `import type {{ '{' }} CreateUserDto {{ '}' }}`.
+> info **Astuce** Lors de l'importation de vos DTO, vous ne pouvez pas utiliser une importation de type uniquement, car cela serait effacé à l'exécution, c'est-à-dire rappelez vous d'importer : `import {{ '{' }} CreateUserDto {{ '}' }}` au lieu de : `import type {{ '{' }} CreateUserDto {{ '}' }}`.
 
-Now we can add a few validation rules in our `CreateUserDto`. We do this using decorators provided by the `class-validator` package, described in detail [here](https://github.com/typestack/class-validator#validation-decorators). In this fashion, any route that uses the `CreateUserDto` will automatically enforce these validation rules.
+Maintenant, nous pouvons ajouter quelques règles de validation dans notre `CreateUserDto`. Nous le faisons en utilisant des décorateurs fournis par le paquet `class-validator`, décrits en détail [ici](https://github.com/typestack/class-validator#validation-decorators). De cette manière, toute route qui utilise le `CreateUserDto` appliquera automatiquement ces règles de validation.
 
 ```typescript
 import { IsEmail, IsNotEmpty } from 'class-validator';
@@ -173,7 +172,7 @@ export class CreateUserDto {
 }
 ```
 
-With these rules in place, if a request hits our endpoint with an invalid `email` property in the request body, the application will automatically respond with a `400 Bad Request` code, along with the following response body:
+Avec ces règles en place, si une requête atteint notre endpoint avec une propriété `email` invalide dans le corps de la requête, l'application répondra automatiquement avec un code `400 Bad Request`, ainsi qu'avec le corps de réponse suivant :
 
 ```json
 {
@@ -183,7 +182,7 @@ With these rules in place, if a request hits our endpoint with an invalid `email
 }
 ```
 
-In addition to validating request bodies, the `ValidationPipe` can be used with other request object properties as well. Imagine that we would like to accept `:id` in the endpoint path. To ensure that only numbers are accepted for this request parameter, we can use the following construct:
+En plus de valider les corps de requête, le `ValidationPipe` peut être utilisé avec d'autres propriétés de l'objet de requête. Imaginons que nous voulions accepter `:id` dans le chemin du endpoint. Pour garantir que seuls les nombres sont acceptés pour ce paramètre de requête, nous pouvons utiliser la construction suivante :
 
 ```typescript
 @Get(':id')
@@ -192,7 +191,7 @@ findOne(@Param() params: FindOneParams) {
 }
 ```
 
-`FindOneParams`, like a DTO, is simply a class that defines validation rules using `class-validator`. It would look like this:
+`FindOneParams`, tout comme un DTO, est simplement une classe qui définit des règles de validation en utilisant `class-validator`. Cela ressemblerait à ça :
 
 ```typescript
 import { IsNumberString } from 'class-validator';
@@ -203,9 +202,9 @@ export class FindOneParams {
 }
 ```
 
-#### Disable detailed errors
+#### Désactivation des erreurs détaillées.
 
-Error messages can be helpful to explain what was incorrect in a request. However, some production environments prefer to disable detailed errors. Do this by passing an options object to the `ValidationPipe`:
+Les messages d'erreur peuvent être utiles pour expliquer ce qui était incorrect dans une requête. Cependant, certains environnements de production préfèrent désactiver les erreurs détaillées. Faites cela en passant un objet d'options au `ValidationPipe` :
 
 ```typescript
 app.useGlobalPipes(
@@ -215,11 +214,11 @@ app.useGlobalPipes(
 );
 ```
 
-As a result, detailed error messages won't be displayed in the response body.
+En conséquence, les messages d'erreur détaillés ne seront pas affichés dans le corps de la réponse.
 
-#### Stripping properties
+#### Exclusion de propriétés
 
-Our `ValidationPipe` can also filter out properties that should not be received by the method handler. In this case, we can **whitelist** the acceptable properties, and any property not included in the whitelist is automatically stripped from the resulting object. For example, if our handler expects `email` and `password` properties, but a request also includes an `age` property, this property can be automatically removed from the resulting DTO. To enable such behavior, set `whitelist` to `true`.
+Notre `ValidationPipe` peut également filtrer les propriétés qui ne devraient pas être reçues par le gestionnaire de méthode. Dans ce cas, nous pouvons mettre sur la **whitelist** les propriétés acceptables, et toute propriété non incluse dans la liste d'acceptation est automatiquement supprimée de l'objet résultant.Par exemple, si notre gestionnaire attend les propriétés `email` et `password` , mais qu'une requête inclut également une propriété `age`, cette propriété peut être automatiquement supprimée du DTO résultant. Pour activer ce comportement, définissez `whitelist` sur `true`.
 
 ```typescript
 app.useGlobalPipes(
@@ -229,15 +228,15 @@ app.useGlobalPipes(
 );
 ```
 
-When set to true, this will automatically remove non-whitelisted properties (those without any decorator in the validation class).
+Lorsque cette valeur est définie sur true, cela supprimera automatiquement les propriétés non autorisées (celles sans aucun décorateur dans la classe de validation).
 
-Alternatively, you can stop the request from processing when non-whitelisted properties are present, and return an error response to the user. To enable this, set the `forbidNonWhitelisted` option property to `true`, in combination with setting `whitelist` to `true`.
+Alternativement, vous pouvez arrêter le traitement de la requête lorsque des propriétés non autorisées sont présentes, et renvoyer une réponse d'erreur à l'utilisateur. Pour activer cela, définissez la propriété `forbidNonWhitelisted` sur `true`, en combinaison avec le réglage de `whitelist` sur `true`.
 
 <app-banner-courses></app-banner-courses>
 
-#### Transform payload objects
+#### Transformer les objets de charge utile (payloads)
 
-Payloads coming in over the network are plain JavaScript objects. The `ValidationPipe` can automatically transform payloads to be objects typed according to their DTO classes. To enable auto-transformation, set `transform` to `true`.  This can be done at a method level:
+Les charges utiles provenant du réseau sont des objets JavaScript simples. Le `ValidationPipe` peut automatiquement transformer les charges utiles en objets typés selon leurs classes de DTO. Pour activer la transformation automatique, définissez `transform` sur `true`. Cela peut être fait au niveau de la méthode :
 
 ```typescript
 @@filename(cats.controller)
@@ -248,7 +247,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-To enable this behavior globally, set the option on a global pipe:
+Pour activer ce comportement au niveau global, définissez l'option sur un pipe global :
 
 ```typescript
 app.useGlobalPipes(
@@ -258,7 +257,7 @@ app.useGlobalPipes(
 );
 ```
 
-With the auto-transformation option enabled, the `ValidationPipe` will also perform conversion of primitive types. In the following example, the `findOne()` method takes one argument which represents an extracted `id` path parameter:
+Avec l'option auto-transformation activée, le `ValidationPipe` effectuera également la conversion des types primitifs. Dans l'exemple suivant, la méthode `findOne()` prend un argument qui représente un paramètre d'extraction `id` du chemin :
 
 ```typescript
 @Get(':id')
@@ -268,13 +267,13 @@ findOne(@Param('id') id: number) {
 }
 ```
 
-By default, every path parameter and query parameter comes over the network as a `string`. In the above example, we specified the `id` type as a `number` (in the method signature). Therefore, the `ValidationPipe` will try to automatically convert a string identifier to a number.
+Par défaut, chaque paramètre de chemin et paramètre de requête arrive sur le réseau en tant que `string`. Dans l'exemple ci-dessus, nous avons spécifié le type `id` comme étant un `number` (dans la signature de la méthode). Par conséquent, le `ValidationPipe` tentera de convertir automatiquement un identifiant de type chaîne en un nombre.
 
-#### Explicit conversion
+#### Conversion explicite
 
-In the above section, we showed how the `ValidationPipe` can implicitly transform query and path parameters based on the expected type. However, this feature requires having auto-transformation enabled.
+Dans la section précédente, nous avons montré comment le `ValidationPipe` peut implicitement transformer les paramètres de requête et de chemin en fonction du type attendu. Cependant, cette fonctionnalité nécessite d'avoir la transformation automatique activée.
 
-Alternatively (with auto-transformation disabled), you can explicitly cast values using the `ParseIntPipe` or `ParseBoolPipe` (note that `ParseStringPipe` is not needed because, as mentioned earlier, every path parameter and query parameter comes over the network as a `string` by default).
+Alternativement (avec l'auto-transformation désactivée), vous pouvez caster explicitement les valeurs en utilisant `ParseIntPipe` ou `ParseBoolPipe` (notez que `ParseStringPipe` n'est pas nécessaire car, comme mentionné précédemment, chaque paramètre de chemin et de requête arrive sur le réseau en tant que `string` par défaut).
 
 ```typescript
 @Get(':id')
@@ -288,19 +287,19 @@ findOne(
 }
 ```
 
-> info **Hint** The `ParseIntPipe` and `ParseBoolPipe` are exported from the `@nestjs/common` package.
+> info **Astuce** Le `ParseIntPipe` et le `ParseBoolPipe` sont exportés du paquet `@nestjs/common`.
 
-#### Mapped types
+#### Types mappés
 
-As you build out features like **CRUD** (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
+Lorsque vous développez des fonctionnalités telles que **CRUD** (Create/Read/Update/Delete) il est souvent utile de construire des variantes d'un type d'entité de base. Nest fournit plusieurs fonctions utilitaires qui effectuent des transformations de type pour rendre cette tâche plus pratique.
 
-> **Warning** If your application uses the `@nestjs/swagger` package, see [this chapter](/openapi/mapped-types) for more information about Mapped Types. Likewise, if you use the `@nestjs/graphql` package see [this chapter](/graphql/mapped-types). Both packages heavily rely on types and so they require a different import to be used. Therefore, if you used `@nestjs/mapped-types` (instead of an appropriate one, either `@nestjs/swagger` or `@nestjs/graphql` depending on the type of your app), you may face various, undocumented side-effects.
+> **Attention** Si votre application utilise le paquet `@nestjs/swagger`, consultez [ce chapitre](/openapi/mapped-types) pour plus d'informations sur les types mappés. De même, si vous utilisez le paquet `@nestjs/graphql`, consultez [ce chapitre](/graphql/mapped-types). Les deux packages reposent fortement sur les types et nécessitent donc une importation différente pour être utilisés. Par conséquent, si vous avez utilisé `@nestjs/mapped-types` (au lieu de celui approprié, soit `@nestjs/swagger` ou `@nestjs/graphql` en fonction du type de votre application), vous pourriez rencontrer divers effets secondaires non documentés.
 
-When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
+Lors de la construction de types de validation d'entrée (également appelés DTO), il est souvent utile de créer des variations **create** et **update** du même type. Par exemple, la variante **create** peut nécessiter tous les champs, tandis que la variante **update** peut rendre tous les champs facultatifs.
 
-Nest provides the `PartialType()` utility function to make this task easier and minimize boilerplate.
+Nest fournit la fonction utilitaire `PartialType()` pour faciliter cette tâche et réduire le code redondant.
 
-The `PartialType()` function returns a type (class) with all the properties of the input type set to optional. For example, suppose we have a **create** type as follows:
+La fonction `PartialType()` renvoie un type (classe) avec toutes les propriétés du type d'entrée définies comme facultatives. Par exemple, supposons que nous ayons un type **create** comme suit :
 
 ```typescript
 export class CreateCatDto {
@@ -310,15 +309,15 @@ export class CreateCatDto {
 }
 ```
 
-By default, all of these fields are required. To create a type with the same fields, but with each one optional, use `PartialType()` passing the class reference (`CreateCatDto`) as an argument:
+Par défaut, tous ces champs sont obligatoires. Pour créer un type avec les mêmes champs, mais en les rendant tous facultatifs, utilisez `PartialType()` en passant la référence de classe (`CreateCatDto`) en argument :
 
 ```typescript
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
-> info **Hint** The `PartialType()` function is imported from the `@nestjs/mapped-types` package.
+> info **Astuce** La fonction `PartialType()` est importée depuis le package `@nestjs/mapped-types`.
 
-The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
+La fonction `PickType()` construit un nouveau type (classe) en sélectionnant un ensemble de propriétés à partir d'un type d'entrée. Par exemple, supposons que nous commencions avec un type comme :
 
 ```typescript
 export class CreateCatDto {
@@ -328,15 +327,15 @@ export class CreateCatDto {
 }
 ```
 
-We can pick a set of properties from this class using the `PickType()` utility function:
+Nous pouvons sélectionner un ensemble de propriétés de cette classe en utilisant la fonction utilitaire `PickType()` :
 
 ```typescript
 export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
-> info **Hint** The `PickType()` function is imported from the `@nestjs/mapped-types` package.
+> info **Astuce** La fonction `PickType()` est importée depuis le paquet `@nestjs/mapped-types`.
 
-The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
+La fonction `OmitType()` construit un type en sélectionnant toutes les propriétés d'un type d'entrée, puis en supprimant un ensemble particulier de clés. Par exemple, supposons que nous commençons avec un type comme :
 
 ```typescript
 export class CreateCatDto {
@@ -346,15 +345,15 @@ export class CreateCatDto {
 }
 ```
 
-We can generate a derived type that has every property **except** `name` as shown below. In this construct, the second argument to `OmitType` is an array of property names.
+Nous pouvons générer un type dérivé qui possède toutes les propriétés **sauf** `name` comme indiqué ci-dessous. Dans cette construction, le deuxième argument de `OmitType` est un tableau de noms de propriétés.
 
 ```typescript
 export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
-> info **Hint** The `OmitType()` function is imported from the `@nestjs/mapped-types` package.
+> info **Astuce** La fonction `OmitType()` est importée depuis le paquet `@nestjs/mapped-types`.
 
-The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
+La fonction `IntersectionType()` combine deux types en un nouveau type (classe). Par exemple, supposons que nous ayons deux types comme suit :
 
 ```typescript
 export class CreateCatDto {
@@ -367,7 +366,7 @@ export class AdditionalCatInfo {
 }
 ```
 
-We can generate a new type that combines all properties in both types.
+Nous pouvons générer un nouveau type qui combine toutes les propriétés des deux types.
 
 ```typescript
 export class UpdateCatDto extends IntersectionType(
@@ -376,9 +375,9 @@ export class UpdateCatDto extends IntersectionType(
 ) {}
 ```
 
-> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/mapped-types` package.
+> info **Astuce** La fonction `IntersectionType()` est importée depuis le paquet `@nestjs/mapped-types`.
 
-The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateCatDto` type except for `name`, and those properties will be set to optional:
+Les fonctions utilitaires de mappage de types sont composables. Par exemple, ce qui suit produira un type (classe) qui a toutes les propriétés du type `CreateCatDto` sauf `name`, et ces propriétés seront définies comme facultatives :
 
 ```typescript
 export class UpdateCatDto extends PartialType(
@@ -386,9 +385,9 @@ export class UpdateCatDto extends PartialType(
 ) {}
 ```
 
-#### Parsing and validating arrays
+#### Analyse et validation des tableaux.
 
-TypeScript does not store metadata about generics or interfaces, so when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data. For instance, in the following code, `createUserDtos` won't be correctly validated:
+TypeScript ne stocke pas de métadonnées sur les génériques ou les interfaces, de sorte que lorsque vous les utilisez dans vos DTO, le `ValidationPipe` peut ne pas être en mesure de valider correctement les données entrantes. Par exemple, dans le code suivant, les `createUserDtos` ne seront pas correctement validés :
 
 ```typescript
 @Post()
@@ -397,7 +396,7 @@ createBulk(@Body() createUserDtos: CreateUserDto[]) {
 }
 ```
 
-To validate the array, create a dedicated class which contains a property that wraps the array, or use the `ParseArrayPipe`.
+Pour valider le tableau, créez une classe dédiée qui contient une propriété enveloppant le tableau, ou utilisez le `ParseArrayPipe`.
 
 ```typescript
 @Post()
@@ -409,7 +408,7 @@ createBulk(
 }
 ```
 
-In addition, the `ParseArrayPipe` may come in handy when parsing query parameters. Let's consider a `findByIds()` method that returns users based on identifiers passed as query parameters.
+De plus, le `ParseArrayPipe` peut être utile lors de l'analyse des paramètres de requête. Considérons une méthode `findByIds()` qui renvoie des utilisateurs en fonction des identifiants passés en tant que paramètres de requête.
 
 ```typescript
 @Get()
@@ -421,16 +420,16 @@ findByIds(
 }
 ```
 
-This construction validates the incoming query parameters from an HTTP `GET` request like the following:
+Cette construction valide les paramètres de requête entrants d'une requête HTTP `GET` comme suit :
 
 ```bash
 GET /?ids=1,2,3
 ```
 
-#### WebSockets and Microservices
+#### WebSockets et Microservices
 
-While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ValidationPipe` works the same for WebSockets and microservices, regardless of the transport method that is used.
+Bien que ce chapitre montre des exemples utilisant des applications de style HTTP (par exemple, Express ou Fastify), le `ValidationPipe` fonctionne de la même manière pour les WebSockets et les microservices, quelle que soit la méthode de transport utilisée.
 
-#### Learn more
+#### En savoir plus
 
-Read more about custom validators, error messages, and available decorators as provided by the `class-validator` package [here](https://github.com/typestack/class-validator).
+Pour en savoir plus sur les validateurs personnalisés, les messages d'erreur et les décorateurs disponibles fournis par le paquet `class-validator` rendez-vous [ici](https://github.com/typestack/class-validator).
