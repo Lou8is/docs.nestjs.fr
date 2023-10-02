@@ -1,26 +1,26 @@
-### Queues
+### Files d'attente
 
-Queues are a powerful design pattern that help you deal with common application scaling and performance challenges. Some examples of problems that Queues can help you solve are:
+Les files d'attente sont un puissant modèle de conception qui vous aide à relever les défis courants en matière de mise à l'échelle et de performance des applications. Voici quelques exemples de problèmes que les files d'attente peuvent vous aider à résoudre :
 
-- Smooth out processing peaks. For example, if users can initiate resource-intensive tasks at arbitrary times, you can add these tasks to a queue instead of performing them synchronously. Then you can have worker processes pull tasks from the queue in a controlled manner. You can easily add new Queue consumers to scale up the back-end task handling as the application scales up.
-- Break up monolithic tasks that may otherwise block the Node.js event loop. For example, if a user request requires CPU intensive work like audio transcoding, you can delegate this task to other processes, freeing up user-facing processes to remain responsive.
-- Provide a reliable communication channel across various services. For example, you can queue tasks (jobs) in one process or service, and consume them in another. You can be notified (by listening for status events) upon completion, error or other state changes in the job life cycle from any process or service. When Queue producers or consumers fail, their state is preserved and task handling can restart automatically when nodes are restarted.
+- Lisser les pics de traitement. Par exemple, si les utilisateurs peuvent lancer des tâches gourmandes en ressources à des moments arbitraires, vous pouvez ajouter ces tâches à une file d'attente au lieu de les exécuter de manière synchrone. Vous pouvez ensuite demander aux processus de travail d'extraire les tâches de la file d'attente de manière contrôlée. Vous pouvez facilement ajouter de nouveaux consommateurs de file d'attente pour augmenter la gestion des tâches en arrière-plan au fur et à mesure que l'application évolue.
+- Décomposer les tâches monolithiques qui risquent de bloquer la boucle événementielle de Node.js. Par exemple, si une demande d'utilisateur nécessite un travail intensif au niveau du processeur, comme le transcodage audio, vous pouvez déléguer cette tâche à d'autres processus, libérant ainsi les processus orientés vers l'utilisateur pour qu'ils restent réactifs.
+- Fournir un canal de communication fiable entre les différents services. Par exemple, vous pouvez mettre en file d'attente des tâches (jobs) dans un processus ou un service, et les consommer dans un autre. Vous pouvez être informé (en écoutant les événements d'état) de l'achèvement, de l'erreur ou d'autres changements d'état dans le cycle de vie du travail à partir de n'importe quel processus ou service. Lorsque les producteurs ou les consommateurs de la file d'attente tombent en panne, leur état est préservé et le traitement des tâches peut reprendre automatiquement lorsque les nœuds sont redémarrés.
 
-Nest provides the `@nestjs/bull` package as an abstraction/wrapper on top of [Bull](https://github.com/OptimalBits/bull), a popular, well supported, high performance Node.js based Queue system implementation. The package makes it easy to integrate Bull Queues in a Nest-friendly way to your application.
+Nest fournit le paquet `@nestjs/bull` en tant qu'abstraction/enveloppe au-dessus de [Bull](https://github.com/OptimalBits/bull), une implémentation populaire, bien supportée et de haute performance du système de file d'attente basé sur Node.js. Le paquetage facilite l'intégration des files d'attente Bull dans votre application d'une manière adaptée à Nest.
 
-Bull uses [Redis](https://redis.io/) to persist job data, so you'll need to have Redis installed on your system. Because it is Redis-backed, your Queue architecture can be completely distributed and platform-independent. For example, you can have some Queue <a href="techniques/queues#producers">producers</a> and <a href="techniques/queues#consumers">consumers</a> and <a href="techniques/queues#event-listeners">listeners</a> running in Nest on one (or several) nodes, and other producers, consumers and listeners running on other Node.js platforms on other network nodes.
+Bull utilise [Redis](https://redis.io/) pour conserver les données des travaux, vous devez donc avoir installé Redis sur votre système. Parce qu'elle est soutenue par Redis, votre architecture de file d'attente peut être complètement distribuée et indépendante de la plate-forme. Par exemple, certains <a href="techniques/queues#producteurs">producteurs</a>, <a href="techniques/queues#consommateurs">consommateurs</a> et <a href="techniques/queues#auditeurs">auditeurs</a> de files d'attente peuvent être exécutés dans Nest sur un (ou plusieurs) nœuds, et d'autres producteurs, consommateurs et auditeurs peuvent être exécutés sur d'autres plates-formes Node.js sur d'autres nœuds du réseau.
 
-This chapter covers the `@nestjs/bull` package. We also recommend reading the [Bull documentation](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md) for more background and specific implementation details.
+Ce chapitre couvre le paquetage `@nestjs/bull`. Nous recommandons également la lecture de la [documentation Bull](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md) pour plus de détails sur le contexte et l'implémentation.
 
 #### Installation
 
-To begin using it, we first install the required dependencies.
+Pour commencer à l'utiliser, nous devons d'abord installer les dépendances nécessaires.
 
 ```bash
 $ npm install --save @nestjs/bull bull
 ```
 
-Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
+Une fois le processus d'installation terminé, nous pouvons importer le `BullModule` dans la racine `AppModule`.
 
 ```typescript
 @@filename(app.module)
@@ -40,17 +40,17 @@ import { BullModule } from '@nestjs/bull';
 export class AppModule {}
 ```
 
-The `forRoot()` method is used to register a `bull` package configuration object that will be used by all queues registered in the application (unless specified otherwise). A configuration object consist of the following properties:
+La méthode `forRoot()` est utilisée pour enregistrer un objet de configuration du paquet `bull` qui sera utilisé par toutes les files d'attente enregistrées dans l'application (sauf indication contraire). Un objet de configuration est constitué des propriétés suivantes :
 
-- `limiter: RateLimiter` - Options to control the rate at which the queue's jobs are processed. See [RateLimiter](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
-- `redis: RedisOpts` - Options to configure the Redis connection. See [RedisOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
-- `prefix: string` - Prefix for all queue keys. Optional.
-- `defaultJobOptions: JobOpts` - Options to control the default settings for new jobs. See [JobOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd) for more information. Optional.
-- `settings: AdvancedSettings` - Advanced Queue configuration settings. These should usually not be changed. See [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
+- `limiter: RateLimiter` - Options permettant de contrôler la vitesse à laquelle les travaux de la file d'attente sont traités. Voir [RateLimiter](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) pour plus d'informations. Optionnel.
+- `redis: RedisOpts` - Options pour configurer la connexion Redis. Voir [RedisOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) pour plus d'informations. Optionnel.
+- `prefix: string` - Préfixe pour toutes les clés de file d'attente. Optionnel.
+- `defaultJobOptions: JobOpts` - Options permettant de contrôler les paramètres par défaut des nouveaux travaux. Voir [JobOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd) pour plus d'informations. Optionnel.
+- `settings: AdvancedSettings` - Paramètres avancés de configuration de la file d'attente. Ils ne doivent généralement pas être modifiés. Voir [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) pour plus d'informations. Optionnel.
 
-All the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull `Queue` constructor. Read more about these options [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue).
+Toutes les options sont optionnelles et permettent un contrôle détaillé du comportement de la file d'attente. Elles sont passées directement au constructeur de Bull `Queue`. Pour en savoir plus sur ces options, cliquez [ici](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue).
 
-To register a queue, import the `BullModule.registerQueue()` dynamic module, as follows:
+Pour enregistrer une file d'attente, importez le module dynamique `BullModule.registerQueue()`, comme suit :
 
 ```typescript
 BullModule.registerQueue({
@@ -58,11 +58,11 @@ BullModule.registerQueue({
 });
 ```
 
-> info **Hint** Create multiple queues by passing multiple comma-separated configuration objects to the `registerQueue()` method.
+> info **Astuce** Créez plusieurs files d'attente en passant plusieurs objets de configuration séparés par des virgules à la méthode `registerQueue()`.
 
-The `registerQueue()` method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property. A queue name is used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues.
+La méthode `registerQueue()` est utilisée pour instancier et/ou enregistrer des files d'attente. Les files d'attente sont partagées entre les modules et les processus qui se connectent à la même base de données Redis sous-jacente avec les mêmes informations d'identification. Chaque file d'attente est unique par sa propriété name. Le nom d'une file d'attente est utilisé à la fois comme jeton d'injection (pour injecter la file d'attente dans les contrôleurs/fournisseurs) et comme argument pour les décorateurs afin d'associer les classes de consommateurs et les auditeurs aux files d'attente.
 
-You can also override some of the pre-configured options for a specific queue, as follows:
+Vous pouvez également remplacer certaines des options préconfigurées pour une file d'attente spécifique, comme suit :
 
 ```typescript
 BullModule.registerQueue({
@@ -73,17 +73,17 @@ BullModule.registerQueue({
 });
 ```
 
-Since jobs are persisted in Redis, each time a specific named queue is instantiated (e.g., when an app is started/restarted), it attempts to process any old jobs that may exist from a previous unfinished session.
+Comme les travaux sont conservés dans Redis, chaque fois qu'une file d'attente spécifique est instanciée (par exemple, lorsqu'une application est démarrée/redémarrée), elle tente de traiter tous les anciens travaux qui peuvent exister à partir d'une session précédente inachevée.
 
-Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed <a href="techniques/queues#consumers">here</a>.
+Chaque file d'attente peut avoir un ou plusieurs producteurs, consommateurs et auditeurs. Les consommateurs récupèrent les travaux de la file d'attente dans un ordre spécifique : FIFO ( par défaut), LIFO, ou en fonction des priorités. Le contrôle de l'ordre de traitement des files d'attente est abordé [ici](techniques/queues#consommateurs)
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Named configurations
+#### Configurations nommées
 
-If your queues connect to multiple different Redis instances, you can use a technique called **named configurations**. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
+Si vos files d'attente se connectent à plusieurs instances Redis différentes, vous pouvez utiliser une technique appelée **configurations nommées**. Cette fonctionnalité vous permet d'enregistrer plusieurs configurations sous des clés spécifiques, auxquelles vous pouvez ensuite vous référer dans les options de la file d'attente.
 
-For example, assuming that you have an additional Redis instance (apart from the default one) used by a few queues registered in your application, you can register its configuration as follows:
+Par exemple, si vous avez une instance Redis supplémentaire (en plus de l'instance par défaut) utilisée par quelques files d'attente enregistrées dans votre application, vous pouvez enregistrer sa configuration comme suit :
 
 ```typescript
 BullModule.forRoot('alternative-config', {
@@ -93,9 +93,9 @@ BullModule.forRoot('alternative-config', {
 });
 ```
 
-In the example above, `'alternative-config'` is just a configuration key (it can be any arbitrary string).
+Dans l'exemple ci-dessus, `'alternative-config'` est juste une clé de configuration (elle peut être n'importe quelle chaîne arbitraire).
 
-With this in place, you can now point to this configuration in the `registerQueue()` options object:
+Avec ceci en place, vous pouvez maintenant pointer vers cette configuration dans l'objet d'options `registerQueue()` :
 
 ```typescript
 BullModule.registerQueue({
@@ -104,9 +104,9 @@ BullModule.registerQueue({
 });
 ```
 
-#### Producers
+#### Producteurs
 
-Job producers add jobs to queues. Producers are typically application services (Nest [providers](/providers)). To add jobs to a queue, first inject the queue into the service as follows:
+Les producteurs de travaux ajoutent des travaux aux files d'attente. Les producteurs sont généralement des services d'application ([fournisseurs](/providers) Nest). Pour ajouter des travaux à une file d'attente, il faut d'abord injecter la file d'attente dans le service comme suit :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -119,9 +119,9 @@ export class AudioService {
 }
 ```
 
-> info **Hint** The `@InjectQueue()` decorator identifies the queue by its name, as provided in the `registerQueue()` method call (e.g., `'audio'`).
+> info **Astuce** Le décorateur `@InjectQueue()` identifie la file d'attente par son nom, tel qu'il est fourni dans l'appel à la méthode `registerQueue()` (par exemple, `'audio'`).
 
-Now, add a job by calling the queue's `add()` method, passing a user-defined job object. Jobs are represented as serializable JavaScript objects (since that is how they are stored in the Redis database). The shape of the job you pass is arbitrary; use it to represent the semantics of your job object.
+Maintenant, ajoutez un travail en appelant la méthode `add()` de la file d'attente, en passant un objet de travail défini par l'utilisateur. Les travaux sont représentés comme des objets JavaScript sérialisables (puisque c'est ainsi qu'ils sont stockés dans la base de données Redis). La forme du job que vous passez est arbitraire ; utilisez-la pour représenter la sémantique de votre objet job.
 
 ```typescript
 const job = await this.audioQueue.add({
@@ -129,9 +129,9 @@ const job = await this.audioQueue.add({
 });
 ```
 
-#### Named jobs
+#### Travaux nommés
 
-Jobs may have unique names. This allows you to create specialized <a href="techniques/queues#consumers">consumers</a> that will only process jobs with a given name.
+Les travaux peuvent avoir des noms uniques. Cela vous permet de créer des [consommateurs](techniques/queues#consommateurs) spécialisés qui ne traiteront que les travaux portant un nom donné.
 
 ```typescript
 const job = await this.audioQueue.add('transcode', {
@@ -139,39 +139,39 @@ const job = await this.audioQueue.add('transcode', {
 });
 ```
 
-> Warning **Warning** When using named jobs, you must create processors for each unique name added to a queue, or the queue will complain that you are missing a processor for the given job. See <a href="techniques/queues#consumers">here</a> for more information on consuming named jobs.
+> Warning **Attention** Lorsque vous utilisez des travaux nommés, vous devez créer des processeurs pour chaque nom unique ajouté à une file d'attente, sinon la file d'attente se plaindra qu'il manque un processeur pour le travail en question. Voir [ici](techniques/queues#consommateurs) pour plus d'informations sur l'utilisation des travaux nommés.
 
-#### Job options
+#### Options de travaux
 
-Jobs can have additional options associated with them. Pass an options object after the `job` argument in the `Queue.add()` method. Job options properties are:
+Les jobs peuvent être associés à des options supplémentaires. Passez un objet options après l'argument `job` dans la méthode `Queueue.add()`. Les propriétés des options des jobs sont les suivantes :
 
-- `priority`: `number` - Optional priority value. Ranges from 1 (highest priority) to MAX_INT (lowest priority). Note that using priorities has a slight impact on performance, so use them with caution.
-- `delay`: `number` - An amount of time (milliseconds) to wait until this job can be processed. Note that for accurate delays, both server and clients should have their clocks synchronized.
-- `attempts`: `number` - The total number of attempts to try the job until it completes.
-- `repeat`: `RepeatOpts` - Repeat job according to a cron specification. See [RepeatOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd).
-- `backoff`: `number | BackoffOpts` - Backoff setting for automatic retries if the job fails. See [BackoffOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd).
-- `lifo`: `boolean` - If true, adds the job to the right end of the queue instead of the left (default false).
-- `timeout`: `number` - The number of milliseconds after which the job should fail with a timeout error.
-- `jobId`: `number` | `string` - Override the job ID - by default, the job ID is a unique
-  integer, but you can use this setting to override it. If you use this option, it is up to you to ensure the jobId is unique. If you attempt to add a job with an id that already exists, it will not be added.
-- `removeOnComplete`: `boolean | number` - If true, removes the job when it successfully completes. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the completed set.
-- `removeOnFail`: `boolean | number` - If true, removes the job when it fails after all attempts. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the failed set.
-- `stackTraceLimit`: `number` - Limits the amount of stack trace lines that will be recorded in the stacktrace.
+- `priority`: `number` - Valeur de priorité facultative. Elle est comprise entre 1 (priorité la plus élevée) et MAX_INT (priorité la plus faible). Notez que l'utilisation des priorités a un léger impact sur les performances, il convient donc de les utiliser avec précaution.
+- `delay`: `number` - Temps d'attente (en millisecondes) jusqu'à ce que ce travail puisse être traité. Pour obtenir des délais précis, le serveur et les clients doivent avoir leurs horloges synchronisées.
+- `attempts`: `number` - Nombre total de tentatives pour essayer le travail jusqu'à ce qu'il s'achève.
+- `repeat`: `RepeatOpts` - Répéter un travail selon une spécification cron. Voir [RepeatOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd).
+- `backoff`: `number | BackoffOpts` - Paramètre de temporisation pour les nouvelles tentatives automatiques en cas d'échec du travail. Voir [BackoffOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd).
+- `lifo`: `boolean` - Si true, ajoute le travail à l'extrémité droite de la file d'attente au lieu de l'extrémité gauche (false par défaut).
+- `timeout`: `number` - Nombre de millisecondes après lequel le travail doit échouer avec une erreur de dépassement de délai.
+- `jobId`: `number` | `string` - Remplace l'identifiant du travail - par défaut, l'identifiant du travail est un numéro unique.
+  integer, mais vous pouvez utiliser ce paramètre pour le remplacer. Si vous utilisez cette option, il vous appartient de vous assurer que l'identifiant du travail est unique. Si vous tentez d'ajouter un travail avec un identifiant qui existe déjà, il ne sera pas ajouté.
+- `removeOnComplete`: `boolean | number` - Si true, le travail est supprimé lorsqu'il s'achève avec succès. Un nombre indique le nombre de travaux à conserver. Par défaut, le travail est conservé dans l'ensemble des travaux terminés.
+- `removeOnFail`: `boolean | number` - Si true, supprime le travail lorsqu'il échoue après toutes les tentatives. Un nombre indique le nombre de tâches à conserver. Le comportement par défaut est de conserver le travail dans l'ensemble des échecs.
+- `stackTraceLimit`: `number` - Limite le nombre de lignes de la stacktrace qui seront enregistrées dans la stacktrace.
 
-Here are a few examples of customizing jobs with job options.
+Voici quelques exemples de personnalisation de travaux à l'aide d'options de travaux.
 
-To delay the start of a job, use the `delay` configuration property.
+Pour retarder le démarrage d'un travail, utilisez la propriété de configuration `delay`.
 
 ```typescript
 const job = await this.audioQueue.add(
   {
     foo: 'bar',
   },
-  { delay: 3000 }, // 3 seconds delayed
+  { delay: 3000 }, //3 secondes de délai
 );
 ```
 
-To add a job to the right end of the queue (process the job as **LIFO** (Last In First Out)), set the `lifo` property of the configuration object to `true`.
+Pour ajouter un travail à l'extrémité droite de la file d'attente (traiter le travail comme **LIFO** (Last In First Out)), définissez la propriété `lifo` de l'objet de configuration à `true`.
 
 ```typescript
 const job = await this.audioQueue.add(
@@ -182,7 +182,7 @@ const job = await this.audioQueue.add(
 );
 ```
 
-To prioritize a job, use the `priority` property.
+Pour classer un travail par ordre de priorité, utilisez la propriété `priority`.
 
 ```typescript
 const job = await this.audioQueue.add(
@@ -193,9 +193,9 @@ const job = await this.audioQueue.add(
 );
 ```
 
-#### Consumers
+#### Consommateurs
 
-A consumer is a **class** defining methods that either process jobs added into the queue, or listen for events on the queue, or both. Declare a consumer class using the `@Processor()` decorator as follows:
+Un consommateur est une **classe** définissant des méthodes qui traitent les travaux ajoutés à la file d'attente, ou qui écoutent les événements de la file d'attente, ou les deux. Déclarez une classe de consommateur en utilisant le décorateur `@Processor()` comme suit :
 
 ```typescript
 import { Processor } from '@nestjs/bull';
@@ -204,11 +204,11 @@ import { Processor } from '@nestjs/bull';
 export class AudioConsumer {}
 ```
 
-> info **Hint** Consumers must be registered as `providers` so the `@nestjs/bull` package can pick them up.
+> info **Astuce** Les consommateurs doivent être enregistrés en tant que `providers` pour que le paquet `@nestjs/bull` puisse les récupérer.
 
-Where the decorator's string argument (e.g., `'audio'`) is the name of the queue to be associated with the class methods.
+Où l'argument chaîne du décorateur (par exemple, `'audio'`) est le nom de la file d'attente à associer aux méthodes de la classe.
 
-Within a consumer class, declare job handlers by decorating handler methods with the `@Process()` decorator.
+Dans une classe de consommateur, déclarez des gestionnaires de tâches en décorant les méthodes de gestionnaire avec le décorateur `@Process()`.
 
 ```typescript
 import { Processor, Process } from '@nestjs/bull';
@@ -229,22 +229,22 @@ export class AudioConsumer {
 }
 ```
 
-The decorated method (e.g., `transcode()`) is called whenever the worker is idle and there are jobs to process in the queue. This handler method receives the `job` object as its only argument. The value returned by the handler method is stored in the job object and can be accessed later on, for example in a listener for the completed event.
+La méthode décorée (par exemple, `transcode()`) est appelée chaque fois que le worker est inactif et qu'il y a des jobs à traiter dans la file d'attente. Cette méthode handler reçoit l'objet `job` comme seul argument. La valeur retournée par la méthode handler est stockée dans l'objet job et peut être accédée ultérieurement, par exemple dans un écouteur pour l'événement completed.
 
-`Job` objects have multiple methods that allow you to interact with their state. For example, the above code uses the `progress()` method to update the job's progress. See [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#job) for the complete `Job` object API reference.
+Les objets `Job` ont plusieurs méthodes qui vous permettent d'interagir avec leur état. Par exemple, le code ci-dessus utilise la méthode `progress()` pour mettre à jour la progression du job. Voir [ici](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#job) pour la référence complète de l'API de l'objet `Job`.
 
-You can designate that a job handler method will handle **only** jobs of a certain type (jobs with a specific `name`) by passing that `name` to the `@Process()` decorator as shown below. You can have multiple `@Process()` handlers in a given consumer class, corresponding to each job type (`name`). When you use named jobs, be sure to have a handler corresponding to each name.
+Vous pouvez indiquer qu'une méthode de gestion des travaux ne traitera **que** les travaux d'un certain type (les travaux avec un `nom` spécifique) en passant ce `nom` au décorateur `@Process()` comme indiqué ci-dessous. Vous pouvez avoir plusieurs gestionnaires `@Process()` dans une classe de consommateur donnée, correspondant à chaque type de travail (`nom`). Lorsque vous utilisez des travaux nommés, assurez-vous d'avoir un gestionnaire correspondant à chaque nom.
 
 ```typescript
 @Process('transcode')
 async transcode(job: Job<unknown>) { ... }
 ```
 
-> warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({{ '{' }} concurrency: 1 {{ '}' }})` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
+> warning **Attention** Lors de la définition de plusieurs consommateurs pour la même file d'attente, l'option `concurrency` dans `@Process({{ '{' }} concurrency : 1 {{ '}' }})` ne sera pas prise en compte. La `concurrency` minimale correspondra au nombre de consommateurs définis. Ceci s'applique même si les gestionnaires `@Process()` utilisent un `nom` différent pour gérer les travaux nommés.
 
-#### Request-scoped consumers
+#### Consommateurs à portée de requête
 
-When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+Lorsqu'un consommateur est marqué comme étant à portée de requête (en savoir plus sur les portées d'injection [ici](/fundamentals/injection-scopes#portée-du-fournisseur)), une nouvelle instance de la classe sera créée exclusivement pour chaque tâche. L'instance sera ramassée une fois le travail terminé.
 
 ```typescript
 @Processor({
@@ -253,7 +253,7 @@ When a consumer is flagged as request-scoped (learn more about the injection sco
 })
 ```
 
-Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a `JOB_REF` through the constructor using a standard approach.
+Puisque les classes de consommateurs à portée de requête sont instanciées dynamiquement et à portée d'un seul travail, vous pouvez injecter un `JOB_REF` à travers le constructeur en utilisant une approche standard.
 
 ```typescript
 constructor(@Inject(JOB_REF) jobRef: Job) {
@@ -261,13 +261,13 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 }
 ```
 
-> info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
+> info **Astuce** Le jeton `JOB_REF` est importé du paquet `@nestjs/bull`.
 
-#### Event listeners
+#### Auditeurs
 
-Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the `@nestjs/bull` package.
+Bull génère un ensemble d'événements utiles lorsque des changements d'état de la file d'attente et/ou du travail se produisent. Nest fournit un ensemble de décorateurs qui permettent de s'abonner à un ensemble d'événements standards. Ceux-ci sont exportés depuis le package `@nestjs/bull`.
 
-Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+Les récepteurs d'événements doivent être déclarés dans une classe <a href="techniques/queues#consumers">consommateur</a> (c'est-à-dire dans une classe décorée avec le décorateur `@Processor()`). Pour écouter un événement, utilisez l'un des décorateurs du tableau ci-dessous pour déclarer un gestionnaire pour l'événement. Par exemple, pour écouter l'événement émis lorsqu'un travail entre dans l'état actif dans la file d'attente `audio`, utilisez la construction suivante :
 
 ```typescript
 import { Processor, Process, OnQueueActive } from '@nestjs/bull';
@@ -285,57 +285,57 @@ export class AudioConsumer {
   ...
 ```
 
-Since Bull operates in a distributed (multi-node) environment, it defines the concept of event locality. This concept recognizes that events may be triggered either entirely within a single process, or on shared queues from different processes. A **local** event is one that is produced when an action or state change is triggered on a queue in the local process. In other words, when your event producers and consumers are local to a single process, all events happening on queues are local.
+Bull fonctionnant dans un environnement distribué (multi-nœuds), il définit le concept de localité des événements. Ce concept reconnaît que les événements peuvent être déclenchés soit entièrement dans un seul processus, soit sur des files d'attente partagées par différents processus. Un événement **local** est produit lorsqu'une action ou un changement d'état est déclenché sur une file d'attente dans le processus local. En d'autres termes, lorsque vos producteurs et consommateurs d'événements sont locaux à un seul processus, tous les événements se produisant sur les files d'attente sont locaux.
 
-When a queue is shared across multiple processes, we encounter the possibility of **global** events. For a listener in one process to receive an event notification triggered by another process, it must register for a global event.
+Lorsqu'une file d'attente est partagée entre plusieurs processus, nous rencontrons la possibilité d'événements **globaux**. Pour qu'un auditeur d'un processus reçoive une notification d'événement déclenchée par un autre processus, il doit s'enregistrer pour un événement global.
 
-Event handlers are invoked whenever their corresponding event is emitted. The handler is called with the signature shown in the table below, providing access to information relevant to the event. We discuss one key difference between local and global event handler signatures below.
+Les gestionnaires d'événements sont invoqués chaque fois que l'événement correspondant est émis. Le gestionnaire est appelé avec la signature indiquée dans le tableau ci-dessous, ce qui lui permet d'accéder aux informations relatives à l'événement. Nous examinons ci-dessous une différence essentielle entre les signatures locales et globales des gestionnaires d'événements.
 
 <table>
   <tr>
-    <th>Local event listeners</th>
-    <th>Global event listeners</th>
-    <th>Handler method signature / When fired</th>
+    <th>Auditeurs d'événements locaux</th>
+    <th>Auditeurs d'événements globaux</th>
+    <th>Signature de la méthode du gestionnaire / Lors de l'exécution</th>
   </tr>
   <tr>
-    <td><code>@OnQueueError()</code></td><td><code>@OnGlobalQueueError()</code></td><td><code>handler(error: Error)</code> - An error occurred. <code>error</code> contains the triggering error.</td>
+    <td><code>@OnQueueError()</code></td><td><code>@OnGlobalQueueError()</code></td><td><code>handler(error: Error)</code> - Une erreur s'est produite. <code>error</code> contient l'erreur qui a déclenché le message.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueWaiting()</code></td><td><code>@OnGlobalQueueWaiting()</code></td><td><code>handler(jobId: number | string)</code> - A Job is waiting to be processed as soon as a worker is idling. <code>jobId</code> contains the id for the job that has entered this state.</td>
+    <td><code>@OnQueueWaiting()</code></td><td><code>@OnGlobalQueueWaiting()</code></td><td><code>handler(jobId: number | string)</code> - Un travail attend d'être traité dès qu'un travailleur est au repos. <code>jobId</code> contient l'identifiant du travail qui est entré dans cet état.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueActive()</code></td><td><code>@OnGlobalQueueActive()</code></td><td><code>handler(job: Job)</code> - Job <code>job</code>has started. </td>
+    <td><code>@OnQueueActive()</code></td><td><code>@OnGlobalQueueActive()</code></td><td><code>handler(job: Job)</code> - Le travail <code>job</code>a débuté. </td>
   </tr>
   <tr>
-    <td><code>@OnQueueStalled()</code></td><td><code>@OnGlobalQueueStalled()</code></td><td><code>handler(job: Job)</code> - Job <code>job</code> has been marked as stalled. This is useful for debugging job workers that crash or pause the event loop.</td>
+    <td><code>@OnQueueStalled()</code></td><td><code>@OnGlobalQueueStalled()</code></td><td><code>handler(job: Job)</code> - Le travail <code>job</code> a été marqué comme étant bloqué. Ceci est utile pour débugger les travailleurs qui se plantent ou qui mettent en pause la boucle d'événements.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueProgress()</code></td><td><code>@OnGlobalQueueProgress()</code></td><td><code>handler(job: Job, progress: number)</code> - Job <code>job</code>'s progress was updated to value <code>progress</code>.</td>
+    <td><code>@OnQueueProgress()</code></td><td><code>@OnGlobalQueueProgress()</code></td><td><code>handler(job: Job, progress: number)</code> - La progression du travail <code>job</code> a été mise à jour à la valeur <code>progress</code>.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueCompleted()</code></td><td><code>@OnGlobalQueueCompleted()</code></td><td><code>handler(job: Job, result: any)</code> Job <code>job</code> successfully completed with a result <code>result</code>.</td>
+    <td><code>@OnQueueCompleted()</code></td><td><code>@OnGlobalQueueCompleted()</code></td><td><code>handler(job: Job, result: any)</code> Le travail <code>job</code> s'est achevé avec succès, avec un résultat <code>result</code>.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueFailed()</code></td><td><code>@OnGlobalQueueFailed()</code></td><td><code>handler(job: Job, err: Error)</code> Job <code>job</code> failed with reason <code>err</code>.</td>
+    <td><code>@OnQueueFailed()</code></td><td><code>@OnGlobalQueueFailed()</code></td><td><code>handler(job: Job, err: Error)</code> Le travail <code>job</code> a échoué avec la raison <code>err</code>.</td>
   </tr>
   <tr>
-    <td><code>@OnQueuePaused()</code></td><td><code>@OnGlobalQueuePaused()</code></td><td><code>handler()</code> The queue has been paused.</td>
+    <td><code>@OnQueuePaused()</code></td><td><code>@OnGlobalQueuePaused()</code></td><td><code>handler()</code> La file d'attente a été mise en pause.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueResumed()</code></td><td><code>@OnGlobalQueueResumed()</code></td><td><code>handler(job: Job)</code> The queue has been resumed.</td>
+    <td><code>@OnQueueResumed()</code></td><td><code>@OnGlobalQueueResumed()</code></td><td><code>handler(job: Job)</code> La file d'attente a été reprise.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueCleaned()</code></td><td><code>@OnGlobalQueueCleaned()</code></td><td><code>handler(jobs: Job[], type: string)</code> Old jobs have been cleaned from the queue. <code>jobs</code> is an array of cleaned jobs, and <code>type</code> is the type of jobs cleaned.</td>
+    <td><code>@OnQueueCleaned()</code></td><td><code>@OnGlobalQueueCleaned()</code></td><td><code>handler(jobs: Job[], type: string)</code> Les anciens travaux ont été supprimés de la file d'attente. <code>jobs</code> est un tableau de travaux nettoyés, et <code>type</code> est le type des travaux nettoyés.</td>
   </tr>
   <tr>
-    <td><code>@OnQueueDrained()</code></td><td><code>@OnGlobalQueueDrained()</code></td><td><code>handler()</code> Emitted whenever the queue has processed all the waiting jobs (even if there can be some delayed jobs not yet processed).</td>
+    <td><code>@OnQueueDrained()</code></td><td><code>@OnGlobalQueueDrained()</code></td><td><code>handler()</code> Émis lorsque la file d'attente a traité tous les travaux en attente (même s'il peut y avoir des travaux retardés qui n'ont pas encore été traités).</td>
   </tr>
   <tr>
-    <td><code>@OnQueueRemoved()</code></td><td><code>@OnGlobalQueueRemoved()</code></td><td><code>handler(job: Job)</code> Job <code>job</code> was successfully removed.</td>
+    <td><code>@OnQueueRemoved()</code></td><td><code>@OnGlobalQueueRemoved()</code></td><td><code>handler(job: Job)</code> Le travail <code>job</code> a été supprimée avec succès.</td>
   </tr>
 </table>
 
-When listening for global events, the method signatures can be slightly different from their local counterpart. Specifically, any method signature that receives `job` objects in the local version, instead receives a `jobId` (`number`) in the global version. To get a reference to the actual `job` object in such a case, use the `Queue#getJob` method. This call should be awaited, and therefore the handler should be declared `async`. For example:
+Lors de l'écoute d'événements globaux, les signatures de méthodes peuvent être légèrement différentes de leur contrepartie locale. Spécifiquement, toute signature de méthode qui reçoit des objets `job` dans la version locale, reçoit à la place un `jobId` (`numéro`) dans la version globale. Pour obtenir une référence à l'objet `job` dans un tel cas, utilisez la méthode `Queueue#getJob`. Cet appel doit être attendu, et donc le gestionnaire doit être déclaré `async`. Par exemple :
 
 ```typescript
 @OnGlobalQueueCompleted()
@@ -345,34 +345,34 @@ async onGlobalCompleted(jobId: number, result: any) {
 }
 ```
 
-> info **Hint** To access the `Queue` object (to make a `getJob()` call), you must of course inject it. Also, the Queue must be registered in the module where you are injecting it.
+> info **Astuce** Pour accéder à l'objet `Queue` (pour faire un appel à `getJob()`), vous devez bien sûr l'injecter. De plus, la file d'attente doit être enregistrée dans le module où vous l'injectez.
 
-In addition to the specific event listener decorators, you can also use the generic `@OnQueueEvent()` decorator in combination with either `BullQueueEvents` or `BullQueueGlobalEvents` enums. Read more about events [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#events).
+En plus des décorateurs d'auditeurs d'événements spécifiques, vous pouvez également utiliser le décorateur générique `@OnQueueEvent()` en combinaison avec les enums `BullQueueEvents` ou `BullQueueueGlobalEvents`. Pour en savoir plus sur les événements [ici](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#events).
 
-#### Queue management
+#### Gestion des files d'attente
 
-Queue's have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue). Invoke any of these methods directly on the `Queue` object, as shown below with the pause/resume examples.
+Les files d'attente disposent d'une API qui vous permet d'exécuter des fonctions de gestion telles que la mise en pause et la reprise, la récupération du nombre de travaux dans différents états, et bien d'autres encore. Vous pouvez trouver l'API complète de la file d'attente [ici](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue). Invoquez n'importe laquelle de ces méthodes directement sur l'objet `Queue`, comme illustré ci-dessous avec les exemples de pause/reprise.
 
-Pause a queue with the `pause()` method call. A paused queue will not process new jobs until resumed, but current jobs being processed will continue until they are finalized.
+Mettez en pause une file d'attente avec l'appel de la méthode `pause()`. Une file d'attente mise en pause ne traitera pas de nouveaux travaux jusqu'à ce qu'elle reprenne, mais les travaux en cours de traitement continueront jusqu'à ce qu'ils soient finalisés.
 
 ```typescript
 await audioQueue.pause();
 ```
 
-To resume a paused queue, use the `resume()` method, as follows:
+Pour reprendre une file d'attente en pause, utilisez la méthode `resume()`, comme suit :
 
 ```typescript
 await audioQueue.resume();
 ```
 
-#### Separate processes
+#### Processus distincts
 
-Job handlers can also be run in a separate (forked) process ([source](https://github.com/OptimalBits/bull#separate-processes)). This has several advantages:
+Les gestionnaires de tâches peuvent également être exécutés dans un processus séparé (forké) ([source](https://github.com/OptimalBits/bull#separate-processes)). Cela présente plusieurs avantages :
 
-- The process is sandboxed so if it crashes it does not affect the worker.
-- You can run blocking code without affecting the queue (jobs will not stall).
-- Much better utilization of multi-core CPUs.
-- Less connections to redis.
+- Le processus est placé dans une sandbox, de sorte que s'il échoue, cela n'affecte pas le travailleur.
+- Vous pouvez exécuter du code bloquant sans affecter la file d'attente (les tâches ne seront pas bloquées).
+- Une meilleure utilisation des processeurs multi-cœurs.
+- Moins de connexions à redis.
 
 ```ts
 @@filename(app.module)
@@ -391,7 +391,7 @@ import { join } from 'path';
 export class AppModule {}
 ```
 
-Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
+Veuillez noter qu'étant donné que votre fonction est exécutée dans un processus forké, l'injection de dépendance (et le conteneur IoC) ne sera pas disponible. Cela signifie que la fonction de votre processeur devra contenir (ou créer) toutes les instances de dépendances externes dont elle a besoin.
 
 ```ts
 @@filename(processor)
@@ -403,11 +403,11 @@ export default function (job: Job, cb: DoneCallback) {
 }
 ```
 
-#### Async configuration
+#### Configuration asynchrone
 
-You may want to pass `bull` options asynchronously instead of statically. In this case, use the `forRootAsync()` method which provides several ways to deal with async configuration. Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method.
+Vous pouvez vouloir passer des options `bull` de manière asynchrone plutôt que statique. Dans ce cas, utilisez la méthode `forRootAsync()` qui fournit plusieurs façons de gérer la configuration asynchrone. De même, si vous voulez passer des options de file d'attente de manière asynchrone, utilisez la méthode `registerQueueAsync()`.
 
-One approach is to use a factory function:
+Une approche consiste à utiliser une fonction d'usine :
 
 ```typescript
 BullModule.forRootAsync({
@@ -420,7 +420,7 @@ BullModule.forRootAsync({
 });
 ```
 
-Our factory behaves like any other [asynchronous provider](https://docs.nestjs.com/fundamentals/async-providers) (e.g., it can be `async` and it's able to inject dependencies through `inject`).
+Notre fabrique se comporte comme n'importe quel autre [fournisseur asynchrone](https://docs.nestjs.com/fundamentals/async-providers) (par exemple, il peut être `async` et il est capable d'injecter des dépendances via `inject`).
 
 ```typescript
 BullModule.forRootAsync({
@@ -443,7 +443,7 @@ BullModule.forRootAsync({
 });
 ```
 
-The construction above will instantiate `BullConfigService` inside `BullModule` and use it to provide an options object by calling `createSharedConfiguration()`. Note that this means that the `BullConfigService` has to implement the `SharedBullConfigurationFactory` interface, as shown below:
+La construction ci-dessus instanciera `BullConfigService` dans `BullModule` et l'utilisera pour fournir un objet d'options en appelant `createSharedConfiguration()`. Notez que cela signifie que le `BullConfigService` doit implémenter l'interface `SharedBullConfigurationFactory`, comme montré ci-dessous :
 
 ```typescript
 @Injectable()
@@ -459,7 +459,7 @@ class BullConfigService implements SharedBullConfigurationFactory {
 }
 ```
 
-In order to prevent the creation of `BullConfigService` inside `BullModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
+Afin d'éviter la création de `BullConfigService` dans `BullModule` et d'utiliser un fournisseur importé d'un module différent, vous pouvez utiliser la syntaxe `useExisting`.
 
 ```typescript
 BullModule.forRootAsync({
@@ -468,8 +468,8 @@ BullModule.forRootAsync({
 });
 ```
 
-This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
+Cette construction fonctionne de la même manière que `useClass` avec une différence essentielle - `BullModule` va chercher dans les modules importés pour réutiliser un `ConfigService` existant au lieu d'en instancier un nouveau.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/26-queues).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/26-queues).
