@@ -25,7 +25,7 @@ jobs:
         uses: jakepartusch/wait-for-netlify-action@v1
         id: wait-for-netflify-preview
         with:
-          site_name: 'docs-nestjs'
+          site_name: 'docs-nestjs-fr'
           max_timeout: 600
       - name: Run Lighthouse on urls and validate with lighthouserc
         uses: treosh/lighthouse-ci-action@v8
