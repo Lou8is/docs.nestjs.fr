@@ -1,6 +1,6 @@
 ### Fournisseurs
 
-Les fournisseurs sont un concept fondamental de Nest. De nombreuses classes de base de Nest peuvent être considérées comme des fournisseurs : services, répertoires, usines, aides, etc. L'idée principale d'un fournisseur est qu'il peut être **injecté** en tant que dépendance ; cela signifie que les objets peuvent créer diverses relations les uns avec les autres et que la fonction de "câblage" des instances d'objets peut être largement déléguée au système d'exécution Nest.
+Les fournisseurs sont un concept fondamental de Nest. De nombreuses classes de base de Nest peuvent être considérées comme des fournisseurs : services, répertoires, usines, aides, etc. L'idée principale d'un fournisseur est qu'il peut être **injecté** en tant que dépendance ; cela signifie que les objets peuvent créer diverses relations les uns avec les autres et que la fonction de "câblage" de ces objets peut être largement déléguée au système d'exécution Nest.
 
 <figure><img src="/assets/Components_1.png" /></figure>
 
@@ -161,7 +161,7 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Attention** Si votre classe n'étend pas un autre fournisseur, vous devriez toujours préférer utiliser l'injection basée sur le constructeur.
+> warning **Attention** Si votre classe n'étend pas une autre classe, vous devriez toujours préférer d'utiliser l'injection basée sur le constructeur.
 
 #### Enregistrement des fournisseurs
 

@@ -1,6 +1,6 @@
 ### Événements du cycle de vie
 
-Une application Nest, ainsi que chaque élément de l'application, a un cycle de vie géré par Nest. Nest fournit des **hooks de cycle de vie** qui donnent une visibilité sur les événements clés du cycle de vie, et la possibilité d'agir (exécuter le code enregistré sur votre `module`, `injectable` ou `controller`) lorsqu'ils se produisent.
+Une application Nest, ainsi que chaque élément de l'application, a un cycle de vie géré par Nest. Nest fournit des **hooks de cycle de vie** qui donnent une visibilité sur les événements clés du cycle de vie, et la possibilité d'agir (exécuter le code enregistré sur vos modules, fournisseurs ou contrôleurs) lorsqu'ils se produisent.
 
 #### Séquence du cycle de vie
 
@@ -10,7 +10,7 @@ Le diagramme suivant illustre la séquence des événements clés du cycle de vi
 
 #### Événements du cycle de vie
 
-Les événements du cycle de vie se produisent pendant le démarrage et l'arrêt de l'application. Nest appelle les méthodes de hook de cycle de vie enregistrées sur les `modules`, les `injectables` et les `contrôleurs` à chacun des événements de cycle de vie suivants (**les hooks d'arrêt** doivent être activés en premier, comme décrit [ci-dessous](/fundamentals/lifecycle-events#arrêt-de-lapplication)). Comme le montre le diagramme ci-dessus, Nest appelle également les méthodes sous-jacentes appropriées pour commencer à écouter les connexions, et pour arrêter d'écouter les connexions.
+Les événements du cycle de vie se produisent pendant le démarrage et l'arrêt de l'application. Nest appelle les méthodes de hook de cycle de vie enregistrées sur les modules, les fournisseurs et les contrôleurs à chacun des événements de cycle de vie suivants (**les hooks d'arrêt** doivent être activés en premier, comme décrit [ci-dessous](/fundamentals/lifecycle-events#arrêt-de-lapplication)). Comme le montre le diagramme ci-dessus, Nest appelle également les méthodes sous-jacentes appropriées pour commencer à écouter les connexions, et pour arrêter d'écouter les connexions.
 
 Dans le tableau suivant, `onModuleDestroy`, `beforeApplicationShutdown` et `onApplicationShutdown` ne sont déclenchés que si vous appelez explicitement `app.close()` ou si le processus reçoit un signal système spécial (tel que SIGTERM) et que vous avez correctement appelé `enableShutdownHooks` au démarrage de l'application (voir ci-dessous la partie **Arrêt de l'application**).
 

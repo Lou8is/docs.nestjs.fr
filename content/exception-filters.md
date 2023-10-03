@@ -260,7 +260,7 @@ async create(createCatDto) {
 
 > info **Astuce** Préférez appliquer des filtres en utilisant des classes plutôt que des instances lorsque c'est possible. Cela réduit l'utilisation de la **mémoire** puisque Nest peut facilement réutiliser des instances de la même classe dans l'ensemble de votre module.
 
-Dans l'exemple ci-dessus, le `HttpExceptionFilter` est appliqué uniquement au gestionnaire de route `create()`, ce qui en fait un filtre de méthode. Les filtres d'exception peuvent être définis à différents niveaux : méthode, contrôleur ou global. Par exemple, pour configurer un filtre à l'échelle du contrôleur, vous devez faire ce qui suit :
+Dans l'exemple ci-dessus, le `HttpExceptionFilter` est appliqué uniquement au gestionnaire de route `create()`, ce qui en fait un filtre de méthode. Les filtres d'exception peuvent être définis à différents niveaux : méthode de contrôleur/résolveur/gateway, contrôleur ou global. Par exemple, pour configurer un filtre à l'échelle du contrôleur, vous devez faire ce qui suit :
 
 ```typescript
 @@filename(cats.controller)
