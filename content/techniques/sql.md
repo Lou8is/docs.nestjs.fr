@@ -992,10 +992,10 @@ Il existe trois types de relations :
   </tr>
 </table>
 
-Pour définir des relations dans les entités, utilisez les **décorateurs** correspondants. Par exemple, pour définir que chaque `User` peut avoir plusieurs photos, utilisez le décorateur `@HasMany()`.
+Pour définir des relations entre les modèles, utilisez les **décorateurs** correspondants. Par exemple, pour définir que chaque `User` peut avoir plusieurs photos, utilisez le décorateur `@HasMany()`.
 
 ```typescript
-@@filename(user.entity)
+@@filename(user.model)
 import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { Photo } from '../photos/photo.model';
 

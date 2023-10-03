@@ -242,14 +242,7 @@ Pour rediriger une réponse vers une URL spécifique, vous pouvez utiliser un d�
 @Redirect('https://nestjs.com', 301)
 ```
 
-Il peut arriver que vous souhaitiez déterminer le code de retour HTTP ou l'URL de redirection de manière dynamique. Pour ce faire, renvoyez un objet à partir de la méthode "route handler" avec la forme :
-
-```json
-{
-  "url": string,
-  "statusCode": number
-}
-```
+> info **Astuce** Il peut arriver que vous souhaitiez déterminer le code de retour HTTP ou l'URL de redirection de manière dynamique. Pour ce faire, renvoyez un objet suivant l'interface `HttpRedirectResponse` (issue de `@nestjs/common`).
 
 Les valeurs retournées remplaceront tous les arguments passés au décorateur `@Redirect()`. Par exemple :
 

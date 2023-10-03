@@ -253,7 +253,7 @@ export class CaslAbilityFactory {
     cannot(Action.Delete, Article, { isPublished: true });
 
     return build({
-      // Lire https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types pour plus de détails
+      // Lire https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types pour plus de détails
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
     });
@@ -265,9 +265,9 @@ export class CaslAbilityFactory {
 
 > info **Astuce** Les classes `Ability`, `AbilityBuilder`, `AbilityClass` et `ExtractSubjectType` sont exportées depuis le package `@casl/ability`.
 
-> info **Astuce** L'option `detectSubjectType` permet à CASL de comprendre comment extraire le type de sujet d'un objet. Pour plus d'informations, consultez la [documentation CASL](https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types).
+> info **Astuce** L'option `detectSubjectType` permet à CASL de comprendre comment extraire le type de sujet d'un objet. Pour plus d'informations, consultez la [documentation CASL](https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types).
 
-Dans l'exemple ci-dessus, nous avons créé l'instance `Ability` en utilisant la classe `AbilityBuilder`. Comme vous l'avez probablement deviné, `can` et `cannot` acceptent les mêmes arguments mais ont des significations différentes, `can` permet de faire une action sur le sujet spécifié et `cannot` l'interdit. Les deux fonctions peuvent accepter jusqu'à 4 arguments. Pour en savoir plus sur ces fonctions, consultez la [documentation CASL officielle](https://casl.js.org/v5/en/guide/intro).
+Dans l'exemple ci-dessus, nous avons créé l'instance `Ability` en utilisant la classe `AbilityBuilder`. Comme vous l'avez probablement deviné, `can` et `cannot` acceptent les mêmes arguments mais ont des significations différentes, `can` permet de faire une action sur le sujet spécifié et `cannot` l'interdit. Les deux fonctions peuvent accepter jusqu'à 4 arguments. Pour en savoir plus sur ces fonctions, consultez la [documentation CASL officielle](https://casl.js.org/v6/en/guide/intro).
 
 Enfin, assurez-vous d'ajouter la `CaslAbilityFactory` aux tableaux `providers` et `exports` dans la définition du module `CaslModule` :
 
@@ -297,7 +297,7 @@ if (ability.can(Action.Read, 'all')) {
 }
 ```
 
-> info **Astuce** Pour en savoir plus sur la classe `Ability`, consultez la [documentation CASL officielle](https://casl.js.org/v5/en/guide/intro).
+> info **Astuce** Pour en savoir plus sur la classe `Ability`, consultez la [documentation CASL officielle](https://casl.js.org/v6/en/guide/intro).
 
 Par exemple, supposons qu'un utilisateur ne soit pas un administrateur. Dans ce cas, l'utilisateur doit pouvoir lire les articles, mais la création de nouveaux articles ou la suppression d'articles existants doit être interdite.
 

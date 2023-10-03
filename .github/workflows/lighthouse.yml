@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js 12.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: 12.x
+          node-version: 16.x
       # Build needs around 400 seconds on Netlify.
       # We can not rely on "Waiting for 200", since the user
       # might push another commit to an existing PR, meaning
@@ -25,7 +25,7 @@ jobs:
         uses: jakepartusch/wait-for-netlify-action@v1
         id: wait-for-netflify-preview
         with:
-          site_name: 'docs-nestjs'
+          site_name: 'docs-nestjs-fr'
           max_timeout: 600
       - name: Run Lighthouse on urls and validate with lighthouserc
         uses: treosh/lighthouse-ci-action@v8
