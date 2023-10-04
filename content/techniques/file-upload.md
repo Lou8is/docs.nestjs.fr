@@ -1,20 +1,20 @@
-### File upload
+### Téléchargement de fichiers
 
-To handle file uploading, Nest provides a built-in module based on the [multer](https://github.com/expressjs/multer) middleware package for Express. Multer handles data posted in the `multipart/form-data` format, which is primarily used for uploading files via an HTTP `POST` request. This module is fully configurable and you can adjust its behavior to your application requirements.
+Pour gérer le téléchargement de fichiers, Nest fournit un module intégré basé sur le package middleware [multer](https://github.com/expressjs/multer) pour Express. Multer gère les données affichées au format `multipart/form-data`, qui est principalement utilisé pour le téléchargement de fichiers via une requête HTTP `POST`. Ce module est entièrement configurable et vous pouvez adapter son comportement aux besoins de votre application.
 
-> warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
+> warning **Attention** Multer ne peut pas traiter les données qui ne sont pas dans le format multipart supporté (`multipart/form-data`). Notez également que ce paquet n'est pas compatible avec le `FastifyAdapter`.
 
-For better type safety, let's install Multer typings package:
+Pour une meilleure sécurité des types, installons le paquet de types Multer :
 
 ```shell
 $ npm i -D @types/multer
 ```
 
-With this package installed, we can now use the `Express.Multer.File` type (you can import this type as follows: `import {{ '{' }} Express {{ '}' }} from 'express'`).
+Avec ce paquet installé, nous pouvons maintenant utiliser le type `Express.Multer.File` (vous pouvez importer ce type comme suit : `import {{ '{' }} Express {{ '}' }} from 'express'`).
 
-#### Basic example
+#### Exemple basique
 
-To upload a single file, simply tie the `FileInterceptor()` interceptor to the route handler and extract `file` from the `request` using the `@UploadedFile()` decorator.
+Pour télécharger un seul fichier, il suffit de lier l'intercepteur `FileInterceptor()` au gestionnaire de route et d'extraire `file` de la `request` en utilisant le décorateur `@UploadedFile()`.
 
 ```typescript
 @@filename()
@@ -32,18 +32,18 @@ uploadFile(file) {
 }
 ```
 
-> info **Hint** The `FileInterceptor()` decorator is exported from the `@nestjs/platform-express` package. The `@UploadedFile()` decorator is exported from `@nestjs/common`.
+> info **Astuce** Le décorateur `FileInterceptor()` est exporté depuis le paquet `@nestjs/platform-express`. Le décorateur `@UploadedFile()` est exporté depuis le paquet `@nestjs/common`.
 
-The `FileInterceptor()` decorator takes two arguments:
+Le décorateur `FileInterceptor()` prend deux arguments :
 
-- `fieldName`: string that supplies the name of the field from the HTML form that holds a file
-- `options`: optional object of type `MulterOptions`. This is the same object used by the multer constructor (more details [here](https://github.com/expressjs/multer#multeropts)).
+- `fieldName`: chaîne de caractères qui fournit le nom du champ du formulaire HTML qui contient un fichier
+- `options`: objet optionnel de type `MulterOptions`. C'est le même objet que celui utilisé par le constructeur de multer (plus de détails [ici](https://github.com/expressjs/multer#multeropts)).
 
-> warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
+> warning **Attention** `FileInterceptor()` peut ne pas être compatible avec des fournisseurs de clouds tiers tels que Google Firebase ou autres.
 
-#### File validation
+#### Validation de fichiers
 
-Often times it can be useful to validate incoming file metadata, like file size or file mime-type. For this, you can create your own [Pipe](https://docs.nestjs.com/pipes) and bind it to the parameter annotated with the `UploadedFile` decorator. The example below demonstrates how a basic file size validator pipe could be implemented:
+Souvent, il peut être utile de valider les métadonnées d'un fichier entrant, comme la taille ou le mime-type du fichier. Pour cela, vous pouvez créer votre propre [Pipe](https://docs.nestjs.com/pipes) et le lier au paramètre annoté avec le décorateur `UploadedFile`. L'exemple ci-dessous montre comment un pipe basique de validation de taille de fichier pourrait être implémenté :
 
 ```typescript
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
@@ -51,14 +51,14 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 @Injectable()
 export class FileSizeValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    // "value" is an object containing the file's attributes and metadata
+    // "value" est un objet contenant les attributs et les métadonnées du fichier
     const oneKb = 1000;
     return value.size < oneKb;
   }
 }
 ```
 
-Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called `ParseFilePipe`, and you can use it as follows:
+Nest fournit un pipe intégré pour gérer les cas d'utilisation courants et faciliter/standardiser l'ajout de nouveaux cas. Ce tube est appelé `ParseFilePipe`, et vous pouvez l'utiliser comme suit :
 
 ```typescript
 @Post('file')
@@ -67,7 +67,7 @@ uploadFileAndPassValidation(
   @UploadedFile(
     new ParseFilePipe({
       validators: [
-        // ... Set of file validator instances here
+        // ... Ensemble d'instances de validateurs de fichiers ici
       ]
     })
   )
@@ -80,49 +80,49 @@ uploadFileAndPassValidation(
 }
 ```
 
-As you can see, it's required to specify an array of file validators that will be executed by the `ParseFilePipe`. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
+Comme vous pouvez le voir, il est nécessaire de spécifier un tableau de validateurs de fichiers qui seront exécutés par le `ParseFilePipe`. Nous allons discuter de l'interface d'un validateur, mais il vaut la peine de mentionner que ce pipe a aussi deux options **optionnelles** supplémentaires :
 
 <table>
   <tr>
     <td><code>errorHttpStatusCode</code></td>
-    <td>The HTTP status code to be thrown in case <b>any</b> validator fails. Default is <code>400</code> (BAD REQUEST)</td>
+    <td>Le code d'état HTTP à afficher en cas d'échec de <b>n'importe lequel</b> des validateurs. La valeur par défaut est <code>400</code> (BAD REQUEST)</td>
   </tr>
   <tr>
     <td><code>exceptionFactory</code></td>
-    <td>A factory which receives the error message and returns an error.</td>
+    <td>Une fabrique qui reçoit le message d'erreur et renvoie une erreur.</td>
   </tr>
 </table>
 
-Now, back to the `FileValidator` interface. To integrate validators with this pipe, you have to either use built-in implementations or provide your own custom `FileValidator`. See example below:
+Revenons maintenant à l'interface `FileValidator`. Pour intégrer des validateurs à cette pipe, vous devez soit utiliser les implémentations intégrées, soit fournir votre propre `FileValidator`. Voir l'exemple ci-dessous :
 
 ```typescript
 export abstract class FileValidator<TValidationOptions = Record<string, any>> {
   constructor(protected readonly validationOptions: TValidationOptions) {}
 
   /**
-   * Indicates if this file should be considered valid, according to the options passed in the constructor.
-   * @param file the file from the request object
+   * Indique si ce fichier doit être considéré comme valide, selon les options passées dans le constructeur.
+   * @param file le fichier contenu dans l'objet requête
    */
   abstract isValid(file?: any): boolean | Promise<boolean>;
 
   /**
-   * Builds an error message in case the validation fails.
-   * @param file the file from the request object
+   * Crée un message d'erreur en cas d'échec de la validation.
+   * @param file le fichier contenu dans l'objet requête
    */
   abstract buildErrorMessage(file: any): string;
 }
 ```
 
-> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function. To leverage type security, you can also type the `file` parameter as `Express.Multer.File` in case you are using express (default) as a driver.
+> info **Astuce** L'interface `FileValidator` supporte la validation asynchrone via sa fonction `isValid`. Pour tirer parti de la sécurité des types, vous pouvez aussi taper le paramètre `file` comme `Express.Multer.File` dans le cas où vous utilisez express (par défaut) comme pilote.
 
-`FileValidator` is a regular class that has access to the file object and validates it according to the options provided by the client. Nest has two built-in `FileValidator` implementations you can use in your project:
+`FileValidator` est une classe normale qui a accès à l'objet fichier et le valide en fonction des options fournies par le client. Nest possède deux implémentations intégrées de `FileValidator` que vous pouvez utiliser dans votre projet :
 
-- `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
-- `FileTypeValidator` - Checks if a given file's mime-type matches the given value. 
+- `MaxFileSizeValidator` - Vérifie si la taille d'un fichier donné est inférieure à la valeur fournie (mesurée en `bytes`)
+- `FileTypeValidator` - Vérifie si le type de mime d'un fichier donné correspond à la valeur donnée.
 
-> warning **Warning** To verify file type, [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) class uses the type as detected by multer. By default, multer derives file type from file extension on user's device. However, it does not check actual file contents. As files can be renamed to arbitrary extensions, consider using a custom implementation (like checking the file's [magic number](https://www.ibm.com/support/pages/what-magic-number)) if your app requires a safer solution.
+> warning **Attention** Pour vérifier le type de fichier, la classe [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) utilise le type détecté par multer. Par défaut, multer déduit le type de fichier à partir de l'extension du fichier sur l'appareil de l'utilisateur. Cependant, il ne vérifie pas le contenu réel du fichier. Comme les fichiers peuvent être renommés avec des extensions arbitraires, envisagez d'utiliser une implémentation personnalisée (comme la vérification du [nombre magique](https://www.ibm.com/support/pages/what-magic-number) du fichier) si votre application nécessite une solution plus sûre.
 
-To understand how these can be used in conjunction with the aforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
+Pour comprendre comment ils peuvent être utilisés en conjonction avec le `FileParsePipe` mentionné plus haut, nous allons utiliser un extrait modifié du dernier exemple présenté :
 
 ```typescript
 @UploadedFile(
@@ -135,9 +135,9 @@ To understand how these can be used in conjunction with the aforementioned `File
 )
 file: Express.Multer.File,
 ```
-> info **Hint** If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like `fileValidators`.
+> info **Astuce** Si le nombre de validateurs augmente considérablement ou si leurs options encombrent le fichier, vous pouvez définir ce tableau dans un fichier séparé et l'importer ici sous la forme d'une constante nommée comme `fileValidators`.
 
-Finally, you can use the special `ParseFilePipeBuilder` class that lets you compose & construct your validators. By using it as shown below you can avoid manual instantiation of each validator and just pass their options directly:
+Enfin, vous pouvez utiliser la classe spéciale `ParseFilePipeBuilder` qui vous permet de composer et de construire vos validateurs. En l'utilisant comme indiqué ci-dessous, vous pouvez éviter l'instanciation manuelle de chaque validateur et simplement passer leurs options directement :
 
 ```typescript
 @UploadedFile(
@@ -155,15 +155,15 @@ Finally, you can use the special `ParseFilePipeBuilder` class that lets you comp
 file: Express.Multer.File,
 ```
 
-#### Array of files
+#### Liste de fichiers
 
-To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
+Pour télécharger un ensemble de fichiers (identifiés par un seul nom de champ), utilisez le décorateur `FilesInterceptor()` (notez le pluriel **Files** dans le nom du décorateur). Ce décorateur prend trois arguments :
 
-- `fieldName`: as described above
-- `maxCount`: optional number defining the maximum number of files to accept
-- `options`: optional `MulterOptions` object, as described above
+- `fieldName`: comme décrit ci-dessus
+- `maxCount`: nombre facultatif définissant le nombre maximum de fichiers à accepter
+- `options`: objet facultatif `MulterOptions`, comme décrit ci-dessus
 
-When using `FilesInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
+Lorsque vous utilisez `FilesInterceptor()`, extrayez les fichiers de la `request` avec le décorateur `@UploadedFiles()`.
 
 ```typescript
 @@filename()
@@ -181,16 +181,16 @@ uploadFile(files) {
 }
 ```
 
-> info **Hint** The `FilesInterceptor()` decorator is exported from the `@nestjs/platform-express` package. The `@UploadedFiles()` decorator is exported from `@nestjs/common`.
+> info **Astuce** Le décorateur `FilesInterceptor()` est exporté depuis le paquet `@nestjs/platform-express`. Le décorateur `@UploadedFiles()` est exporté depuis le paquet `@nestjs/common`.
 
-#### Multiple files
+#### Fichiers multiples
 
-To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
+Pour télécharger plusieurs fichiers (tous avec des noms de champs différents), utilisez le décorateur `FileFieldsInterceptor()`. Ce décorateur prend deux arguments :
 
-- `uploadedFields`: an array of objects, where each object specifies a required `name` property with a string value specifying a field name, as described above, and an optional `maxCount` property, as described above
-- `options`: optional `MulterOptions` object, as described above
+- `uploadedFields`: un tableau d'objets, où chaque objet spécifie une propriété obligatoire `name` avec une valeur de chaîne spécifiant un nom de champ, comme décrit ci-dessus, et une propriété optionnelle `maxCount`, comme décrit ci-dessus
+- `options`: objet facultatif `MulterOptions`, comme décrit ci-dessus
 
-When using `FileFieldsInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
+Lorsque vous utilisez `FileFieldsInterceptor()`, extrayez les fichiers de la `request` avec le décorateur `@UploadedFiles()`.
 
 ```typescript
 @@filename()
@@ -214,11 +214,11 @@ uploadFile(files) {
 }
 ```
 
-#### Any files
+#### N'importe quel fichier
 
-To upload all fields with arbitrary field name keys, use the `AnyFilesInterceptor()` decorator. This decorator can accept an optional `options` object as described above.
+Pour télécharger tous les champs avec des clés de noms de champs arbitraires, utilisez le décorateur `AnyFilesInterceptor()`. Ce décorateur peut accepter un objet optionnel `options` comme décrit ci-dessus.
 
-When using `AnyFilesInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
+Lorsque vous utilisez `AnyFilesInterceptor()`, extrayez les fichiers de la `request` avec le décorateur `@UploadedFiles()`.
 
 ```typescript
 @@filename()
@@ -237,9 +237,9 @@ uploadFile(files) {
 ```
 
 
-#### No files
+#### Pas de fichier
 
-To accept `multipart/form-data` but not allow any files to be uploaded, use the `NoFilesInterceptor`. This sets multipart data as attributes on the request body. Any files sent with the request will throw a `BadRequestException`.
+Pour accepter `multipart/form-data` mais ne pas autoriser le téléchargement de fichiers, utilisez le `NoFilesInterceptor`. Cela définit les données multipart comme des attributs sur le corps de la requête. Tout fichier envoyé avec la requête lancera une `BadRequestException`.
 
 ```typescript
 @Post('upload')
@@ -249,9 +249,9 @@ handleMultiPartData(@Body() body) {
 }
 ```
 
-#### Default options
+#### Options par défaut
 
-You can specify multer options in the file interceptors as described above. To set default options, you can call the static `register()` method when you import the `MulterModule`, passing in supported options. You can use all options listed [here](https://github.com/expressjs/multer#multeropts).
+Vous pouvez spécifier des options multer dans les intercepteurs de fichiers comme décrit ci-dessus. Pour définir les options par défaut, vous pouvez appeler la méthode statique `register()` lorsque vous importez le `MulterModule`, en passant les options supportées. Vous pouvez utiliser toutes les options listées [ici](https://github.com/expressjs/multer#multeropts).
 
 ```typescript
 MulterModule.register({
@@ -259,13 +259,13 @@ MulterModule.register({
 });
 ```
 
-> info **Hint** The `MulterModule` class is exported from the `@nestjs/platform-express` package.
+> info **Astuce** La classe `MulterModule` est exportée du paquetage `@nestjs/platform-express`.
 
-#### Async configuration
+#### Configuration asynchrone
 
-When you need to set `MulterModule` options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+Lorsque vous avez besoin de définir les options de `MulterModule` de manière asynchrone plutôt que statique, utilisez la méthode `registerAsync()`. Comme pour la plupart des modules dynamiques, Nest fournit plusieurs techniques pour gérer la configuration asynchrone.
 
-One technique is to use a factory function:
+Une technique consiste à utiliser une fonction d'usine :
 
 ```typescript
 MulterModule.registerAsync({
@@ -275,7 +275,7 @@ MulterModule.registerAsync({
 });
 ```
 
-Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`.
+Comme les autres [fournisseurs d'usine](/fundamentals/custom-providers#fournisseurs-de-factory--usefactory), notre fonction d'usine peut être `async` et peut injecter des dépendances via `inject`.
 
 ```typescript
 MulterModule.registerAsync({
@@ -287,7 +287,7 @@ MulterModule.registerAsync({
 });
 ```
 
-Alternatively, you can configure the `MulterModule` using a class instead of a factory, as shown below:
+Alternativement, vous pouvez configurer le `MulterModule` en utilisant une classe au lieu d'une fabrique, comme montré ci-dessous :
 
 ```typescript
 MulterModule.registerAsync({
@@ -295,7 +295,7 @@ MulterModule.registerAsync({
 });
 ```
 
-The construction above instantiates `MulterConfigService` inside `MulterModule`, using it to create the required options object. Note that in this example, the `MulterConfigService` has to implement the `MulterOptionsFactory` interface, as shown below. The `MulterModule` will call the `createMulterOptions()` method on the instantiated object of the supplied class.
+La construction ci-dessus instancie `MulterConfigService` à l'intérieur de `MulterModule`, en l'utilisant pour créer l'objet d'options requis. Notez que dans cet exemple, le `MulterConfigService` doit implémenter l'interface `MulterOptionsFactory`, comme montré ci-dessous. Le `MulterModule` appellera la méthode `createMulterOptions()` sur l'objet instancié de la classe fournie.
 
 ```typescript
 @Injectable()
@@ -308,7 +308,7 @@ class MulterConfigService implements MulterOptionsFactory {
 }
 ```
 
-If you want to reuse an existing options provider instead of creating a private copy inside the `MulterModule`, use the `useExisting` syntax.
+Si vous voulez réutiliser un fournisseur d'options existant au lieu de créer une copie privée dans le `MulterModule`, utilisez la syntaxe `useExisting`.
 
 ```typescript
 MulterModule.registerAsync({
@@ -317,6 +317,6 @@ MulterModule.registerAsync({
 });
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/29-file-upload).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/29-file-upload).
