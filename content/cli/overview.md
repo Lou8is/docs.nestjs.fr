@@ -1,110 +1,110 @@
-### Overview
+### Vue d'ensemble
 
-The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface tool that helps you to initialize, develop, and maintain your Nest applications. It assists in multiple ways, including scaffolding the project, serving it in development mode, and building and bundling the application for production distribution. It embodies best-practice architectural patterns to encourage well-structured apps.
+La [CLI Nest](https://github.com/nestjs/nest-cli) est un outil d'interface de ligne de commande qui vous aide à initialiser, à développer et à maintenir vos applications Nest. Elle vous assiste de plusieurs manières, notamment en élaborant le projet, en le servant en mode développement, et en construisant et en regroupant l'application pour la distribution en production. Elle intègre les meilleures pratiques architecturales afin d'encourager la création d'applications bien structurées.
 
 #### Installation
 
-**Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI. Other package managers may be used at your discretion. With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file. Here, we describe installing the `nest` binary globally using the `-g` option. This provides a measure of convenience, and is the approach we assume throughout the documentation. Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user. It also means that if you have different projects, each will run the **same** version of the CLI. A reasonable alternative is to use the [npx](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) program, built into the `npm` cli (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI. We recommend you consult the [npx documentation](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) and/or your DevOps support staff for more information.
+**Note** : Dans ce guide, nous décrivons l'utilisation de [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) pour installer des paquets, y compris l'interface de programmation Nest. D'autres gestionnaires de paquets peuvent être utilisés à votre discrétion. Avec npm, vous disposez de plusieurs options pour gérer la façon dont la ligne de commande de votre système d'exploitation résout l'emplacement du fichier binaire de l'interface de programmation `nest`. Ici, nous décrivons l'installation du binaire `nest` globalement en utilisant l'option `-g`. Cela apporte une certaine commodité, et c'est l'approche que nous adoptons tout au long de la documentation. Notez que l'installation globale de **n'importe quel** paquet `npm` laisse à l'utilisateur la responsabilité de s'assurer qu'il utilise la bonne version. Cela signifie également que si vous avez différents projets, chacun d'entre eux utilisera la **même** version de l'interface de programmation. Une alternative raisonnable est d'utiliser le programme [npx](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md), intégré dans le clique `npm` (ou des fonctionnalités similaires avec d'autres gestionnaires de paquets) pour s'assurer que vous exécutez une **version gérée** de l'interface de programmation de Nest. Nous vous recommandons de consulter la [documentation npx](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) et/ou votre équipe de support DevOps pour plus d'informations.
 
-Install the CLI globally using the `npm install -g` command (see the **Note** above for details about global installs).
+Installez la CLI globalement en utilisant la commande `npm install -g` (voir la **Note** ci-dessus pour plus de détails sur les installations globales).
 
 ```bash
 $ npm install -g @nestjs/cli
 ```
 
-> info **Hint** Alternatively, you can use this command `npx @nestjs/cli@latest` without installing the cli globally.
+> info **Astuce** Alternativement, vous pouvez utiliser cette commande `npx @nestjs/cli@latest` sans installer la CLI globalement.
 
-#### Basic workflow
+#### Processus de base
 
-Once installed, you can invoke CLI commands directly from your OS command line through the `nest` executable. See the available `nest` commands by entering the following:
+Une fois installée, vous pouvez invoquer des commandes CLI directement depuis la ligne de commande de votre système d'exploitation grâce à l'exécutable `nest`. Voyez les commandes `nest` disponibles en entrant ce qui suit :
 
 ```bash
 $ nest --help
 ```
 
-Get help on an individual command using the following construct. Substitute any command, like `new`, `add`, etc., where you see `generate` in the example below to get detailed help on that command:
+Obtenez de l'aide sur une commande individuelle en utilisant la construction suivante. Remplacez n'importe quelle commande, comme `new`, `add`, etc., à la place de `generate` dans l'exemple ci-dessous pour obtenir de l'aide détaillée sur cette commande :
 
 ```bash
 $ nest generate --help
 ```
 
-To create, build and run a new basic Nest project in development mode, go to the folder that should be the parent of your new project, and run the following commands:
+Pour créer, construire et exécuter un nouveau projet Nest de base en mode développement, accédez au dossier qui doit être le parent de votre nouveau projet et exécutez les commandes suivantes :
 
 ```bash
-$ nest new my-nest-project
-$ cd my-nest-project
+$ nest new mon-projet-nest
+$ cd mon-projet-nest
 $ npm run start:dev
 ```
 
-In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. The app will automatically recompile and reload when you change any of the source files.
+Dans votre navigateur, ouvrez [http://localhost:3000](http://localhost:3000) pour voir la nouvelle application fonctionner. L'application sera automatiquement recompilée et rechargée lorsque vous modifierez l'un des fichiers sources.
 
-> info **Hint** We recommend using the [SWC builder](/recipes/swc) for faster builds (10x more performant than the default TypeScript compiler).
+> info **Astuce** Nous recommandons d'utiliser le [constructeur SWC](/recipes/swc) pour des constructions plus rapides (10x plus performant que le compilateur TypeScript par défaut).
 
-#### Project structure
+#### Structure du projet
 
-When you run `nest new`, Nest generates a boilerplate application structure by creating a new folder and populating an initial set of files. You can continue working in this default structure, adding new components, as described throughout this documentation. We refer to the project structure generated by `nest new` as **standard mode**. Nest also supports an alternate structure for managing multiple projects and libraries called **monorepo mode**.
+Lorsque vous lancez `nest new`, Nest génère une structure d'application standard en créant un nouveau dossier et en remplissant un ensemble initial de fichiers. Vous pouvez continuer à travailler dans cette structure par défaut, en ajoutant de nouveaux composants, comme décrit dans cette documentation. Nous nous référons à la structure du projet générée par `nest new` comme **mode standard**. Nest supporte également une structure alternative pour la gestion de multiples projets et bibliothèques appelée **mode monorepo**.
 
-Aside from a few specific considerations around how the **build** process works (essentially, monorepo mode simplifies build complexities that can sometimes arise from monorepo-style project structures), and built-in [library](/cli/libraries) support, the rest of the Nest features, and this documentation, apply equally to both standard and monorepo mode project structures. In fact, you can easily switch from standard mode to monorepo mode at any time in the future, so you can safely defer this decision while you're still learning about Nest.
+Hormis quelques considérations spécifiques sur le fonctionnement du processus de **construction** (essentiellement, le mode monorepo simplifie les complexités de construction qui peuvent parfois découler des structures de projet de type monorepo), et le support intégré des [library](/cli/libraries), le reste des fonctionnalités de Nest, et cette documentation, s'appliquent de la même manière aux structures de projet en mode standard et en mode monorepo. En fait, vous pouvez facilement passer du mode standard au mode monorepo à n'importe quel moment dans le futur, vous pouvez donc reporter cette décision en toute sécurité pendant que vous apprenez encore à connaître Nest.
 
-You can use either mode to manage multiple projects. Here's a quick summary of the differences:
+Vous pouvez utiliser l'un ou l'autre mode pour gérer plusieurs projets. Voici un résumé rapide des différences :
 
-| Feature                                               | Standard Mode                                                      | Monorepo Mode                                              |
+| Fonctionnalité                                        | Mode standard                                                      | Mode Monorepo                                              |
 | ----------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Multiple projects                                     | Separate file system structure                                     | Single file system structure                               |
-| `node_modules` & `package.json`                       | Separate instances                                                 | Shared across monorepo                                     |
-| Default compiler                                      | `tsc`                                                              | webpack                                                    |
-| Compiler settings                                     | Specified separately                                               | Monorepo defaults that can be overridden per project       |
-| Config files like `.eslintrc.js`, `.prettierrc`, etc. | Specified separately                                               | Shared across monorepo                                     |
-| `nest build` and `nest start` commands                | Target defaults automatically to the (only) project in the context | Target defaults to the **default project** in the monorepo |
-| Libraries                                             | Managed manually, usually via npm packaging                        | Built-in support, including path management and bundling   |
+| Projets multiples                                     | Structure de système de fichiers séparée                           | Structure de système de fichiers unique                    |
+| `node_modules` & `package.json`                       | Instances distinctes                                               | Partagés au sein du monorepo                             |
+| Compilateur par défaut                                | `tsc`                                                              | webpack                                                    |
+| Paramètres du compilateur                             | Spécifiés séparément                                               | Valeurs par défaut de Monorepo qui peuvent être modifiées par projet |
+| Fichiers de configuration tels `.eslintrc.js`, `.prettierrc`, etc. | Spécifiés séparément                                               | Partagés au sein du monorepo                  |
+| commandes `nest build` et `nest start`                | La cible est automatiquement définie par défaut comme étant le (seul) projet dans le contexte | La cible est par défaut le **projet par défaut** dans le monorepo |
+| Bibliothèques                                         | Géré manuellement, généralement via npm packaging                  | Support intégré, y compris la gestion des routes et le bundling |
 
-Read the sections on [Workspaces](/cli/monorepo) and [Libraries](/cli/libraries) for more detailed information to help you decide which mode is most suitable for you.
+Lisez les sections [Espaces de travail](/cli/monorepo) et [Bibliothèques](/cli/libraries) pour obtenir des informations plus détaillées qui vous aideront à choisir le mode qui vous convient le mieux.
 
 <app-banner-courses></app-banner-courses>
 
-#### CLI command syntax
+#### Syntaxe des commandes CLI
 
-All `nest` commands follow the same format:
-
-```bash
-nest commandOrAlias requiredArg [optionalArg] [options]
-```
-
-For example:
+Toutes les commandes `nest` suivent le même format :
 
 ```bash
-$ nest new my-nest-project --dry-run
+nest commandOuAlias argumentRequis [argumentOptionnel] [options]
 ```
 
-Here, `new` is the _commandOrAlias_. The `new` command has an alias of `n`. `my-nest-project` is the _requiredArg_. If a _requiredArg_ is not supplied on the command line, `nest` will prompt for it. Also, `--dry-run` has an equivalent short-hand form `-d`. With this in mind, the following command is the equivalent of the above:
+Par exemple:
 
 ```bash
-$ nest n my-nest-project -d
+$ nest new mon-projet-nest --dry-run
 ```
 
-Most commands, and some options, have aliases. Try running `nest new --help` to see these options and aliases, and to confirm your understanding of the above constructs.
+Ici, `new` est la _commandOuAlias_. La commande `new` a un alias de `n`. `mon-projet-nest` est l'_argument_ requis. Si un _argumentRequis_ n'est pas fourni sur la ligne de commande, `nest` le demandera. De plus, `--dry-run` a une forme abrégée équivalente `-d`. En gardant cela à l'esprit, la commande suivante est l'équivalent de ce qui précède :
 
-#### Command overview
+```bash
+$ nest n mon-projet-nest -d
+```
 
-Run `nest <command> --help` for any of the following commands to see command-specific options.
+La plupart des commandes, et certaines options, ont des alias. Essayez de lancer `nest new --help` pour voir ces options et alias, et pour confirmer votre compréhension des constructions ci-dessus.
 
-See [usage](/cli/usages) for detailed descriptions for each command.
+#### Vue d'ensemble des commandes
 
-| Command    | Alias | Description                                                                                    |
-| ---------- | ----- | ---------------------------------------------------------------------------------------------- |
-| `new`      | `n`   | Scaffolds a new _standard mode_ application with all boilerplate files needed to run.          |
-| `generate` | `g`   | Generates and/or modifies files based on a schematic.                                          |
-| `build`    |       | Compiles an application or workspace into an output folder.                                    |
-| `start`    |       | Compiles and runs an application (or default project in a workspace).                          |
-| `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic. |
-| `info`     | `i`   | Displays information about installed nest packages and other helpful system info.              |
+Lancez `nest <commande> --help` pour n'importe laquelle des commandes suivantes pour voir les options spécifiques à la commande.
 
-#### Requirements
+Voir [usage](/cli/usages) pour une description détaillée de chaque commande.
 
-Nest CLI requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [Node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
+| Commande   | Alias | Description                                                                                                                  |
+| ---------- | ----- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `new`      | `n`   | Crée une nouvelle application en _mode standard_ avec tous les fichiers de base nécessaires à son fonctionnement.            |
+| `generate` | `g`   | Génère et/ou modifie des fichiers sur la base d'un schéma.                                                                   |
+| `build`    |       | Compile une application ou un espace de travail dans un dossier de sortie.                                                   |
+| `start`    |       | Compile et exécute une application (ou un projet par défaut dans un espace de travail).                                      |
+| `add`      |       | Importe une bibliothèque qui a été empaquetée en tant que **bibliothèque Nest**, en exécutant son schéma d'installation.     |
+| `info`     | `i`   | Affiche des informations sur les packages Nest installés et d'autres informations utiles sur le système.                     |
+
+#### Prérequis
+
+La CLI Nest nécessite un binaire Node.js construit avec le [support d'internationalisation](https://nodejs.org/api/intl.html) (ICU), comme les binaires officiels de la [page du projet Node.js](https://nodejs.org/en/download). Si vous rencontrez des erreurs liées à ICU, vérifiez que votre binaire répond à cette exigence.
 
 ```bash
 node -p process.versions.icu
 ```
 
-If the command prints `undefined`, your Node.js binary has no internationalization support.
+Si la commande affiche `undefined`, votre binaire Node.js ne supporte pas l'internationalisation.
