@@ -1,66 +1,66 @@
-### Nest CLI and scripts
+### CLI de Nest et scripts
 
-This section provides additional background on how the `nest` command interacts with compilers and scripts to help DevOps personnel manage the development environment.
+Cette section fournit des informations supplémentaires sur la façon dont la commande `nest` interagit avec les compilateurs et les scripts afin d'aider les équipes DevOps à gérer l'environnement de développement.
 
-A Nest application is a **standard** TypeScript application that needs to be compiled to JavaScript before it can be executed. There are various ways to accomplish the compilation step, and developers/teams are free to choose a way that works best for them. With that in mind, Nest provides a set of tools out-of-the-box that seek to do the following:
+Une application Nest est une application TypeScript **standard** qui doit être compilée en JavaScript avant de pouvoir être exécutée. Il existe plusieurs façons d'accomplir l'étape de compilation, et les développeurs/équipes sont libres de choisir celle qui leur convient le mieux. Dans cette optique, Nest fournit un ensemble d'outils prêts à l'emploi qui visent à accomplir les tâches suivantes :
 
-- Provide a standard build/execute process, available at the command line, that "just works" with reasonable defaults.
-- Ensure that the build/execute process is **open**, so developers can directly access the underlying tools to customize them using native features and options.
-- Remain a completely standard TypeScript/Node.js framework, so that the entire compile/deploy/execute pipeline can be managed by any external tools that the development team chooses to use.
+- Fournir un processus de construction/exécution standard, disponible en ligne de commande, qui fonctionne simplement avec des valeurs par défaut raisonnables.
+- Veiller à ce que le processus de construction/exécution soit **ouvert**, afin que les développeurs puissent accéder directement aux outils sous-jacents pour les personnaliser à l'aide de fonctionnalités et d'options natives.
+- Rester un framework TypeScript/Node.js complètement standard, de sorte que l'ensemble du pipeline de compilation/déploiement/exécution puisse être géré par n'importe quel outil externe que l'équipe de développement choisit d'utiliser.
 
-This goal is accomplished through a combination of the `nest` command, a locally installed TypeScript compiler, and `package.json` scripts. We describe how these technologies work together below. This should help you understand what's happening at each step of the build/execute process, and how to customize that behavior if necessary.
+Cet objectif est atteint grâce à la combinaison de la commande `nest`, d'un compilateur TypeScript installé localement, et des scripts `package.json`. Nous décrivons ci-dessous comment ces technologies fonctionnent ensemble. Cela devrait vous aider à comprendre ce qui se passe à chaque étape du processus de construction/exécution, et comment personnaliser ce comportement si nécessaire.
 
-#### The nest binary
+#### The binaire nest
 
-The `nest` command is an OS level binary (i.e., runs from the OS command line). This command actually encompasses 3 distinct areas, described below. We recommend that you run the build (`nest build`) and execution (`nest start`) sub-commands via the `package.json` scripts provided automatically when a project is scaffolded (see [typescript starter](https://github.com/nestjs/typescript-starter) if you wish to start by cloning a repo, instead of running `nest new`).
+La commande `nest` est un binaire au niveau du système d'exploitation (c'est-à-dire qu'elle s'exécute à partir de la ligne de commande du système d'exploitation). Cette commande englobe en fait 3 domaines distincts, décrits ci-dessous. Nous recommandons de lancer les sous-commandes de construction (`nest build`) et d'exécution (`nest start`) via les scripts `package.json` fournis automatiquement lorsqu'un projet est construit (voir [typescript starter](https://github.com/nestjs/typescript-starter) si vous souhaitez commencer par cloner un dépôt, au lieu d'exécuter `nest new`).
 
 #### Build
 
-`nest build` is a wrapper on top of the standard `tsc` compiler or `swc` compiler (for [standard projects](https://docs.nestjs.com/cli/overview#project-structure)) or the webpack bundler using the `ts-loader` (for [monorepos](https://docs.nestjs.com/cli/overview#project-structure)). It does not add any other compilation features or steps except for handling `tsconfig-paths` out of the box. The reason it exists is that most developers, especially when starting out with Nest, do not need to adjust compiler options (e.g., `tsconfig.json` file) which can sometimes be tricky.
+`nest build` est une enveloppe au-dessus du compilateur standard `tsc` ou du compilateur `swc` (pour les [projets standards](/cli/overview#structure-du-projet)) ou du bundler webpack utilisant le `ts-loader` (pour les [monorepos](/cli/overview#structure-du-projet)). Il n'ajoute aucune autre fonctionnalité ou étape de compilation, à l'exception de la gestion de `tsconfig-paths`. La raison pour laquelle il existe est que la plupart des développeurs, en particulier lorsqu'ils débutent avec Nest, n'ont pas besoin d'ajuster les options du compilateur (par exemple, le fichier `tsconfig.json`), ce qui peut parfois être délicat.
 
-See the [nest build](https://docs.nestjs.com/cli/usages#nest-build) documentation for more details.
+Voir la documentation [nest build](/cli/usages#nest-build) pour plus de détails.
 
-#### Execution
+#### Exécution
 
-`nest start` simply ensures the project has been built (same as `nest build`), then invokes the `node` command in a portable, easy way to execute the compiled application. As with builds, you are free to customize this process as needed, either using the `nest start` command and its options, or completely replacing it. The entire process is a standard TypeScript application build and execute pipeline, and you are free to manage the process as such.
+`nest start` s'assure simplement que le projet a été compilé (comme `nest build`), puis invoque la commande `node` d'une manière portable et facile pour exécuter l'application compilée. Comme pour les builds, vous êtes libre de personnaliser ce processus selon vos besoins, soit en utilisant la commande `nest start` et ses options, soit en la remplaçant complètement. L'ensemble du processus est un pipeline standard de construction et d'exécution d'applications TypeScript, et vous êtes libre de gérer le processus comme tel.
 
-See the [nest start](https://docs.nestjs.com/cli/usages#nest-start) documentation for more details.
+Voir la documentation [nest start](/cli/usages#nest-start) pour plus de détails.
 
-#### Generation
+#### Génération
 
-The `nest generate` commands, as the name implies, generate new Nest projects, or components within them.
+Les commandes `nest generate`, comme leur nom l'indique, génèrent de nouveaux projets Nest, ou des composants à l'intérieur de ceux-ci.
 
-#### Package scripts
+#### Scripts de packages
 
-Running the `nest` commands at the OS command level requires that the `nest` binary be installed globally. This is a standard feature of npm, and outside of Nest's direct control. One consequence of this is that the globally installed `nest` binary is **not** managed as a project dependency in `package.json`. For example, two different developers can be running two different versions of the `nest` binary. The standard solution for this is to use package scripts so that you can treat the tools used in the build and execute steps as development dependencies.
+L'exécution des commandes `nest` au niveau des commandes du système d'exploitation nécessite que le binaire `nest` soit installé globalement. C'est une fonctionnalité standard de npm, et en dehors du contrôle direct de Nest. Une conséquence de ceci est que le binaire `nest` installé globalement n'est **pas** géré comme une dépendance de projet dans `package.json`. Par exemple, deux développeurs différents peuvent utiliser deux versions différentes du binaire `nest`. La solution standard pour cela est d'utiliser des scripts de package afin de traiter les outils utilisés dans les étapes de construction et d'exécution comme des dépendances de développement.
 
-When you run `nest new`, or clone the [typescript starter](https://github.com/nestjs/typescript-starter), Nest populates the new project's `package.json` scripts with commands like `build` and `start`. It also installs the underlying compiler tools (such as `typescript`) as **dev dependencies**.
+Lorsque vous lancez `nest new`, ou clonez le [typescript starter](https://github.com/nestjs/typescript-starter), Nest remplit les scripts `package.json` du nouveau projet avec des commandes comme `build` et `start`. Il installe également les outils de compilation sous-jacents (comme `typescript`) en tant que **dépendances dev**.
 
-You run the build and execute scripts with commands like:
+Vous lancez le build et exécutez des scripts avec des commandes comme :
 
 ```bash
 $ npm run build
 ```
 
-and
+et
 
 ```bash
 $ npm run start
 ```
 
-These commands use npm's script running capabilities to execute `nest build` or `nest start` using the **locally installed** `nest` binary. By using these built-in package scripts, you have full dependency management over the Nest CLI commands\*. This means that, by following this **recommended** usage, all members of your organization can be assured of running the same version of the commands.
+Ces commandes utilisent les capacités de script de npm pour exécuter `nest build` ou `nest start` en utilisant le binaire **localement installé** `nest`. En utilisant ces scripts de paquets intégrés, vous avez une gestion complète des dépendances sur les commandes CLI de Nest*. Cela signifie qu'en suivant cette utilisation **recommandée**, tous les membres de votre organisation peuvent être assurés d'exécuter la même version des commandes.
 
-\*This applies to the `build` and `start` commands. The `nest new` and `nest generate` commands aren't part of the build/execute pipeline, so they operate in a different context, and do not come with built-in `package.json` scripts.
+\*Ceci s'applique aux commandes `build` et `start`. Les commandes `nest new` et `nest generate` ne font pas partie du pipeline de construction/exécution, elles opèrent donc dans un contexte différent, et ne sont pas accompagnées de scripts `package.json` intégrés.
 
-For most developers/teams, it is recommended to utilize the package scripts for building and executing their Nest projects. You can fully customize the behavior of these scripts via their options (`--path`, `--webpack`, `--webpackPath`) and/or customize the `tsc` or webpack compiler options files (e.g., `tsconfig.json`) as needed. You are also free to run a completely custom build process to compile the TypeScript (or even to execute TypeScript directly with `ts-node`).
+Pour la plupart des développeurs/équipes, il est recommandé d'utiliser les scripts du package pour construire et exécuter leurs projets Nest. Vous pouvez entièrement personnaliser le comportement de ces scripts via leurs options (`--path`, `--webpack`, `--webpackPath`) et/ou personnaliser les fichiers d'options de `tsc` ou du compilateur webpack (par exemple, `tsconfig.json`) selon les besoins. Vous êtes également libre de lancer un processus de compilation complètement personnalisé pour compiler le TypeScript (ou même d'exécuter le TypeScript directement avec `ts-node`).
 
-#### Backward compatibility
+#### Rétrocompatibilité
 
-Because Nest applications are pure TypeScript applications, previous versions of the Nest build/execute scripts will continue to operate. You are not required to upgrade them. You can choose to take advantage of the new `nest build` and `nest start` commands when you are ready, or continue running previous or customized scripts.
+Les applications Nest étant des applications purement TypeScript, les versions précédentes des scripts de construction/exécution Nest continueront à fonctionner. Vous n'êtes pas obligé de les mettre à jour. Vous pouvez choisir de profiter des nouvelles commandes `nest build` et `nest start` lorsque vous êtes prêt, ou continuer à exécuter les scripts précédents ou personnalisés.
 
 #### Migration
 
-While you are not required to make any changes, you may want to migrate to using the new CLI commands instead of using tools such as `tsc-watch` or `ts-node`. In this case, simply install the latest version of the `@nestjs/cli`, both globally and locally:
+Bien que vous ne soyez pas obligé de faire des changements, vous pouvez vouloir migrer vers l'utilisation des nouvelles commandes CLI au lieu d'utiliser des outils tels que `tsc-watch` ou `ts-node`. Dans ce cas, installez simplement la dernière version de `@nestjs/cli`, à la fois globalement et localement :
 
 ```bash
 $ npm install -g @nestjs/cli
@@ -68,7 +68,7 @@ $ cd  /some/project/root/folder
 $ npm install -D @nestjs/cli
 ```
 
-You can then replace the `scripts` defined in `package.json` with the following ones:
+Vous pouvez alors remplacer les `scripts` définis dans `package.json` par les suivants :
 
 ```typescript
 "build": "nest build",
