@@ -1,12 +1,12 @@
-### HTTP adapter
+### Adaptateur HTTP
 
-Occasionally, you may want to access the underlying HTTP server, either within the Nest application context or from the outside.
+Il peut arriver que vous souhaitiez accéder au serveur HTTP sous-jacent, soit dans le contexte de l'application Nest, soit depuis l'extérieur.
 
-Every native (platform-specific) HTTP server/library (e.g., Express and Fastify) instance is wrapped in an **adapter**. The adapter is registered as a globally available provider that can be retrieved from the application context, as well as injected into other providers.
+Chaque instance de serveur/bibliothèque HTTP natif (spécifique à une plate-forme) (par exemple, Express et Fastify) est enveloppée dans un **adaptateur**. L'adaptateur est enregistré comme un fournisseur globalement disponible qui peut être récupéré dans le contexte de l'application, ainsi qu'injecté dans d'autres fournisseurs.
 
-#### Outside application context strategy
+#### Stratégie externe au contexte de l'application
 
-To get a reference to the `HttpAdapter` from outside of the application context, call the `getHttpAdapter()` method.
+Pour obtenir une référence au `HttpAdapter` en dehors du contexte de l'application, appelez la méthode `getHttpAdapter()`.
 
 ```typescript
 @@filename()
@@ -14,9 +14,9 @@ const app = await NestFactory.create(AppModule);
 const httpAdapter = app.getHttpAdapter();
 ```
 
-#### In-context strategy
+#### Stratégie interne
 
-To get a reference to the `HttpAdapterHost` from within the application context, inject it using the same technique as any other existing provider (e.g., using constructor injection).
+Pour obtenir une référence au `HttpAdapterHost` depuis le contexte de l'application, injectez-le en utilisant la même technique que n'importe quel autre fournisseur existant (par exemple, en utilisant l'injection de constructeur).
 
 ```typescript
 @@filename()
@@ -32,18 +32,18 @@ export class CatsService {
 }
 ```
 
-> info **Hint** The `HttpAdapterHost` is imported from the `@nestjs/core` package.
+> info **Astuce** `HttpAdapterHost` est importé du paquet `@nestjs/core`.
 
-The `HttpAdapterHost` is **not** an actual `HttpAdapter`. To get the actual `HttpAdapter` instance, simply access the `httpAdapter` property.
+Le `HttpAdapterHost` n'est **pas** un véritable `HttpAdapter`. Pour obtenir l'instance réelle de `HttpAdapter`, il suffit d'accéder à la propriété `httpAdapter`.
 
 ```typescript
 const adapterHost = app.get(HttpAdapterHost);
 const httpAdapter = adapterHost.httpAdapter;
 ```
 
-The `httpAdapter` is the actual instance of the HTTP adapter used by the underlying framework. It is an instance of either `ExpressAdapter` or `FastifyAdapter` (both classes extend `AbstractHttpAdapter`).
+Le `httpAdapter` est l'instance réelle de l'adaptateur HTTP utilisé par le framework sous-jacent. C'est une instance de `ExpressAdapter` ou de `FastifyAdapter` (les deux classes étendent `AbstractHttpAdapter`).
 
-The adapter object exposes several useful methods to interact with the HTTP server. However, if you want to access the library instance (e.g., the Express instance) directly, call the `getInstance()` method.
+L'objet adaptateur expose plusieurs méthodes utiles pour interagir avec le serveur HTTP. Cependant, si vous voulez accéder directement à l'instance de la bibliothèque (par exemple, l'instance Express), appelez la méthode `getInstance()`.
 
 ```typescript
 const instance = httpAdapter.getInstance();

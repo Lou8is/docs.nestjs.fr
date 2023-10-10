@@ -1,6 +1,6 @@
-### Hybrid application
+### Application hybride
 
-A hybrid application is one that listens for requests from two or more different sources. This can combine an HTTP server with a microservice listener or even just multiple different microservice listeners. The default `createMicroservice` method does not allow for multiple servers so in this case each microservice must be created and started manually. In order to do this, the `INestApplication` instance can be connected with `INestMicroservice` instances through the `connectMicroservice()` method.
+Une application hybride est une application qui écoute les requêtes provenant de deux ou plusieurs sources différentes. Cela peut combiner un serveur HTTP avec un microservice listener ou même simplement plusieurs microservices listeners différents. La méthode par défaut `createMicroservice` ne permet pas de créer plusieurs serveurs, donc dans ce cas, chaque microservice doit être créé et démarré manuellement. Pour ce faire, l'instance `INestApplication` peut être connectée avec les instances `INestMicroservice` à travers la méthode `connectMicroservice()`.
 
 ```typescript
 const app = await NestFactory.create(AppModule);
@@ -12,9 +12,9 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-> info **Hint** the `app.listen(port)` method starts an HTTP server on the specified address. If your application does not handle HTTP requests then you should use the `app.init()` method instead.
+> info **Astuce** la méthode `app.listen(port)` démarre un serveur HTTP à l'adresse spécifiée. Si votre application ne gère pas de requêtes HTTP, vous devriez utiliser la méthode `app.init()` à la place.
 
-To connect multiple microservice instances, issue the call to `connectMicroservice()` for each microservice:
+Pour connecter plusieurs instances de microservices, il faut appeler `connectMicroservice()` pour chaque microservice :
 
 ```typescript
 const app = await NestFactory.create(AppModule);
@@ -38,7 +38,7 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument of type `Transport` which is an enum with all the built-in transport strategies defined.
+Pour lier `@MessagePattern()` à une seule stratégie de transport (par exemple, MQTT) dans une application hybride avec plusieurs microservices, nous pouvons passer le second argument de type `Transport` qui est une enum avec toutes les stratégies de transport intégrées définies.
 
 ```typescript
 @@filename()
@@ -65,12 +65,12 @@ getTCPDate(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
+> info **Astuce** `@Payload()`, `@Ctx()`, `Transport` et `NatsContext` sont importés depuis `@nestjs/microservices`.
 
-#### Sharing configuration
+#### Partager la configuration
 
-By default a hybrid application will not inherit global pipes, interceptors, guards and filters configured for the main (HTTP-based) application.
-To inherit these configuration properties from the main application, set the `inheritAppConfig` property in the second argument (an optional options object) of the `connectMicroservice()` call, as follow:
+Par défaut, une application hybride n'hérite pas des pipes globaux, des intercepteurs, des guards et des filtres configurés pour l'application principale (basée sur HTTP).
+Pour hériter de ces propriétés de configuration de l'application principale, définissez la propriété `inheritAppConfig` dans le second argument (un objet optionnel d'options) de l'appel `connectMicroservice()`, comme suit :
 
 ```typescript
 const microservice = app.connectMicroservice<MicroserviceOptions>(

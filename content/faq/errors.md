@@ -1,12 +1,12 @@
-### Common errors
+### Erreurs fréquentes
 
-During your development with NestJS, you may encounter various errors as you learn the framework.
+Au cours de votre développement avec NestJS, il se peut que vous rencontriez diverses erreurs au fur et à mesure que vous apprenez à utiliser le framework.
 
-#### "Cannot resolve dependency" error
+#### Erreur "Cannot resolve dependency"
 
-> info **Hint** Check out the [NestJS Devtools](/devtools/overview#investigating-the-cannot-resolve-dependency-error) which can help you resolve the "Cannot resolve dependency" error effortlessly.
+> info **Astuce** Consultez les [NestJS Devtools](/devtools/overview#investigating-the-cannot-resolve-dependency-error) qui peuvent vous aider à résoudre l'erreur "Cannot resolve dependency" sans effort.
 
-Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
+Le message d'erreur le plus courant concerne probablement l'impossibilité pour Nest de résoudre les dépendances d'un fournisseur. Le message d'erreur ressemble généralement à ceci :
 
 ```bash
 Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument <unknown_token> at index [<index>] is available in the <module> context.
@@ -20,21 +20,21 @@ Potential solutions:
   })
 ```
 
-The most common culprit of the error, is not having the `<provider>` in the module's `providers` array. Please make sure that the provider is indeed in the `providers` array and following [standard NestJS provider practices](/fundamentals/custom-providers#di-fundamentals).
+La cause la plus fréquente de cette erreur est l'absence de `<provider>` dans le tableau `providers` du module. Veuillez vous assurer que le fournisseur est bien dans le tableau `providers` et qu'il respecte les [pratiques standards de NestJS en matière de fournisseurs](/fundamentals/custom-providers#principes-de-base-de-lid).
 
-There are a few gotchas, that are common. One is putting a provider in an `imports` array. If this is the case, the error will have the provider's name where `<module>` should be.
+Il y a quelques problèmes, qui sont courants. Un de ces problèmes est de mettre un fournisseur dans un tableau `imports`. Si c'est le cas, l'erreur contiendra le nom du fournisseur à la place de `<module>`.
 
-If you run across this error while developing, take a look at the module mentioned in the error message and look at its `providers`. For each provider in the `providers` array, make sure the module has access to all of the dependencies. Often times, `providers` are duplicated in a "Feature Module" and a "Root Module" which means Nest will try to instantiate the provider twice. More than likely, the module containing the `<provider>` being duplicated should be added in the "Root Module"'s `imports` array instead.
+Si vous rencontrez cette erreur lors de votre développement, jetez un coup d'œil au module mentionné dans le message d'erreur et regardez ses `providers`. Pour chaque fournisseur dans le tableau `providers`, assurez-vous que le module a accès à toutes les dépendances. Souvent, les `providers` sont dupliqués dans un "Feature Module" et un "Root Module", ce qui signifie que Nest essaiera d'instancier le provider deux fois. Plus que probablement, le module contenant le `<provider>` dupliqué devrait être ajouté dans le tableau `imports` du "Root Module" à la place.
 
-If the `<unknown_token>` above is the string `dependency`, you might have a circular file import. This is different from the [circular dependency](/faq/common-errors#circular-dependency-error) below because instead of having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
+Si le `<unknown_token>` ci-dessus est la chaîne `dependency`, il se peut que vous ayez une importation circulaire de fichiers. Ceci est différent de la [dépendance circulaire](/faq/common-errors#erreur-circular-dependency) ci-dessous car au lieu d'avoir des fournisseurs qui dépendent l'un de l'autre dans leurs constructeurs, cela signifie simplement que deux fichiers finissent par s'importer l'un l'autre. Un cas courant serait un fichier de module déclarant un token et important un fournisseur, et le fournisseur important la constante du token à partir du fichier de module. Si vous utilisez des "barrel files", veillez à ce que vos importations de "barrel" ne finissent pas par créer ces importations circulaires.
 
-If the `<unknown_token>` above is the string `Object`, it means that you're injecting using an type/interface without a proper provider's token. To fix that, make sure you're importing the class reference or use a custom token with `@Inject()` decorator. Read the [custom providers page](/fundamentals/custom-providers).
+Si le `<unknown_token>` ci-dessus est la chaîne `Object`, cela signifie que vous injectez en utilisant un type/interface sans un token de fournisseur approprié. Pour corriger cela, assurez-vous que vous importez la référence de la classe ou utilisez un token personnalisé avec le décorateur `@Inject()`. Lisez la [page des fournisseurs personnalisés](/fundamentals/custom-providers).
 
-Also, make sure you didn't end up injecting the provider on itself because self-injections are not allowed in NestJS. When this happens, `<unknown_token>` will likely be equal to `<provider>`.
+De plus, assurez-vous que vous n'avez pas injecté le provider sur lui-même car les auto-injections ne sont pas autorisées dans NestJS. Dans ce cas, `<unknown_token>` sera probablement égal à `<provider>`.
 
 <app-banner-devtools></app-banner-devtools>
 
-If you are in a **monorepo setup**, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
+Si vous êtes dans une configuration **monorepo**, vous pouvez rencontrer la même erreur que ci-dessus mais pour le fournisseur de base appelé `ModuleRef` en tant que `<unknown_token>` :
 
 ```bash
 Nest can't resolve dependencies of the <provider> (?).
@@ -42,7 +42,7 @@ Please make sure that the argument ModuleRef at index [<index>] is available in 
 ...
 ```
 
-This likely happens when your project end up loading two Node modules of the package `@nestjs/core`, like this:
+Cela se produit probablement lorsque votre projet charge deux modules Node du paquet `@nestjs/core`, comme ceci :
 
 ```text
 .
@@ -58,14 +58,14 @@ This likely happens when your project end up loading two Node modules of the pac
     └── @nestjs/core
 ```
 
-Solutions:
+Solutions :
 
-- For **Yarn** Workspaces, use the [nohoist feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hoisting the package `@nestjs/core`.
-- For **pnpm** Workspaces, set `@nestjs/core` as a peerDependencies in your other module and `"dependenciesMeta": {{ '{' }}"other-module-name": {{ '{' }}"injected": true{{ '}}' }}` in the app package.json where the module is imported. see: [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
+- Pour les espaces de travail **Yarn**, utilisez la fonctionnalité [nohoist](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) pour empêcher le package `@nestjs/core` d'être remonté.
+- Pour les espaces de travail **pnpm**, définissez `@nestjs/core` comme peerDependencies dans votre autre module et `"dependenciesMeta" : {{ '{' }} "other-module-name" : {{ '{' }} "injected" : true{{ '}}'". }}` dans le package.json de l'application où le module est importé. voir : [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
 
-#### "Circular dependency" error
+#### Erreur "Circular dependency"
 
-Occasionally you'll find it difficult to avoid [circular dependencies](https://docs.nestjs.com/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
+Il vous sera parfois difficile d'éviter les [dépendances circulaires](https://docs.nestjs.com/fundamentals/circular-dependency) dans votre application. Vous devrez prendre des mesures pour aider Nest à les résoudre. Les erreurs dues à des dépendances circulaires ressemblent à ceci :
 
 ```bash
 Nest cannot create the <module> instance.
@@ -79,28 +79,28 @@ Scope [<module_import_chain>]
 # example chain AppModule -> FooModule
 ```
 
-Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.
+Les dépendances circulaires peuvent résulter du fait que les fournisseurs dépendent les uns des autres, ou que les fichiers de script dépendent les uns des autres pour les constantes, comme l'exportation de constantes à partir d'un fichier de module et leur importation dans un fichier de service. Dans ce dernier cas, il est conseillé de créer un fichier séparé pour vos constantes. Dans le premier cas, veuillez suivre le guide sur les dépendances circulaires et assurez-vous que les modules **et** les fournisseurs sont marqués avec `forwardRef`.
 
-#### Debugging dependency errors
+#### Débugger les erreurs de dépendance
 
-Along with just manually verifying your dependencies are correct, as of Nest 8.1.0 you can set the `NEST_DEBUG` environment variable to a string that resolves as truthy, and get extra logging information while Nest is resolving all of the dependencies for the application.
+En plus de vérifier manuellement que vos dépendances sont correctes, à partir de Nest 8.1.0, vous pouvez définir la variable d'environnement `NEST_DEBUG` à une chaîne qui se résout comme étant "truthy", et obtenir des informations de journalisation supplémentaires pendant que Nest résout toutes les dépendances pour l'application.
 
 <figure><img src="/assets/injector_logs.png" /></figure>
 
-In the above image, the string in yellow is the host class of the dependency being injected, the string in blue is the name of the injected dependency, or its injection token, and the string in purple is the module in which the dependency is being searched for. Using this, you can usually trace back the dependency resolution for what's happening and why you're getting dependency injection problems.
+Dans l'image ci-dessus, la chaîne en jaune est la classe hôte de la dépendance injectée, la chaîne en bleu est le nom de la dépendance injectée, ou son jeton d'injection, et la chaîne en violet est le module dans lequel la dépendance est recherchée. En utilisant cela, vous pouvez généralement remonter la résolution de la dépendance pour savoir ce qui se passe et pourquoi vous avez des problèmes d'injection de dépendance.
 
-#### "File change detected" loops endlessly
+#### Le message "File change detected" tourne en boucle
 
-Windows users who are using TypeScript version 4.9 and up may encounter this problem.
-This happens when you're trying to run your application in watch mode, e.g `npm run start:dev` and see an endless loop of the log messages:
+Les utilisateurs de Windows qui utilisent TypeScript version 4.9 et plus peuvent rencontrer ce problème.
+Cela se produit lorsque vous essayez d'exécuter votre application en mode veille, par exemple `npm run start:dev` et que vous voyez une boucle sans fin de messages de log :
 
 ```bash
 XX:XX:XX AM - File change detected. Starting incremental compilation...
 XX:XX:XX AM - Found 0 errors. Watching for file changes.
 ```
 
-When you're using the NestJS CLI to start your application in watch mode it is done by calling `tsc --watch`, and as of version 4.9 of TypeScript, a [new strategy](https://devblogs.microsoft.com/typescript/announcing-typescript-4-9/#file-watching-now-uses-file-system-events) for detecting file changes is used which is likely to be the cause of this problem.
-In order to fix this problem, you need to add a setting to your tsconfig.json file after the `"compilerOptions"` option as follows:
+Lorsque vous utilisez le CLI NestJS pour démarrer votre application en mode veille, cela se fait en appelant `tsc --watch`, et à partir de la version 4.9 de TypeScript, une [nouvelle stratégie](https://devblogs.microsoft.com/typescript/announcing-typescript-4-9/#file-watching-now-uses-file-system-events) pour détecter les changements de fichiers est utilisée, ce qui est probablement la cause de ce problème.
+Afin de corriger ce problème, vous devez ajouter un paramètre à votre fichier tsconfig.json après l'option `"compilerOptions"` comme suit :
 
 ```bash
   "watchOptions": {
@@ -108,5 +108,5 @@ In order to fix this problem, you need to add a setting to your tsconfig.json fi
   }
 ```
 
-This tells TypeScript to use the polling method for checking for file changes instead of file system events (the new default method), which can cause issues on some machines.
-You can read more about the `"watchFile"` option in [TypeScript documentation](https://www.typescriptlang.org/tsconfig#watch-watchDirectory).
+Cette option indique à TypeScript d'utiliser la méthode de sondage pour vérifier les changements de fichiers au lieu des événements du système de fichiers (la nouvelle méthode par défaut), ce qui peut causer des problèmes sur certaines machines.
+Vous pouvez en savoir plus sur l'option `"watchFile"` dans la [documentation TypeScript](https://www.typescriptlang.org/tsconfig#watch-watchDirectory).

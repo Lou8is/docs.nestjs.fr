@@ -1,26 +1,26 @@
-### Raw body
+### Corps brut
 
-One of the most common use-case for having access to the raw request body is performing webhook signature verifications. Usually to perform webhook signature validations the unserialized request body is required to calculate an HMAC hash.
+L'un des cas d'utilisation les plus courants pour avoir accès au corps de la requête brute est la vérification de la signature du webhook. Généralement, pour effectuer des validations de signature de webhook, le corps de la requête non sérialisé est nécessaire pour calculer un hachage HMAC.
 
-> warning **Warning** This feature can be used only if the built-in global body parser middleware is enabled, ie., you must not pass `bodyParser: false` when creating the app.
+> warning **Astuce** Cette fonctionnalité ne peut être utilisée que si le middleware de l'analyseur de corps de requête intégré est activé, c'est-à-dire que vous ne devez pas passer `bodyParser : false` lors de la création de l'application.
 
-#### Use with Express
+#### Utilisation avec Express
 
-First enable the option when creating your Nest Express application:
+Activez d'abord l'option lors de la création de votre application Nest Express :
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 
-// in the "bootstrap" function
+// dans la fonction "bootstrap"
 const app = await NestFactory.create<NestExpressApplication>(AppModule, {
   rawBody: true,
 });
 await app.listen(3000);
 ```
 
-To access the raw request body in a controller, a convenience interface `RawBodyRequest` is provided to expose a `rawBody` field on the request: use the interface `RawBodyRequest` type:
+Pour accéder au corps de la requête brute dans un contrôleur, une interface de commodité `RawBodyRequest` est fournie pour exposer un champ `rawBody` sur la requête : utilisez le type d'interface `RawBodyRequest` :
 
 ```typescript
 import { Controller, Post, RawBodyRequest, Req } from '@nestjs/common';
@@ -30,36 +30,36 @@ import { Request } from 'express';
 class CatsController {
   @Post()
   create(@Req() req: RawBodyRequest<Request>) {
-    const raw = req.rawBody; // returns a `Buffer`.
+    const raw = req.rawBody; // renvoie un `Buffer`.
   }
 }
 ```
 
-#### Registering a different parser
+#### Enregistrer un autre analyseur syntaxique
 
-By default, only `json` and `urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
+Par défaut, seuls les parseurs `json` et `urlencoded` sont enregistrés. Si vous voulez enregistrer un parseur différent à la volée, vous devrez le faire explicitement.
 
-For example, to register a `text` parser, you can use the following code:
+Par exemple, pour enregistrer un parseur `text`, vous pouvez utiliser le code suivant :
 
 ```typescript
 app.useBodyParser('text');
 ```
 
-> warning **Warning** Ensure that you are providing the correct application type to the `NestFactory.create` call. For Express applications, the correct type is `NestExpressApplication`. Otherwise the `.useBodyParser` method will not be found.
+> warning **Attention** Assurez-vous que vous fournissez le bon type d'application à l'appel `NestFactory.create`. Pour les applications Express, le type correct est `NestExpressApplication`. Sinon, la méthode `.useBodyParser` ne sera pas trouvée.
 
-#### Body parser size limit
+#### Limite de taille de l'analyseur
 
-If your application needs to parse a body larger than the default `100kb` of Express, use the following:
+Si votre application a besoin d'analyser un corps plus grand que les `100kb` par défaut d'Express, utilisez ce qui suit :
 
 ```typescript
 app.useBodyParser('json', { limit: '10mb' });
 ```
 
-The `.useBodyParser` method will respect the `rawBody` option that is passed in the application options.
+La méthode `.useBodyParser` respecte l'option `rawBody` passée dans les options de l'application.
 
-#### Use with Fastify
+#### Utilisation avec Fastify
 
-First enable the option when creating your Nest Fastify application:
+Activez d'abord l'option lors de la création de votre application Nest Fastify :
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -69,7 +69,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 
-// in the "bootstrap" function
+// dans la fonction "bootstrap"
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
@@ -80,7 +80,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
 await app.listen(3000);
 ```
 
-To access the raw request body in a controller, a convenience interface `RawBodyRequest` is provided to expose a `rawBody` field on the request: use the interface `RawBodyRequest` type:
+Pour accéder au corps de la requête brute dans un contrôleur, une interface de commodité `RawBodyRequest` est fournie pour exposer un champ `rawBody` sur la requête : utilisez le type d'interface `RawBodyRequest` :
 
 ```typescript
 import { Controller, Post, RawBodyRequest, Req } from '@nestjs/common';
@@ -90,30 +90,30 @@ import { FastifyRequest } from 'fastify';
 class CatsController {
   @Post()
   create(@Req() req: RawBodyRequest<FastifyRequest>) {
-    const raw = req.rawBody; // returns a `Buffer`.
+    const raw = req.rawBody; // renvoie un `Buffer`.
   }
 }
 ```
 
-#### Registering a different parser
+#### Enregistrer un autre analyseur syntaxique
 
-By default, only `application/json` and `application/x-www-form-urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
+Par défaut, seuls les parseurs `application/json` et `application/x-www-form-urlencoded` sont enregistrés. Si vous voulez enregistrer un parseur différent à la volée, vous devrez le faire explicitement.
 
-For example, to register a `text/plain` parser, you can use the following code:
+Par exemple, pour enregistrer un analyseur `text/plain`, vous pouvez utiliser le code suivant :
 
 ```typescript
 app.useBodyParser('text/plain');
 ```
 
-> warning **Warning** Ensure that you are providing the correct application type to the `NestFactory.create` call. For Fastify applications, the correct type is `NestFastifyApplication`. Otherwise the `.useBodyParser` method will not be found.
+> warning **Attention** Assurez-vous que vous fournissez le bon type d'application à l'appel `NestFactory.create`. Pour les applications Fastify, le type correct est `NestFastifyApplication`. Sinon, la méthode `.useBodyParser` ne sera pas trouvée.
 
-#### Body parser size limit
+#### Limite de taille de l'analyseur
 
-If your application needs to parse a body larger than the default 1MiB of Fastify, use the following:
+Si votre application a besoin d'analyser un corps plus grand que les 1 Mo de Fastify par défaut, utilisez ce qui suit :
 
 ```typescript
 const bodyLimit = 10_485_760; // 10MiB
 app.useBodyParser('application/json', { bodyLimit });
 ```
 
-The `.useBodyParser` method will respect the `rawBody` option that is passed in the application options.
+La méthode `.useBodyParser` respecte l'option `rawBody` passée dans les options de l'application.

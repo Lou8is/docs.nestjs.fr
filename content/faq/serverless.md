@@ -1,24 +1,23 @@
 ### Serverless
 
-Serverless computing is a cloud computing execution model in which the cloud provider allocates machine resources on-demand, taking care of the servers on behalf of their customers. When an app is not in use, there are no computing resources allocated to the app. Pricing is based on the actual amount of resources consumed by an application ([source](https://en.wikipedia.org/wiki/Serverless_computing)).
+L'informatique sans serveur (serverless) est un modèle d'exécution du cloud computing dans lequel le fournisseur de cloud alloue des ressources machine à la demande, en s'occupant des serveurs pour le compte de ses clients. Lorsqu'une application n'est pas utilisée, aucune ressource informatique ne lui est allouée. La tarification est basée sur la quantité réelle de ressources consommées par une application ([source](https://en.wikipedia.org/wiki/Serverless_computing)).
 
-With a **serverless architecture**, you focus purely on the individual functions in your application code. Services such as AWS Lambda, Google Cloud Functions, and Microsoft Azure Functions take care of all the physical hardware, virtual machine operating system, and web server software management.
+Avec une **architecture sans serveur**, vous vous concentrez purement sur les fonctions individuelles dans le code de votre application. Des services tels que AWS Lambda, Google Cloud Functions et Microsoft Azure Functions s'occupent de toute la gestion du matériel physique, du système d'exploitation de la machine virtuelle et du logiciel du serveur web.
 
-> info **Hint** This chapter does not cover the pros and cons of serverless functions nor dives into the specifics of any cloud providers.
+> info **Info** Ce chapitre ne couvre pas les avantages et les inconvénients des fonctions sans serveur et ne plonge pas dans les spécificités des fournisseurs de cloud.
 
-#### Cold start
+#### Démarrage à froid
 
-A cold start is the first time your code has been executed in a while. Depending on a cloud provider you use, it may span several different operations, from downloading the code and bootstrapping the runtime to eventually running your code.
-This process adds **significant latency** depending on several factors, the language, the number of packages your application require, etc.
+Un démarrage à froid est la première fois que votre code est exécuté depuis un certain temps. Selon le fournisseur de cloud que vous utilisez, il peut s'agir de plusieurs opérations différentes, depuis le téléchargement du code et l'amorçage du runtime jusqu'à l'exécution finale de votre code.
+Ce processus ajoute **une latence significative** en fonction de plusieurs facteurs, le langage, le nombre de paquets dont votre application a besoin, etc.
 
-The cold start is important and although there are things which are beyond our control, there's still a lot of things we can do on our side to make it as short as possible.
+Le démarrage à froid est important et, bien qu'il y ait des choses qui échappent à notre contrôle, il y a encore beaucoup de choses que nous pouvons faire de notre côté pour le rendre aussi court que possible.
 
-While you can think of Nest as a fully-fledged framework designed to be used in complex, enterprise applications,
-it is also **suitable for much "simpler" applications** (or scripts). For example, with the use of [Standalone applications](/standalone-applications) feature, you can take advantage of Nest's DI system in simple workers, CRON jobs, CLIs, or serverless functions.
+Bien que vous puissiez considérer Nest comme un framework à part entière conçu pour être utilisé dans des applications d'entreprise complexes, il est également  **adapté à des applications** (ou des scripts) beaucoup plus "simples". Par exemple, avec l'utilisation de la fonctionnalité [applications indépendantes](/standalone-applications), vous pouvez tirer parti du système DI de Nest dans des travailleurs simples, des tâches CRON, des CLI ou des fonctions sans serveur.
 
-#### Benchmarks
+#### Critères d'évaluation
 
-To better understand what's the cost of using Nest or other, well-known libraries (like `express`) in the context of serverless functions, let's compare how much time Node runtime needs to run the following scripts:
+Pour mieux comprendre quel est le coût de l'utilisation de Nest ou d'autres bibliothèques bien connues (comme `express`) dans le contexte des fonctions sans serveur, comparons le temps nécessaire au runtime Node pour exécuter les scripts suivants :
 
 ```typescript
 // #1 Express
@@ -31,7 +30,7 @@ async function bootstrap() {
 }
 bootstrap();
 
-// #2 Nest (with @nestjs/platform-express)
+// #2 Nest (avec @nestjs/platform-express)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -41,7 +40,7 @@ async function bootstrap() {
 }
 bootstrap();
 
-// #3 Nest as a Standalone application (no HTTP server)
+// #3 Nest en tant qu'application indépendante (pas de serveur HTTP)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AppService } from './app.service';
@@ -54,26 +53,26 @@ async function bootstrap() {
 }
 bootstrap();
 
-// #4 Raw Node.js script
+// #4 Script Node.js brut
 async function bootstrap() {
   console.log('Hello world!');
 }
 bootstrap();
 ```
 
-For all these scripts, we used the `tsc` (TypeScript) compiler and so the code remains unbundled (`webpack` isn't used).
+Pour tous ces scripts, nous avons utilisé le compilateur `tsc` (TypeScript) et donc le code reste dégroupé (`webpack` n'est pas utilisé).
 
 |                                      |                   |
 | ------------------------------------ | ----------------- |
 | Express                              | 0.0079s (7.9ms)   |
-| Nest with `@nestjs/platform-express` | 0.1974s (197.4ms) |
-| Nest (standalone application)        | 0.1117s (111.7ms) |
-| Raw Node.js script                   | 0.0071s (7.1ms)   |
+| Nest avec `@nestjs/platform-express` | 0.1974s (197.4ms) |
+| Nest (application indépendante)      | 0.1117s (111.7ms) |
+| Script Node.js brut                  | 0.0071s (7.1ms)   |
 
 > info **Note** Machine: MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
 
-Now, let's repeat all benchmarks but this time, using `webpack` (if you have [Nest CLI](/cli/overview) installed, you can run `nest build --webpack`) to bundle our application into a single executable JavaScript file.
-However, instead of using the default `webpack` configuration that Nest CLI ships with, we'll make sure to bundle all dependencies (`node_modules`) together, as follows:
+Maintenant, répétons tous les benchmarks mais cette fois en utilisant `webpack` (si vous avez [Nest CLI](/cli/overview) installé, vous pouvez lancer `nest build --webpack`) pour empaqueter notre application dans un seul fichier JavaScript exécutable.
+Cependant, au lieu d'utiliser la configuration par défaut de `webpack` fournie par Nest CLI, nous allons nous assurer de regrouper toutes les dépendances (`node_modules`) ensemble, comme suit :
 
 ```javascript
 module.exports = (options, webpack) => {
@@ -104,38 +103,38 @@ module.exports = (options, webpack) => {
 };
 ```
 
-> info **Hint** To instruct Nest CLI to use this configuration, create a new `webpack.config.js` file in the root directory of your project.
+> info **Astuce** Pour indiquer à Nest CLI d'utiliser cette configuration, créez un nouveau fichier `webpack.config.js` dans le répertoire racine de votre projet.
 
-With this configuration, we received the following results:
+Avec cette configuration, nous avons obtenu les résultats suivants :
 
 |                                      |                  |
 | ------------------------------------ | ---------------- |
 | Express                              | 0.0068s (6.8ms)  |
-| Nest with `@nestjs/platform-express` | 0.0815s (81.5ms) |
-| Nest (standalone application)        | 0.0319s (31.9ms) |
-| Raw Node.js script                   | 0.0066s (6.6ms)  |
+| Nest avec `@nestjs/platform-express` | 0.0815s (81.5ms) |
+| Nest (application indépendante)      | 0.0319s (31.9ms) |
+| Script Node.js brut                  | 0.0066s (6.6ms)  |
 
 > info **Note** Machine: MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
 
-> info **Hint** You could optimize it even further by applying additional code minification & optimization techniques (using `webpack` plugins, etc.).
+> info **Astuce** Vous pouvez l'optimiser encore plus en appliquant des techniques supplémentaires de minification et d'optimisation du code (en utilisant les plugins `webpack`, etc.).
 
-As you can see, the way you compile (and whether you bundle your code) is crucial and has a significant impact on the overall startup time. With `webpack`, you can get the bootstrap time of a standalone Nest application (starter project with one module, controller, and service) down to ~32ms on average, and down to ~81.5ms for a regular HTTP, express-based NestJS app.
+Comme vous pouvez le voir, la façon dont vous compilez (et si vous bundlez votre code) est cruciale et a un impact significatif sur le temps de démarrage global. Avec `webpack`, vous pouvez réduire le temps de démarrage d'une application Nest autonome (projet de démarrage avec un module, un contrôleur et un service) à ~32 ms en moyenne, et à ~81,5 ms pour une application NestJS basée sur HTTP et express.
 
-For more complicated Nest applications, for example, with 10 resources (generated through `$ nest g resource` schematic = 10 modules, 10 controllers, 10 services, 20 DTO classes, 50 HTTP endpoints + `AppModule`), the overall startup on MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD is approximately 0.1298s (129.8ms). Running a monolithic application as a serverless function typically doesn't make too much sense anyway, so think of this benchmark more as an example of how the bootstrap time may potentially increase as your application grows.
+Pour les applications Nest plus compliquées, par exemple, avec 10 ressources (générées par le schéma `$ nest g resource` = 10 modules, 10 contrôleurs, 10 services, 20 classes DTO, 50 points de terminaison HTTP + `AppModule`), le démarrage global sur MacBook Pro Mid 2014, 2,5 GHz Quad-Core Intel Core i7, 16 Go 1600 MHz DDR3, SSD est d'environ 0,1298s (129,8ms). L'exécution d'une application monolithique en tant que fonction sans serveur n'a généralement pas beaucoup de sens de toute façon, alors considérez ce benchmark plus comme un exemple de la façon dont le temps de démarrage peut potentiellement augmenter au fur et à mesure que votre application grandit.
 
-#### Runtime optimizations
+#### Optimisation de la durée d'exécution
 
-Thus far we covered compile-time optimizations. These are unrelated to the way you define providers and load Nest modules in your application, and that plays an essential role as your application gets bigger.
+Jusqu'à présent, nous avons abordé les optimisations au moment de la compilation. Celles-ci ne sont pas liées à la manière dont vous définissez les fournisseurs et chargez les modules Nest dans votre application, ce qui joue un rôle essentiel au fur et à mesure que votre application prend de l'ampleur.
 
-For example, imagine having a database connection defined as an [asynchronous provider](/fundamentals/async-providers). Async providers are designed to delay the application start until one or more asynchronous tasks are completed.
-That means, if your serverless function on average requires 2s to connect to the database (on bootstrap), your endpoint will need at least two extra seconds (because it must wait till the connection is established) to send a response back (when it's a cold start and your application wasn't running already).
+Imaginons par exemple qu'une connexion à une base de données soit définie comme un [fournisseur asynchrone](/fundamentals/async-providers). Les fournisseurs asynchrones sont conçus pour retarder le démarrage de l'application jusqu'à ce qu'une ou plusieurs tâches asynchrones soient terminées.
+Cela signifie que si votre fonction serverless nécessite en moyenne 2s pour se connecter à la base de données (au démarrage), votre endpoint aura besoin d'au moins deux secondes supplémentaires (parce qu'il doit attendre que la connexion soit établie) pour renvoyer une réponse (lorsqu'il s'agit d'un démarrage à froid et que votre application n'était pas déjà en cours d'exécution).
 
-As you can see, the way you structure your providers is somewhat different in a **serverless environment** where bootstrap time is important.
-Another good example is if you use Redis for caching, but only in certain scenarios. Perhaps, in this case, you should not define a Redis connection as an async provider, as it would slow down the bootstrap time, even if it's not required for this specific function invocation.
+Comme vous pouvez le voir, la façon dont vous structurez vos fournisseurs est quelque peu différente dans un **environnement sans serveur** où le temps de démarrage est important.
+Un autre bon exemple est l'utilisation de Redis pour la mise en cache, mais seulement dans certains scénarios. Dans ce cas, vous ne devriez peut-être pas définir une connexion Redis en tant que fournisseur asynchrone, car cela ralentirait le temps de démarrage, même si cela n'est pas nécessaire pour cette invocation de fonction spécifique.
 
-Also, sometimes you could lazy-load entire modules, using the `LazyModuleLoader` class, as described in [this chapter](/fundamentals/lazy-loading-modules). Caching is a great example here too.
-Imagine that your application has, let's say, `CacheModule` which internally connects to Redis and also, exports the `CacheService` to interact with the Redis storage. If you don't need it for all potential function invocations,
-you can just load it on-demand, lazily. This way you'll get a faster startup time (when a cold start occurs) for all invocations that don't require caching.
+Parfois, vous pouvez également charger paresseusement des modules entiers, en utilisant la classe `LazyModuleLoader`, comme décrit dans [ce chapitre](/fundamentals/lazy-loading-modules). La mise en cache est un bon exemple ici aussi.
+Imaginez que votre application ait, disons, `CacheModule` qui se connecte en interne à Redis et exporte aussi `CacheService` pour interagir avec le stockage Redis. Si vous n'en avez pas besoin pour toutes les invocations potentielles de fonctions, vous pouvez simplement le charger à la demande,
+vous pouvez simplement le charger à la demande, paresseusement. De cette façon, vous obtiendrez un temps de démarrage plus rapide (lors d'un démarrage à froid) pour toutes les invocations qui ne nécessitent pas de mise en cache.
 
 ```typescript
 if (request.method === RequestMethod[RequestMethod.GET]) {
@@ -149,8 +148,8 @@ if (request.method === RequestMethod[RequestMethod.GET]) {
 }
 ```
 
-Another great example is a webhook or worker, which depending on some specific conditions (e.g., input arguments), may perform different operations.
-In such a case, you could specify a condition inside your route handler that lazily loads an appropriate module for the specific function invocation, and just load every other module lazily.
+Un autre bon exemple est celui d'un webhook ou d'un worker qui, en fonction de certaines conditions spécifiques (par exemple, les arguments d'entrée), peut effectuer différentes opérations.
+Dans ce cas, vous pouvez spécifier une condition dans votre gestionnaire de route qui charge paresseusement un module approprié pour l'invocation de la fonction spécifique, et charge simplement tous les autres modules paresseusement.
 
 ```typescript
 if (workerType === WorkerType.A) {
@@ -164,26 +163,26 @@ if (workerType === WorkerType.A) {
 }
 ```
 
-#### Example integration
+#### Exemple d'intégration
 
-The way your application's entry file (typically `main.ts` file) is supposed to look like **depends on several factors** and so **there's no single template** that just works for every scenario.
-For example, the initialization file required to spin up your serverless function varies by cloud providers (AWS, Azure, GCP, etc.).
-Also, depending on whether you want to run a typical HTTP application with multiple routes/endpoints or just provide a single route (or execute a specific portion of code),
-your application's code will look different (for example, for the endpoint-per-function approach you could use the `NestFactory.createApplicationContext` instead of booting the HTTP server, setting up middleware, etc.).
+La façon dont le fichier d'entrée de votre application (typiquement le fichier `main.ts`) est censé ressembler **dépend de plusieurs facteurs** et donc **il n'y a pas de modèle unique** qui fonctionne simplement pour tous les scénarios.
+Par exemple, le fichier d'initialisation requis pour démarrer votre fonction serverless varie selon les fournisseurs de cloud (AWS, Azure, GCP, etc.).
+De même, selon que vous souhaitez exécuter une application HTTP typique avec plusieurs routes/points de terminaison ou simplement fournir une seule route (ou exécuter une partie spécifique du code),
+le code de votre application sera différent (par exemple, pour l'approche endpoint par fonction, vous pourriez utiliser `NestFactory.createApplicationContext` au lieu de démarrer le serveur HTTP, de configurer le middleware, etc.)
 
-Just for illustration purposes, we'll integrate Nest (using `@nestjs/platform-express` and so spinning up the whole, fully functional HTTP router)
-with the [Serverless](https://www.serverless.com/) framework (in this case, targeting AWS Lambda). As we've mentioned earlier, your code will differ depending on the cloud provider you choose, and many other factors.
+Juste à des fins d'illustration, nous allons intégrer Nest (en utilisant `@nestjs/platform-express` et en faisant tourner l'ensemble du routeur HTTP entièrement fonctionnel)
+avec le framework [Serverless](https://www.serverless.com/) (dans ce cas, ciblant AWS Lambda). Comme nous l'avons mentionné précédemment, votre code sera différent en fonction du fournisseur de cloud que vous choisissez, et de nombreux autres facteurs.
 
-First, let's install the required packages:
+Tout d'abord, installons les packages nécessaires :
 
 ```bash
 $ npm i @vendia/serverless-express aws-lambda
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
-> info **Hint** To speed up development cycles, we install the `serverless-offline` plugin which emulates AWS λ and API Gateway.
+> info **Astuce** Pour accélérer les cycles de développement, nous installons le plugin `serverless-offline` qui émule AWS λ et API Gateway.
 
-Once the installation process is complete, let's create the `serverless.yml` file to configure the Serverless framework:
+Une fois le processus d'installation terminé, créons le fichier `serverless.yml` pour configurer le framework Serverless :
 
 ```yaml
 service: serverless-example
@@ -207,9 +206,9 @@ functions:
           path: '{proxy+}'
 ```
 
-> info **Hint** To learn more about the Serverless framework, visit the [official documentation](https://www.serverless.com/framework/docs/).
+> info **Astuce** Pour en savoir plus sur le framework Serverless, consultez la [documentation officielle](https://www.serverless.com/framework/docs/).
 
-With this place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
+Avec cela, nous pouvons maintenant naviguer vers le fichier `main.ts` et mettre à jour notre code bootstrap avec le boilerplate requis :
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -237,11 +236,11 @@ export const handler: Handler = async (
 };
 ```
 
-> info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
+> info **Astuce** Pour créer plusieurs fonctions sans serveur et partager des modules communs entre elles, nous recommandons d'utiliser le [mode Monorepo](/cli/monorepo#mode-monorepo).
 
-> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [thread](https://github.com/nestjs/swagger/issues/199) for more information.
+> warning **Attention** Si vous utilisez le paquet `@nestjs/swagger`, il y a quelques étapes supplémentaires requises pour le faire fonctionner correctement dans le contexte de la fonction sans serveur. Consultez ce [thread](https://github.com/nestjs/swagger/issues/199) pour plus d'informations.
 
-Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@vendia/serverless-express` package load properly.
+Ensuite, ouvrez le fichier `tsconfig.json` et assurez-vous d'activer l'option `esModuleInterop` pour que le paquet `@vendia/serverless-express` se charge correctement.
 
 ```json
 {
@@ -252,18 +251,18 @@ Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInte
 }
 ```
 
-Now we can build our application (with `nest build` or `tsc`) and use the `serverless` CLI to start our lambda function locally:
+Maintenant nous pouvons construire notre application (avec `nest build` ou `tsc`) et utiliser le CLI `serverless` pour démarrer notre fonction lambda localement :
 
 ```bash
 $ npm run build
 $ npx serverless offline
 ```
 
-Once the application is running, open your browser and navigate to `http://localhost:3000/dev/[ANY_ROUTE]` (where `[ANY_ROUTE]` is any endpoint registered in your application).
+Une fois l'application lancée, ouvrez votre navigateur et naviguez vers `http://localhost:3000/dev/[ANY_ROUTE]` (où `[ANY_ROUTE]` est n'importe quel point de terminaison enregistré dans votre application).
 
-In the sections above, we've shown that using `webpack` and bundling your app can have significant impact on the overall bootstrap time.
-However, to make it work with our example, there are a few additional configurations you must add in your `webpack.config.js` file. Generally,
-to make sure our `handler` function will be picked up, we must change the `output.libraryTarget` property to `commonjs2`.
+Dans les sections précédentes, nous avons montré que l'utilisation de `webpack` et l'empaquetage de votre application peuvent avoir un impact significatif sur le temps de démarrage global.
+Cependant, pour que cela fonctionne dans notre exemple, il y a quelques configurations supplémentaires que vous devez ajouter dans votre fichier `webpack.config.js`. Généralement,
+pour s'assurer que notre fonction `handler` sera récupérée, nous devons changer la propriété `output.libraryTarget` en `commonjs2`.
 
 ```javascript
 return {
@@ -273,13 +272,13 @@ return {
     ...options.output,
     libraryTarget: 'commonjs2',
   },
-  // ... the rest of the configuration
+  // ... le reste de la configuration
 };
 ```
 
-With this in place, you can now use `$ nest build --webpack` to compile your function's code (and then `$ npx serverless offline` to test it).
+Avec ceci en place, vous pouvez maintenant utiliser `$ nest build --webpack` pour compiler le code de votre fonction (et ensuite `$ npx serverless offline` pour la tester).
 
-It's also recommended (but **not required** as it will slow down your build process) to install the `terser-webpack-plugin` package and override its configuration to keep classnames intact when minifying your production build. Not doing so can result in incorrect behavior when using `class-validator` within your application.
+Il est également recommandé (mais **non obligatoire** car cela ralentira votre processus de construction) d'installer le paquet `terser-webpack-plugin` et de surcharger sa configuration pour garder les noms de classe intacts lors de la minification de votre construction de production. Ne pas le faire peut résulter en un comportement incorrect lors de l'utilisation de `class-validator` dans votre application.
 
 ```javascript
 const TerserPlugin = require('terser-webpack-plugin');
@@ -300,14 +299,14 @@ return {
     ...options.output,
     libraryTarget: 'commonjs2',
   },
-  // ... the rest of the configuration
+  // ... le reste de la configuration
 };
 ```
 
-#### Using standalone application feature
+#### Utilisation de la fonction d'application indépendante
 
-Alternatively, if you want to keep your function very lightweight and you don't need any HTTP-related features (routing, but also guards, interceptors, pipes, etc.),
-you can just use `NestFactory.createApplicationContext` (as mentioned earlier) instead of running the entire HTTP server (and `express` under the hood), as follows:
+Alternativement, si vous voulez garder votre fonction très légère et que vous n'avez besoin d'aucune fonctionnalité liée à HTTP (routage, mais aussi gardes, intercepteurs, pipes, etc.),
+vous pouvez simplement utiliser `NestFactory.createApplicationContext` (comme mentionné plus tôt) au lieu de lancer le serveur HTTP entier (et `express` sous le capot), comme suit :
 
 ```typescript
 @@filename(main)
@@ -332,9 +331,9 @@ export const handler: Handler = async (
 };
 ```
 
-> info **Hint** Be aware that `NestFactory.createApplicationContext` does not wrap controller methods with enhancers (guard, interceptors, etc.). For this, you must use the `NestFactory.create` method.
+> info **Astuce** Soyez conscient que `NestFactory.createApplicationContext` n'enveloppe pas les méthodes du contrôleur avec des améliorations ( garde, intercepteurs, etc.). Pour cela, vous devez utiliser la méthode `NestFactory.create`.
 
-You could also pass the `event` object down to, let's say, `EventsService` provider that could process it and return a corresponding value (depending on the input value and your business logic).
+Vous pouvez également transmettre l'objet `event` à, disons, un fournisseur `EventsService` qui peut le traiter et renvoyer une valeur correspondante (en fonction de la valeur d'entrée et de votre logique métier).
 
 ```typescript
 export const handler: Handler = async (

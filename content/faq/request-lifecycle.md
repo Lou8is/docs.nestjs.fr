@@ -1,14 +1,14 @@
-### Request lifecycle
+### Cycle de vie de la requête
 
-Nest applications handle requests and produce responses in a sequence we refer to as the **request lifecycle**. With the use of middleware, pipes, guards, and interceptors, it can be challenging to track down where a particular piece of code executes during the request lifecycle, especially as global, controller level, and route level components come into play. In general, a request flows through middleware to guards, then to interceptors, then to pipes and finally back to interceptors on the return path (as the response is generated).
+Les applications Nest traitent les requêtes et produisent des réponses dans une séquence que nous appelons le **cycle de vie de la requête**. Avec l'utilisation de middleware, de pipes, de guards et d'intercepteurs, il peut être difficile de déterminer où un morceau de code particulier s'exécute pendant le cycle de vie de la requête, en particulier lorsque des composants globaux, au niveau du contrôleur et au niveau de la route entrent en jeu. En général, une demande passe par un middleware, des guards, des intercepteurs, des pipes et enfin des intercepteurs sur le chemin du retour (lorsque la réponse est générée).
 
 #### Middleware
 
-Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works. In the case of middleware bound across different modules, the middleware bound to the root module will run first, and then middleware will run in the order that the modules are added to the imports array.
+Les middlewares sont exécutés dans un ordre particulier. Tout d'abord, Nest exécute les middlewares liés globalement (tels que les middlewares liés à `app.use`) et ensuite il exécute les [middlewares liés aux modules](/middleware), qui sont déterminés par des routes. Les middlewares sont exécutés séquentiellement dans l'ordre où ils sont liés, de la même manière que les middlewares dans Express. Dans le cas d'un middleware lié à différents modules, le middleware lié au module racine s'exécutera en premier, puis le middleware s'exécutera dans l'ordre dans lequel les modules sont ajoutés au tableau des imports.
 
-#### Guards
+#### Gardes
 
-Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound. For example:
+L'exécution des gardes commence par les gardes globales, puis passe aux gardes des contrôleurs et enfin aux gardes des routes. Comme pour les intergiciels, les gardes s'exécutent dans l'ordre dans lequel elles sont liées. Par exemple :
 
 ```typescript
 @UseGuards(Guard1, Guard2)
@@ -24,17 +24,17 @@ export class CatsController {
 }
 ```
 
-`Guard1` will execute before `Guard2` and both will execute before `Guard3`.
+`Guard1` s'exécutera avant `Guard2` et les deux s'exécuteront avant `Guard3`.
 
-> info **Hint** When speaking about globally bound vs controller or locally bound, the difference is where the guard (or other component is bound). If you are using `app.useGlobalGuard()` or providing the component via a module, it is globally bound. Otherwise, it is bound to a controller if the decorator precedes a controller class, or to a route if the decorator proceeds a route declaration.
+> info **Astuce** Lorsque l'on parle de lié globalement par opposition à lié au contrôleur ou à la route, la différence est l'endroit où la garde (ou un autre composant est lié). Si vous utilisez `app.useGlobalGuard()` ou si vous fournissez le composant via un module, il est lié globalement. Sinon, il est lié à un contrôleur si le décorateur précède une classe de contrôleur, ou à une route si le décorateur précède une déclaration de route.
 
-#### Interceptors
+#### Intercepteurs
 
-Interceptors, for the most part, follow the same pattern as guards, with one catch: as interceptors return [RxJS Observables](https://github.com/ReactiveX/rxjs), the observables will be resolved in a first in last out manner. So inbound requests will go through the standard global, controller, route level resolution, but the response side of the request (i.e., after returning from the controller method handler) will be resolved from route to controller to global. Also, any errors thrown by pipes, controllers, or services can be read in the `catchError` operator of an interceptor.
+Les intercepteurs, pour la plupart, suivent le même modèle que les gardes, avec une différence : comme les intercepteurs renvoient des [Observables RxJS](https://github.com/ReactiveX/rxjs), les observables seront résolus de la manière suivante : premier arrivé, dernier sorti. Ainsi, les requêtes entrantes passeront par la résolution standard au niveau global, puis contrôleur, puis route, mais le côté réponse de la requête (c'est-à-dire après le retour du gestionnaire de méthode du contrôleur) sera résolu de la route au contrôleur et au niveau global. De plus, toutes les erreurs lancées par les pipes, les contrôleurs ou les services peuvent être lues dans l'opérateur `catchError` d'un intercepteur.
 
 #### Pipes
 
-Pipes follow the standard global to controller to route bound sequence, with the same first in first out in regards to the `@UsePipes()` parameters. However, at a route parameter level, if you have multiple pipes running, they will run in the order of the last parameter with a pipe to the first. This also applies to the route level and controller level pipes. For example, if we have the following controller:
+Les pipes suivent la séquence standard global/contrôleur/route, avec le même principe "premier entré, premier sorti" en ce qui concerne les paramètres `@UsePipes()`. Cependant, au niveau des paramètres de la route, si vous avez plusieurs pipes en cours d'exécution, elles s'exécuteront dans l'ordre du dernier paramètre avec une pipe vers le premier. Ceci s'applique également aux pipes au niveau de la route et du contrôleur. Par exemple, si nous avons le contrôleur suivant :
 
 ```typescript
 @UsePipes(GeneralValidationPipe)
@@ -54,43 +54,43 @@ export class CatsController {
 }
 ```
 
-then the `GeneralValidationPipe` will run for the `query`, then the `params`, and then the `body` objects before moving on to the `RouteSpecificPipe`, which follows the same order. If any parameter-specific pipes were in place, they would run (again, from the last to first parameter) after the controller and route level pipes.
+alors le `GeneralValidationPipe` s'exécutera pour les objets `query`, puis les `params`, et enfin les objets `body` avant de passer au `RouteSpecificPipe`, qui suit le même ordre. Si des pipes spécifiques aux paramètres étaient en place, ils s'exécuteraient (encore une fois, du dernier au premier paramètre) après les pipes au niveau du contrôleur et de la route.
 
-#### Filters
+#### Filtres
 
-Filters are the only component that do not resolve global first. Instead, filters resolve from the lowest level possible, meaning execution starts with any route bound filters and proceeding next to controller level, and finally to global filters. Note that exceptions cannot be passed from filter to filter; if a route level filter catches the exception, a controller or global level filter cannot catch the same exception. The only way to achieve an effect like this is to use inheritance between the filters.
+Les filtres sont les seuls composants qui ne sont pas résolus globalement en premier. Au lieu de cela, les filtres sont résolus au niveau le plus bas possible, ce qui signifie que l'exécution commence par les filtres liés à la route, puis passe au niveau du contrôleur et enfin aux filtres globaux. Notez que les exceptions ne peuvent pas être transmises d'un filtre à l'autre ; si un filtre au niveau de la route attrape l'exception, un contrôleur ou un filtre au niveau global ne peut pas attraper la même exception. La seule façon d'obtenir un tel effet est d'utiliser l'héritage entre les filtres.
 
-> info **Hint** Filters are only executed if any uncaught exception occurs during the request process. Caught exceptions, such as those caught with a `try/catch` will not trigger Exception Filters to fire. As soon as an uncaught exception is encountered, the rest of the lifecycle is ignored and the request skips straight to the filter.
+> info **Astuce** Les filtres ne sont exécutés que si une exception non capturée se produit au cours du processus de demande. Les exceptions capturées, telles que celles qui sont capturées avec un `try/catch`, ne déclenchent pas l'exécution des filtres d'exception. Dès qu'une exception est rencontrée, le reste du cycle de vie est ignoré et la demande passe directement au filtre.
 
-#### Summary
+#### Résumé
 
-In general, the request lifecycle looks like the following:
+En général, le cycle de vie d'une requête se présente comme suit :
 
-1. Incoming request
+1. Requête entrante
 2. Middleware
-   - 2.1. Globally bound middleware
-   - 2.2. Module bound middleware
-3. Guards
-   - 3.1 Global guards
-   - 3.2 Controller guards
-   - 3.3 Route guards
-4. Interceptors (pre-controller)
-   - 4.1 Global interceptors
-   - 4.2 Controller interceptors
-   - 4.3 Route interceptors
+   - 2.1. Middleware lié globalement
+   - 2.2. Middleware lié au module
+3. Gardes
+   - 3.1 Gardes globales
+   - 3.2 Gardes du contrôleur
+   - 3.3 Gardes de la route
+4. Intercepteurs (pré-contrôleur)
+   - 4.1 Intercepteurs globaux
+   - 4.2 Intercepteurs du contrôleur
+   - 4.3 Intercepteurs de la route
 5. Pipes
-   - 5.1 Global pipes
-   - 5.2 Controller pipes
-   - 5.3 Route pipes
-   - 5.4 Route parameter pipes
-6. Controller (method handler)
-7. Service (if exists)
-8. Interceptors (post-request)
-   - 8.1 Route interceptor
-   - 8.2 Controller interceptor
-   - 8.3 Global interceptor
-9. Exception filters
-   - 9.1 route
-   - 9.2 controller
-   - 9.3 global
-10. Server response
+   - 5.1 Pipes globales
+   - 5.2 Pipes du contrôleur
+   - 5.3 Pipes de la route
+   - 5.4 Pipes des paramètres de route
+6. Contrôleur (gestionnaire de méthode)
+7. Service (s'il existe)
+8. Intercepteurs (post-requête)
+   - 8.1 Intercepteurs de la route
+   - 8.2 Intercepteurs du contrôleur
+   - 8.3 Intercepteurs globaux
+9. Filtres d'exceptions
+   - 9.1 Route
+   - 9.2 Contrôleur
+   - 9.3 Global
+10. Réponse du serveur
