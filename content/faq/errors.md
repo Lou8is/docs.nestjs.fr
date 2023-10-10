@@ -65,7 +65,7 @@ Solutions :
 
 #### Erreur "Circular dependency"
 
-Il vous sera parfois difficile d'éviter les [dépendances circulaires] (https://docs.nestjs.com/fundamentals/circular-dependency) dans votre application. Vous devrez prendre des mesures pour aider Nest à les résoudre. Les erreurs dues à des dépendances circulaires ressemblent à ceci :
+Il vous sera parfois difficile d'éviter les [dépendances circulaires](https://docs.nestjs.com/fundamentals/circular-dependency) dans votre application. Vous devrez prendre des mesures pour aider Nest à les résoudre. Les erreurs dues à des dépendances circulaires ressemblent à ceci :
 
 ```bash
 Nest cannot create the <module> instance.

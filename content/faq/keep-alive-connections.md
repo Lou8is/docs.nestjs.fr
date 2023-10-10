@@ -1,4 +1,4 @@
-### Connections Keep-Alive 
+### Connexions Keep-Alive 
 
 Par défaut, les adaptateurs HTTP de NestJS attendent que la réponse soit terminée avant de fermer l'application. Mais parfois, ce comportement n'est pas souhaité, ou inattendu. Il peut y avoir des requêtes qui utilisent des en-têtes `Connection : Keep-Alive` qui durent longtemps.
 
