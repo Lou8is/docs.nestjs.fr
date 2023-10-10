@@ -1,13 +1,13 @@
-### Global prefix
+### Préfixe global
 
-To set a prefix for **every route** registered in an HTTP application, use the `setGlobalPrefix()` method of the `INestApplication` instance.
+Pour définir un préfixe pour **chaque route** enregistrée dans une application HTTP, utilisez la méthode `setGlobalPrefix()` de l'instance `INestApplication`.
 
 ```typescript
 const app = await NestFactory.create(AppModule);
 app.setGlobalPrefix('v1');
 ```
 
-You can exclude routes from the global prefix using the following construction:
+Vous pouvez exclure des routes du préfixe global en utilisant la construction suivante :
 
 ```typescript
 app.setGlobalPrefix('v1', {
@@ -15,10 +15,10 @@ app.setGlobalPrefix('v1', {
 });
 ```
 
-Alternatively, you can specify route as a string (it will apply to every request method):
+Vous pouvez également spécifier la route sous la forme d'une chaîne (elle s'appliquera à toutes les méthodes de requête) :
 
 ```typescript
 app.setGlobalPrefix('v1', { exclude: ['cats'] });
 ```
 
-> info **Hint** The `path` property supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package. Note: this does not accept wildcard asterisks `*`. Instead, you must use parameters (e.g., `(.*)`, `:splat*`).
+> info **Astuce** La propriété `path` supporte les paramètres joker en utilisant le package [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters). Note : ceci n'accepte pas les astérisques `*`. A la place, vous devez utiliser des paramètres (par exemple, `(.*)`, `:splat*`).
