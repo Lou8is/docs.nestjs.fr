@@ -1,6 +1,6 @@
 ### HTTPS
 
-To create an application that uses the HTTPS protocol, set the `httpsOptions` property in the options object passed to the `create()` method of the `NestFactory` class:
+Pour créer une application qui utilise le protocole HTTPS, définissez la propriété `httpsOptions` dans l'objet options passé à la méthode `create()` de la classe `NestFactory` :
 
 ```typescript
 const httpsOptions = {
@@ -13,7 +13,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-If you use the `FastifyAdapter`, create the application as follows:
+Si vous utilisez l'adaptateur `FastifyAdapter`, créez l'application comme suit :
 
 ```typescript
 const app = await NestFactory.create<NestFastifyApplication>(
@@ -22,9 +22,9 @@ const app = await NestFactory.create<NestFastifyApplication>(
 );
 ```
 
-#### Multiple simultaneous servers
+#### Plusieurs serveurs simultanés
 
-The following recipe shows how to instantiate a Nest application that listens on multiple ports (for example, on a non-HTTPS port and an HTTPS port) simultaneously.
+La recette suivante montre comment instancier une application Nest qui écoute simultanément sur plusieurs ports (par exemple, sur un port non-HTTPS et sur un port HTTPS).
 
 ```typescript
 const httpsOptions = {
@@ -43,7 +43,7 @@ const httpServer = http.createServer(server).listen(3000);
 const httpsServer = https.createServer(httpsOptions, server).listen(443);
 ```
 
-Because we called `http.createServer` / `https.createServer` ourselves, NestJS doesn't close them when calling `app.close` / on termination signal. We need to do this ourselves:
+Parce que nous avons appelé `http.createServer` / `https.createServer` nous-mêmes, NestJS ne les ferme pas lors de l'appel à `app.close` / sur le signal de fin. Nous devons le faire nous-mêmes :
 
 ```typescript
 @Injectable()
@@ -76,6 +76,6 @@ shutdownObserver.addHttpServer(httpServer);
 shutdownObserver.addHttpServer(httpsServer);
 ```
 
-> info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package. The `http` and `https` packages are native Node.js packages.
+> info **Astuce** L'adaptateur `ExpressAdapter` est importé depuis le paquet `@nestjs/platform-express`. Les paquets `http` et `https` sont des paquets natifs de Node.js.
 
-> **Warning** This recipe does not work with [GraphQL Subscriptions](/graphql/subscriptions).
+> **Attention** Cette recette ne fonctionne pas avec les [Subscriptions GraphQL](/graphql/subscriptions).
