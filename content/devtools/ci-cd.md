@@ -1,26 +1,26 @@
-### CI/CD integration
+### Intégration CI/CD
 
-> info **Hint** This chapter covers the Nest Devtools integration with the Nest framework. If you are looking for the Devtools application, please visit the [Devtools](https://devtools.nestjs.com) website.
+> info **Astuce** Ce chapitre couvre l'intégration de Nest Devtools avec le framework Nest. Si vous recherchez l'application Devtools, veuillez consulter le site Web [Devtools](https://devtools.nestjs.com).
 
-CI/CD integration is available for users with the **[Enterprise](/settings)** plan.
+L'intégration CI/CD est disponible pour les utilisateurs ayant le plan **Enterprise**.
 
-You can watch this video to learn why & how CI/CD integration can help you:
+Vous pouvez regarder cette vidéo pour savoir pourquoi et comment l'intégration CI/CD peut vous aider :
 
 <figure>
   <iframe
     width="1000"
     height="565"
     src="https://www.youtube.com/embed/r5RXcBrnEQ8"
-    title="YouTube video player"
+    title="Lecteur vidéo YouTube"
     frameBorder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowFullScreen
   ></iframe>
 </figure>
 
-#### Publishing graphs
+#### Publication de graphes
 
-Let's first configure the application bootstrap file (`main.ts`) to use the `GraphPublisher` class (exported from the `@nestjs/devtools-integration` - see previous chapter for more details), as follows:
+Commençons par configurer le fichier d'amorçage de l'application (`main.ts`) pour utiliser la classe `GraphPublisher` (exportée depuis `@nestjs/devtools-integration` - voir le chapitre précédent pour plus de détails), comme suit :
 
 ```typescript
 async function bootstrap() {
@@ -34,7 +34,7 @@ async function bootstrap() {
   if (shouldPublishGraph) {
     await app.init();
 
-    const publishOptions = { ... } // NOTE: this options object will vary depending on the CI/CD provider you're using
+    const publishOptions = { ... } // NOTE : cet objet d'options varie en fonction du fournisseur CI/CD que vous utilisez.
     const graphPublisher = new GraphPublisher(app);
     await graphPublisher.publish(publishOptions);
 
@@ -45,47 +45,47 @@ async function bootstrap() {
 }
 ```
 
-As we can see, we're using the `GraphPublisher` here to publish our serialized graph to the centralized registry. The `PUBLISH_GRAPH` is a custom environment variable that will let us control whether the graph should be published (CI/CD workflow), or not (regular application bootstrap). Also, we set the `preview` attribute here to `true`. With this flag enabled, our application will bootstrap in the preview mode - which basically means that constructors (and lifecycle hooks) of all controllers, enhancers, and providers in our application will not be executed. Note - this isn't **required**, but makes things simpler for us since in this case we won't really have to connect to the database etc. when running our application in the CI/CD pipeline.
+Comme nous pouvons le voir, nous utilisons le `GraphPublisher` ici pour publier notre graphe sérialisé dans le registre centralisé. La variable `PUBLISH_GRAPH` est une variable d'environnement personnalisée qui nous permet de contrôler si le graphe doit être publié (workflow CI/CD), ou non (démarrage normal de l'application). De plus, nous mettons l'attribut `preview` ici à `true`. Avec ce flag activé, notre application va démarrer en mode preview - ce qui signifie que les constructeurs (et les hooks de cycle de vie) de tous les contrôleurs, améliorateurs et fournisseurs de notre application ne seront pas exécutés. Note - ce n'est pas **nécessaire**, mais rend les choses plus simples pour nous puisque dans ce cas nous n'aurons pas vraiment à nous connecter à la base de données etc. lors de l'exécution de notre application dans le pipeline CI/CD.
 
-The `publishOptions` object will vary depending on the CI/CD provider you're using. We will provide you with instructions for the most popular CI/CD providers below, in later sections.
+L'objet `publishOptions` varie en fonction du fournisseur CI/CD que vous utilisez. Nous vous fournirons des instructions pour les fournisseurs CI/CD les plus populaires dans les sections suivantes.
 
-Once the graph is successfully published, you'll see the following output in your workflow view:
+Une fois le graphique publié avec succès, vous verrez la sortie suivante dans votre vue du flux de travail :
 
 <figure><img src="/assets/devtools/graph-published-terminal.png" /></figure>
 
-Every time our graph is published, we should see a new entry in the project's corresponding page:
+Chaque fois que notre graphique est publié, nous devrions voir une nouvelle entrée dans la page correspondante du projet :
 
 <figure><img src="/assets/devtools/project.png" /></figure>
 
-#### Reports
+#### Rapports
 
-Devtools generate a report for every build **IF** there's a corresponding snapshot already stored in the centralized registry. So for example, if you create a PR against the `master` branch for which the graph was already published - then the application will be able to detect differences and generate a report. Otherwise, the report will not be generated.
+Devtools génère un rapport pour chaque build **SI** il y a un snapshot correspondant déjà stocké dans le registre centralisé. Ainsi, par exemple, si vous créez un PR contre la branche `master` pour laquelle le graphe a déjà été publié - alors l'application sera capable de détecter les différences et de générer un rapport. Dans le cas contraire, le rapport ne sera pas généré.
 
-To see reports, navigate to the project's corresponding page (see organizations).
+Pour consulter les rapports, naviguez jusqu'à la page correspondante du projet (voir organisations).
 
 <figure><img src="/assets/devtools/report.png" /></figure>
 
-This is particularly helpful in identifying changes that may have gone unnoticed during code reviews. For instance, let's say someone has changed the scope of a **deeply nested provider**. This change might not be immediately obvious to the reviewer, but with Devtools, we can easily spot such changes and make sure that they're intentional. Or if we remove a guard from a specific endpoint, it will show up as affected in the report. Now if we didn't have integration or e2e tests for that route, we might not notice that it's no longer protected, and by the time we do, it could be too late.
+Ceci est particulièrement utile pour identifier les changements qui auraient pu passer inaperçus lors des revues de code. Par exemple, supposons que quelqu'un ait modifié la portée d'un **fournisseur profondément imbriqué**. Ce changement peut ne pas être immédiatement évident pour le réviseur, mais avec Devtools, nous pouvons facilement repérer de tels changements et nous assurer qu'ils sont intentionnels. Ou si nous supprimons une garde d'un point de terminaison spécifique, il apparaîtra comme affecté dans le rapport. Or, si nous n'avions pas de tests d'intégration ou de tests e2e pour cette route, nous pourrions ne pas remarquer qu'elle n'est plus protégée, et lorsque nous le ferons, il sera peut-être trop tard.
 
-Similarly, if we're working on a **large codebase** and we modify a module to be global, we'll see how many edges were added to the graph, and this - in most cases - is a sign that we're doing something wrong.
+De même, si nous travaillons sur une **grande base de code** et que nous modifions un module pour qu'il soit global, nous verrons combien d'arêtes ont été ajoutées au graphe, ce qui - dans la plupart des cas - est le signe que nous faisons quelque chose de mal.
 
-#### Build preview
+#### Prévisualisation du build
 
-For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences higlighted on our graph:
+Pour chaque graphique publié, nous pouvons remonter dans le temps et prévisualiser son aspect antérieur en cliquant sur le bouton **Preview**. De plus, si le rapport a été généré, nous devrions voir les différences mises en évidence sur notre graphique :
 
-- green nodes represent added elements
-- light white nodes represent updated elements
-- red nodes represent deleted elements
+- les nœuds verts représentent les éléments ajoutés
+- les nœuds en blanc clair représentent les éléments mis à jour
+- les nœuds rouges représentent les éléments supprimés
 
-See screenshot below:
+Voir la capture d'écran ci-dessous :
 
 <figure><img src="/assets/devtools/nodes-selection.png" /></figure>
 
-The ability to go back in time lets you investigate and troubleshoot the issue by comparing the current graph with the previous one. Depending on how you set things up, every pull request (or even every commit) will have a corresponding snapshot in the registry, so you can easily go back in time and see what changed. Think of Devtools as a Git but with an understanding of how Nest constructs your application graph, and with the ability to **visualize** it.
+La possibilité de remonter dans le temps vous permet d'enquêter et de résoudre le problème en comparant le graphique actuel avec le précédent. Selon la façon dont vous avez configuré les choses, chaque pull request (ou même chaque commit) aura un snapshot correspondant dans le registre, de sorte que vous pouvez facilement remonter dans le temps et voir ce qui a changé. Considérez Devtools comme un Git, mais avec une compréhension de la façon dont Nest construit votre graphe d'application, et avec la capacité de **visualiser** ce graphe.
 
-#### Integrations: Github Actions
+#### Intégrations : Github Actions
 
-First let's start from creating a new Github workflow in the `.github/workflows` directory in our project and call it, for example, `publish-graph.yml`. Inside this file, let's use the following definition:
+Commençons par créer un nouveau workflow Github dans le répertoire `.github/workflows` de notre projet et appelons-le, par exemple, `publish-graph.yml`. Dans ce fichier, utilisons la définition suivante :
 
 ```yaml
 name: Devtools
@@ -130,13 +130,13 @@ jobs:
           TARGET_SHA: {{ '${{' }} github.event.pull_request.base.sha {{ '}}' }}
 ```
 
-Ideally, `DEVTOOLS_API_KEY` environment variable should be retrieved from Github Secrets, read more [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) .
+Idéalement, la variable d'environnement `DEVTOOLS_API_KEY` devrait être récupérée à partir de Github Secrets, pour en savoir plus [ici](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
 
-This workflow will run per each pull request that's targeting the `master` branch OR in case there's a direct commit to the `master` branch. Feel free to align this configuration to whatever your project needs. What's essential here is that we provide necessary environment varaiables for our `GraphPublisher` class (to run).
+Ce workflow sera exécuté pour chaque pull request qui cible la branche `master` OU dans le cas où il y a un commit direct vers la branche `master`. N'hésitez pas à adapter cette configuration aux besoins de votre projet. Ce qui est essentiel ici est de fournir les variables d'environnement nécessaires à notre classe `GraphPublisher` (pour qu'elle s'exécute).
 
-However, there's one variable that needs to be updated before we can start using this workflow - `DEVTOOLS_API_KEY`. We can generate an API key dedicated for our project on this **page** .
+Cependant, il y a une variable qui doit être mise à jour avant que nous puissions commencer à utiliser ce flux de travail - `DEVTOOLS_API_KEY`. Nous pouvons générer une clé API dédiée à notre projet sur votre compte Devtools.
 
-Lastly, let's navigate to the `main.ts` file again and update the `publishOptions` object we previously left empty.
+Enfin, naviguons à nouveau vers le fichier `main.ts` et mettons à jour l'objet `publishOptions` que nous avons précédemment laissé vide.
 
 ```typescript
 const publishOptions = {
@@ -150,17 +150,17 @@ const publishOptions = {
 };
 ```
 
-For the best developer experience, make sure to integrate the **Github application** for your project by clicking on the "Integrate Github app" button (see screenshot below). Note - this isn't required.
+Pour une meilleure expérience de développement, assurez-vous d'intégrer l'application **Github** pour votre projet en cliquant sur le bouton "Intégrer l'application Github" (voir la capture d'écran ci-dessous). Remarque : cette opération n'est pas obligatoire.
 
 <figure><img src="/assets/devtools/integrate-github-app.png" /></figure>
 
-With this integration, you'll be able to see the status of the preview/report generation process right in your pull request:
+Grâce à cette intégration, vous serez en mesure de voir l'état du processus de prévisualisation/de génération de rapport directement dans votre demande d'extraction :
 
 <figure><img src="/assets/devtools/actions-preview.png" /></figure>
 
-#### Integrations: Gitlab Pipelines
+#### Intégrations : Gitlab Pipelines
 
-First let's start from creating a new Gitlab CI configuration file in the root directory of our project and call it, for example, `.gitlab-ci.yml`. Inside this file, let's use the following definition:
+Commençons par créer un nouveau fichier de configuration Gitlab CI dans le répertoire racine de notre projet et appelons-le, par exemple, `.gitlab-ci.yml`. Dans ce fichier, utilisons la définition suivante :
 
 ```typescript
 const publishOptions = {
@@ -174,13 +174,13 @@ const publishOptions = {
 };
 ```
 
-> info **Hint** Ideally, `DEVTOOLS_API_KEY` environment variable should be retrieved from secrets.
+> info **Astuce** Idéalement, la variable d'environnement `DEVTOOLS_API_KEY` devrait être récupérée à partir des secrets.
 
-This workflow will run per each pull request that's targeting the `master` branch OR in case there's a direct commit to the `master` branch. Feel free to align this configuration to whatever your project needs. What's essential here is that we provide necessary environment variables for our `GraphPublisher` class (to run).
+Ce workflow sera exécuté pour chaque pull request qui cible la branche `master` OU dans le cas où il y a un commit direct vers la branche `master`. N'hésitez pas à adapter cette configuration aux besoins de votre projet. Ce qui est essentiel ici est que nous fournissons les variables d'environnement nécessaires à notre classe `GraphPublisher` (pour qu'elle s'exécute).
 
-However, there's one variable (in this workflow definition) that needs to be updated before we can start using this workflow - `DEVTOOLS_API_KEY`. We can generate an API key dedicated for our project on this **page** .
+Cependant, il y a une variable (dans cette définition de workflow) qui doit être mise à jour avant que nous puissions commencer à utiliser ce workflow - `DEVTOOLS_API_KEY`. Nous pouvons générer une clé API dédiée à notre projet sur votre compte Devtools.
 
-Lastly, let's navigate to the `main.ts` file again and update the `publishOptions` object we previously left empty.
+Enfin, naviguons à nouveau vers le fichier `main.ts` et mettons à jour l'objet `publishOptions` que nous avons précédemment laissé vide.
 
 ```yaml
 image: node:16
@@ -218,11 +218,11 @@ publish_graph:
     DEVTOOLS_API_KEY: 'CHANGE_THIS_TO_YOUR_API_KEY'
 ```
 
-#### Other CI/CD tools
+#### Autres outils CI/CD
 
-Nest Devtools CI/CD integration can be used with any CI/CD tool of your choice (e.g., [Bitbucket Pipelines](https://bitbucket.org/product/features/pipelines) , [CircleCI](https://circleci.com/), etc) so don't feel limited to providers we described here.
+L'intégration CI/CD de Nest Devtools peut être utilisée avec n'importe quel outil CI/CD de votre choix (par exemple, [Bitbucket Pipelines](https://bitbucket.org/product/features/pipelines) , [CircleCI](https://circleci.com/), etc), donc ne vous sentez pas limité aux fournisseurs décrits ici.
 
-Look at the following `publishOptions` object configuration to understand what information is required to publish the graph for a given commit/build/PR.
+Regardez la configuration de l'objet `publishOptions` suivant pour comprendre quelles informations sont requises pour publier le graphe pour un commit/build/PR donné.
 
 ```typescript
 const publishOptions = {
@@ -238,9 +238,9 @@ const publishOptions = {
 };
 ```
 
-Most of this information is provided through CI/CD built-in environment variables (see [CircleCI built-in environment list](https://circleci.com/docs/variables/#built-in-environment-variables) and [Bitbucket variables](https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/) ).
+La plupart de ces informations sont fournies par des variables d'environnement intégrées à CI/CD (voir [CircleCI built-in environment list](https://circleci.com/docs/variables/#built-in-environment-variables) et [Bitbucket variables](https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/) ).
 
-When it comes to the pipeline configuration for publishing graphs, we recommend using the following triggers:
+En ce qui concerne la configuration du pipeline pour la publication des graphes, nous recommandons d'utiliser les déclencheurs suivants :
 
-- `push` event - only if the current branch represents a deployment environment, for example `master`, `main`, `staging`, `production`, etc.
-- `pull request` event - always, or when the **target branch** represents a deployment environment (see above)
+- événement `push` - seulement si la branche courante représente un environnement de déploiement, par exemple `master`, `main`, `staging`, `production`, etc.
+- événement `pull request` - toujours, ou lorsque la **branche cible** représente un environnement de déploiement (voir ci-dessus)
