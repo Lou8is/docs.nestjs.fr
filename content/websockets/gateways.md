@@ -53,7 +53,7 @@ handleEvent(data) {
 
 > info **Astuce** Les décorateurs `@SubscribeMessage()` et `@MessageBody()` sont importés du package `@nestjs/websockets`.
 
-Once the gateway is created, we can register it in our module.
+Une fois la gateway créée, nous pouvons l'enregistrer dans notre module.
 
 ```typescript
 import { Module } from '@nestjs/common';
