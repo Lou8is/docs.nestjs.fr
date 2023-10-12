@@ -1,16 +1,16 @@
 ### Gateways
 
-Most of the concepts discussed elsewhere in this documentation, such as dependency injection, decorators, exception filters, pipes, guards and interceptors, apply equally to gateways. Wherever possible, Nest abstracts implementation details so that the same components can run across HTTP-based platforms, WebSockets, and Microservices. This section covers the aspects of Nest that are specific to WebSockets.
+La plupart des concepts abordés ailleurs dans cette documentation, tels que l'injection de dépendance, les décorateurs, les filtres d'exception, les pipes, les gardes et les intercepteurs, s'appliquent également aux gateways. Dans la mesure du possible, Nest fait abstraction des détails de mise en œuvre afin que les mêmes composants puissent fonctionner sur des plates-formes HTTP, WebSockets et Microservices. Cette section couvre les aspects de Nest qui sont spécifiques aux WebSockets.
 
-In Nest, a gateway is simply a class annotated with `@WebSocketGateway()` decorator. Technically, gateways are platform-agnostic which makes them compatible with any WebSockets library once an adapter is created. There are two WS platforms supported out-of-the-box: [socket.io](https://github.com/socketio/socket.io) and [ws](https://github.com/websockets/ws). You can choose the one that best suits your needs. Also, you can build your own adapter by following this [guide](/websockets/adapter).
+Dans Nest, une gateway est simplement une classe annotée avec le décorateur `@WebSocketGateway()`. Techniquement, les gateways sont agnostiques en termes de plateforme, ce qui les rend compatibles avec n'importe quelle bibliothèque WebSockets une fois qu'un adaptateur est créé. Deux plates-formes WS sont prises en charge dès le départ : [socket.io](https://github.com/socketio/socket.io) et [ws](https://github.com/websockets/ws). Vous pouvez choisir celle qui correspond le mieux à vos besoins. Vous pouvez également créer votre propre adaptateur en suivant ce [guide](/websockets/adapter).
 
 <figure><img src="/assets/Gateways_1.png" /></figure>
 
-> info **Hint** Gateways can be treated as [providers](/providers); this means they can inject dependencies through the class constructor. Also, gateways can be injected by other classes (providers and controllers) as well.
+> info **Astuce** Les gateways peuvent être traitées comme des [providers](/providers) ; cela signifie qu'elles peuvent injecter des dépendances via le constructeur de la classe. Les passerelles peuvent également être injectées par d'autres classes (fournisseurs et contrôleurs).
 
 #### Installation
 
-To start building WebSockets-based applications, first install the required package:
+Pour commencer à créer des applications basées sur les WebSockets, il faut d'abord installer le package requis :
 
 ```bash
 @@filename()
@@ -19,23 +19,23 @@ $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-In general, each gateway is listening on the same port as the **HTTP server**, unless your app is not a web application, or you have changed the port manually. This default behavior can be modified by passing an argument to the `@WebSocketGateway(80)` decorator where `80` is a chosen port number. You can also set a [namespace](https://socket.io/docs/v4/namespaces/) used by the gateway using the following construction:
+En général, chaque gateway écoute sur le même port que le **serveur HTTP**, à moins que votre application ne soit pas une application web, ou que vous ayez changé le port manuellement. Ce comportement par défaut peut être modifié en passant un argument au décorateur `@WebSocketGateway(80)` où `80` est un numéro de port choisi. Vous pouvez également définir un [namespace](https://socket.io/docs/v4/namespaces/) utilisé par la gateway en utilisant la construction suivante :
 
 ```typescript
 @WebSocketGateway(80, { namespace: 'events' })
 ```
 
-> warning **Warning** Gateways are not instantiated until they are referenced in the providers array of an existing module.
+> warning **Attention** Les gateways ne sont pas instanciées tant qu'elles ne sont pas référencées dans le tableau des fournisseurs d'un module existant.
 
-You can pass any supported [option](https://socket.io/docs/v4/server-options/) to the socket constructor with the second argument to the `@WebSocketGateway()` decorator, as shown below:
+Vous pouvez passer n'importe quelle [option](https://socket.io/docs/v4/server-options/) supportée au constructeur de la socket avec le second argument du décorateur `@WebSocketGateway()`, comme montré ci-dessous :
 
 ```typescript
 @WebSocketGateway(81, { transports: ['websocket'] })
 ```
 
-The gateway is now listening, but we have not yet subscribed to any incoming messages. Let's create a handler that will subscribe to the `events` messages and respond to the user with the exact same data.
+La gateway est maintenant à l'écoute, mais nous n'avons pas encore souscrit aux messages entrants. Créons un handler qui s'abonnera aux messages `events` et répondra à l'utilisateur avec exactement les mêmes données.
 
 ```typescript
 @@filename(events.gateway)
@@ -51,9 +51,9 @@ handleEvent(data) {
 }
 ```
 
-> info **Hint** `@SubscribeMessage()` and `@MessageBody()` decorators are imported from `@nestjs/websockets` package.
+> info **Astuce** Les décorateurs `@SubscribeMessage()` et `@MessageBody()` sont importés du package `@nestjs/websockets`.
 
-Once the gateway is created, we can register it in our module.
+Une fois la gateway créée, nous pouvons l'enregistrer dans notre module.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -66,7 +66,7 @@ import { EventsGateway } from './events.gateway';
 export class EventsModule {}
 ```
 
-You can also pass in a property key to the decorator to extract it from the incoming message body:
+Vous pouvez également transmettre une clé de propriété au décorateur pour qu'il l'extraie du corps du message entrant :
 
 ```typescript
 @@filename(events.gateway)
@@ -84,7 +84,7 @@ handleEvent(id) {
 }
 ```
 
-If you would prefer not to use decorators, the following code is functionally equivalent:
+Si vous préférez ne pas utiliser de décorateurs, le code suivant est fonctionnellement équivalent :
 
 ```typescript
 @@filename(events.gateway)
@@ -99,9 +99,9 @@ handleEvent(client, data) {
 }
 ```
 
-In the example above, the `handleEvent()` function takes two arguments. The first one is a platform-specific [socket instance](https://socket.io/docs/v4/server-api/#socket), while the second one is the data received from the client. This approach is not recommended though, because it requires mocking the `socket` instance in each unit test.
+Dans l'exemple ci-dessus, la fonction `handleEvent()` prend deux arguments. Le premier est une [instance de socket](https://socket.io/docs/v4/server-api/#socket) spécifique à la plate-forme, tandis que le second est la donnée reçue du client. Cette approche n'est cependant pas recommandée, car elle nécessite de simuler l'instance `socket` dans chaque test unitaire.
 
-Once the `events` message is received, the handler sends an acknowledgment with the same data that was sent over the network. In addition, it's possible to emit messages using a library-specific approach, for example, by making use of `client.emit()` method. In order to access a connected socket instance, use `@ConnectedSocket()` decorator.
+Une fois le message `events` reçu, le gestionnaire envoie un accusé de réception avec les mêmes données que celles envoyées sur le réseau. De plus, il est possible d'émettre des messages en utilisant une approche spécifique à la bibliothèque, par exemple en utilisant la méthode `client.emit()`. Pour accéder à une instance de socket connectée, utilisez le décorateur `@ConnectedSocket()`.
 
 ```typescript
 @@filename(events.gateway)
@@ -120,25 +120,25 @@ handleEvent(data, client) {
 }
 ```
 
-> info **Hint** `@ConnectedSocket()` decorator is imported from `@nestjs/websockets` package.
+> info **Astuce** Le décorateur `@ConnectedSocket()` est importé du package `@nestjs/websockets`.
 
-However, in this case, you won't be able to leverage interceptors. If you don't want to respond to the user, you can simply skip the `return` statement (or explicitly return a "falsy" value, e.g. `undefined`).
+Cependant, dans ce cas, vous ne pourrez pas utiliser les intercepteurs. Si vous ne voulez pas répondre à l'utilisateur, vous pouvez simplement sauter l'instruction `return` (ou retourner explicitement une valeur "falsy", par exemple `undefined`).
 
-Now when a client emits the message as follows:
+Maintenant, lorsqu'un client émet le message suivant :
 
 ```typescript
 socket.emit('events', { name: 'Nest' });
 ```
 
-The `handleEvent()` method will be executed. In order to listen for messages emitted from within the above handler, the client has to attach a corresponding acknowledgment listener:
+La méthode `handleEvent()` sera exécutée. Afin d'écouter les messages émis par le gestionnaire ci-dessus, le client doit attacher un récepteur d'accusé de réception correspondant :
 
 ```typescript
 socket.emit('events', { name: 'Nest' }, (data) => console.log(data));
 ```
 
-#### Multiple responses
+#### Réponses multiples
 
-The acknowledgment is dispatched only once. Furthermore, it is not supported by native WebSockets implementation. To solve this limitation, you may return an object which consists of two properties. The `event` which is a name of the emitted event and the `data` that has to be forwarded to the client.
+L'accusé de réception n'est envoyé qu'une seule fois. En outre, il n'est pas pris en charge par les implémentations natives des WebSockets. Pour résoudre cette limitation, vous pouvez retourner un objet qui consiste en deux propriétés : `event` qui est le nom de l'événement émis et `data` qui doit être transmis au client.
 
 ```typescript
 @@filename(events.gateway)
@@ -156,19 +156,19 @@ handleEvent(data) {
 }
 ```
 
-> info **Hint** The `WsResponse` interface is imported from `@nestjs/websockets` package.
+> info **Astuce** L'interface `WsResponse` est importée du package `@nestjs/websockets`.
 
-> warning **Warning** You should return a class instance that implements `WsResponse` if your `data` field relies on `ClassSerializerInterceptor`, as it ignores plain JavaScript object responses.
+> warning **Attention** Vous devez retourner une instance de classe qui implémente `WsResponse` si votre champ `data` repose sur `ClassSerializerInterceptor`, car il ignore les réponses d'objets JavaScript simples.
 
-In order to listen for the incoming response(s), the client has to apply another event listener.
+Afin d'écouter la ou les réponses entrantes, le client doit appliquer un autre écouteur d'événements.
 
 ```typescript
 socket.on('events', (data) => console.log(data));
 ```
 
-#### Asynchronous responses
+#### Réponses asynchrones
 
-Message handlers are able to respond either synchronously or **asynchronously**. Hence, `async` methods are supported. A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
+Les gestionnaires de messages peuvent répondre de manière synchrone ou **asynchrone**. Les méthodes `asynchrones` sont donc supportées. Un gestionnaire de message peut également retourner un `Observable`, auquel cas les valeurs de résultat seront émises jusqu'à ce que le flux soit terminé.
 
 ```typescript
 @@filename(events.gateway)
@@ -194,11 +194,11 @@ onEvent(data) {
 }
 ```
 
-In the example above, the message handler will respond **3 times** (with each item from the array).
+Dans l'exemple ci-dessus, le gestionnaire de message répondra **3 fois** (avec chaque élément du tableau).
 
-#### Lifecycle hooks
+#### Hooks du cycle de vie
 
-There are 3 useful lifecycle hooks available. All of them have corresponding interfaces and are described in the following table:
+Il existe trois hooks utiles pour le cycle de vie. Ils ont tous des interfaces correspondantes et sont décrits dans le tableau suivant :
 
 <table>
   <tr>
@@ -206,8 +206,8 @@ There are 3 useful lifecycle hooks available. All of them have corresponding int
       <code>OnGatewayInit</code>
     </td>
     <td>
-      Forces to implement the <code>afterInit()</code> method. Takes library-specific server instance as an argument (and
-      spreads the rest if required).
+      Oblige à mettre en œuvre la méthode <code>afterInit()</code>. Prend en argument l'instance de serveur spécifique à la bibliothèque (et
+      étend le reste si nécessaire).
     </td>
   </tr>
   <tr>
@@ -215,8 +215,8 @@ There are 3 useful lifecycle hooks available. All of them have corresponding int
       <code>OnGatewayConnection</code>
     </td>
     <td>
-      Forces to implement the <code>handleConnection()</code> method. Takes library-specific client socket instance as
-      an argument.
+      Oblige à mettre en œuvre la méthode <code>handleConnection()</code>. Prend l'instance de socket client spécifique à la bibliothèque
+      comme argument.
     </td>
   </tr>
   <tr>
@@ -224,29 +224,29 @@ There are 3 useful lifecycle hooks available. All of them have corresponding int
       <code>OnGatewayDisconnect</code>
     </td>
     <td>
-      Forces to implement the <code>handleDisconnect()</code> method. Takes library-specific client socket instance as
-      an argument.
+      Oblige à mettre en œuvre la méthode <code>handleDisconnect()</code>. Prend l'instance de socket client spécifique à la bibliothèque
+      comme argument.
     </td>
   </tr>
 </table>
 
-> info **Hint** Each lifecycle interface is exposed from `@nestjs/websockets` package.
+> info **Astuce** Chaque interface de cycle de vie est exposée dans le package `@nestjs/websockets`.
 
-#### Server
+#### Serveur
 
-Occasionally, you may want to have a direct access to the native, **platform-specific** server instance. The reference to this object is passed as an argument to the `afterInit()` method (`OnGatewayInit` interface). Another option is to use the `@WebSocketServer()` decorator.
+Occasionnellement, vous pouvez vouloir avoir un accès direct à l'instance du serveur natif, **spécifique à la plateforme**. La référence à cet objet est passée comme argument à la méthode `afterInit()` (interface `OnGatewayInit`). Une autre option consiste à utiliser le décorateur `@WebSocketServer()`.
 
 ```typescript
 @WebSocketServer()
 server: Server;
 ```
 
-> warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.
+> warning **Remarque** Le décorateur `@WebSocketServer()` est importé du package `@nestjs/websockets`.
 
-Nest will automatically assign the server instance to this property once it is ready to use.
+Nest attribuera automatiquement l'instance de serveur à cette propriété lorsqu'elle sera prête à être utilisée.
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/02-gateways).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/02-gateways).

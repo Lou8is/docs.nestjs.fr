@@ -1,6 +1,6 @@
-### Interceptors
+### Intercepteurs
 
-There is no difference between [regular interceptors](/interceptors) and web sockets interceptors. The following example uses a manually instantiated method-scoped interceptor. Just as with HTTP based applications, you can also use gateway-scoped interceptors (i.e., prefix the gateway class with a `@UseInterceptors()` decorator).
+Il n'y a pas de différence entre les [intercepteurs ordinaires](/intercepteurs) et les intercepteurs de sockets web. L'exemple suivant utilise un intercepteur à portée de méthode instancié manuellement. Tout comme pour les applications basées sur HTTP, vous pouvez également utiliser des intercepteurs à l'échelle de la gateway (c'est-à-dire préfixer la classe de la gateway avec un décorateur `@UseInterceptors()`)).
 
 ```typescript
 @@filename()

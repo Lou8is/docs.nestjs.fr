@@ -1,12 +1,12 @@
 ### Pipes
 
-There is no fundamental difference between [regular pipes](/pipes) and web sockets pipes. The only difference is that instead of throwing `HttpException`, you should use `WsException`. In addition, all pipes will be only applied to the `data` parameter (because validating or transforming `client` instance is useless).
+Il n'y a pas de différence fondamentale entre les [pipes ordinaires](/pipes) et les pipes des sockets web. La seule différence est qu'au lieu de lancer `HttpException`, vous devriez utiliser `WsException`. De plus, tous les pipes ne seront appliqués qu'au paramètre `data` (parce que valider ou transformer l'instance `client` est inutile).
 
-> info **Hint** The `WsException` class is exposed from `@nestjs/websockets` package.
+> info **Astuce** La classe `WsException` est exposée dans le package `@nestjs/websockets`.
 
-#### Binding pipes
+#### Lier les pipes
 
-The following example uses a manually instantiated method-scoped pipe. Just as with HTTP based applications, you can also use gateway-scoped pipes (i.e., prefix the gateway class with a `@UsePipes()` decorator).
+L'exemple suivant utilise une pipe à portée de méthode instanciée manuellement. Tout comme pour les applications basées sur HTTP, vous pouvez également utiliser des pipes à l'échelle de la gateway (en préfixant la classe de la gateway avec un décorateur `@UsePipes()`).
 
 ```typescript
 @@filename()
