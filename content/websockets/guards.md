@@ -1,12 +1,12 @@
-### Guards
+### Gardes
 
-There is no fundamental difference between web sockets guards and [regular HTTP application guards](/guards). The only difference is that instead of throwing `HttpException`, you should use `WsException`.
+Il n'y a pas de différence fondamentale entre les gardes de sockets web et les [gardes d'applications HTTP ordinaires](/guards). La seule différence est qu'au lieu de lancer `HttpException`, vous devriez utiliser `WsException`.
 
-> info **Hint** The `WsException` class is exposed from `@nestjs/websockets` package.
+> info **Astuce** La classe `WsException` est exposée dans le package `@nestjs/websockets`.
 
-#### Binding guards
+#### Lier les gardes
 
-The following example uses a method-scoped guard. Just as with HTTP based applications, you can also use gateway-scoped guards (i.e., prefix the gateway class with a `@UseGuards()` decorator).
+L'exemple suivant utilise un garde à l'échelle de la méthode. Comme pour les applications basées sur HTTP, vous pouvez également utiliser des protections au niveau de la gateway (en préfixant la classe de la gateway avec un décorateur `@UseGuards()`).
 
 ```typescript
 @@filename()
