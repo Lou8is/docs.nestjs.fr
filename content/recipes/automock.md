@@ -1,22 +1,17 @@
 ### Automock
 
-Automock is a standalone library for unit testing. Using TypeScript Reflection
-API (`reflect-metadata`) internally to produce mock objects, Automock streamlines
-test development by automatically mocking class external dependencies.
-> info **info** `Automock` is a third party package and is not managed by the NestJS core team.
-> Please, report any issues found with the library in the [appropriate repository](https://github.com/omermorad/automock)
+Automock est une bibliothèque autonome pour les tests unitaires. En utilisant l'API TypeScript Reflection
+TypeScript (`reflect-metadata`) pour produire des objets fictifs, Automock rationalise le
+développement des tests en simulant automatiquement les dépendances externes des classes.
+> info **Info** `Automock` est un package tiers et n'est pas géré par l'équipe NestJS.
+> Veuillez rapporter tout problème trouvé avec la bibliothèque dans le [dépôt approprié](https://github.com/omermorad/automock).
 
 #### Introduction
 
-The dependency injection (DI) container is an essential component of the Nest module system.
-This container is utilized both during testing, and the application execution.
-Unit tests vary from other types of tests, such as integration tests, in that they must
-fully override providers/services within the DI container. External class dependencies
-(providers) of the so-called "unit", have to be totally isolated. That is, all dependencies
-within the DI container should be replaced by mock objects.
-As a result, loading the target module and replacing the providers inside it is a process
-that loops back on itself. Automock tackles this issue by automatically mocking all the
-class external providers, resulting in total isolation of the unit under test.
+Le conteneur d'injection de dépendances (DI) est un composant essentiel du système de modules Nest.
+Ce conteneur est utilisé à la fois pendant les tests et pendant l'exécution de l'application.
+Les tests unitaires diffèrent des autres types de tests, tels que les tests d'intégration, en ce sens qu'ils doivent surcharger entièrement les fournisseurs/services dans le conteneur DI. Les dépendances de classes externes (fournisseurs) de ce que l'on appelle l'"unité" doivent être totalement isolées. En d'autres termes, toutes les dépendances dans le conteneur DI doivent être remplacées par des objets fictifs.
+Par conséquent, le chargement du module cible et le remplacement des fournisseurs à l'intérieur de celui-ci est un processus qui se répète en boucle. Automock s'attaque à ce problème en simulant automatiquement tous les fournisseurs externes de la classe ce qui permet d'isoler totalement l'unité testée.
 
 #### Installation
 
@@ -24,14 +19,14 @@ class external providers, resulting in total isolation of the unit under test.
 $ npm i -D @automock/jest
 ```
 
-Automock does not require any additional setup.
+Automock ne nécessite aucune installation supplémentaire.
 
-> info **info** Jest is the only test framework currently supported by Automock.
-Sinon will shortly be released.
+> info **Info** Jest est le seul framework de test actuellement pris en charge par Automock.
+"Sinon" sera bientôt disponible.
 
-#### Example
+#### Exemple
 
-Consider the following cats service, which takes three constructor parameters:
+Considérons le service `cats` suivant, qui prend trois paramètres de construction :
 
 ```ts
 @@filename(cats.service)
@@ -47,15 +42,15 @@ export class CatsService {
 
   async getAllCats() {
     const cats = await this.httpService.get('http://localhost:3000/api/cats');
-    this.logger.log('Successfully fetched all cats');
+    this.logger.log('Tous les chats ont été récupérés avec succès');
     
     this.catsDal.saveCats(cats);
   }
 }
 ```
 
-The service contains one public method, `getAllCats`, which is the method
-we use an example for the following unit test:
+Le service contient une méthode publique, `getAllCats`, qui est la méthode
+que nous utilisons comme exemple pour le test unitaire suivant :
 
 ```ts
 @@filename(cats.service.spec)
@@ -85,8 +80,8 @@ describe('CatsService unit spec', () => {
     catsDal = unitRef.get(CatsDal);
   });
 
-  describe('when getting all the cats', () => {
-    test('then meet some expectations', async () => {
+  describe('lors de l\'obtention de tous les chats', () => {
+    test('répondre à certaines attentes', async () => {
       httpService.get.mockResolvedValueOnce([{ id: 1, name: 'Catty' }]);
       await catsService.getAllCats();
 
@@ -97,24 +92,22 @@ describe('CatsService unit spec', () => {
 });
 ```
 
-> info **info** The jest.Mocked<Source> utility type returns the Source type
-> wrapped with type definitions of Jest mock function. ([reference](https://jestjs.io/docs/mock-function-api/#jestmockedsource))
+> info **Info** L'utilitaire jest.Mocked<Source> renvoie le type Source
+> enveloppée avec les définitions de type de la fonction Jest mock. ([référence](https://jestjs.io/docs/mock-function-api/#jestmockedsource))
 
-#### About `unit` and `unitRef`
+#### À propos de `unit` et `unitRef`
 
-Let's examine the following code:
+Examinons le code suivant :
 
 ```typescript
 const { unit, unitRef } = TestBed.create(CatsService).compile();
 ```
 
-Calling `.compile()` returns an object with two properties, `unit`, and `unitRef`.
+L'appel à `.compile()` renvoie un objet avec deux propriétés, `unit`, et `unitRef`.
 
-**`unit`** is the unit under test, it is an actual instance of class being tested.
+**`unit`** est l'unité testée, c'est une instance réelle de la classe testée.
 
-**`unitRef`** is the "unit reference", where the mocked dependencies of the tested class
-are stored, in a small container. The container's `.get()` method returns the mocked
-dependency with all of its methods automatically stubbed (using `jest.fn()`):
+**`unitRef`** est la "référence de l'unité", où les dépendances simulées de la classe testée sont stockées dans un petit conteneur. La méthode `.get()` du conteneur renvoie la dépendance simulée avec toutes ses méthodes automatiquement mises en attente (en utilisant `jest.fn()`) :
 
 ```typescript
 const { unit, unitRef } = TestBed.create(CatsService).compile();
@@ -122,17 +115,13 @@ const { unit, unitRef } = TestBed.create(CatsService).compile();
 let httpServiceMock: jest.Mocked<HttpService> = unitRef.get(HttpService);
 ```
 
-> info **info** The `.get()` method can accept either a `string` or an actual class (`Type`) as its argument.
-> This essentially depends on how the provider is being injected to the class under test.
+> info **Info** La méthode `.get()` peut accepter comme argument une `chaîne` ou une classe réelle (`Type`).
+> Cela dépend essentiellement de la manière dont le fournisseur est injecté dans la classe testée.
 
-#### Working with different providers
-Providers are one of the most important elements in Nest. You can think of many of
-the default Nest classes as providers, including services, repositories, factories,
-helpers, and so on. A provider's primary function is to take the form of an
-`Injectable` dependency.
+#### Travailler avec différents fournisseurs
+Les fournisseurs sont l'un des éléments les plus importants de Nest. Vous pouvez considérer de nombreuses classes Nest par défaut comme des fournisseurs, y compris les services, les référentiels, les usines, les helpers, et ainsi de suite. La fonction première d'un fournisseur est de prendre la forme d'une dépendance "injectable".
 
-Consider the following `CatsService`, it takes one parameter, which is an instance
-of the following `Logger` interface:
+Considérons le `CatsService` suivant, il prend un paramètre, qui est une instance de l'interface `Logger`. de l'interface `Logger` suivante :
 
 ```typescript
 export interface Logger {
@@ -144,8 +133,8 @@ export class CatsService {
 }
 ```
 
-TypeScript's Reflection API does not support interface reflection yet.
-Nest solves this issue with string-based injection tokens (see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)):
+L'API Reflection de TypeScript ne prend pas encore en charge la réflexion sur les interfaces.
+Nest résout ce problème avec des jetons d'injection basés sur des chaînes de caractères (voir [Fournisseurs personnalisés](/fundamentals/custom-providers)) :
 
 ```typescript
 export const MyLoggerProvider = {
@@ -158,8 +147,7 @@ export class CatsService {
 }
 ```
 
-Automock follows this practice and lets you provide a string-based token instead
-of providing the actual class in the `unitRef.get()` method:
+Automock suit cette pratique et vous permet de fournir un jeton basé sur une chaîne de caractères au lieu de fournir la classe réelle dans la méthode `unitRef.get()` :
 
 ```typescript
 const { unit, unitRef } = TestBed.create(CatsService).compile();
@@ -167,6 +155,6 @@ const { unit, unitRef } = TestBed.create(CatsService).compile();
 let loggerMock: jest.Mocked<Logger> = unitRef.get('MY_LOGGER_TOKEN');
 ```
 
-#### More Information
-Visit [Automock GitHub repository](https://github.com/omermorad/automock) for more
-information.
+#### En savoir plus
+
+Visitez le [dépôt GitHub Automock](https://github.com/omermorad/automock) pour plus d'informations.
