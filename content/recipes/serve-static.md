@@ -1,10 +1,10 @@
 ### Serve Static
 
-In order to serve static content like a Single Page Application (SPA) we can use the `ServeStaticModule` from the [`@nestjs/serve-static`](https://www.npmjs.com/package/@nestjs/serve-static) package.
+Afin de servir un contenu statique comme une application à page unique (SPA), nous pouvons utiliser le module `ServeStaticModule` du package [`@nestjs/serve-static`](https://www.npmjs.com/package/@nestjs/serve-static).
 
 #### Installation
 
-First we need to install the required package:
+Nous devons d'abord installer le package requis :
 
 ```bash
 $ npm install --save @nestjs/serve-static
@@ -12,7 +12,7 @@ $ npm install --save @nestjs/serve-static
 
 #### Bootstrap
 
-Once the installation process is done, we can import the `ServeStaticModule` into the root `AppModule` and configure it by passing in a configuration object to the `forRoot()` method.
+Une fois le processus d'installation terminé, nous pouvons importer le module `ServeStaticModule` dans le module racine `AppModule` et le configurer en passant un objet de configuration à la méthode `forRoot()`.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -33,17 +33,17 @@ import { join } from 'path';
 export class AppModule {}
 ```
 
-With this in place, build the static website and place its content in the location specified by the `rootPath` property.
+Avec ceci en place, construisez le site web statique et placez son contenu dans l'emplacement spécifié par la propriété `rootPath`.
 
 #### Configuration
 
-[ServeStaticModule](https://github.com/nestjs/serve-static) can be configured with a variety of options to customize its behavior.
-You can set the path to render your static app, specify excluded paths, enable or disable setting Cache-Control response header, etc. See the full list of options [here](https://github.com/nestjs/serve-static/blob/master/lib/interfaces/serve-static-options.interface.ts).
+[ServeStaticModule](https://github.com/nestjs/serve-static) peut être configuré avec une variété d'options pour personnaliser son comportement.
+Vous pouvez définir le chemin de rendu de votre application statique, spécifier des chemins exclus, activer ou désactiver l'en-tête de réponse Cache-Control, etc. Voir la liste complète des options [ici](https://github.com/nestjs/serve-static/blob/master/lib/interfaces/serve-static-options.interface.ts).
 
-> warning **Notice** The default `renderPath` of the Static App is `*` (all paths), and the module will send "index.html" files in response.
-> It lets you create Client-Side routing for your SPA. Paths, specified in your controllers will fallback to the server.
-> You can change this behavior setting `serveRoot`, `renderPath` combining them with other options.
+> warning **Remarque** Le `renderPath` par défaut de l'application statique est `*` (tous les chemins), et le module enverra des fichiers "index.html" en réponse.
+> Il vous permet de créer un routage côté client pour votre SPA. Les chemins d'accès spécifiés dans vos contrôleurs seront renvoyés vers le serveur.
+> Vous pouvez modifier ce comportement en paramétrant `serveRoot`, `renderPath` en les combinant avec d'autres options.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/24-serve-static).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/24-serve-static).
