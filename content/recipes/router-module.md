@@ -1,14 +1,11 @@
-### Router module
+### Module Router
 
-> info **Hint** This chapter is only relevant to HTTP-based applications.
+> info **Astuce** Ce chapitre ne concerne que les applications basées sur le protocole HTTP.
 
-In an HTTP application (for example, REST API), the route path for a handler is determined by concatenating the (optional) prefix declared for the controller (inside the `@Controller` decorator),
-and any path specified in the method's decorator (e.g, `@Get('users')`). You can learn more about that in [this section](/controllers#routing). Additionally,
-you can define a [global prefix](/faq/global-prefix) for all routes registered in your application, or enable [versioning](/techniques/versioning).
+Dans une application HTTP (par exemple, une API REST), le chemin d'accès à un handler est déterminé en concaténant le préfixe (optionnel) déclaré pour le contrôleur (dans le décorateur `@Controller`), et tout chemin spécifié dans le décorateur de la méthode (par exemple, `@Get('users')`). Vous pouvez en apprendre plus à ce sujet dans [cette section](/controllers#routage). De plus, vous pouvez définir un [préfixe global](/faq/global-prefix) pour toutes les routes enregistrées dans votre application, ou activer le [versioning](/techniques/versioning).
 
-Also, there are edge-cases when defining a prefix at a module-level (and so for all controllers registered inside that module) may come in handy.
-For example, imagine a REST application that exposes several different endpoints being used by a specific portion of your application called "Dashboard".
-In such a case, instead of repeating the `/dashboard` prefix within each controller, you could use a utility `RouterModule` module, as follows:
+Par ailleurs, il existe des cas où la définition d'un préfixe au niveau d'un module (et donc pour tous les contrôleurs enregistrés dans ce module) peut s'avérer utile. Par exemple, imaginez une application REST qui expose plusieurs points d'accès différents utilisés par une partie spécifique de votre application appelée "Dashboard".
+Dans un tel cas, au lieu de répéter le préfixe `/dashboard` dans chaque contrôleur, vous pourriez utiliser un module utilitaire `RouterModule`, comme suit :
 
 ```typescript
 @Module({
@@ -25,10 +22,10 @@ In such a case, instead of repeating the `/dashboard` prefix within each control
 export class AppModule {}
 ```
 
-> info **Hint** The `RouterModule` class is exported from the `@nestjs/core` package.
+> info **Astuce** La classe `RouterModule` est exportée du package `@nestjs/core`.
 
-In addition, you can define hierarchical structures. This means each module can have `children` modules.
-The children modules will inherit their parent's prefix. In the following example, we'll register the `AdminModule` as a parent module of `DashboardModule` and `MetricsModule`.
+En outre, vous pouvez définir des structures hiérarchiques. Cela signifie que chaque module peut avoir des modules "enfants".
+Les modules enfants hériteront du préfixe de leur parent. Dans l'exemple suivant, nous allons enregistrer le module `AdminModule` en tant que module parent des modules `DashboardModule` et `MetricsModule`.
 
 ```typescript
 @Module({
@@ -56,7 +53,7 @@ The children modules will inherit their parent's prefix. In the following exampl
 });
 ```
 
-> info **Hint** This feature should be used very carefully, as overusing it can make code difficult to maintain over time.
+> info **Astuce** Cette fonctionnalité doit être utilisée avec précaution, car une utilisation excessive peut rendre le code difficile à maintenir dans le temps.
 
-In the example above, any controller registered inside the `DashboardModule` will have an extra `/admin/dashboard` prefix (as the module concatenates paths from top to bottom - recursively - parent to children).
-Likewise, each controller defined inside the `MetricsModule` will have an additional module-level prefix `/admin/metrics`.
+Dans l'exemple ci-dessus, tout contrôleur enregistré dans le `DashboardModule` aura un préfixe supplémentaire `/admin/dashboard` (car le module concatène les chemins de haut en bas - récursivement - du parent aux enfants).
+De même, chaque contrôleur défini à l'intérieur du `MetricsModule` aura un préfixe supplémentaire au niveau du module `/admin/metrics`.
