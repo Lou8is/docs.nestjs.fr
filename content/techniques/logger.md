@@ -33,7 +33,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-Les valeurs du tableau peuvent être n'importe quelle combinaison de `'log'`, `'error'`, `'warn'`, `'debug'`, et `'verbose'`.
+Les valeurs du tableau peuvent être n'importe quelle combinaison de `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, et `'verbose'`.
 
 > info **Astuce** Pour désactiver la couleur dans les messages de l'enregistreur par défaut, définissez la variable d'environnement `NO_COLOR` avec une chaîne de caractères non vide.
 
@@ -58,6 +58,11 @@ export class MyLogger implements LoggerService {
    * Écrit un journal de niveau "log".
    */
   log(message: any, ...optionalParams: any[]) {}
+
+  /**
+   * Écrit un journal de niveau "fatal" (erreur fatale).
+   */
+  fatal(message: any, ...optionalParams: any[]) {}
 
   /**
    * Écrit un journal de niveau "error" (erreur).
