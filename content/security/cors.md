@@ -1,6 +1,6 @@
 ### CORS
 
-Cross-origin resource sharing (CORS) (littéralement " partage de ressources entre origines multiples ") est un mécanisme qui permet de demander des ressources à un autre domaine. Sous le capot, Nest utilise le package Express [cors](https://github.com/expressjs/cors). Ce package fournit diverses options que vous pouvez personnaliser en fonction de vos besoins.
+Cross-origin resource sharing (CORS) (littéralement " partage de ressources entre origines multiples ") est un mécanisme qui permet de demander des ressources à un autre domaine. Sous le capot, Nest utilise les packages Express [cors](https://github.com/expressjs/cors) ou Fastify [@fastify/cors](https://github.com/fastify/fastify-cors) en fonction de la plateforme utilisée. Ces packages fournissent diverses options que vous pouvez personnaliser en fonction de vos besoins.
 
 #### Pour commencer
 
