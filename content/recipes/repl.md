@@ -1,11 +1,11 @@
 ### Read-Eval-Print-Loop (REPL)
 
-REPL is a simple interactive environment that takes single user inputs, executes them, and returns the result to the user.
-The REPL feature lets you inspect your dependency graph and call methods on your providers (and controllers) directly from your terminal.
+REPL est un environnement interactif simple qui prend des entrées utilisateur uniques, les exécute et renvoie le résultat à l'utilisateur.
+La fonction REPL vous permet d'inspecter votre graphe de dépendance et d'appeler des méthodes sur vos fournisseurs (et contrôleurs) directement depuis votre terminal.
 
 #### Usage
 
-To run your NestJS application in REPL mode, create a new `repl.ts` file (alongside the existing `main.ts` file) and add the following code inside:
+Pour exécuter votre application NestJS en mode REPL, créez un nouveau fichier `repl.ts` (à côté du fichier `main.ts` existant) et ajoutez le code suivant à l'intérieur :
 
 ```typescript
 @@filename(repl)
@@ -26,15 +26,15 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Now in your terminal, start the REPL with the following command:
+Maintenant, dans votre terminal, démarrez le REPL avec la commande suivante :
 
 ```bash
 $ npm run start -- --entryFile repl
 ```
 
-> info **Hint** `repl` returns a [Node.js REPL server](https://nodejs.org/api/repl.html) object.
+> info **Astuce** `repl` renvoie un objet [serveur Node.js REPL](https://nodejs.org/api/repl.html).
 
-Once it's up and running, you should see the following message in your console:
+Une fois qu'il est opérationnel, vous devriez voir le message suivant dans votre console :
 
 ```bash
 LOG [NestFactory] Starting Nest application...
@@ -42,14 +42,14 @@ LOG [InstanceLoader] AppModule dependencies initialized
 LOG REPL initialized
 ```
 
-And now you can start interacting with your dependencies graph. For instance, you can retrieve an `AppService` (we are using the starter project as an example here) and call the `getHello()` method:
+Et maintenant vous pouvez commencer à interagir avec votre graphe de dépendances. Par exemple, vous pouvez récupérer un `AppService` (nous utilisons le projet starter comme exemple ici) et appeler la méthode `getHello()` :
 
 ```typescript
 > get(AppService).getHello()
 'Hello World!'
 ```
 
-You can execute any JavaScript code from within your terminal, for example, assign an instance of the `AppController` to a local variable, and use `await` to call an asynchronous method:
+Vous pouvez exécuter n'importe quel code JavaScript depuis votre terminal, par exemple, assigner une instance de `AppController` à une variable locale, et utiliser `await` pour appeler une méthode asynchrone :
 
 ```typescript
 > appController = get(AppController)
@@ -58,7 +58,7 @@ AppController { appService: AppService {} }
 'Hello World!'
 ```
 
-To display all public methods available on a given provider or controller, use the `methods()` function, as follows:
+Pour afficher toutes les méthodes publiques disponibles sur un fournisseur ou un contrôleur donné, utilisez la fonction `methods()`, comme suit :
 
 ```typescript
 > methods(AppController)
@@ -67,7 +67,7 @@ Methods:
  ◻ getHello
 ```
 
-To print all registered modules as a list together with their controllers and providers, use `debug()`.
+Pour afficher tous les modules enregistrés sous forme de liste avec leurs contrôleurs et fournisseurs, utilisez `debug()`.
 
 ```typescript
 > debug()
@@ -79,18 +79,18 @@ AppModule:
   ◻ AppService
 ```
 
-Quick demo:
+Démo rapide :
 
-<figure><img src="/assets/repl.gif" alt="REPL example" /></figure>
+<figure><img src="/assets/repl.gif" alt="Exemple REPL" /></figure>
 
-You can find more information about the existing, predefined native methods in the section below.
+Vous trouverez plus d'informations sur les méthodes natives prédéfinies existantes dans la section ci-dessous.
 
-#### Native functions
+#### Fonctions natives
 
-The built-in NestJS REPL comes with a few native functions that are globally available when you start REPL. You can call `help()` to list them out.
+Le REPL NestJS intégré est livré avec quelques fonctions natives qui sont globalement disponibles lorsque vous démarrez le REPL. Vous pouvez appeler `help()` pour les énumérer.
 
-If you don't recall what's the signature (ie: expected parameters and a return type) of a function, you can call `<function_name>.help`.
-For instance:
+Si vous ne vous souvenez pas de la signature (c'est-à-dire des paramètres attendus et du type de retour) d'une fonction, vous pouvez appeler `<nom_de_la_fonction>.help`.
+Par exemple :
 
 ```text
 > $.help
@@ -98,26 +98,26 @@ Retrieves an instance of either injectable or controller, otherwise, throws exce
 Interface: $(token: InjectionToken) => any
 ```
 
-> info **Hint** Those function interfaces are written in [TypeScript function type expression syntax](https://www.typescriptlang.org/docs/handbook/2/functions.html#function-type-expressions).
+> info **Astuce** Ces interfaces de fonction sont écrites en [syntaxe d'expression de type de fonction TypeScript](https://www.typescriptlang.org/docs/handbook/2/functions.html#function-type-expressions).
 
-| Function     | Description                                                                                                        | Signature                                                             |
-| ------------ | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| `debug`      | Print all registered modules as a list together with their controllers and providers.                              | `debug(moduleCls?: ClassRef \| string) => void`                       |
-| `get` or `$` | Retrieves an instance of either injectable or controller, otherwise, throws exception.                             | `get(token: InjectionToken) => any`                                   |
-| `methods`    | Display all public methods available on a given provider or controller.                                            | `methods(token: ClassRef \| string) => void`                          |
-| `resolve`    | Resolves transient or request-scoped instance of either injectable or controller, otherwise, throws exception.     | `resolve(token: InjectionToken, contextId: any) => Promise<any>`      |
-| `select`     | Allows navigating through the modules tree, for example, to pull out a specific instance from the selected module. | `select(token: DynamicModule \| ClassRef) => INestApplicationContext` |
+| Fonction     | Description                                                                                                                  | Signature                                                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `debug`      | Affiche tous les modules enregistrés sous forme de liste, avec leurs contrôleurs et leurs fournisseurs.                      | `debug(moduleCls?: ClassRef \| string) => void`                       |
+| `get` ou `$` | Récupère une instance d'injectable ou de contrôleur, sinon, lève une exception.                                              | `get(token: InjectionToken) => any`                                   |
+| `methods`    | Affiche toutes les méthodes publiques disponibles pour un fournisseur ou un contrôleur donné.                                | `methods(token: ClassRef \| string) => void`                          |
+| `resolve`    | Résout l'instance transitoire ou à portée de requête de l'injectable ou du contrôleur, sinon lève une exception.             | `resolve(token: InjectionToken, contextId: any) => Promise<any>`      |
+| `select`     | Permet de naviguer dans l'arborescence des modules, par exemple pour extraire une instance spécifique du module sélectionné. | `select(token: DynamicModule \| ClassRef) => INestApplicationContext` |
 
-#### Watch mode
+#### Mode de surveillance
 
-During development it is useful to run REPL in a watch mode to reflect all the code changes automatically:
+Pendant le développement, il est utile d'exécuter REPL en mode veille pour refléter automatiquement toutes les modifications du code :
 
 ```bash
 $ npm run start -- --watch --entryFile repl
 ```
 
-This has one flaw, the REPL's command history is discarded after each reload which might be cumbersome.
-Fortunately, there is a very simple solution. Modify your `bootstrap` function like this:
+Cela a un défaut, l'historique des commandes du REPL est supprimé après chaque rechargement, ce qui peut s'avérer fastidieux.
+Heureusement, il existe une solution très simple. Modifiez votre fonction `bootstrap` comme suit :
 
 ```typescript
 async function bootstrap() {
@@ -130,4 +130,4 @@ async function bootstrap() {
 }
 ```
 
-Now the history is preserved between the runs/reloads.
+Désormais, l'historique est préservé entre les exécutions/rechargements.
