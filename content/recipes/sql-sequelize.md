@@ -2,7 +2,7 @@
 
 ##### Ce chapitre ne s'applique uniquement à TypeScript
 
-> **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le paquet **Sequelize** à partir de zéro en utilisant des composants personnalisés. En conséquence, cette technique contient beaucoup de surcharge que vous pouvez éviter en utilisant le paquetage dédié et prêt à l'emploi `@nestjs/sequelize`. Pour en savoir plus, voir [ici](/techniques/database#intégration-sequelize).
+> **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le paquet **Sequelize** à partir de zéro en utilisant des composants personnalisés. En conséquence, cette technique contient beaucoup de surcharge que vous pouvez éviter en utilisant le package dédié et prêt à l'emploi `@nestjs/sequelize`. Pour en savoir plus, voir [ici](/techniques/database#intégration-sequelize).
 
 [Sequelize](https://github.com/sequelize/sequelize) est un ORM (Object Relational Mapper) populaire écrit en JavaScript classique, mais il existe un [sequelize-typescript](https://github.com/RobinBuschmann/sequelize-typescript) wrapper TypeScript qui fournit un ensemble de décorateurs et d'autres extras pour le sequelize de base.
 
