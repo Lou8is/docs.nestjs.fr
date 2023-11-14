@@ -65,11 +65,11 @@ export class MyService {
 
 > info **Info** Notez que le `EntityManager` est importé depuis le package `@mikro-orm/driver`, où driver est `mysql`, `sqlite`, `postgres` ou tout autre driver que vous utilisez. Dans le cas où vous avez `@mikro-orm/knex` installé comme dépendance, vous pouvez aussi importer le `EntityManager` à partir de là.
 
-#### Dépôts
+#### Repository pattern
 
-MikroORM prend en charge le modèle de conception des dépôts. Pour chaque entité, nous pouvons créer un dépôt. Lisez la documentation complète sur les dépôts [ici] (https://mikro-orm.io/docs/repositories). Pour définir quels dépôts doivent être enregistrés dans la portée courante, vous pouvez utiliser la méthode `forFeature()`. Par exemple, de cette façon :
+MikroORM prend en charge le Repository pattern. Pour chaque entité, nous pouvons créer un Repository. Lisez la documentation complète sur les Repositories [ici] (https://mikro-orm.io/docs/repositories). Pour définir quels Repositories doivent être enregistrés dans la portée courante, vous pouvez utiliser la méthode `forFeature()`. Par exemple, de cette façon :
 
-> info **Info** Vous ne devriez **pas** enregistrer vos entités de base via `forFeature()`, car il n'y a pas de dépôt pour celles-ci. D'un autre côté, les entités de base doivent faire partie de la liste dans `forRoot()` (ou dans la configuration de l'ORM en général).
+> info **Info** Vous ne devriez **pas** enregistrer vos entités de base via `forFeature()`, car il n'y a pas de Repository pour celles-ci. D'un autre côté, les entités de base doivent faire partie de la liste dans `forRoot()` (ou dans la configuration de l'ORM en général).
 
 ```typescript
 // photo.module.ts
@@ -103,18 +103,18 @@ export class PhotoService {
 }
 ```
 
-#### Utilisation de dépôts personnalisés
+#### Utilisation de Repositories personnalisés
 
-Lorsque nous utilisons des dépôts personnalisés, nous pouvons contourner le besoin du décorateur `@InjectRepository()`
-en nommant nos dépôts de la même manière que la méthode `getRepositoryToken()` :
+Lorsque nous utilisons des Repositories personnalisés, nous pouvons contourner le besoin du décorateur `@InjectRepository()`
+en nommant nos Repositories de la même manière que la méthode `getRepositoryToken()` :
 
 ```ts
 export const getRepositoryToken = <T>(entity: EntityName<T>) =>
   `${Utils.className(entity)}Repository`;
 ```
 
-En d'autres termes, tant que nous nommons le dépôt de la même manière que l'entité est appelée,
-en ajoutant le suffixe `Repository`, le dépôt sera enregistré automatiquement dans
+En d'autres termes, tant que nous nommons le Repository de la même manière que l'entité est appelée,
+en ajoutant le suffixe `Repository`, le Repository sera enregistré automatiquement dans
 le conteneur Nest DI.
 
 ```ts
@@ -132,8 +132,7 @@ export class AuthorRepository extends EntityRepository<Author> {
 }
 ```
 
-Comme le nom du référentiel personnalisé est le même que celui que `getRepositoryToken()` retournerait, nous n'avons plus besoin du décorateur `@InjectRepository()`.
-nous n'avons plus besoin du décorateur `@InjectRepository()` :
+Comme le nom du Repository personnalisé est le même que celui que `getRepositoryToken()` retournerait, nous n'avons plus besoin du décorateur `@InjectRepository()`.
 
 ```ts
 @Injectable()
@@ -162,9 +161,7 @@ Notez cependant que les chemins globaux ne sont pas supportés par webpack, donc
 export class AppModule {}
 ```
 
-Si cette option est spécifiée, chaque entité enregistrée via la méthode `forFeature()`
-sera automatiquement ajoutée au tableau des entités de l'objet configuration
-de l'objet configuration.
+Si cette option est spécifiée, chaque entité enregistrée via la méthode `forFeature()` sera automatiquement ajoutée au tableau des entités de l'objet configuration.
 
 > info **Info** Notez que les entités qui ne sont pas enregistrées via la méthode `forFeature()`, mais qui sont seulement référencées à partir de l'entité (via une relation), ne seront pas incluses par le biais du paramètre `autoLoadEntities`.
 
