@@ -1,20 +1,20 @@
 ### SQL (TypeORM)
 
-##### This chapter applies only to TypeScript
+##### Ce chapitre ne s'applique uniquement à TypeScript
 
-> **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **TypeORM** package from scratch using custom providers mechanism. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
+> **Warning** **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le paquet **TypeORM** package à partir de zéro en utilisant un mécanisme de fournisseurs personnalisés. En conséquence, cette technique contient beaucoup de surcharge que vous pouvez éviter en utilisant le package dédié et prêt à l'emploi `@nestjs/typeorm`. Pour en savoir plus, voir [ici](/techniques/sql).
 
-[TypeORM](https://github.com/typeorm/typeorm) is definitely the most mature Object Relational Mapper (ORM) available in the node.js world. Since it's written in TypeScript, it works pretty well with the Nest framework.
+[TypeORM] (https://github.com/typeorm/typeorm) est sans aucun doute l'ORM (Object Relational Mapper) le plus mature disponible dans le monde node.js. Comme il est écrit en TypeScript, il fonctionne très bien avec le framework Nest.
 
-#### Getting started
+#### Pour commencer
 
-To start the adventure with this library we have to install all required dependencies:
+Pour commencer l'aventure avec cette bibliothèque, nous devons installer toutes les dépendances nécessaires :
 
 ```bash
 $ npm install --save typeorm mysql2
 ```
 
-The first step we need to do is to establish the connection with our database using `new DataSource().initialize()` class imported from the `typeorm` package. The `initialize()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
+La première étape que nous devons faire est d'établir la connexion avec notre base de données en utilisant la classe `new DataSource().initialize()` importée du package `typeorm`. La fonction `initialize()` retourne une `Promise`, et donc nous devons créer un [fournisseur async](/fundamentals/async-components).
 
 ```typescript
 @@filename(database.providers)
@@ -43,11 +43,11 @@ export const databaseProviders = [
 ];
 ```
 
-> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
+> warning **Attention** Le paramètre `synchronize : true` ne doit pas être utilisé en production - sinon vous pouvez perdre des données de production.
 
-> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> info **Astuce** En suivant les meilleures pratiques, nous avons déclaré le fournisseur personnalisé dans le fichier séparé qui a un suffixe `*.providers.ts`.
 
-Then, we need to export these providers to make them **accessible** for the rest of the application.
+Ensuite, nous devons exporter ces fournisseurs pour les rendre **accessibles** au reste de l'application.
 
 ```typescript
 @@filename(database.module)
@@ -61,13 +61,13 @@ import { databaseProviders } from './database.providers';
 export class DatabaseModule {}
 ```
 
-Now we can inject the `DATA_SOURCE` object using `@Inject()` decorator. Each class that would depend on the `DATA_SOURCE` async provider will wait until a `Promise` is resolved.
+Maintenant nous pouvons injecter l'objet `DATA_SOURCE` en utilisant le décorateur `@Inject()`. Chaque classe qui dépendrait du fournisseur asynchrone `DATA_SOURCE` attendra jusqu'à ce qu'une `Promise` soit résolue.
 
 #### Repository pattern
 
-The [TypeORM](https://github.com/typeorm/typeorm) supports the repository design pattern, thus each entity has its own Repository. These repositories can be obtained from the database connection.
+Le [TypeORM](https://github.com/typeorm/typeorm) prend en charge le Repository pattern, de sorte que chaque entité dispose de son propre Repository. Ces Repositorys peuvent être obtenus à partir de la connexion à la base de données.
 
-But firstly, we need at least one entity. We are going to reuse the `Photo` entity from the official documentation.
+Mais tout d'abord, nous avons besoin d'au moins une entité. Nous allons réutiliser l'entité `Photo` de la documentation officielle.
 
 ```typescript
 @@filename(photo.entity)
@@ -95,7 +95,7 @@ export class Photo {
 }
 ```
 
-The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. Now, let's create a **Repository** provider:
+L'entité `Photo` appartient au répertoire `photo`. Ce répertoire représente le `PhotoModule`. Maintenant, créons un fournisseur **Repository** :
 
 ```typescript
 @@filename(photo.providers)
@@ -111,9 +111,9 @@ export const photoProviders = [
 ];
 ```
 
-> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATA_SOURCE` should be kept in the separated `constants.ts` file.
+> warning **Attention** Dans les applications réelles, vous devriez éviter les **magic strings**. Les deux fichiers `PHOTO_REPOSITORY` et `DATA_SOURCE` doivent être conservés dans le fichier séparé `constants.ts`.
 
-Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
+Nous pouvons maintenant injecter le `Repository<Photo>` dans le `PhotoService` en utilisant le décorateur `@Inject()` :
 
 ```typescript
 @@filename(photo.service)
@@ -134,9 +134,9 @@ export class PhotoService {
 }
 ```
 
-The database connection is **asynchronous**, but Nest makes this process completely invisible for the end-user. The `PhotoRepository` is waiting for the db connection, and the `PhotoService` is delayed until repository is ready to use. The entire application can start when each class is instantiated.
+La connexion à la base de données est **asynchrone**, mais Nest rend ce processus complètement invisible pour l'utilisateur final. Le `PhotoRepository` attend la connexion à la base de données, et le `PhotoService` est retardé jusqu'à ce que le repository soit prêt à être utilisé. L'application entière peut démarrer lorsque chaque classe est instanciée.
 
-Here is a final `PhotoModule`:
+Voici un `PhotoModule` final :
 
 ```typescript
 @@filename(photo.module)
@@ -155,4 +155,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> info **Hint** Do not forget to import the `PhotoModule` into the root `AppModule`.
+> info **Astuce** N'oubliez pas d'importer le `PhotoModule` dans la racine `AppModule`.
