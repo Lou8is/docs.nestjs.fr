@@ -159,7 +159,7 @@ export interface Cat extends Document {
 
 La connexion à la base de données est **asynchrone**, mais Nest rend ce processus complètement invisible pour l'utilisateur final. La classe `CatModel` attend la connexion à la base de données, et le `CatsService` est retardé jusqu'à ce que le modèle soit prêt à être utilisé. L'application entière peut démarrer lorsque chaque classe est instanciée.
 
-Voici un dernier `CatsModule` :
+Voici la version finale de `CatsModule` :
 
 ```typescript
 @@filename(cats.module)
