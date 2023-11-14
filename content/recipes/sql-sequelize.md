@@ -1,21 +1,21 @@
 ### SQL (Sequelize)
 
-##### This chapter applies only to TypeScript
+##### Ce chapitre ne s'applique uniquement à TypeScript
 
-> **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Sequelize** package from scratch using custom components. As a consequence, this technique contains a lot of overhead that you can avoid by using the dedicated, out-of-the-box `@nestjs/sequelize` package. To learn more, see [here](/techniques/database#sequelize-integration).
+> **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le paquet **Sequelize** à partir de zéro en utilisant des composants personnalisés. En conséquence, cette technique contient beaucoup de surcharge que vous pouvez éviter en utilisant le paquetage dédié et prêt à l'emploi `@nestjs/sequelize`. Pour en savoir plus, voir [ici](/techniques/database#intégration-sequelize).
 
-[Sequelize](https://github.com/sequelize/sequelize) is a popular Object Relational Mapper (ORM) written in a vanilla JavaScript, but there is a [sequelize-typescript](https://github.com/RobinBuschmann/sequelize-typescript) TypeScript wrapper which provides a set of decorators and other extras for the base sequelize.
+[Sequelize](https://github.com/sequelize/sequelize) est un ORM (Object Relational Mapper) populaire écrit en JavaScript classique, mais il existe un [sequelize-typescript](https://github.com/RobinBuschmann/sequelize-typescript) wrapper TypeScript qui fournit un ensemble de décorateurs et d'autres extras pour le sequelize de base.
 
-#### Getting started
+#### Pour commencer
 
-To start the adventure with this library we have to install the following dependencies:
+Pour commencer l'aventure avec cette bibliothèque, nous devons installer les dépendances suivantes :
 
 ```bash
 $ npm install --save sequelize sequelize-typescript mysql2
 $ npm install --save-dev @types/sequelize
 ```
 
-The first step we need to do is create a **Sequelize** instance with an options object passed into the constructor. Also, we need to add all models (the alternative is to use `modelPaths` property) and `sync()` our database tables.
+La première étape est de créer une instance **Sequelize** avec un objet options passé dans le constructeur. Nous devons également ajouter tous les modèles (l'alternative est d'utiliser la propriété `modelPaths`) et `sync()` nos tables de base de données.
 
 ```typescript
 @@filename(database.providers)
@@ -31,7 +31,7 @@ export const databaseProviders = [
         host: 'localhost',
         port: 3306,
         username: 'root',
-        password: 'password',
+        password: 'motdepasse',
         database: 'nest',
       });
       sequelize.addModels([Cat]);
@@ -42,9 +42,9 @@ export const databaseProviders = [
 ];
 ```
 
-> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> info **Astuce** En suivant les meilleures pratiques, nous avons déclaré le fournisseur personnalisé dans le fichier séparé qui a un suffixe `*.providers.ts`.
 
-Then, we need to export these providers to make them **accessible** for the rest part of the application.
+Ensuite, nous devons exporter ces fournisseurs pour les rendre **accessibles** pour le reste de l'application.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -57,11 +57,11 @@ import { databaseProviders } from './database.providers';
 export class DatabaseModule {}
 ```
 
-Now we can inject the `Sequelize` object using `@Inject()` decorator. Each class that would depend on the `Sequelize` async provider will wait until a `Promise` is resolved.
+Maintenant nous pouvons injecter l'objet `Sequelize` en utilisant le décorateur `@Inject()`. Chaque classe qui dépendrait du fournisseur asynchrone `Sequelize` attendra jusqu'à ce qu'une `Promise` soit résolue.
 
-#### Model injection
+#### Injection de modèle
 
-In [Sequelize](https://github.com/sequelize/sequelize) the **Model** defines a table in the database. Instances of this class represent a database row. Firstly, we need at least one entity:
+Dans [Sequelize](https://github.com/sequelize/sequelize), le **Modèle** définit une table dans la base de données. Les instances de cette classe représentent une ligne de la base de données. Tout d'abord, nous avons besoin d'au moins une entité :
 
 ```typescript
 @@filename(cat.entity)
@@ -80,7 +80,7 @@ export class Cat extends Model {
 }
 ```
 
-The `Cat` entity belongs to the `cats` directory. This directory represents the `CatsModule`. Now it's time to create a **Repository** provider:
+L'entité `Cat` appartient au répertoire `cats`. Ce répertoire représente le module `Cats`. Il est maintenant temps de créer un fournisseur **Repository** :
 
 ```typescript
 @@filename(cats.providers)
@@ -94,11 +94,11 @@ export const catsProviders = [
 ];
 ```
 
-> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `CATS_REPOSITORY` and `SEQUELIZE` should be kept in the separated `constants.ts` file.
+> warning **Attention** Dans les applications réelles, vous devriez éviter les **magic strings**. `CATS_REPOSITORY` et `SEQUELIZE` doivent être conservés dans le fichier `constants.ts` séparé.
 
-In Sequelize, we use static methods to manipulate the data, and thus we created an **alias** here.
+Dans Sequelize, nous utilisons des méthodes statiques pour manipuler les données, et nous avons donc créé un **alias** ici.
 
-Now we can inject the `CATS_REPOSITORY` to the `CatsService` using the `@Inject()` decorator:
+Maintenant nous pouvons injecter le `CATS_REPOSITORY` dans le `CatsService` en utilisant le décorateur `@Inject()` :
 
 ```typescript
 @@filename(cats.service)
@@ -119,9 +119,9 @@ export class CatsService {
 }
 ```
 
-The database connection is **asynchronous**, but Nest makes this process completely invisible for the end-user. The `CATS_REPOSITORY` provider is waiting for the db connection, and the `CatsService` is delayed until repository is ready to use. The entire application can start when each class is instantiated.
+La connexion à la base de données est **asynchrone**, mais Nest rend ce processus complètement invisible pour l'utilisateur final. Le fournisseur `CATS_REPOSITORY` attend la connexion à la base de données, et le `CatsService` est retardé jusqu'à ce que le référentiel soit prêt à être utilisé. L'application entière peut démarrer lorsque chaque classe est instanciée.
 
-Here is a final `CatsModule`:
+Voici la version finale de `CatsModule` :
 
 ```typescript
 @@filename(cats.module)
@@ -142,4 +142,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> info **Hint** Do not forget to import the `CatsModule` into the root `AppModule`.
+> info **Astuce** N'oubliez pas d'importer le `CatsModule` dans la racine `AppModule`.
