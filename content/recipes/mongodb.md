@@ -1,18 +1,18 @@
 ### MongoDB (Mongoose)
 
-> **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Mongoose** package from scratch using custom components. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/mongoose` package. To learn more, see [here](/techniques/mongodb).
+> **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le package **Mongoose** à partir de zéro en utilisant des composants personnalisés. En conséquence, cette solution contient beaucoup de surcharge que vous pouvez omettre en utilisant le package dédié `@nestjs/mongoose` prêt à l'emploi et disponible prêt à l'emploi. Pour en savoir plus, voir [ici](/techniques/mongodb).
 
-[Mongoose](https://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
+[Mongoose](https://mongoosejs.com) est l'outil de modélisation d'objets [MongoDB](https://www.mongodb.org/) le plus populaire.
 
-#### Getting started
+#### Pour commencer
 
-To start the adventure with this library we have to install all required dependencies:
+Pour commencer l'aventure avec cette bibliothèque, nous devons installer toutes les dépendances nécessaires :
 
 ```typescript
 $ npm install --save mongoose
 ```
 
-The first step we need to do is to establish the connection with our database using `connect()` function. The `connect()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
+La première étape est d'établir une connexion avec notre base de données en utilisant la fonction `connect()`. La fonction `connect()` retourne une `Promise`, et donc nous devons créer un [async provider](/fundamentals/async-components).
 
 ```typescript
 @@filename(database.providers)
@@ -36,9 +36,9 @@ export const databaseProviders = [
 ];
 ```
 
-> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> info **Astuce** En suivant les meilleures pratiques, nous avons déclaré le fournisseur personnalisé dans le fichier séparé qui a un suffixe `*.providers.ts`.
 
-Then, we need to export these providers to make them **accessible** for the rest part of the application.
+Ensuite, nous devons exporter ces fournisseurs pour les rendre **accessibles** pour le reste de l'application.
 
 ```typescript
 @@filename(database.module)
@@ -52,11 +52,11 @@ import { databaseProviders } from './database.providers';
 export class DatabaseModule {}
 ```
 
-Now we can inject the `Connection` object using `@Inject()` decorator. Each class that would depend on the `Connection` async provider will wait until a `Promise` is resolved.
+Maintenant nous pouvons injecter l'objet `Connection` en utilisant le décorateur `@Inject()`. Chaque classe qui dépendrait du fournisseur asynchrone `Connection` attendra jusqu'à ce qu'une `Promise` soit résolue.
 
-#### Model injection
+#### Injection de modèle
 
-With Mongoose, everything is derived from a [Schema](https://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
+Avec Mongoose, tout est dérivé d'un [Schema](https://mongoosejs.com/docs/guide.html). Définissons le `CatSchema` :
 
 ```typescript
 @@filename(schemas/cat.schema)
@@ -69,9 +69,9 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `CatsSchema` belongs to the `cats` directory. This directory represents the `CatsModule`.
+Le `CatsSchema` appartient au répertoire `cats`. Ce répertoire représente le `CatsModule`.
 
-Now it's time to create a **Model** provider:
+Il est maintenant temps de créer un fournisseur **Model** :
 
 ```typescript
 @@filename(cats.providers)
@@ -97,9 +97,9 @@ export const catsProviders = [
 ];
 ```
 
-> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Attention** Dans les applications réelles, vous devriez éviter les **magic strings**. Le `CAT_MODEL` et le `DATABASE_CONNECTION` doivent être conservés dans le fichier `constants.ts` séparé.
 
-Now we can inject the `CAT_MODEL` to the `CatsService` using the `@Inject()` decorator:
+Maintenant nous pouvons injecter le `CAT_MODEL` dans le `CatsService` en utilisant le décorateur `@Inject()` :
 
 ```typescript
 @@filename(cats.service)
@@ -145,7 +145,7 @@ export class CatsService {
 }
 ```
 
-In the above example we have used the `Cat` interface. This interface extends the `Document` from the mongoose package:
+Dans l'exemple ci-dessus, nous avons utilisé l'interface `Cat`. Cette interface étend l'interface `Document` du package mongoose :
 
 ```typescript
 import { Document } from 'mongoose';
@@ -157,9 +157,9 @@ export interface Cat extends Document {
 }
 ```
 
-The database connection is **asynchronous**, but Nest makes this process completely invisible for the end-user. The `CatModel` class is waiting for the db connection, and the `CatsService` is delayed until model is ready to use. The entire application can start when each class is instantiated.
+La connexion à la base de données est **asynchrone**, mais Nest rend ce processus complètement invisible pour l'utilisateur final. La classe `CatModel` attend la connexion à la base de données, et le `CatsService` est retardé jusqu'à ce que le modèle soit prêt à être utilisé. L'application entière peut démarrer lorsque chaque classe est instanciée.
 
-Here is a final `CatsModule`:
+Voici un dernier `CatsModule` :
 
 ```typescript
 @@filename(cats.module)
@@ -180,8 +180,8 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> info **Hint** Do not forget to import the `CatsModule` into the root `AppModule`.
+> info **Astuce** N'oubliez pas d'importer le `CatsModule` dans la racine `AppModule`.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/14-mongoose-base).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/14-mongoose-base).
