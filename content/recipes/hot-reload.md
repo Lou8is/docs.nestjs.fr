@@ -6,7 +6,7 @@ L'impact le plus important sur le processus de démarrage de votre application e
 
 ### Avec la CLI
 
-Si vous utilisez la [CLI Nest] (https://docs.nestjs.com/cli/overview), le processus de configuration est assez simple. La CLI intègre `webpack`, qui permet d'utiliser le plugin `HotModuleReplacementPlugin`.
+Si vous utilisez la [CLI Nest](https://docs.nestjs.com/cli/overview), le processus de configuration est assez simple. La CLI intègre `webpack`, qui permet d'utiliser le plugin `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -84,7 +84,7 @@ $ npm run start:dev
 
 ### Sans la CLI
 
-Si vous n'utilisez pas la [CLI Nest] (https://docs.nestjs.com/cli/overview), la configuration sera légèrement plus complexe (elle nécessitera plus d'étapes manuelles).
+Si vous n'utilisez pas la [CLI Nest](https://docs.nestjs.com/cli/overview), la configuration sera légèrement plus complexe (elle nécessitera plus d'étapes manuelles).
 
 #### Installation
 

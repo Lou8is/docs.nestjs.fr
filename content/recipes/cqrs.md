@@ -1,6 +1,6 @@
 ### CQRS
 
-Le flux des applications simples [CRUD] (https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Créer, Lire, Mettre à jour et Supprimer) peut être décrit comme suit :
+Le flux des applications simples [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Créer, Lire, Mettre à jour et Supprimer) peut être décrit comme suit :
 
 1. La couche des contrôleurs traite les demandes HTTP et délègue les tâches à la couche des services.
 2. C'est dans la couche des services que se trouve la majeure partie de la logique d'entreprise.
@@ -14,7 +14,7 @@ Si ce modèle est généralement suffisant pour les applications de petite et mo
 - **Flexibilité**. Le modèle permet d'utiliser différents magasins de données pour les opérations de lecture et d'écriture.
 - **Performance**. Le modèle permet d'utiliser différents magasins de données optimisés pour les opérations de lecture et d'écriture.
 
-Pour faciliter ce modèle, Nest fournit un [module CQRS] léger (https://github.com/nestjs/cqrs). Ce chapitre décrit comment l'utiliser.
+Pour faciliter ce modèle, Nest fournit un [module CQRS](https://github.com/nestjs/cqrs) léger . Ce chapitre décrit comment l'utiliser.
 
 #### Installation
 

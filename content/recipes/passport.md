@@ -12,7 +12,7 @@ Dans ce chapitre, nous allons mettre en œuvre une solution d'authentification d
 
 #### Exigences en matière d'authentification
 
-Précisons nos exigences. Pour ce cas d'utilisation, les clients commenceront par s'authentifier à l'aide d'un nom d'utilisateur et d'un mot de passe. Une fois authentifié, le serveur émettra un JWT qui pourra être envoyé en tant que ["bearer token" dans un en-tête d'autorisation] (https://tools.ietf.org/html/rfc6750) lors des demandes ultérieures pour prouver l'authentification. Nous allons également créer une route protégée qui ne sera accessible qu'aux demandes contenant un JWT valide.
+Précisons nos exigences. Pour ce cas d'utilisation, les clients commenceront par s'authentifier à l'aide d'un nom d'utilisateur et d'un mot de passe. Une fois authentifié, le serveur émettra un JWT qui pourra être envoyé en tant que ["bearer token" dans un en-tête d'autorisation](https://tools.ietf.org/html/rfc6750) lors des demandes ultérieures pour prouver l'authentification. Nous allons également créer une route protégée qui ne sera accessible qu'aux demandes contenant un JWT valide.
 
 Nous commencerons par la première exigence : l'authentification d'un utilisateur. Nous l'étendrons ensuite en émettant un JWT. Enfin, nous créerons une route protégée qui vérifiera que la requête contient un JWT valide.
 
@@ -618,7 +618,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 }
 ```
 
-Avec notre `JwtStrategy`, nous avons suivi la même recette décrite précédemment pour toutes les stratégies Passport. Cette stratégie nécessite une certaine initialisation, ce que nous faisons en passant un objet options dans l'appel `super()`. Vous pouvez en savoir plus sur les options disponibles [ici] (https://github.com/mikenicholson/passport-jwt#configure-strategy). Dans notre cas, ces options sont les suivantes :
+Avec notre `JwtStrategy`, nous avons suivi la même recette décrite précédemment pour toutes les stratégies Passport. Cette stratégie nécessite une certaine initialisation, ce que nous faisons en passant un objet options dans l'appel `super()`. Vous pouvez en savoir plus sur les options disponibles [ici](https://github.com/mikenicholson/passport-jwt#configure-strategy). Dans notre cas, ces options sont les suivantes :
 
 - `jwtFromRequest` : fournit la méthode par laquelle le JWT sera extrait de la `Request`. Nous utiliserons l'approche standard qui consiste à fournir un jeton de porteur dans l'en-tête Authorization de nos demandes d'API. D'autres options sont décrites [ici](https://github.com/mikenicholson/passport-jwt#extracting-the-jwt-from-the-request).
 - `ignoreExpiration` : juste pour être explicite, nous choisissons le paramètre par défaut `false`, qui délègue la responsabilité de s'assurer qu'un JWT n'a pas expiré au module Passport. Cela signifie que si notre route est fournie avec un JWT expiré, la requête sera refusée et une réponse `401 Unauthorized` sera envoyée. Passport s'en occupe automatiquement pour nous.

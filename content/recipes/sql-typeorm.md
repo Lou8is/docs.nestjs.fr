@@ -4,7 +4,7 @@
 
 > **Warning** **Attention** Dans cet article, vous apprendrez comment créer un `DatabaseModule` basé sur le paquet **TypeORM** package à partir de zéro en utilisant un mécanisme de fournisseurs personnalisés. En conséquence, cette technique contient beaucoup de surcharge que vous pouvez éviter en utilisant le package dédié et prêt à l'emploi `@nestjs/typeorm`. Pour en savoir plus, voir [ici](/techniques/sql).
 
-[TypeORM] (https://github.com/typeorm/typeorm) est sans aucun doute l'ORM (Object Relational Mapper) le plus mature disponible dans le monde node.js. Comme il est écrit en TypeScript, il fonctionne très bien avec le framework Nest.
+[TypeORM](https://github.com/typeorm/typeorm) est sans aucun doute l'ORM (Object Relational Mapper) le plus mature disponible dans le monde node.js. Comme il est écrit en TypeScript, il fonctionne très bien avec le framework Nest.
 
 #### Pour commencer
 

@@ -67,7 +67,7 @@ export class MyService {
 
 #### Repository pattern
 
-MikroORM prend en charge le Repository pattern. Pour chaque entité, nous pouvons créer un Repository. Lisez la documentation complète sur les Repositories [ici] (https://mikro-orm.io/docs/repositories). Pour définir quels Repositories doivent être enregistrés dans la portée courante, vous pouvez utiliser la méthode `forFeature()`. Par exemple, de cette façon :
+MikroORM prend en charge le Repository pattern. Pour chaque entité, nous pouvons créer un Repository. Lisez la documentation complète sur les Repositories [ici](https://mikro-orm.io/docs/repositories). Pour définir quels Repositories doivent être enregistrés dans la portée courante, vous pouvez utiliser la méthode `forFeature()`. Par exemple, de cette façon :
 
 > info **Info** Vous ne devriez **pas** enregistrer vos entités de base via `forFeature()`, car il n'y a pas de Repository pour celles-ci. D'un autre côté, les entités de base doivent faire partie de la liste dans `forRoot()` (ou dans la configuration de l'ORM en général).
 
