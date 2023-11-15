@@ -1,28 +1,28 @@
 ### Documentation
 
-**Compodoc** is a documentation tool for Angular applications. Since Nest and Angular share similar project and code structures, **Compodoc** works with Nest applications as well.
+**Compodoc** est un outil de documentation pour les applications Angular. Comme Nest et Angular partagent des structures de projet et de code similaires, **Compodoc** fonctionne également avec les applications Nest.
 
-#### Setup
+#### Mise en place
 
-Setting up Compodoc inside an existing Nest project is very simple. Start by adding the dev-dependency with the following command in your OS terminal:
+L'installation de Compodoc dans un projet Nest existant est très simple. Commencez par ajouter la dépendance dev avec la commande suivante dans le terminal de votre système d'exploitation :
 
 ```bash
 $ npm i -D @compodoc/compodoc
 ```
 
-#### Generation
+#### Génération
 
-Generate project documentation using the following command (npm 6 is required for `npx` support). See [the official documentation](https://compodoc.app/guides/usage.html) for more options.
+Générer la documentation du projet en utilisant la commande suivante (npm 6 est nécessaire pour le support `npx`). Voir [la documentation officielle](https://compodoc.app/guides/usage.html) pour plus d'options.
 
 ```bash
 $ npx @compodoc/compodoc -p tsconfig.json -s
 ```
 
-Open your browser and navigate to [http://localhost:8080](http://localhost:8080). You should see an initial Nest CLI project:
+Ouvrez votre navigateur et accédez à [http://localhost:8080](http://localhost:8080). Vous devriez voir un premier projet Nest CLI :
 
 <figure><img src="/assets/documentation-compodoc-1.jpg" /></figure>
 <figure><img src="/assets/documentation-compodoc-2.jpg" /></figure>
 
-#### Contribute
+#### Contribuer
 
-You can participate and contribute to the Compodoc project [here](https://github.com/compodoc/compodoc).
+Vous pouvez participer et contribuer au projet Compodoc [ici](https://github.com/compodoc/compodoc).

@@ -1,21 +1,21 @@
 ### MikroORM
 
-This recipe is here to help users getting started with MikroORM in Nest. MikroORM is the TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. It is a great alternative to TypeORM and migration from TypeORM should be fairly easy. The complete documentation on MikroORM can be found [here](https://mikro-orm.io/docs).
+Cette recette a pour but d'aider les utilisateurs à démarrer avec MikroORM dans Nest. MikroORM est l'ORM TypeScript pour Node.js basé sur les patterns Data Mapper, Unit of Work et Identity Map. C'est une excellente alternative à TypeORM et la migration depuis TypeORM devrait être assez facile. La documentation complète sur MikroORM est disponible [ici](https://mikro-orm.io/docs).
 
-> info **info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
+> info **Info** `@mikro-orm/nestjs` est un package tiers et n'est pas géré par l'équipe NestJS. Veuillez rapporter tout problème trouvé avec la bibliothèque dans le [dépôt approprié](https://github.com/mikro-orm/nestjs).
 
 #### Installation
 
-Easiest way to integrate MikroORM to Nest is via [`@mikro-orm/nestjs` module](https://github.com/mikro-orm/nestjs).
-Simply install it next to Nest, MikroORM and underlying driver:
+La manière la plus simple d'intégrer MikroORM à Nest est d'utiliser le module [`@mikro-orm/nestjs`](https://github.com/mikro-orm/nestjs).
+Il suffit de l'installer à côté de Nest, MikroORM et du pilote sous-jacent :
 
 ```bash
 $ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mysql # for mysql/mariadb
 ```
 
-MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql/) for all drivers.
+MikroORM supporte également `postgres`, `sqlite`, et `mongo`. Voir la [documentation officielle](https://mikro-orm.io/docs/usage-with-sql/) pour tous les pilotes.
 
-Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
+Une fois le processus d'installation terminé, nous pouvons importer le `MikroOrmModule` dans le `AppModule` racine.
 
 ```typescript
 @Module({
@@ -33,9 +33,9 @@ Once the installation process is completed, we can import the `MikroOrmModule` i
 export class AppModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. Check [this page](https://mikro-orm.io/docs/configuration) for the complete configuration documentation.
+La méthode `forRoot()` accepte le même objet de configuration que `init()` du package MikroORM. Consultez [cette page](https://mikro-orm.io/docs/configuration) pour obtenir la documentation complète sur la configuration.
 
-Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) by creating a configuration file `mikro-orm.config.ts` and then call the `forRoot()` without any arguments. This won't work when you use a build tools that use tree shaking.
+Nous pouvons également [configurer la CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) en créant un fichier de configuration `mikro-orm.config.ts` et en appelant la fonction `forRoot()` sans aucun argument. Cela ne fonctionnera pas si vous utilisez un outil de construction qui utilise le tree shaking.
 
 ```typescript
 @Module({
@@ -47,11 +47,11 @@ Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#
 export class AppModule {}
 ```
 
-Afterward, the `EntityManager` will be available to inject across entire project (without importing any module elsewhere).
+Par la suite, le `EntityManager` sera disponible pour être injecté dans l'ensemble du projet (sans importer aucun module ailleurs).
 
 ```ts
 import { MikroORM } from '@mikro-orm/core';
-// Import EntityManager from your driver package or `@mikro-orm/knex`
+// Importez EntityManager depuis votre package de pilote ou `@mikro-orm/knex`
 import { EntityManager } from '@mikro-orm/mysql';
 
 @Injectable()
@@ -63,14 +63,13 @@ export class MyService {
 }
 ```
 
-> info **info** Notice that the `EntityManager` is imported from the `@mikro-orm/driver` package, where driver is `mysql`, `sqlite`, `postgres` or what driver you are using. In case you have `@mikro-orm/knex` installed as a dependency, you can also import the `EntityManager` from there.
+> info **Info** Notez que le `EntityManager` est importé depuis le package `@mikro-orm/driver`, où driver est `mysql`, `sqlite`, `postgres` ou tout autre driver que vous utilisez. Dans le cas où vous avez `@mikro-orm/knex` installé comme dépendance, vous pouvez aussi importer le `EntityManager` à partir de là.
 
-#### Repositories
+#### Repository pattern
 
-MikroORM supports the repository design pattern. For every entity we can create a repository. Read the complete documentation on repositories [here](https://mikro-orm.io/docs/repositories). To define which repositories should be registered in the current scope you can use the `forFeature()` method. For example, in this way:
+MikroORM prend en charge le Repository pattern. Pour chaque entité, nous pouvons créer un Repository. Lisez la documentation complète sur les Repositories [ici](https://mikro-orm.io/docs/repositories). Pour définir quels Repositories doivent être enregistrés dans la portée courante, vous pouvez utiliser la méthode `forFeature()`. Par exemple, de cette façon :
 
-> info **info** You should **not** register your base entities via `forFeature()`, as there are no
-> repositories for those. On the other hand, base entities need to be part of the list in `forRoot()` (or in the ORM config in general).
+> info **Info** Vous ne devriez **pas** enregistrer vos entités de base via `forFeature()`, car il n'y a pas de Repository pour celles-ci. D'un autre côté, les entités de base doivent faire partie de la liste dans `forRoot()` (ou dans la configuration de l'ORM en général).
 
 ```typescript
 // photo.module.ts
@@ -82,7 +81,7 @@ MikroORM supports the repository design pattern. For every entity we can create 
 export class PhotoModule {}
 ```
 
-and import it into the root `AppModule`:
+et l'importer dans la racine `AppModule` :
 
 ```typescript
 // app.module.ts
@@ -92,7 +91,7 @@ and import it into the root `AppModule`:
 export class AppModule {}
 ```
 
-In this way we can inject the `PhotoRepository` to the `PhotoService` using the `@InjectRepository()` decorator:
+De cette façon, nous pouvons injecter le `PhotoRepository` dans le `PhotoService` en utilisant le décorateur `@InjectRepository()` :
 
 ```typescript
 @Injectable()
@@ -104,37 +103,36 @@ export class PhotoService {
 }
 ```
 
-#### Using custom repositories
+#### Utilisation de Repositories personnalisés
 
-When using custom repositories, we can get around the need for `@InjectRepository()`
-decorator by naming our repositories the same way as `getRepositoryToken()` method do:
+Lorsque nous utilisons des Repositories personnalisés, nous pouvons contourner le besoin du décorateur `@InjectRepository()`
+en nommant nos Repositories de la même manière que la méthode `getRepositoryToken()` :
 
 ```ts
 export const getRepositoryToken = <T>(entity: EntityName<T>) =>
   `${Utils.className(entity)}Repository`;
 ```
 
-In other words, as long as we name the repository same was as the entity is called,
-appending `Repository` suffix, the repository will be registered automatically in
-the Nest DI container.
+En d'autres termes, tant que nous nommons le Repository de la même manière que l'entité est appelée,
+en ajoutant le suffixe `Repository`, le Repository sera enregistré automatiquement dans
+le conteneur Nest DI.
 
 ```ts
 // `**./author.entity.ts**`
 @Entity()
 export class Author {
-  // to allow inference in `em.getRepository()`
+  // pour permettre l'inférence dans `em.getRepository()`
   [EntityRepositoryType]?: AuthorRepository;
 }
 
 // `**./author.repository.ts**`
 @Repository(Author)
 export class AuthorRepository extends EntityRepository<Author> {
-  // your custom methods...
+  // vos méthodes personnalisées...
 }
 ```
 
-As the custom repository name is the same as what `getRepositoryToken()` would
-return, we do not need the `@InjectRepository()` decorator anymore:
+Comme le nom du Repository personnalisé est le même que celui que `getRepositoryToken()` retournerait, nous n'avons plus besoin du décorateur `@InjectRepository()`.
 
 ```ts
 @Injectable()
@@ -143,20 +141,13 @@ export class MyService {
 }
 ```
 
-#### Load entities automatically
+#### Chargement automatique des entités
 
-> info **info** `autoLoadEntities` option was added in v4.1.0
+> info **Info** L'option `autoLoadEntities` a été ajoutée dans la version 4.1.0
 
-Manually adding entities to the entities array of the connection options can be
-tedious. In addition, referencing entities from the root module breaks application
-domain boundaries and causes leaking implementation details to other parts of the
-application. To solve this issue, static glob paths can be used.
+L'ajout manuel d'entités au tableau d'entités des options de connexion peut s'avérer fastidieux. En outre, le référencement d'entités à partir du module racine ne respecte pas les limites du domaine d'application et entraîne des fuites de détails d'implémentation vers d'autres parties de l'application. Pour résoudre ce problème, il est possible d'utiliser des chemins globaux statiques.
 
-Note, however, that glob paths are not supported by webpack, so if you are building
-your application within a monorepo, you won't be able to use them. To address this
-issue, an alternative solution is provided. To automatically load entities, set the
-`autoLoadEntities` property of the configuration object (passed into the `forRoot()`
-method) to `true`, as shown below:
+Notez cependant que les chemins globaux ne sont pas supportés par webpack, donc si vous construisez votre application dans une monorepo, vous ne pourrez pas les utiliser. Pour résoudre ce problème, une solution alternative est fournie. Pour charger automatiquement les entités, mettez la propriété `autoLoadEntities` de l'objet de configuration (passé dans la méthode `forRoot()`) à `true`, comme montré ci-dessous :
 
 ```ts
 @Module({
@@ -170,55 +161,44 @@ method) to `true`, as shown below:
 export class AppModule {}
 ```
 
-With that option specified, every entity registered through the `forFeature()`
-method will be automatically added to the entities array of the configuration
-object.
+Si cette option est spécifiée, chaque entité enregistrée via la méthode `forFeature()` sera automatiquement ajoutée au tableau des entités de l'objet configuration.
 
-> info **info** Note that entities that aren't registered through the `forFeature()` method, but
-> are only referenced from the entity (via a relationship), won't be included by
-> way of the `autoLoadEntities` setting.
+> info **Info** Notez que les entités qui ne sont pas enregistrées via la méthode `forFeature()`, mais qui sont seulement référencées à partir de l'entité (via une relation), ne seront pas incluses par le biais du paramètre `autoLoadEntities`.
 
-> info **info** Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we
-> still need CLI config with the full list of entities. On the other hand, we can
-> use globs there, as the CLI won't go thru webpack.
+> info **Info** L'utilisation de `autoLoadEntities` n'a pas non plus d'effet sur le CLI de MikroORM - pour cela nous avons toujours besoin de la configuration du CLI avec la liste complète des entités. D'un autre côté, nous pouvons utiliser des globs, car le CLI ne passera pas par webpack.
 
-#### Serialization
+#### Sérialisation
 
-> warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This will make [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, all of their relations will NOT be serialized.
+> warning **Note** MikroORM enveloppe chaque relation d'entité dans un objet `Reference<T>` ou `Collection<T>`, afin de fournir une meilleure sécurité de type. Cela rendra [le sérialiseur intégré de Nest](/techniques/serialization) aveugle à toutes les relations enveloppées. En d'autres termes, si vous renvoyez des entités MikroORM à partir de vos gestionnaires HTTP ou WebSocket, toutes leurs relations ne seront PAS sérialisées.
 
-Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/serializing) which can be used in lieu of `ClassSerializerInterceptor`.
+Heureusement, MikroORM fournit une [API de sérialisation](https://mikro-orm.io/docs/serializing) qui peut être utilisée à la place de `ClassSerializerInterceptor`.
 
 ```typescript
 @Entity()
 export class Book {
-  @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
+  @Property({ hidden: true }) // Équivalent du transformateur de classe `@Exclude`
   hiddenField = Date.now();
 
-  @Property({ persist: false }) // Similar to class-transformer's `@Expose()`. Will only exist in memory, and will be serialized.
+  @Property({ persist: false }) // Similaire à la fonction `@Expose()` du transformateur de classe. N'existera qu'en mémoire et sera sérialisé.
   count?: number;
 
   @ManyToOne({
     serializer: (value) => value.name,
     serializedName: 'authorName',
-  }) // Equivalent of class-transformer's `@Transform()`
+  }) // Équivalent du transformateur de classe `@Transform()`
   author: Author;
 }
 ```
 
-#### Request scoped handlers in queues
+#### Gestionnaires de requêtes dans les files d'attente
 
-> info **info** `@UseRequestContext()` decorator was added in v4.1.0
+> info **Info** Le décorateur `@UseRequestContext()` a été ajouté dans la version 4.1.0
 
-As mentioned in the [docs](https://mikro-orm.io/docs/identity-map), we need a clean state for each request. That is handled automatically thanks to the `RequestContext` helper registered via middleware.
+Comme mentionné dans les [docs](https://mikro-orm.io/docs/identity-map), nous avons besoin d'un état propre pour chaque requête. Cela est géré automatiquement grâce à l'aide `RequestContext` enregistrée par le middleware.
 
-But middlewares are executed only for regular HTTP request handles, what if we need
-a request scoped method outside of that? One example of that is queue handlers or
-scheduled tasks.
+Mais les middlewares ne sont exécutés que pour les requêtes HTTP normales, que se passe-t-il si nous avons besoin d'une méthode à portée de requête en dehors de cela ? Les gestionnaires de file d'attente ou les tâches planifiées en sont un exemple.
 
-We can use the `@UseRequestContext()` decorator. It requires you to first inject the
-`MikroORM` instance to current context, it will be then used to create the context
-for you. Under the hood, the decorator will register new request context for your
-method and execute it inside the context.
+Nous pouvons utiliser le décorateur `@UseRequestContext()`. Il vous faut d'abord injecter l'instance `MikroORM` dans le contexte courant, elle sera ensuite utilisée pour créer le contexte pour vous. Sous le capot, le décorateur va enregistrer un nouveau contexte de requête pour votre méthode et l'exécuter à l'intérieur du contexte.
 
 ```ts
 @Injectable()
@@ -227,26 +207,25 @@ export class MyService {
 
   @UseRequestContext()
   async doSomething() {
-    // this will be executed in a separate context
+    // cette opération sera exécutée dans un contexte distinct
   }
 }
 ```
 
-#### Using `AsyncLocalStorage` for request context
+#### Utilisation de `AsyncLocalStorage` pour le contexte de la requête
 
-By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
-you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
+Par défaut, l'api `domain` est utilisée dans l'aide `RequestContext`. Depuis `@mikro-orm/core@4.0.3`, vous pouvez aussi utiliser le nouveau `AsyncLocalStorage`, si vous êtes sur une version de node à jour :
 
 ```typescript
-// create new (global) storage instance
+// créé une nouvelle instance de stockage (globale)
 const storage = new AsyncLocalStorage<EntityManager>();
 
 @Module({
   imports: [
     MikroOrmModule.forRoot({
       // ...
-      registerRequestContext: false, // disable automatic middleware
-      context: () => storage.getStore(), // use our AsyncLocalStorage instance
+      registerRequestContext: false, // désactive l'intergiciel automatique
+      context: () => storage.getStore(), // utilise notre instance AsyncLocalStorage
     }),
   ],
   controllers: [AppController],
@@ -254,7 +233,7 @@ const storage = new AsyncLocalStorage<EntityManager>();
 })
 export class AppModule {}
 
-// register the request context middleware
+// enregistre le middleware du contexte de la demande
 const app = await NestFactory.create(AppModule, { ... });
 const orm = app.get(MikroORM);
 
@@ -263,9 +242,9 @@ app.use((req, res, next) => {
 });
 ```
 
-#### Testing
+#### Tests
 
-The `@mikro-orm/nestjs` package exposes `getRepositoryToken()` function that returns prepared token based on a given entity to allow mocking the repository.
+Le package `@mikro-orm/nestjs` expose la fonction `getRepositoryToken()` qui renvoie un jeton préparé basé sur une entité donnée pour permettre de simuler le dépôt.
 
 ```typescript
 @Module({
@@ -280,6 +259,6 @@ The `@mikro-orm/nestjs` package exposes `getRepositoryToken()` function that ret
 export class PhotoModule {}
 ```
 
-#### Example
+#### Exemple
 
-A real world example of NestJS with MikroORM can be found [here](https://github.com/mikro-orm/nestjs-realworld-example-app)
+Un exemple concret de NestJS avec MikroORM est disponible [ici](https://github.com/mikro-orm/nestjs-realworld-example-app)

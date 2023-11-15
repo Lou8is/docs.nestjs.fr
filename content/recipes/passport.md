@@ -1,62 +1,62 @@
-### Passport (authentication)
+### Passport (authentification)
 
-[Passport](https://github.com/jaredhanson/passport) is the most popular node.js authentication library, well-known by the community and successfully used in many production applications. It's straightforward to integrate this library with a **Nest** application using the `@nestjs/passport` module. At a high level, Passport executes a series of steps to:
+[Passport](https://github.com/jaredhanson/passport) est la bibliothèque d'authentification node.js la plus populaire, bien connue de la communauté et utilisée avec succès dans de nombreuses applications en production. Il est facile d'intégrer cette bibliothèque dans une application **Nest** en utilisant le module `@nestjs/passport`. A un niveau élevé, Passport exécute une série d'étapes pour :
 
-- Authenticate a user by verifying their "credentials" (such as username/password, JSON Web Token ([JWT](https://jwt.io/)), or identity token from an Identity Provider)
-- Manage authenticated state (by issuing a portable token, such as a JWT, or creating an [Express session](https://github.com/expressjs/session))
-- Attach information about the authenticated user to the `Request` object for further use in route handlers
+- Authentifier un utilisateur en vérifiant ses "informations d'identification" (nom d'utilisateur/mot de passe, jeton Web JSON ([JWT](https://jwt.io/)) ou jeton d'identité provenant d'un fournisseur d'identité).
+- Gérer l'état d'authentification (en émettant un jeton portable, tel qu'un JWT, ou en créant une [session Express](https://github.com/expressjs/session))
+- Attacher des informations sur l'utilisateur authentifié à l'objet `Request` pour une utilisation ultérieure dans les gestionnaires de routes.
 
-Passport has a rich ecosystem of [strategies](http://www.passportjs.org/) that implement various authentication mechanisms. While simple in concept, the set of Passport strategies you can choose from is large and presents a lot of variety. Passport abstracts these varied steps into a standard pattern, and the `@nestjs/passport` module wraps and standardizes this pattern into familiar Nest constructs.
+Passport dispose d'un riche écosystème de [stratégies](http://www.passportjs.org/) qui mettent en œuvre divers mécanismes d'authentification. Bien que simple dans son concept, l'ensemble des stratégies de Passport que vous pouvez choisir est large et présente une grande variété. Passport abstrait ces différentes étapes en un modèle standard, et le module `@nestjs/passport` enveloppe et standardise ce modèle dans des constructions Nest familières.
 
-In this chapter, we'll implement a complete end-to-end authentication solution for a RESTful API server using these powerful and flexible modules. You can use the concepts described here to implement any Passport strategy to customize your authentication scheme. You can follow the steps in this chapter to build this complete example.
+Dans ce chapitre, nous allons mettre en œuvre une solution d'authentification de bout en bout pour un serveur d'API RESTful à l'aide de ces modules puissants et flexibles. Vous pouvez utiliser les concepts décrits ici pour mettre en œuvre n'importe quelle stratégie Passport afin de personnaliser votre schéma d'authentification. Vous pouvez suivre les étapes de ce chapitre pour construire cet exemple complet.
 
-#### Authentication requirements
+#### Exigences en matière d'authentification
 
-Let's flesh out our requirements. For this use case, clients will start by authenticating with a username and password. Once authenticated, the server will issue a JWT that can be sent as a [bearer token in an authorization header](https://tools.ietf.org/html/rfc6750) on subsequent requests to prove authentication. We'll also create a protected route that is accessible only to requests that contain a valid JWT.
+Précisons nos exigences. Pour ce cas d'utilisation, les clients commenceront par s'authentifier à l'aide d'un nom d'utilisateur et d'un mot de passe. Une fois authentifié, le serveur émettra un JWT qui pourra être envoyé en tant que ["bearer token" dans un en-tête d'autorisation](https://tools.ietf.org/html/rfc6750) lors des demandes ultérieures pour prouver l'authentification. Nous allons également créer une route protégée qui ne sera accessible qu'aux demandes contenant un JWT valide.
 
-We'll start with the first requirement: authenticating a user. We'll then extend that by issuing a JWT. Finally, we'll create a protected route that checks for a valid JWT on the request.
+Nous commencerons par la première exigence : l'authentification d'un utilisateur. Nous l'étendrons ensuite en émettant un JWT. Enfin, nous créerons une route protégée qui vérifiera que la requête contient un JWT valide.
 
-First we need to install the required packages. Passport provides a strategy called [passport-local](https://github.com/jaredhanson/passport-local) that implements a username/password authentication mechanism, which suits our needs for this portion of our use case.
+Tout d'abord, nous devons installer les packages nécessaires. Passport fournit une stratégie appelée [passport-local](https://github.com/jaredhanson/passport-local) qui met en œuvre un mécanisme d'authentification par nom d'utilisateur/mot de passe, ce qui correspond à nos besoins pour cette partie de notre cas d'utilisation.
 
 ```bash
 $ npm install --save @nestjs/passport passport passport-local
 $ npm install --save-dev @types/passport-local
 ```
 
-> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as shown above with `@types/passport-local`, which provides assistance while writing TypeScript code.
+> warning **Remarque** Pour **n'importe quelle** stratégie Passport que vous choisissez, vous aurez toujours besoin des packages `@nestjs/passport` et `passport`. Ensuite, vous devrez installer le package spécifique à la stratégie (par exemple, `passport-jwt` ou `passport-local`) qui implémente la stratégie d'authentification particulière que vous construisez. De plus, vous pouvez également installer les définitions de type pour n'importe quelle stratégie Passport, comme montré ci-dessus avec `@types/passport-local`, qui fournit une assistance lors de l'écriture de code TypeScript.
 
-#### Implementing Passport strategies
+#### Mettre en œuvre les stratégies Passeport
 
-We're now ready to implement the authentication feature. We'll start with an overview of the process used for **any** Passport strategy. It's helpful to think of Passport as a mini framework in itself. The elegance of the framework is that it abstracts the authentication process into a few basic steps that you customize based on the strategy you're implementing. It's like a framework because you configure it by supplying customization parameters (as plain JSON objects) and custom code in the form of callback functions, which Passport calls at the appropriate time. The `@nestjs/passport` module wraps this framework in a Nest style package, making it easy to integrate into a Nest application. We'll use `@nestjs/passport` below, but first let's consider how **vanilla Passport** works.
+Nous sommes maintenant prêts à mettre en œuvre la fonction d'authentification. Nous commencerons par une vue d'ensemble du processus utilisé pour **toute** stratégie Passport. Il est utile de considérer Passport comme un mini framework en soi. L'élégance du cadre réside dans le fait qu'il abstrait le processus d'authentification en quelques étapes de base que vous personnalisez en fonction de la stratégie que vous mettez en œuvre. Il s'agit d'un framework parce que vous le configurez en fournissant des paramètres de personnalisation (sous forme d'objets JSON) et du code personnalisé sous la forme de fonctions de rappel, que Passport appelle au moment opportun. Le module `@nestjs/passport` enveloppe ce framework dans un package de style Nest, ce qui le rend facile à intégrer dans une application Nest. Nous utiliserons `@nestjs/passport` ci-dessous, mais voyons d'abord comment fonctionne **Passport seul**.
 
-In vanilla Passport, you configure a strategy by providing two things:
+Dans le Passeport de base, vous configurez une stratégie en fournissant deux éléments :
 
-1. A set of options that are specific to that strategy. For example, in a JWT strategy, you might provide a secret to sign tokens.
-2. A "verify callback", which is where you tell Passport how to interact with your user store (where you manage user accounts). Here, you verify whether a user exists (and/or create a new user), and whether their credentials are valid. The Passport library expects this callback to return a full user if the validation succeeds, or a null if it fails (failure is defined as either the user is not found, or, in the case of passport-local, the password does not match).
+1. Un ensemble d'options spécifiques à cette stratégie. Par exemple, dans une stratégie JWT, vous pouvez fournir un secret pour signer les jetons.
+2. Un "callback de vérification", où vous indiquez à Passport comment interagir avec votre magasin d'utilisateurs (où vous gérez les comptes d'utilisateurs). Vous vérifiez ici si un utilisateur existe (et/ou créez un nouvel utilisateur) et si ses informations d'identification sont valides. La bibliothèque Passport s'attend à ce que ce callback renvoie un utilisateur complet si la validation réussit, ou un null si elle échoue (l'échec est défini comme l'utilisateur n'est pas trouvé, ou, dans le cas de passport-local, le mot de passe ne correspond pas).
 
-With `@nestjs/passport`, you configure a Passport strategy by extending the `PassportStrategy` class. You pass the strategy options (item 1 above) by calling the `super()` method in your subclass, optionally passing in an options object. You provide the verify callback (item 2 above) by implementing a `validate()` method in your subclass.
+Avec `@nestjs/passport`, vous configurez une stratégie Passport en étendant la classe `PassportStrategy`. Vous passez les options de la stratégie (point 1 ci-dessus) en appelant la méthode `super()` dans votre sous-classe, en passant éventuellement un objet options. Vous fournissez le callback de vérification (point 2 ci-dessus) en implémentant une méthode `validate()` dans votre sous-classe.
 
-We'll start by generating an `AuthModule` and in it, an `AuthService`:
+Nous allons commencer par générer un `AuthModule` et dans celui-ci, un `AuthService` :
 
 ```bash
 $ nest g module auth
 $ nest g service auth
 ```
 
-As we implement the `AuthService`, we'll find it useful to encapsulate user operations in a `UsersService`, so let's generate that module and service now:
+Comme nous implémentons le `AuthService`, nous trouverons utile d'encapsuler les opérations des utilisateurs dans un `UsersService`, donc générons ce module et ce service maintenant :
 
 ```bash
 $ nest g module users
 $ nest g service users
 ```
 
-Replace the default contents of these generated files as shown below. For our sample app, the `UsersService` simply maintains a hard-coded in-memory list of users, and a find method to retrieve one by username. In a real app, this is where you'd build your user model and persistence layer, using your library of choice (e.g., TypeORM, Sequelize, Mongoose, etc.).
+Remplacez le contenu par défaut de ces fichiers générés comme indiqué ci-dessous. Pour notre exemple d'application, le `UsersService` maintient simplement une liste d'utilisateurs en mémoire codée en dur, et une méthode de recherche pour récupérer un utilisateur par son nom d'utilisateur. Dans une application réelle, c'est ici que vous construiriez votre modèle d'utilisateur et votre couche de persistance, en utilisant la bibliothèque de votre choix (par exemple, TypeORM, Sequelize, Mongoose, etc.).
 
 ```typescript
 @@filename(users/users.service)
 import { Injectable } from '@nestjs/common';
 
-// This should be a real class/interface representing a user entity
+// Il doit s'agir d'une véritable classe/interface représentant une entité utilisateur.
 export type User = any;
 
 @Injectable()
@@ -104,7 +104,7 @@ export class UsersService {
 }
 ```
 
-In the `UsersModule`, the only change needed is to add the `UsersService` to the exports array of the `@Module` decorator so that it is visible outside this module (we'll soon use it in our `AuthService`).
+Dans le `UsersModule`, le seul changement nécessaire est d'ajouter le `UsersService` au tableau des exportations du décorateur `@Module` afin qu'il soit visible en dehors de ce module (nous l'utiliserons bientôt dans notre `AuthService`).
 
 ```typescript
 @@filename(users/users.module)
@@ -127,7 +127,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-Our `AuthService` has the job of retrieving a user and verifying the password. We create a `validateUser()` method for this purpose. In the code below, we use a convenient ES6 spread operator to strip the password property from the user object before returning it. We'll be calling into the `validateUser()` method from our Passport local strategy in a moment.
+Notre `AuthService` a pour tâche de récupérer un utilisateur et de vérifier son mot de passe. Nous créons une méthode `validateUser()` dans ce but. Dans le code ci-dessous, nous utilisons un opérateur d'étalement ES6 pratique pour retirer la propriété password de l'objet user avant de le renvoyer. Nous ferons appel à la méthode `validateUser()` de notre stratégie locale Passport dans un instant.
 
 ```typescript
 @@filename(auth/auth.service)
@@ -169,9 +169,9 @@ export class AuthService {
 }
 ```
 
-> Warning **Warning** Of course in a real application, you wouldn't store a password in plain text. You'd instead use a library like [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), with a salted one-way hash algorithm. With that approach, you'd only store hashed passwords, and then compare the stored password to a hashed version of the **incoming** password, thus never storing or exposing user passwords in plain text. To keep our sample app simple, we violate that absolute mandate and use plain text. **Don't do this in your real app!**
+> Warning **Attention** Bien entendu, dans une application réelle, vous ne stockeriez pas un mot de passe en texte brut. Vous utiliseriez plutôt une bibliothèque comme [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), avec un algorithme de hachage à sens unique salé. Avec cette approche, vous ne stockeriez que des mots de passe hachés, et compareriez ensuite le mot de passe stocké à une version hachée du mot de passe **entrant**, ne stockant ou n'exposant donc jamais les mots de passe des utilisateurs en texte brut. Pour que notre exemple d'application reste simple, nous violons cette règle absolue et utilisons du texte en clair. **Ne faites pas cela dans votre application réelle !**
 
-Now, we update our `AuthModule` to import the `UsersModule`.
+Maintenant, nous mettons à jour notre `AuthModule` pour importer le `UsersModule`.
 
 ```typescript
 @@filename(auth/auth.module)
@@ -196,9 +196,9 @@ import { UsersModule } from '../users/users.module';
 export class AuthModule {}
 ```
 
-#### Implementing Passport local
+#### Mise en oeuvre de Passeport localement
 
-Now we can implement our Passport **local authentication strategy**. Create a file called `local.strategy.ts` in the `auth` folder, and add the following code:
+Maintenant nous pouvons implémenter notre **stratégie d'authentification locale** de Passport. Créez un fichier appelé `local.strategy.ts` dans le dossier `auth`, et ajoutez le code suivant :
 
 ```typescript
 @@filename(auth/local.strategy)
@@ -245,17 +245,17 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 }
 ```
 
-We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
+Nous avons suivi la recette décrite précédemment pour toutes les stratégies Passport. Dans notre cas d'utilisation avec passport-local, il n'y a pas d'options de configuration, donc notre constructeur appelle simplement `super()`, sans objet options.
 
-> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body. Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`. See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
+> info **Astuce** Nous pouvons passer un objet d'options dans l'appel à `super()` pour personnaliser le comportement de la stratégie de passeport. Dans cet exemple, la stratégie passport-local attend par défaut des propriétés appelées `username` et `password` dans le corps de la requête. Passez un objet options pour spécifier des noms de propriétés différents, par exemple : `super({{ '{' }} usernameField : 'email' {{ '}' }})`. Voir la [documentation Passport](http://www.passportjs.org/docs/configure/) pour plus d'informations.
 
-We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
+Nous avons également implémenté la méthode `validate()`. Pour chaque stratégie, Passport appellera la fonction verify (implémentée avec la méthode `validate()` dans `@nestjs/passport`) en utilisant un ensemble approprié de paramètres spécifiques à la stratégie. Pour la stratégie locale, Passport attend une méthode `validate()` avec la signature suivante : `validate(username : string, password:string) : any`.
 
-Most of the validation work is done in our `AuthService` (with the help of our `UsersService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exception-filters">exceptions layer</a> handle it.
+La plupart du travail de validation est fait dans notre `AuthService` (avec l'aide de notre `UsersService`), donc cette méthode est assez simple. La méthode `validate()` pour **n'importe quelle** stratégie Passport suivra un schéma similaire, variant seulement dans les détails de la façon dont les informations d'identification sont représentées. Si un utilisateur est trouvé et que les informations d'identification sont valides, l'utilisateur est renvoyé afin que Passport puisse terminer ses tâches (par exemple, créer la propriété `user` sur l'objet `Request`), et que le pipeline de traitement des requêtes puisse continuer. S'il n'est pas trouvé, nous lançons une exception et laissons notre [couche d'exceptions](exception-filters) s'en charger.
 
-Typically, the only significant difference in the `validate()` method for each strategy is **how** you determine if a user exists and is valid. For example, in a JWT strategy, depending on requirements, we may evaluate whether the `userId` carried in the decoded token matches a record in our user database, or matches a list of revoked tokens. Hence, this pattern of sub-classing and implementing strategy-specific validation is consistent, elegant and extensible.
+Typiquement, la seule différence significative dans la méthode `validate()` pour chaque stratégie est **comment** vous déterminez si un utilisateur existe et est valide. Par exemple, dans une stratégie JWT, en fonction des besoins, nous pouvons évaluer si le `userId` porté dans le token décodé correspond à un enregistrement dans notre base de données d'utilisateurs, ou correspond à une liste de tokens révoqués. Ce modèle de sous-classification et de mise en œuvre d'une validation spécifique à une stratégie est donc cohérent, élégant et extensible.
 
-We need to configure our `AuthModule` to use the Passport features we just defined. Update `auth.module.ts` to look like this:
+Nous devons configurer notre `AuthModule` pour utiliser les fonctionnalités de Passport que nous venons de définir. Mettez à jour `auth.module.ts` pour qu'il ressemble à ceci :
 
 ```typescript
 @@filename(auth/auth.module)
@@ -284,30 +284,30 @@ import { LocalStrategy } from './local.strategy';
 export class AuthModule {}
 ```
 
-#### Built-in Passport Guards
+#### Gardes Passport intégrées
 
-The <a href="guards">Guards</a> chapter describes the primary function of Guards: to determine whether a request will be handled by the route handler or not. That remains true, and we'll use that standard capability soon. However, in the context of using the `@nestjs/passport` module, we will also introduce a slight new wrinkle that may at first be confusing, so let's discuss that now. Consider that your app can exist in two states, from an authentication perspective:
+Le chapitre [Gardes](gards) décrit la fonction première des gardes : déterminer si une requête sera traitée par le gestionnaire de route ou non. Cela reste vrai, et nous utiliserons bientôt cette capacité standard. Cependant, dans le contexte de l'utilisation du module `@nestjs/passport`, nous allons également introduire une légère nouveauté qui peut être déroutante à première vue, donc discutons-en maintenant. Considérons que votre application peut exister dans deux états, du point de vue de l'authentification :
 
-1. the user/client is **not** logged in (is not authenticated)
-2. the user/client **is** logged in (is authenticated)
+1. l'utilisateur/client n'est **pas** connecté (n'est pas authentifié)
+2. l'utilisateur/client **est** connecté (est authentifié)
 
-In the first case (user is not logged in), we need to perform two distinct functions:
+Dans le premier cas (l'utilisateur n'est pas connecté), nous devons exécuter deux fonctions distinctes :
 
-- Restrict the routes an unauthenticated user can access (i.e., deny access to restricted routes). We'll use Guards in their familiar capacity to handle this function, by placing a Guard on the protected routes. As you may anticipate, we'll be checking for the presence of a valid JWT in this Guard, so we'll work on this Guard later, once we are successfully issuing JWTs.
+- Restreindre les routes auxquelles un utilisateur non authentifié peut accéder (c'est-à-dire refuser l'accès aux routes restreintes). Nous utiliserons les gardes dans leur capacité habituelle pour gérer cette fonction, en plaçant une garde sur les routes protégées. Comme vous pouvez l'imaginer, nous allons vérifier la présence d'un JWT valide dans cette garde, nous travaillerons donc sur cette garde plus tard, une fois que nous aurons réussi à émettre des JWTs.
 
-- Initiate the **authentication step** itself when a previously unauthenticated user attempts to login. This is the step where we'll **issue** a JWT to a valid user. Thinking about this for a moment, we know we'll need to `POST` username/password credentials to initiate authentication, so we'll set up a `POST /auth/login` route to handle that. This raises the question: how exactly do we invoke the passport-local strategy in that route?
+- Initier **l'étape d'authentification** elle-même lorsqu'un utilisateur non authentifié tente de se connecter. C'est l'étape où nous allons **émettre** un JWT à un utilisateur valide. En y réfléchissant un instant, nous savons que nous aurons besoin de `POST` nom d'utilisateur/mot de passe pour initier l'authentification, donc nous mettrons en place une route `POST /auth/login` pour gérer cela. Cela soulève la question suivante : comment invoquer la stratégie passeport-local dans cette route ?
 
-The answer is straightforward: by using another, slightly different type of Guard. The `@nestjs/passport` module provides us with a built-in Guard that does this for us. This Guard invokes the Passport strategy and kicks off the steps described above (retrieving credentials, running the verify function, creating the `user` property, etc).
+La réponse est simple : en utilisant un autre type de garde, légèrement différent. Le module `@nestjs/passport` nous fournit une garde intégrée qui fait cela pour nous. Cette garde invoque la stratégie Passport et lance les étapes décrites ci-dessus (récupération des informations d'identification, exécution de la fonction de vérification, création de la propriété `user`, etc).
 
-The second case enumerated above (logged in user) simply relies on the standard type of Guard we already discussed to enable access to protected routes for logged in users.
+Le deuxième cas énuméré ci-dessus (utilisateur connecté) s'appuie simplement sur le type de garde standard dont nous avons déjà parlé pour permettre aux utilisateurs connectés d'accéder aux itinéraires protégés.
 
 <app-banner-courses-auth></app-banner-courses-auth>
 
-#### Login route
+#### Route login
 
-With the strategy in place, we can now implement a bare-bones `/auth/login` route, and apply the built-in Guard to initiate the passport-local flow.
+Avec la stratégie en place, nous pouvons maintenant implémenter une route `/auth/login` simple, et appliquer la garde intégrée pour initier le flux passeport-local.
 
-Open the `app.controller.ts` file and replace its contents with the following:
+Ouvrez le fichier `app.controller.ts` et remplacez son contenu par ce qui suit :
 
 ```typescript
 @@filename(app.controller)
@@ -337,19 +337,19 @@ export class AppController {
 }
 ```
 
-With `@UseGuards(AuthGuard('local'))` we are using an `AuthGuard` that `@nestjs/passport` **automatically provisioned** for us when we extended the passport-local strategy. Let's break that down. Our Passport local strategy has a default name of `'local'`. We reference that name in the `@UseGuards()` decorator to associate it with code supplied by the `passport-local` package. This is used to disambiguate which strategy to invoke in case we have multiple Passport strategies in our app (each of which may provision a strategy-specific `AuthGuard`). While we only have one such strategy so far, we'll shortly add a second, so this is needed for disambiguation.
+Avec `@UseGuards(AuthGuard('local'))` nous utilisons une `AuthGuard` que `@nestjs/passport` a **automatiquement provisionné** pour nous quand nous avons étendu la stratégie passport-local. Décomposons cela. Notre stratégie locale Passport a un nom par défaut `'local''. Nous référençons ce nom dans le décorateur `@UseGuards()` pour l'associer au code fourni par le paquet `passport-local`. Ceci est utilisé pour désambiguïser la stratégie à invoquer dans le cas où nous aurions plusieurs stratégies Passport dans notre application (chacune pouvant fournir un `AuthGuard` spécifique à la stratégie). Bien que nous n'ayons pour l'instant qu'une seule stratégie de ce type, nous en ajouterons bientôt une seconde, ce qui rend ce paquet nécessaire pour la désambiguïsation.
 
-In order to test our route we'll have our `/auth/login` route simply return the user for now. This also lets us demonstrate another Passport feature: Passport automatically creates a `user` object, based on the value we return from the `validate()` method, and assigns it to the `Request` object as `req.user`. Later, we'll replace this with code to create and return a JWT instead.
+Afin de tester notre route, nous allons faire en sorte que notre route `/auth/login` renvoie simplement l'utilisateur pour l'instant. Cela nous permet également de démontrer une autre fonctionnalité de Passport : Passport crée automatiquement un objet `user`, basé sur la valeur retournée par la méthode `validate()`, et l'assigne à l'objet `Request` en tant que `req.user`. Plus tard, nous remplacerons cela par du code pour créer et retourner un JWT à la place.
 
-Since these are API routes, we'll test them using the commonly available [cURL](https://curl.haxx.se/) library. You can test with any of the `user` objects hard-coded in the `UsersService`.
+Comme il s'agit de routes API, nous allons les tester en utilisant la bibliothèque [cURL](https://curl.haxx.se/) communément disponible. Vous pouvez tester avec n'importe quel objet `user` codé en dur dans le `UsersService`.
 
 ```bash
-$ # POST to /auth/login
+$ # POST vers /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
-$ # result -> {"userId":1,"username":"john"}
+$ # résultat -> {"userId":1,"username":"john"}
 ```
 
-While this works, passing the strategy name directly to the `AuthGuard()` introduces magic strings in the codebase. Instead, we recommend creating your own class, as shown below:
+Bien que cela fonctionne, passer le nom de la stratégie directement à `AuthGuard()` introduit des "magic strings" dans le code. Au lieu de cela, nous recommandons de créer votre propre classe, comme indiqué ci-dessous :
 
 ```typescript
 @@filename(auth/local-auth.guard)
@@ -360,7 +360,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class LocalAuthGuard extends AuthGuard('local') {}
 ```
 
-Now, we can update the `/auth/login` route handler and use the `LocalAuthGuard` instead:
+Maintenant, nous pouvons mettre à jour le gestionnaire de route `/auth/login` et utiliser `LocalAuthGuard` à la place :
 
 ```typescript
 @UseGuards(LocalAuthGuard)
@@ -370,28 +370,28 @@ async login(@Request() req) {
 }
 ```
 
-#### JWT functionality
+#### Fonctionnalité JWT
 
-We're ready to move on to the JWT portion of our auth system. Let's review and refine our requirements:
+Nous sommes prêts à passer à la partie JWT de notre système d'authentification. Passons en revue et affinons nos exigences :
 
-- Allow users to authenticate with username/password, returning a JWT for use in subsequent calls to protected API endpoints. We're well on our way to meeting this requirement. To complete it, we'll need to write the code that issues a JWT.
-- Create API routes which are protected based on the presence of a valid JWT as a bearer token
+- Permettre aux utilisateurs de s'authentifier avec leur nom d'utilisateur et leur mot de passe, en renvoyant un JWT à utiliser lors d'appels ultérieurs à des points d'extrémité d'API protégés. Nous sommes sur la bonne voie pour répondre à cette exigence. Pour la compléter, nous devons écrire le code qui émet un JWT.
+- Créer des itinéraires API protégés en fonction de la présence d'un JWT valide en tant que jeton porteur.
 
-We'll need to install a couple more packages to support our JWT requirements:
+Nous aurons besoin d'installer quelques paquets supplémentaires pour répondre à nos besoins en matière de JWT :
 
 ```bash
 $ npm install --save @nestjs/jwt passport-jwt
 $ npm install --save-dev @types/passport-jwt
 ```
 
-The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy and `@types/passport-jwt` provides the TypeScript type definitions.
+Le package `@nestjs/jwt` (voir plus [ici](https://github.com/nestjs/jwt)) est un package utilitaire qui aide à la manipulation des JWT. Le package `passport-jwt` est le package Passport qui implémente la stratégie JWT et `@types/passport-jwt` fournit les définitions de type TypeScript.
 
-Let's take a closer look at how a `POST /auth/login` request is handled. We've decorated the route using the built-in `AuthGuard` provided by the passport-local strategy. This means that:
+Regardons de plus près comment une requête `POST /auth/login` est gérée. Nous avons décoré la route en utilisant le `AuthGuard` intégré fourni par la stratégie passport-local. Cela signifie que :
 
-1. The route handler **will only be invoked if the user has been validated**
-2. The `req` parameter will contain a `user` property (populated by Passport during the passport-local authentication flow)
+1. Le gestionnaire de route **ne sera invoqué que si l'utilisateur a été validé**
+2. Le paramètre `req` contiendra une propriété `user` (remplie par Passport pendant le flux d'authentification locale).
 
-With this in mind, we can now finally generate a real JWT, and return it in this route. To keep our services cleanly modularized, we'll handle generating the JWT in the `authService`. Open the `auth.service.ts` file in the `auth` folder, and add the `login()` method, and import the `JwtService` as shown:
+Avec ceci en tête, nous pouvons enfin générer un vrai JWT, et le retourner dans cette route. Pour garder nos services proprement modulaires, nous allons nous occuper de la génération du JWT dans le `authService`. Ouvrez le fichier `auth.service.ts` dans le dossier `auth`, et ajoutez la méthode `login()`, et importez le `JwtService` comme indiqué :
 
 ```typescript
 @@filename(auth/auth.service)
@@ -454,28 +454,28 @@ export class AuthService {
 }
 ```
 
-We're using the `@nestjs/jwt` library, which supplies a `sign()` function to generate our JWT from a subset of the `user` object properties, which we then return as a simple object with a single `access_token` property. Note: we choose a property name of `sub` to hold our `userId` value to be consistent with JWT standards. Don't forget to inject the JwtService provider into the `AuthService`.
+Nous utilisons la bibliothèque `@nestjs/jwt`, qui fournit une fonction `sign()` pour générer notre JWT à partir d'un sous-ensemble de propriétés de l'objet `user`, que nous retournons ensuite comme un simple objet avec une seule propriété `access_token`. Note : nous avons choisi le nom de propriété `sub` pour contenir notre valeur `userId` afin d'être cohérent avec les standards JWT. N'oubliez pas d'injecter le fournisseur JwtService dans le `AuthService`.
 
-We now need to update the `AuthModule` to import the new dependencies and configure the `JwtModule`.
+Nous devons maintenant mettre à jour le `AuthModule` pour importer les nouvelles dépendances et configurer le `JwtModule`.
 
-First, create `constants.ts` in the `auth` folder, and add the following code:
+Tout d'abord, créez `constants.ts` dans le dossier `auth`, et ajoutez le code suivant :
 
 ```typescript
 @@filename(auth/constants)
 export const jwtConstants = {
-  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+  secret: 'N UTILISEZ PAS CETTE VALEUR. CRÉEZ PLUTÔT UN SECRET COMPLEXE ET GARDEZ-LE EN SÉCURITÉ EN DEHORS DU CODE SOURCE.',
 };
 @@switch
 export const jwtConstants = {
-  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
+  secret: 'N UTILISEZ PAS CETTE VALEUR. CRÉEZ PLUTÔT UN SECRET COMPLEXE ET GARDEZ-LE EN SÉCURITÉ EN DEHORS DU CODE SOURCE.',
 };
 ```
 
-We'll use this to share our key between the JWT signing and verifying steps.
+Nous l'utiliserons pour partager notre clé entre les étapes de signature et de vérification du JWT.
 
-> Warning **Warning** **Do not expose this key publicly**. We have done so here to make it clear what the code is doing, but in a production system **you must protect this key** using appropriate measures such as a secrets vault, environment variable, or configuration service.
+> Warning **Attention** **Ne pas exposer cette clé publiquement**. Nous l'avons fait ici pour que le code soit clair, mais dans un système de production **vous devez protéger cette clé** à l'aide de mesures appropriées telles qu'un coffre-fort de secrets, une variable d'environnement ou un service de configuration.
 
-Now, open `auth.module.ts` in the `auth` folder and update it to look like this:
+Maintenant, ouvrez `auth.module.ts` dans le dossier `auth` et mettez-le à jour pour qu'il ressemble à ceci :
 
 ```typescript
 @@filename(auth/auth.module)
@@ -524,9 +524,9 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 ```
 
-We configure the `JwtModule` using `register()`, passing in a configuration object. See [here](https://github.com/nestjs/jwt/blob/master/README.md) for more on the Nest `JwtModule` and [here](https://github.com/auth0/node-jsonwebtoken#usage) for more details on the available configuration options.
+Nous configurons le `JwtModule` en utilisant `register()`, en passant un objet de configuration. Voir [ici](https://github.com/nestjs/jwt/blob/master/README.md) pour plus de détails sur le Nest `JwtModule` et [ici](https://github.com/auth0/node-jsonwebtoken#usage) pour plus de détails sur les options de configuration disponibles.
 
-Now we can update the `/auth/login` route to return a JWT.
+Maintenant nous pouvons mettre à jour la route `/auth/login` pour retourner un JWT.
 
 ```typescript
 @@filename(app.controller)
@@ -562,18 +562,18 @@ export class AppController {
 }
 ```
 
-Let's go ahead and test our routes using cURL again. You can test with any of the `user` objects hard-coded in the `UsersService`.
+Testons à nouveau nos routes en utilisant cURL. Vous pouvez tester avec n'importe quel objet `user` codé en dur dans le `UsersService`.
 
 ```bash
-$ # POST to /auth/login
+$ # POST vers /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
-$ # result -> {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
-$ # Note: above JWT truncated
+$ # résultat -> {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
+$ # Note : le JWT ci-dessus a été tronqué.
 ```
 
-#### Implementing Passport JWT
+#### Mise en œuvre du JWT de Passeport
 
-We can now address our final requirement: protecting endpoints by requiring a valid JWT be present on the request. Passport can help us here too. It provides the [passport-jwt](https://github.com/mikenicholson/passport-jwt) strategy for securing RESTful endpoints with JSON Web Tokens. Start by creating a file called `jwt.strategy.ts` in the `auth` folder, and add the following code:
+Nous pouvons maintenant répondre à notre dernière exigence : protéger les points de terminaison en exigeant qu'un JWT valide soit présent dans la demande. Passport peut nous aider ici aussi. Il fournit la stratégie [passport-jwt](https://github.com/mikenicholson/passport-jwt) pour sécuriser les points de terminaison RESTful avec des jetons Web JSON. Commencez par créer un fichier appelé `jwt.strategy.ts` dans le dossier `auth`, et ajoutez le code suivant :
 
 ```typescript
 @@filename(auth/jwt.strategy)
@@ -618,19 +618,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 }
 ```
 
-With our `JwtStrategy`, we've followed the same recipe described earlier for all Passport strategies. This strategy requires some initialization, so we do that by passing in an options object in the `super()` call. You can read more about the available options [here](https://github.com/mikenicholson/passport-jwt#configure-strategy). In our case, these options are:
+Avec notre `JwtStrategy`, nous avons suivi la même recette décrite précédemment pour toutes les stratégies Passport. Cette stratégie nécessite une certaine initialisation, ce que nous faisons en passant un objet options dans l'appel `super()`. Vous pouvez en savoir plus sur les options disponibles [ici](https://github.com/mikenicholson/passport-jwt#configure-strategy). Dans notre cas, ces options sont les suivantes :
 
-- `jwtFromRequest`: supplies the method by which the JWT will be extracted from the `Request`. We will use the standard approach of supplying a bearer token in the Authorization header of our API requests. Other options are described [here](https://github.com/mikenicholson/passport-jwt#extracting-the-jwt-from-the-request).
-- `ignoreExpiration`: just to be explicit, we choose the default `false` setting, which delegates the responsibility of ensuring that a JWT has not expired to the Passport module. This means that if our route is supplied with an expired JWT, the request will be denied and a `401 Unauthorized` response sent. Passport conveniently handles this automatically for us.
-- `secretOrKey`: we are using the expedient option of supplying a symmetric secret for signing the token. Other options, such as a PEM-encoded public key, may be more appropriate for production apps (see [here](https://github.com/mikenicholson/passport-jwt#configure-strategy) for more information). In any case, as cautioned earlier, **do not expose this secret publicly**.
+- `jwtFromRequest` : fournit la méthode par laquelle le JWT sera extrait de la `Request`. Nous utiliserons l'approche standard qui consiste à fournir un jeton de porteur dans l'en-tête Authorization de nos demandes d'API. D'autres options sont décrites [ici](https://github.com/mikenicholson/passport-jwt#extracting-the-jwt-from-the-request).
+- `ignoreExpiration` : juste pour être explicite, nous choisissons le paramètre par défaut `false`, qui délègue la responsabilité de s'assurer qu'un JWT n'a pas expiré au module Passport. Cela signifie que si notre route est fournie avec un JWT expiré, la requête sera refusée et une réponse `401 Unauthorized` sera envoyée. Passport s'en occupe automatiquement pour nous.
+- `secretOrKey` : nous utilisons l'option rapide de fournir un secret symétrique pour signer le jeton. D'autres options, comme une clé publique codée en PEM, peuvent être plus appropriées pour les applications de production (voir [ici](https://github.com/mikenicholson/passport-jwt#configure-strategy) pour plus d'informations). Dans tous les cas, comme nous l'avons déjà dit, **ne pas exposer ce secret publiquement**.
 
-The `validate()` method deserves some discussion. For the jwt-strategy, Passport first verifies the JWT's signature and decodes the JSON. It then invokes our `validate()` method passing the decoded JSON as its single parameter. Based on the way JWT signing works, **we're guaranteed that we're receiving a valid token** that we have previously signed and issued to a valid user.
+La méthode `validate()` mérite qu'on s'y attarde. Pour la jwt-strategy, Passport vérifie d'abord la signature du JWT et décode le JSON. Il invoque ensuite notre méthode `validate()` en passant le JSON décodé comme unique paramètre. En se basant sur le fonctionnement de la signature JWT, **nous avons la garantie de recevoir un jeton valide** que nous avons préalablement signé et délivré à un utilisateur valide.
 
-As a result of all this, our response to the `validate()` callback is trivial: we simply return an object containing the `userId` and `username` properties. Recall again that Passport will build a `user` object based on the return value of our `validate()` method, and attach it as a property on the `Request` object.
+En conséquence, notre réponse au callback `validate()` est triviale : nous renvoyons simplement un objet contenant les propriétés `userId` et `username`. Rappelons que Passport va construire un objet `user` basé sur la valeur de retour de notre méthode `validate()`, et l'attacher en tant que propriété de l'objet `Request`.
 
-It's also worth pointing out that this approach leaves us room ('hooks' as it were) to inject other business logic into the process. For example, we could do a database lookup in our `validate()` method to extract more information about the user, resulting in a more enriched `user` object being available in our `Request`. This is also the place we may decide to do further token validation, such as looking up the `userId` in a list of revoked tokens, enabling us to perform token revocation. The model we've implemented here in our sample code is a fast, "stateless JWT" model, where each API call is immediately authorized based on the presence of a valid JWT, and a small bit of information about the requester (its `userId` and `username`) is available in our Request pipeline.
+Il convient également de souligner que cette approche nous laisse de la place (des " hooks" en quelque sorte) pour injecter d'autres logiques d'entreprise dans le processus. Par exemple, nous pourrions faire une recherche dans la base de données dans notre méthode `validate()` pour extraire plus d'informations sur l'utilisateur, résultant en un objet `user` plus enrichi disponible dans notre `Request`. C'est aussi l'endroit où nous pouvons décider d'effectuer une validation plus poussée du token, comme rechercher l'`userId` dans une liste de tokens révoqués, ce qui nous permet d'effectuer la révocation du token. Le modèle que nous avons implémenté ici dans notre code d'exemple est un modèle rapide, "JWT sans état", où chaque appel à l'API est immédiatement autorisé en fonction de la présence d'un JWT valide, et où un petit nombre d'informations sur le demandeur (son `userId` et son `username`) est disponible dans notre pipeline de requête.
 
-Add the new `JwtStrategy` as a provider in the `AuthModule`:
+Ajouter la nouvelle `JwtStrategy` comme fournisseur dans le `AuthModule` :
 
 ```typescript
 @@filename(auth/auth.module)
@@ -681,9 +681,9 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 ```
 
-By importing the same secret used when we signed the JWT, we ensure that the **verify** phase performed by Passport, and the **sign** phase performed in our AuthService, use a common secret.
+En important le même secret que celui utilisé lors de la signature du JWT, nous nous assurons que la phase de **vérification** effectuée par Passport, et la phase de **signature** effectuée dans notre AuthService, utilisent un secret commun.
 
-Finally, we define the `JwtAuthGuard` class which extends the built-in `AuthGuard`:
+Enfin, nous définissons la classe `JwtAuthGuard` qui étend la classe intégrée `AuthGuard` :
 
 ```typescript
 @@filename(auth/jwt-auth.guard)
@@ -694,11 +694,11 @@ import { AuthGuard } from '@nestjs/passport';
 export class JwtAuthGuard extends AuthGuard('jwt') {}
 ```
 
-#### Implement protected route and JWT strategy guards
+#### Mise en œuvre de routes protégées et de gardes stratégiques JWT
 
-We can now implement our protected route and its associated Guard.
+Nous pouvons maintenant mettre en œuvre notre route protégée et sa garde associée.
 
-Open the `app.controller.ts` file and update it as shown below:
+Ouvrez le fichier `app.controller.ts` et mettez-le à jour comme indiqué ci-dessous :
 
 ```typescript
 @@filename(app.controller)
@@ -752,31 +752,31 @@ export class AppController {
 }
 ```
 
-Once again, we're applying the `AuthGuard` that the `@nestjs/passport` module has automatically provisioned for us when we configured the passport-jwt module. This Guard is referenced by its default name, `jwt`. When our `GET /profile` route is hit, the Guard will automatically invoke our passport-jwt custom configured strategy, validate the JWT, and assign the `user` property to the `Request` object.
+Encore une fois, nous appliquons le `AuthGuard` que le module `@nestjs/passport` a automatiquement provisionné pour nous lorsque nous avons configuré le module passport-jwt. Cette garde est référencée par son nom par défaut, `jwt`. Quand notre route `GET /profile` est frappée, le Guard va automatiquement invoquer notre stratégie personnalisée configurée par passport-jwt, valider le JWT, et assigner la propriété `user` à l'objet `Request`.
 
-Ensure the app is running, and test the routes using `cURL`.
+Assurez-vous que l'application fonctionne et testez les routes en utilisant `cURL`.
 
 ```bash
 $ # GET /profile
 $ curl http://localhost:3000/profile
-$ # result -> {"statusCode":401,"message":"Unauthorized"}
+$ # résultat -> {"statusCode":401,"message":"Unauthorized"}
 
 $ # POST /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
-$ # result -> {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm... }
+$ # résultat -> {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm... }
 
-$ # GET /profile using access_token returned from previous step as bearer code
+$ # GET /profile en utilisant le jeton d'accès (access_token) renvoyé à l'étape précédente comme code porteur
 $ curl http://localhost:3000/profile -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm..."
-$ # result -> {"userId":1,"username":"john"}
+$ # résultat -> {"userId":1,"username":"john"}
 ```
 
-Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is probably too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs and the passport-jwt strategy. If you wait 60 seconds after authenticating before attempting a `GET /profile` request, you'll receive a `401 Unauthorized` response. This is because Passport automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
+Notez que dans le `AuthModule`, nous avons configuré le JWT pour avoir une expiration de `60 seconds`. C'est probablement une expiration trop courte, et traiter les détails de l'expiration et du rafraîchissement des jetons dépasse le cadre de cet article. Cependant, nous avons choisi cela pour démontrer une qualité importante des JWTs et de la stratégie passport-jwt. Si vous attendez 60 secondes après l'authentification avant de tenter une requête `GET /profile`, vous recevrez une réponse `401 Unauthorized`. Cela est dû au fait que Passport vérifie automatiquement le délai d'expiration du JWT, ce qui vous évite de le faire dans votre application.
 
-We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server.
+Nous avons maintenant terminé la mise en œuvre de l'authentification JWT. Les clients JavaScript (tels que Angular/React/Vue) et les autres applications JavaScript peuvent désormais s'authentifier et communiquer en toute sécurité avec notre serveur API.
 
-#### Extending guards
+#### Extension des gardes
 
-In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
+Dans la plupart des cas, l'utilisation d'une classe `AuthGuard` fournie est suffisante. Cependant, il peut y avoir des cas d'utilisation où vous voudriez simplement étendre la gestion des erreurs par défaut ou la logique d'authentification. Pour cela, vous pouvez étendre la classe intégrée et surcharger les méthodes dans une sous-classe.
 
 ```typescript
 import {
@@ -789,13 +789,13 @@ import { AuthGuard } from '@nestjs/passport';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
-    // Add your custom authentication logic here
-    // for example, call super.logIn(request) to establish a session.
+    // Ajoutez ici votre logique d'authentification personnalisée
+    // par exemple, appellez super.logIn(request) pour établir une session.
     return super.canActivate(context);
   }
 
   handleRequest(err, user, info) {
-    // You can throw an exception based on either "info" or "err" arguments
+    // Vous pouvez lancer une exception sur la base des arguments "info" ou "err".
     if (err || !user) {
       throw err || new UnauthorizedException();
     }
@@ -804,17 +804,17 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
-In addition to extending the default error handling and authentication logic, we can allow authentication to go through a chain of strategies. The first strategy to succeed, redirect, or error will halt the chain. Authentication failures will proceed through each strategy in series, ultimately failing if all strategies fail.
+En plus d'étendre la gestion des erreurs et la logique d'authentification par défaut, nous pouvons permettre à l'authentification de passer par une chaîne de stratégies. La première stratégie qui réussit, la première redirection ou la première erreur interrompt la chaîne. Les échecs d'authentification passeront par chaque stratégie en série, pour finalement échouer si toutes les stratégies échouent.
 
 ```typescript
 export class JwtAuthGuard extends AuthGuard(['strategy_jwt_1', 'strategy_jwt_2', '...']) { ... }
 ```
 
-#### Enable authentication globally
+#### Activer l'authentification globalement
 
-If the vast majority of your endpoints should be protected by default, you can register the authentication guard as a [global guard](/guards#binding-guards) and instead of using `@UseGuards()` decorator on top of each controller, you could simply flag which routes should be public.
+Si la grande majorité de vos points d'accès doivent être protégés par défaut, vous pouvez enregistrer la garde d'authentification comme une [garde globale](/guards#liaison-des-gardes) et au lieu d'utiliser le décorateur `@UseGuards()` au-dessus de chaque contrôleur, vous pouvez simplement indiquer quelles routes doivent être publiques.
 
-First, register the `JwtAuthGuard` as a global guard using the following construction (in any module):
+Tout d'abord, enregistrez le `JwtAuthGuard` en tant que garde globale en utilisant la construction suivante (dans n'importe quel module) :
 
 ```typescript
 providers: [
@@ -825,9 +825,9 @@ providers: [
 ],
 ```
 
-With this in place, Nest will automatically bind `JwtAuthGuard` to all endpoints.
+Avec ceci en place, Nest va automatiquement lier `JwtAuthGuard` à tous les endpoints.
 
-Now we must provide a mechanism for declaring routes as public. For this, we can create a custom decorator using the `SetMetadata` decorator factory function.
+Maintenant, nous devons fournir un mécanisme pour déclarer les routes comme publiques. Pour cela, nous pouvons créer un décorateur personnalisé en utilisant la fonction d'usine du décorateur `SetMetadata`.
 
 ```typescript
 import { SetMetadata } from '@nestjs/common';
@@ -836,9 +836,9 @@ export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 ```
 
-In the file above, we exported two constants. One being our metadata key named `IS_PUBLIC_KEY`, and the other being our new decorator itself that we’re going to call `Public` (you can alternatively name it `SkipAuth` or `AllowAnon`, whatever fits your project).
+Dans le fichier ci-dessus, nous avons exporté deux constantes. L'une est notre clé de métadonnées nommée `IS_PUBLIC_KEY`, et l'autre est notre nouveau décorateur que nous allons appeler `Public` (vous pouvez alternativement le nommer `SkipAuth` ou `AllowAnon`, selon ce qui convient à votre projet).
 
-Now that we have a custom `@Public()` decorator, we can use it to decorate any method, as follows:
+Maintenant que nous avons un décorateur personnalisé `@Public()`, nous pouvons l'utiliser pour décorer n'importe quelle méthode, comme suit :
 
 ```typescript
 @Public()
@@ -848,7 +848,7 @@ findAll() {
 }
 ```
 
-Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metadata is found. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
+Enfin, nous avons besoin que le `JwtAuthGuard` retourne `true` lorsque la métadonnée `"isPublic"` est trouvée. Pour cela, nous allons utiliser la classe `Reflector` (en savoir plus [ici](/guards#mettre-en-place-lensemble)).
 
 ```typescript
 @Injectable()
@@ -870,13 +870,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
-#### Request-scoped strategies
+#### Stratégies liées aux requêtes
 
-The passport API is based on registering strategies to the global instance of the library. Therefore strategies are not designed to have request-dependent options or to be dynamically instantiated per request (read more about the [request-scoped](/fundamentals/injection-scopes) providers). When you configure your strategy to be request-scoped, Nest will never instantiate it since it's not tied to any specific route. There is no physical way to determine which "request-scoped" strategies should be executed per request.
+L'API du passeport est basée sur l'enregistrement de stratégies dans l'instance globale de la bibliothèque. Par conséquent, les stratégies ne sont pas conçues pour avoir des options dépendantes de la requête ou pour être dynamiquement instanciées par requête (en savoir plus sur les fournisseurs [request-scoped](/fundamentals/injection-scopes)). Lorsque vous configurez votre stratégie pour qu'elle soit adaptée aux requêtes, Nest ne l'instanciera jamais car elle n'est pas liée à une route spécifique. Il n'existe aucun moyen physique de déterminer quelles stratégies à portée de requête doivent être exécutées par requête.
 
-However, there are ways to dynamically resolve request-scoped providers within the strategy. For this, we leverage the [module reference](/fundamentals/module-ref) feature.
+Cependant, il existe des moyens de résoudre dynamiquement les fournisseurs à portée de requête au sein de la stratégie. Pour cela, nous utilisons la fonctionnalité [référence de module](/fundamentals/module-ref).
 
-First, open the `local.strategy.ts` file and inject the `ModuleRef` in the normal way:
+Tout d'abord, ouvrez le fichier `local.strategy.ts` et injectez le `ModuleRef` de la manière habituelle :
 
 ```typescript
 constructor(private moduleRef: ModuleRef) {
@@ -886,13 +886,13 @@ constructor(private moduleRef: ModuleRef) {
 }
 ```
 
-> info **Hint** The `ModuleRef` class is imported from the `@nestjs/core` package.
+> info **Astuce** La classe `ModuleRef` est importée du paquet `@nestjs/core`.
 
-Be sure to set the `passReqToCallback` configuration property to `true`, as shown above.
+Assurez-vous de mettre la propriété de configuration `passReqToCallback` à `true`, comme indiqué ci-dessus.
 
-In the next step, the request instance will be used to obtain the current context identifier, instead of generating a new one (read more about request context [here](/fundamentals/module-ref#getting-current-sub-tree)).
+Dans l'étape suivante, l'instance de requête sera utilisée pour obtenir l'identifiant du contexte actuel, au lieu d'en générer un nouveau (pour en savoir plus sur le contexte de requête [ici](/fundamentals/module-ref#obtenir-la-sous-arborescence-actuelle)).
 
-Now, inside the `validate()` method of the `LocalStrategy` class, use the `getByRequest()` method of the `ContextIdFactory` class to create a context id based on the request object, and pass this to the `resolve()` call:
+Maintenant, dans la méthode `validate()` de la classe `LocalStrategy`, utilisez la méthode `getByRequest()` de la classe `ContextIdFactory` pour créer un identifiant de contexte basé sur l'objet de requête, et passez-le à l'appel `resolve()` :
 
 ```typescript
 async validate(
@@ -901,24 +901,24 @@ async validate(
   password: string,
 ) {
   const contextId = ContextIdFactory.getByRequest(request);
-  // "AuthService" is a request-scoped provider
+  // "AuthService" est un fournisseur à portée de requête
   const authService = await this.moduleRef.resolve(AuthService, contextId);
   ...
 }
 ```
 
-In the example above, the `resolve()` method will asynchronously return the request-scoped instance of the `AuthService` provider (we assumed that `AuthService` is marked as a request-scoped provider).
+Dans l'exemple ci-dessus, la méthode `resolve()` renvoie de manière asynchrone l'instance du fournisseur `AuthService` (nous avons supposé que `AuthService` est marqué comme un fournisseur à portée de requête).
 
-#### Customize Passport
+#### Personnaliser Passport
 
-Any standard Passport customization options can be passed the same way, using the `register()` method. The available options depend on the strategy being implemented. For example:
+Toutes les options de personnalisation standard de Passport peuvent être passées de la même manière, en utilisant la méthode `register()`. Les options disponibles dépendent de la stratégie mise en œuvre. Par exemple, les options disponibles dépendent de la stratégie mise en œuvre :
 
 ```typescript
 PassportModule.register({ session: true });
 ```
 
-You can also pass strategies an options object in their constructors to configure them.
-For the local strategy you can pass e.g.:
+Vous pouvez également passer aux stratégies un objet d'options dans leurs constructeurs pour les configurer.
+Pour la stratégie locale, vous pouvez passer par exemple :
 
 ```typescript
 constructor(private authService: AuthService) {
@@ -929,21 +929,21 @@ constructor(private authService: AuthService) {
 }
 ```
 
-Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for property names.
+Consultez le [site web Passeport officiel](http://www.passportjs.org/docs/oauth/) pour connaître les noms de propriété.
 
-#### Named strategies
+#### Stratégies nommées
 
-When implementing a strategy, you can provide a name for it by passing a second argument to the `PassportStrategy` function. If you don't do this, each strategy will have a default name (e.g., 'jwt' for jwt-strategy):
+Lors de l'implémentation d'une stratégie, vous pouvez lui donner un nom en passant un second argument à la fonction `PassportStrategy`. Si vous ne le faites pas, chaque stratégie aura un nom par défaut (par exemple, 'jwt' pour jwt-strategy) :
 
 ```typescript
 export class JwtStrategy extends PassportStrategy(Strategy, 'myjwt')
 ```
 
-Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
+Ensuite, vous y faites référence via un décorateur comme `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
-In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
+Pour utiliser un AuthGuard avec [GraphQL](/graphql/quick-start), il faut étendre la classe AuthGuard intégrée et surcharger la méthode getRequest().
 
 ```typescript
 @Injectable()
@@ -955,7 +955,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
-To get the current authenticated user in your graphql resolver, you can define a `@CurrentUser()` decorator:
+Pour obtenir l'utilisateur authentifié actuel dans votre résolveur graphql, vous pouvez définir un décorateur `@CurrentUser()` :
 
 ```typescript
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
@@ -969,7 +969,7 @@ export const CurrentUser = createParamDecorator(
 );
 ```
 
-To use above decorator in your resolver, be sure to include it as a parameter of your query or mutation:
+Pour utiliser le décorateur ci-dessus dans votre résolveur, assurez-vous de l'inclure en tant que paramètre de votre requête ou mutation :
 
 ```typescript
 @Query(returns => User)

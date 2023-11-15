@@ -1,32 +1,32 @@
 ### CQRS
 
-The flow of simple [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Create, Read, Update and Delete) applications can be described as follows:
+Le flux des applications simples [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Créer, Lire, Mettre à jour et Supprimer) peut être décrit comme suit :
 
-1. The controllers layer handles HTTP requests and delegates tasks to the services layer.
-2. The services layer is where most of the business logic lives.
-3. Services use repositories / DAOs to change / persist entities.
-4. Entities act as containers for the values, with setters and getters.
+1. La couche des contrôleurs traite les demandes HTTP et délègue les tâches à la couche des services.
+2. C'est dans la couche des services que se trouve la majeure partie de la logique d'entreprise.
+3. Les services utilisent des référentiels / DAO pour modifier / maintenir les entités.
+4. Les entités agissent comme des conteneurs pour les valeurs, avec des setters et des getters.
 
-While this pattern is usually sufficient for small and medium-sized applications, it may not be the best choice for larger, more complex applications. In such cases, the **CQRS** (Command and Query Responsibility Segregation) model may be more appropriate and scalable (depending on the application's requirements). Benefits of this model include:
+Si ce modèle est généralement suffisant pour les applications de petite et moyenne taille, il n'est pas forcément le meilleur choix pour les applications plus importantes et plus complexes. Dans ce cas, le modèle **CQRS** (Command and Query Responsibility Segregation) peut être plus approprié et plus évolutif (en fonction des exigences de l'application). Les avantages de ce modèle sont les suivants
 
-- **Separation of concerns**. The model separates the read and write operations into separate models.
-- **Scalability**. The read and write operations can be scaled independently.
-- **Flexibility**. The model allows for the use of different data stores for read and write operations.
-- **Performance**. The model allows for the use of different data stores optimized for read and write operations.
+- **Séparation des préoccupations**. Le modèle sépare les opérations de lecture et d'écriture dans des modèles distincts.
+- **Évolutivité**. Les opérations de lecture et d'écriture peuvent être mises à l'échelle indépendamment.
+- **Flexibilité**. Le modèle permet d'utiliser différents magasins de données pour les opérations de lecture et d'écriture.
+- **Performance**. Le modèle permet d'utiliser différents magasins de données optimisés pour les opérations de lecture et d'écriture.
 
-To facilitate that model, Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs). This chapter describes how to use it.
+Pour faciliter ce modèle, Nest fournit un [module CQRS](https://github.com/nestjs/cqrs) léger . Ce chapitre décrit comment l'utiliser.
 
 #### Installation
 
-First install the required package:
+Installez d'abord le package requis :
 
 ```bash
 $ npm install --save @nestjs/cqrs
 ```
 
-#### Commands
+#### Commandes
 
-Commands are used to change the application state. They should be task-based, rather than data centric. When a command is dispatched, it is handled by a corresponding **Command Handler**. The handler is responsible for updating the application state.
+Les commandes sont utilisées pour modifier l'état de l'application. Elles doivent être basées sur des tâches plutôt que sur des données. Lorsqu'une commande est envoyée, elle est traitée par un **Gestionnaire de commande** correspondant. Le gestionnaire est responsable de la mise à jour de l'état de l'application.
 
 ```typescript
 @@filename(heroes-game.service)
@@ -56,7 +56,7 @@ export class HeroesGameService {
 }
 ```
 
-In the code snippet above, we instantiate the `KillDragonCommand` class and pass it to the `CommandBus`'s `execute()` method. This is the demonstrated command class:
+Dans l'extrait de code ci-dessus, nous instancions la classe `KillDragonCommand` et la passons à la méthode `execute()` du `CommandBus`. C'est la classe de commande démontrée :
 
 ```typescript
 @@filename(kill-dragon.command)
@@ -75,9 +75,9 @@ export class KillDragonCommand {
 }
 ```
 
-The `CommandBus` represents a **stream** of commands. It is responsible for dispatching commands to the appropriate handlers. The `execute()` method returns a promise, which resolves to the value returned by the handler.
+Le `CommandBus` représente un **flux** de commandes. Il est responsable de l'envoi des commandes aux gestionnaires appropriés. La méthode `execute()` renvoie une promesse, qui se résout en la valeur renvoyée par le gestionnaire.
 
-Let's create a handler for the `KillDragonCommand` command.
+Créons un gestionnaire pour la commande `KillDragonCommand`.
 
 ```typescript
 @@filename(kill-dragon.handler)
@@ -111,19 +111,19 @@ export class KillDragonHandler {
 }
 ```
 
-This handler retrieves the `Hero` entity from the repository, calls the `killEnemy()` method, and then persists the changes. The `KillDragonHandler` class implements the `ICommandHandler` interface, which requires the implementation of the `execute()` method. The `execute()` method receives the command object as an argument.
+Ce handler récupère l'entité `Hero` dans le repository, appelle la méthode `killEnemy()`, puis persiste les changements. La classe `KillDragonHandler` implémente l'interface `ICommandHandler`, qui requiert l'implémentation de la méthode `execute()`. La méthode `execute()` reçoit l'objet commande comme argument.
 
-#### Queries
+#### Requêtes
 
-Queries are used to retrieve data from the application state. They should be data centric, rather than task-based. When a query is dispatched, it is handled by a corresponding **Query Handler**. The handler is responsible for retrieving the data.
+Les requêtes sont utilisées pour extraire des données de l'état de l'application. Elles doivent être centrées sur les données plutôt que sur les tâches. Lorsqu'une requête est envoyée, elle est traitée par un **Gestionnaire de requêtes** correspondant. Le gestionnaire est responsable de l'extraction des données.
 
-The `QueryBus` follows the same pattern as the `CommandBus`. Query handlers should implement the `IQueryHandler` interface and be annotated with the `@QueryHandler()` decorator.
+Le `QueryBus` suit le même modèle que le `CommandBus`. Les gestionnaires de requêtes doivent implémenter l'interface `IQueryHandler` et être annotés avec le décorateur `@QueryHandler()`.
 
-#### Events
+#### Evénements
 
-Events are used to notify other parts of the application about changes in the application state. They are dispatched by **models** or directly using the `EventBus`. When an event is dispatched, it is handled by corresponding **Event Handlers**. Handlers can then, for example, update the read model.
+Les événements sont utilisés pour notifier les autres parties de l'application des changements dans l'état de l'application. Ils sont envoyés par les **modèles** ou directement en utilisant le `EventBus`. Lorsqu'un événement est envoyé, il est traité par les **Gestionnaires d'événements** correspondants. Les gestionnaires peuvent alors, par exemple, mettre à jour le modèle de lecture.
 
-For demonstration purposes, let's create an event class:
+À des fins de démonstration, créons une classe d'événements :
 
 ```typescript
 @@filename(hero-killed-dragon.event)
@@ -142,7 +142,7 @@ export class HeroKilledDragonEvent {
 }
 ```
 
-Now while events can be dispatched directly using the `EventBus.publish()` method, we can also dispatch them from the model. Let's update the `Hero` model to dispatch the `HeroKilledDragonEvent` event when the `killEnemy()` method is called.
+Maintenant, alors que les événements peuvent être distribués directement en utilisant la méthode `EventBus.publish()`, nous pouvons aussi les distribuer depuis le modèle. Mettons à jour le modèle `Hero` pour dispatcher l'événement `HeroKilledDragonEvent` lorsque la méthode `killEnemy()` est appelée.
 
 ```typescript
 @@filename(hero.model)
@@ -152,7 +152,7 @@ export class Hero extends AggregateRoot {
   }
 
   killEnemy(enemyId: string) {
-    // Business logic
+    // Logique métier
     this.apply(new HeroKilledDragonEvent(this.id, enemyId));
   }
 }
@@ -164,13 +164,13 @@ export class Hero extends AggregateRoot {
   }
 
   killEnemy(enemyId) {
-    // Business logic
+    // Logique métier
     this.apply(new HeroKilledDragonEvent(this.id, enemyId));
   }
 }
 ```
 
-The `apply()` method is used to dispatch events. It accepts an event object as an argument. However, since our model is not aware of the `EventBus`, we need to associate it with the model. We can do that by using the `EventPublisher` class.
+La méthode `apply()` est utilisée pour distribuer les événements. Elle accepte un objet événement comme argument. Cependant, comme notre modèle ne connaît pas le `EventBus`, nous devons l'associer au modèle. Nous pouvons le faire en utilisant la classe `EventPublisher`.
 
 ```typescript
 @@filename(kill-dragon.handler)
@@ -210,9 +210,9 @@ export class KillDragonHandler {
 }
 ```
 
-The `EventPublisher#mergeObjectContext` method merges the event publisher into the provided object, which means that the object will now be able to publish events to the events stream.
+La méthode `EventPublisher#mergeObjectContext` fusionne l'éditeur d'événements dans l'objet fourni, ce qui signifie que l'objet pourra désormais publier des événements dans le flux d'événements.
 
-Notice that in this example we also call the `commit()` method on the model. This method is used to dispatch any outstanding events. To automatically dispatch events, we can set the `autoCommit` property to `true`:
+Notez que dans cet exemple, nous appelons également la méthode `commit()` sur le modèle. Cette méthode est utilisée pour distribuer les événements en cours. Pour distribuer automatiquement les événements, nous pouvons mettre la propriété `autoCommit` à `true` :
 
 ```typescript
 export class Hero extends AggregateRoot {
@@ -223,24 +223,24 @@ export class Hero extends AggregateRoot {
 }
 ```
 
-In case we want to merge the event publisher into a non-existing object, but rather into a class, we can use the `EventPublisher#mergeClassContext` method:
+Dans le cas où nous voulons fusionner l'éditeur d'événements dans un objet inexistant, mais plutôt dans une classe, nous pouvons utiliser la méthode `EventPublisher#mergeClassContext` :
 
 ```typescript
 const HeroModel = this.publisher.mergeClassContext(Hero);
-const hero = new HeroModel('id'); // <-- HeroModel is a class
+const hero = new HeroModel('id'); // <-- HeroModel est une classe
 ```
 
-Now every instance of the `HeroModel` class will be able to publish events without using `mergeObjectContext()` method.
+Maintenant, chaque instance de la classe `HeroModel` sera capable de publier des événements sans utiliser la méthode `mergeObjectContext()`.
 
-Additionally, we can emit events manually using `EventBus`:
+De plus, nous pouvons émettre des événements manuellement en utilisant `EventBus` :
 
 ```typescript
 this.eventBus.publish(new HeroKilledDragonEvent());
 ```
 
-> info **Hint** The `EventBus` is an injectable class.
+> info **Astuce** Le `EventBus` est une classe injectable.
 
-Each event can have multiple **Event Handlers**.
+Chaque événement peut avoir plusieurs **gestionnaires d'événements**.
 
 ```typescript
 @@filename(hero-killed-dragon.handler)
@@ -249,25 +249,25 @@ export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEv
   constructor(private repository: HeroRepository) {}
 
   handle(event: HeroKilledDragonEvent) {
-    // Business logic
+    // Logique métier
   }
 }
 ```
 
-> info **Hint** Be aware that when you start using event handlers you get out of the traditional HTTP web context.
+> info **Astuce** Sachez que lorsque vous commencez à utiliser des gestionnaires d'événements, vous sortez du contexte web HTTP traditionnel.
 >
-> - Errors in `CommandHandlers` can still be caught by built-in [Exception filters](/exception-filters).
-> - Errors in `EventHandlers` can't be caught by Exception filters: you will have to handle them manually. Either by a simple `try/catch`, using [Sagas](/recipes/cqrs#sagas) by triggering a compensating event, or whatever other solution you choose.
-> - HTTP Responses in `CommandHandlers` can still be sent back to the client.
-> - HTTP Responses in `EventHandlers` cannot. If you want to send information to the client you could use [WebSocket](/websockets/gateways), [SSE](/techniques/server-sent-events), or whatever other solution you choose.
+> - Les erreurs dans les `CommandHandlers` peuvent toujours être capturées par les [filtres d'exception](/exception-filters) intégrés.
+> - Les erreurs dans les `EventHandlers` ne peuvent pas être capturées par les filtres d'exception : vous devrez les gérer manuellement. Soit par un simple `try/catch`, soit en utilisant [Sagas](/recipes/cqrs#sagas) en déclenchant un événement compensatoire, ou toute autre solution que vous choisirez.
+> - Les réponses HTTP dans les `CommandHandlers` peuvent toujours être renvoyées au client.
+> - Les réponses HTTP dans les `EventHandlers` ne le peuvent pas. Si vous voulez envoyer des informations au client, vous pouvez utiliser [WebSocket](/websockets/gateways), [SSE](/techniques/server-sent-events), ou toute autre solution de votre choix.
 
 #### Sagas
 
-Saga is a long-running process that listens to events and may trigger new commands. It is usually used to manage complex workflows in the application. For example, when a user signs up, a saga may listen to the `UserRegisteredEvent` and send a welcome email to the user.
+Saga est un processus de longue durée qui écoute les événements et peut déclencher de nouvelles commandes. Elle est généralement utilisée pour gérer des flux de travail complexes dans l'application. Par exemple, lorsqu'un utilisateur s'inscrit, une saga peut écouter l'événement `UserRegisteredEvent` et envoyer un e-mail de bienvenue à l'utilisateur.
 
-Sagas are an extremely powerful feature. A single saga may listen for 1..\* events. Using the [RxJS](https://github.com/ReactiveX/rxjs) library, we can filter, map, fork, and merge event streams to create sophisticated workflows. Each saga returns an Observable which produces a command instance. This command is then dispatched **asynchronously** by the `CommandBus`.
+Les sagas sont un outil extrêmement puissant. Une seule saga peut écouter 1..\* événements. En utilisant la bibliothèque [RxJS](https://github.com/ReactiveX/rxjs), nous pouvons filtrer, mapper, forker et fusionner des flux d'événements pour créer des flux de travail sophistiqués. Chaque saga renvoie un Observable qui produit une instance de commande. Cette commande est ensuite distribuée de manière **asynchrone** par le `CommandBus`.
 
-Let's create a saga that listens to the `HeroKilledDragonEvent` and dispatches the `DropAncientItemCommand` command.
+Créons une saga qui écoute le `HeroKilledDragonEvent` et envoie la commande `DropAncientItemCommand`.
 
 ```typescript
 @@filename(heroes-game.saga)
@@ -294,15 +294,15 @@ export class HeroesGameSagas {
 }
 ```
 
-> info **Hint** The `ofType` operator and the `@Saga()` decorator are exported from the `@nestjs/cqrs` package.
+> info **Astuce** L'opérateur `ofType` et le décorateur `@Saga()` sont exportés depuis le package `@nestjs/cqrs`.
 
-The `@Saga()` decorator marks the method as a saga. The `events$` argument is an Observable stream of all events. The `ofType` operator filters the stream by the specified event type. The `map` operator maps the event to a new command instance.
+Le décorateur `@Saga()` marque la méthode comme une saga. L'argument `events$` est un flux Observable de tous les événements. L'opérateur `ofType` filtre le flux par le type d'événement spécifié. L'opérateur `map` fait correspondre l'événement à une nouvelle instance de commande.
 
-In this example, we map the `HeroKilledDragonEvent` to the `DropAncientItemCommand` command. The `DropAncientItemCommand` command is then auto-dispatched by the `CommandBus`.
+Dans cet exemple, nous faisons correspondre l'événement `HeroKilledDragonEvent` à la commande `DropAncientItemCommand`. La commande `DropAncientItemCommand` est alors distribuée automatiquement par le `CommandBus`.
 
-#### Setup
+#### Mise en place
 
-To wrap up, we need to register all command handlers, event handlers, and sagas in the `HeroesGameModule`:
+Pour résumer, nous devons enregistrer tous les gestionnaires de commandes, les gestionnaires d'événements et les sagas dans le `HeroesGameModule` :
 
 ```typescript
 @@filename(heroes-game.module)
@@ -323,9 +323,9 @@ export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 export class HeroesGameModule {}
 ```
 
-#### Unhandled exceptions
+#### Exceptions non gérées
 
-Event handlers are executed in the asynchronous manner. This means they should always handle all exceptions to prevent application from entering the inconsistent state. However, if an exception is not handled, the `EventBus` will create the `UnhandledExceptionInfo` object and push it to the `UnhandledExceptionBus` stream. This stream is an `Observable` which can be used to process unhandled exceptions.
+Les gestionnaires d'événements sont exécutés de manière asynchrone. Cela signifie qu'ils doivent toujours gérer toutes les exceptions afin d'éviter que l'application n'entre dans un état incohérent. Cependant, si une exception n'est pas gérée, le `EventBus` va créer l'objet `UnhandledExceptionInfo` et le pousser dans le flux `UnhandledExceptionBus`. Ce flux est un `Observable` qui peut être utilisé pour traiter les exceptions non gérées.
 
 ```typescript
 private destroy$ = new Subject<void>();
@@ -334,8 +334,8 @@ constructor(private unhandledExceptionsBus: UnhandledExceptionBus) {
   this.unhandledExceptionsBus
     .pipe(takeUntil(this.destroy$))
     .subscribe((exceptionInfo) => {
-      // Handle exception here
-      // e.g. send it to external service, terminate process, or publish a new event
+      // Traiter l'exception ici
+      // par exemple, l'envoyer à un service externe, mettre fin au processus ou publier un nouvel événement.
     });
 }
 
@@ -345,11 +345,11 @@ onModuleDestroy() {
 }
 ```
 
-To filter out exceptions, we can use the `ofType` operator, as follows:
+Pour filtrer les exceptions, nous pouvons utiliser l'opérateur `ofType`, comme suit :
 
 ```typescript
 this.unhandledExceptionsBus.pipe(takeUntil(this.destroy$), UnhandledExceptionBus.ofType(TransactionNotAllowedException)).subscribe((exceptionInfo) => {
-  // Handle exception here
+  // Traiter l'exception ici
 });
 ```
 
@@ -360,19 +360,19 @@ The `UnhandledExceptionInfo` object contains the following properties:
 ```typescript
 export interface UnhandledExceptionInfo<Cause = IEvent | ICommand, Exception = any> {
   /**
-   * The exception that was thrown.
+   * L'exception qui a été levée.
    */
   exception: Exception;
   /**
-   * The cause of the exception (event or command reference).
+   * La cause de l'exception (événement ou référence de commande).
    */
   cause: Cause;
 }
 ```
 
-#### Subscribing to all events
+#### S'abonner à tous les événements
 
-`CommandBus`, `QueryBus` and `EventBus` are all **Observables**. This means that we can subscribe to the entire stream and, for example, process all events. For example, we can log all events to the console, or save them to the event store.
+`CommandBus`, `QueryBus` et `EventBus` sont tous des **Observables**. Cela signifie que nous pouvons nous abonner à l'ensemble du flux et, par exemple, traiter tous les événements. Par exemple, nous pouvons enregistrer tous les événements dans la console, ou les sauvegarder dans le magasin d'événements.
 
 ```typescript
 private destroy$ = new Subject<void>();
@@ -381,7 +381,7 @@ constructor(private eventBus: EventBus) {
   this.eventBus
     .pipe(takeUntil(this.destroy$))
     .subscribe((event) => {
-      // Save events to database
+      // Enregistrer les événements dans la base de données
     });
 }
 
@@ -391,6 +391,6 @@ onModuleDestroy() {
 }
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/kamilmysliwiec/nest-cqrs-example).
+Un exemple concret est disponible [ici](https://github.com/kamilmysliwiec/nest-cqrs-example).

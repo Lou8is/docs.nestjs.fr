@@ -1,26 +1,26 @@
 ### Nest Commander
 
-Expanding on the [standalone application](/standalone-applications) docs there's also the [nest-commander](https://jmcdo29.github.io/nest-commander) package for writing command line applications in a structure similar to your typical Nest application.
+En complément de la documentation sur les [applications autonomes](/standalone-applications), il existe également le package [nest-commander](https://jmcdo29.github.io/nest-commander) qui permet d'écrire des applications en ligne de commande dans une structure similaire à celle d'une application Nest classique.
 
-> info **info** `nest-commander` is a third party package and is not managed by the entirety of the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/jmcdo29/nest-commander/issues/new/choose)
+> info **Info** `nest-commander` est un package tiers et n'est pas géré par l'ensemble de l'équipe NestJS. Veuillez rapporter tout problème trouvé avec la bibliothèque dans le [dépôt approprié](https://github.com/jmcdo29/nest-commander/issues/new/choose).
 
 #### Installation
 
-Just like any other package, you've got to install it before you can use it.
+Comme tout autre package, vous devez l'installer avant de pouvoir l'utiliser.
 
 ```bash
 $ npm i nest-commander
 ```
 
-#### A Command file
+#### Un fichier de commande
 
-`nest-commander` makes it easy to write new command-line applications with [decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) via the `@Command()` decorator for classes and the `@Option()` decorator for methods of that class. Every command file should implement the `CommandRunner` abstract class and should be decorated with a `@Command()` decorator.
+`nest-commander` facilite l'écriture de nouvelles applications de ligne de commande avec [decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) via le décorateur `@Command()` pour les classes et le décorateur `@Option()` pour les méthodes de cette classe. Chaque fichier de commande doit implémenter la classe abstraite `CommandRunner` et doit être décoré avec un décorateur `@Command()`.
 
-Every command is seen as an `@Injectable()` by Nest, so your normal Dependency Injection still works as you would expect it to. The only thing to take note of is the abstract class `CommandRunner`, which should be implemented by each command. The `CommandRunner` abstract class ensures that all commands have a `run` method that returns a `Promise<void>` and takes in the parameters `string[], Record<string, any>`. The `run` command is where you can kick all of your logic off from, it will take in whatever parameters did not match option flags and pass them in as an array, just in case you are really meaning to work with multiple parameters. As for the options, the `Record<string, any>`, the names of these properties match the `name` property given to the `@Option()` decorators, while their value matches the return of the option handler. If you'd like better type safety, you are welcome to create an interface for your options as well.
+Chaque commande est vue comme un `@Injectable()` par Nest, donc votre injection de dépendance normale fonctionne toujours comme vous vous y attendez. La seule chose à noter est la classe abstraite `CommandRunner`, qui doit être implémentée par chaque commande. La classe abstraite `CommandRunner` assure que toutes les commandes ont une méthode `run` qui retourne une `Promesse<void>` et prend les paramètres `string[], Record<string, any>`. La commande `run` est l'endroit où vous pouvez lancer toute votre logique, elle prendra tous les paramètres qui ne correspondent pas aux drapeaux d'options et les passera sous forme de tableau, juste au cas où vous voudriez vraiment travailler avec des paramètres multiples. Quant aux options, les `Record<string, any>`, les noms de ces propriétés correspondent à la propriété `name` donnée aux décorateurs `@Option()`, tandis que leur valeur correspond au retour du gestionnaire d'option. Si vous souhaitez une meilleure sécurité de type, vous pouvez également créer une interface pour vos options.
 
-#### Running the Command
+#### Exécution de la commande
 
-Similar to how in a NestJS application we can use the `NestFactory` to create a server for us, and run it using `listen`, the `nest-commander` package exposes a simple to use API to run your server. Import the `CommandFactory` and use the `static` method `run` and pass in the root module of your application. This would probably look like below
+De la même manière que dans une application NestJS nous pouvons utiliser `NestFactory` pour créer un serveur pour nous, et le lancer en utilisant `listen`, le package `nest-commander` expose une API simple à utiliser pour lancer votre serveur. Importez la `CommandFactory` et utilisez la méthode `static` `run` et passez le module racine de votre application. Cela ressemblerait probablement à ce qui suit :
 
 ```ts
 import { CommandFactory } from 'nest-commander';
@@ -33,7 +33,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-By default, Nest's logger is disabled when using the `CommandFactory`. It's possible to provide it though, as the second argument to the `run` function. You can either provide a custom NestJS logger, or an array of log levels you want to keep - it might be useful to at least provide `['error']` here, if you only want to print out Nest's error logs.
+Par défaut, le logger de Nest est désactivé lors de l'utilisation de `CommandFactory`. Il est cependant possible de le fournir en tant que second argument de la fonction `run`. Vous pouvez soit fournir un logger NestJS personnalisé, soit un tableau de niveaux de logs que vous souhaitez conserver - il peut être utile de fournir au moins `['error']` ici, si vous ne voulez imprimer que les logs d'erreur de Nest.
 
 ```ts
 import { CommandFactory } from 'nest-commander';
@@ -43,22 +43,22 @@ import { LogService } './log.service';
 async function bootstrap() {
   await CommandFactory.run(AppModule, new LogService());
 
-  // or, if you only want to print Nest's warnings and errors
+  // ou, si vous ne voulez imprimer que les avertissements et les erreurs de Nest
   await CommandFactory.run(AppModule, ['warn', 'error']);
 }
 
 bootstrap();
 ```
 
-And that's it. Under the hood, `CommandFactory` will worry about calling `NestFactory` for you and calling `app.close()` when necessary, so you shouldn't need to worry about memory leaks there. If you need to add in some error handling, there's always `try/catch` wrapping the `run` command, or you can chain on some `.catch()` method to the `bootstrap()` call.
+Et c'est tout. Sous le capot, `CommandFactory` s'occupera d'appeler `NestFactory` pour vous et d'appeler `app.close()` quand c'est nécessaire, donc vous ne devriez pas avoir à vous soucier des fuites de mémoire ici. Si vous avez besoin d'ajouter une gestion d'erreur, il y a toujours `try/catch` qui enveloppe la commande `run`, ou vous pouvez enchaîner une méthode `.catch()` à l'appel `bootstrap()`.
 
-#### Testing
+#### Tests
 
-So what's the use of writing a super awesome command line script if you can't test it super easily, right? Fortunately, `nest-commander` has some utilities you can make use of that fits in perfectly with the NestJS ecosystem, it'll feel right at home to any Nestlings out there. Instead of using the `CommandFactory` for building the command in test mode, you can use `CommandTestFactory` and pass in your metadata, very similarly to how `Test.createTestingModule` from `@nestjs/testing` works. In fact, it uses this package under the hood. You're also still able to chain on the `overrideProvider` methods before calling `compile()` so you can swap out DI pieces right in the test.
+Alors à quoi bon écrire un super script en ligne de commande si vous ne pouvez pas le tester super facilement, n'est-ce pas ? Heureusement, `nest-commander` a quelques utilitaires que vous pouvez utiliser et qui s'intègrent parfaitement à l'écosystème NestJS, il se sentira comme chez lui pour tous les Nestlings qui sont là. Au lieu d'utiliser `CommandFactory` pour construire la commande en mode test, vous pouvez utiliser `CommandTestFactory` et passer vos métadonnées, de manière très similaire à la façon dont `Test.createTestingModule` de `@nestjs/testing` fonctionne. En fait, il utilise ce package sous le capot. Vous pouvez toujours chaîner les méthodes `overrideProvider` avant d'appeler `compile()` afin de pouvoir changer les éléments DI directement dans le test.
 
-#### Putting it all together
+#### Tout mettre en place
 
-The following class would equate to having a CLI command that can take in the subcommand `basic` or be called directly, with `-n`, `-s`, and `-b` (along with their long flags) all being supported and with custom parsers for each option. The `--help` flag is also supported, as is customary with commander.
+La classe suivante équivaudrait à avoir une commande CLI qui peut prendre la sous-commande `basic` ou être appelée directement, avec `-n`, `-s`, et `-b` (ainsi que leurs verions longues) tous supportés et avec des analyseurs personnalisés pour chaque option. L'option `--help' est également supportée, comme il est d'usage avec commander.
 
 ```ts
 import { Command, CommandRunner, Option } from 'nest-commander';
@@ -133,7 +133,7 @@ export class BasicCommand extends CommandRunner {
 }
 ```
 
-Make sure the command class is added to a module
+Assurez-vous que la classe de commande est ajoutée à un module
 
 ```ts
 @Module({
@@ -142,7 +142,7 @@ Make sure the command class is added to a module
 export class AppModule {}
 ```
 
-And now to be able to run the CLI in your main.ts you can do the following
+Et maintenant, pour pouvoir exécuter la CLI dans votre main.ts, vous pouvez faire ce qui suit
 
 ```ts
 async function bootstrap() {
@@ -152,8 +152,8 @@ async function bootstrap() {
 bootstrap();
 ```
 
-And just like that, you've got a command line application.
+Et ainsi, vous avez une application en ligne de commande.
 
-#### More Information
+#### Plus d'informations
 
-Visit the [nest-commander docs site](https://jmcdo29.github.io/nest-commander) for more information, examples, and API documentation.
+Visitez le site de la [documentation nest-commander](https://jmcdo29.github.io/nest-commander) pour plus d'informations, d'exemples et de documentation sur l'API.
