@@ -143,72 +143,58 @@ export class AppModule {}
 
 Notre `RolesGuard` fonctionne, mais elle n'est pas encore très intelligente. Nous ne profitons pas encore de la caractéristique la plus importante de la garde - le [contexte d'exécution] (/fundamentals/execution-context). Elle ne connaît pas encore les rôles, ni quels rôles sont autorisés pour chaque gestionnaire. Le `CatsController`, par exemple, pourrait avoir différents schémas de permission pour différentes routes. Certaines pourraient n'être accessibles qu'à un utilisateur administrateur, et d'autres pourraient être ouvertes à tout le monde. Comment pouvons-nous faire correspondre les rôles aux routes d'une manière flexible et réutilisable ?
 
-C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](/fundamentals/execution-context#réflexion-et-métadonnées)). Nest offre la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes grâce au décorateur `@SetMetadata()`. Ces métadonnées fournissent la donnée `role` manquante, dont une garde intelligente a besoin pour prendre des décisions. Voyons comment utiliser `@SetMetadata()` :
 
-```typescript
-@@filename(cats.controller)
-@Post()
-@SetMetadata('roles', ['admin'])
-async create(@Body() createCatDto: CreateCatDto) {
-  this.catsService.create(createCatDto);
-}
-@@switch
-@Post()
-@SetMetadata('roles', ['admin'])
-@Bind(Body())
-async create(createCatDto) {
-  this.catsService.create(createCatDto);
-}
-```
+C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](/fundamentals/execution-context#réflexion-et-métadonnées)). Nest fournit la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes à travers des décorateurs créés via la méthode statique `Reflector#createDecorator`, ou le décorateur intégré `@SetMetadata()`.
 
-> info **Astuce** Le décorateur `@SetMetadata()` est importé du package `@nestjs/common`.
+Par exemple, créons un décorateur `@Roles()` en utilisant la méthode `Reflector#createDecorator` qui attachera les métadonnées au handler. Le `Reflector` est fourni par le framework et exposé dans le package `@nestjs/core`.
 
-Avec la construction ci-dessus, nous avons attaché les métadonnées `roles` (`roles` est une clé, tandis que `['admin']` est une valeur particulière) à la méthode `create()`. Bien que cela fonctionne, ce n'est pas une bonne pratique d'utiliser `@SetMetadata()` directement dans vos routes. A la place, créez vos propres décorateurs, comme montré ci-dessous :
-
-```typescript
+```ts
 @@filename(roles.decorator)
-import { SetMetadata } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
-@@switch
-import { SetMetadata } from '@nestjs/common';
-
-export const Roles = (...roles) => SetMetadata('roles', roles);
+export const Roles = Reflector.createDecorator<string[]>();
 ```
 
-Cette approche est beaucoup plus propre et lisible, et est fortement typée. Maintenant que nous avons un décorateur `@Roles()` personnalisé, nous pouvons l'utiliser pour décorer la méthode `create()`.
+Le décorateur `Roles` est ici une fonction qui prend un seul argument de type `string[]`.
+
+Maintenant, pour utiliser ce décorateur, nous annotons simplement le handler avec lui :
 
 ```typescript
 @@filename(cats.controller)
 @Post()
-@Roles('admin')
+@Roles(['admin'])
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
-@Roles('admin')
+@Roles(['admin'])
 @Bind(Body())
 async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
+
+Ici, nous avons attaché les métadonnées du décorateur `Roles` à la méthode `create()`, indiquant que seuls les utilisateurs ayant le rôle `admin` devraient être autorisés à accéder à cette route.
+
+Alternativement, au lieu d'utiliser la méthode `Reflector#createDecorator`, nous pourrions utiliser le décorateur intégré `@SetMetadata()`. En savoir plus [ici](/fundamentals/execution-context#approche-bas-niveau).
 
 #### Mettre en place l'ensemble
 
-Revenons maintenant en arrière et lions cela à notre `RolesGuard`. Actuellement, il retourne simplement `true` dans tous les cas, permettant à toutes les requêtes d'être traitées. Nous voulons rendre la valeur de retour conditionnelle en comparant les **rôles assignés à l'utilisateur actuel** aux rôles réels requis par la route en cours de traitement. Afin d'accéder au(x) rôle(s) de la route (métadonnées personnalisées), nous allons utiliser la classe d'aide `Reflector`, qui est fournie d'office par le framework et exposée dans le package `@nestjs/core`.
+Revenons maintenant en arrière et lions cela à notre `RolesGuard`. Actuellement, il retourne simplement `true` dans tous les cas, permettant à toutes les requêtes d'être traitées. Nous voulons rendre la valeur de retour conditionnelle en comparant les **rôles assignés à l'utilisateur actuel** aux rôles réels requis par la route en cours de traitement. Afin d'accéder au(x) rôle(s) de la route (métadonnées personnalisées), nous allons utiliser la classe d'aide `Reflector` à nouveau, comme présenté ci-dessous :
 
 ```typescript
 @@filename(roles.guard)
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Roles } from './roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    const roles = this.reflector.get<Roles, context.getHandler());
     if (!roles) {
       return true;
     }
@@ -220,6 +206,7 @@ export class RolesGuard implements CanActivate {
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Roles } from './roles.decorator';
 
 @Injectable()
 @Dependencies(Reflector)
@@ -229,7 +216,7 @@ export class RolesGuard {
   }
 
   canActivate(context) {
-    const roles = this.reflector.get('roles', context.getHandler());
+    const roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) {
       return true;
     }
