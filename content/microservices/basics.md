@@ -1,24 +1,24 @@
-### Overview
+### Vue d'ensemble
 
-In addition to traditional (sometimes called monolithic) application architectures, Nest natively supports the microservice architectural style of development. Most of the concepts discussed elsewhere in this documentation, such as dependency injection, decorators, exception filters, pipes, guards and interceptors, apply equally to microservices. Wherever possible, Nest abstracts implementation details so that the same components can run across HTTP-based platforms, WebSockets, and Microservices. This section covers the aspects of Nest that are specific to microservices.
+En plus des architectures d'application traditionnelles (parfois appelées monolithiques), Nest supporte nativement le style architectural de développement en microservices. La plupart des concepts abordés ailleurs dans cette documentation, tels que l'injection de dépendances, les décorateurs, les filtres d'exception, les tuyaux, les gardes et les intercepteurs, s'appliquent également aux microservices. Dans la mesure du possible, Nest fait abstraction des détails de mise en œuvre afin que les mêmes composants puissent être exécutés sur des plates-formes HTTP, des WebSockets et des microservices. Cette section couvre les aspects de Nest qui sont spécifiques aux microservices.
 
-In Nest, a microservice is fundamentally an application that uses a different **transport** layer than HTTP.
+Dans Nest, un microservice est fondamentalement une application qui utilise une couche de **transport** différente de HTTP.
 
 <figure><img src="/assets/Microservices_1.png" /></figure>
 
-Nest supports several built-in transport layer implementations, called **transporters**, which are responsible for transmitting messages between different microservice instances. Most transporters natively support both **request-response** and **event-based** message styles. Nest abstracts the implementation details of each transporter behind a canonical interface for both request-response and event-based messaging. This makes it easy to switch from one transport layer to another -- for example to leverage the specific reliability or performance features of a particular transport layer -- without impacting your application code.
+Nest supporte plusieurs implémentations intégrées de la couche de transport, appelées **transporteurs**, qui sont responsables de la transmission de messages entre différentes instances de microservices. La plupart des transporteurs supportent nativement les styles de messages **requête-réponse** et **événement**. Nest abstrait les détails d'implémentation de chaque transporteur derrière une interface canonique pour les messages de type requête-réponse et basés sur les événements. Il est ainsi facile de passer d'une couche de transport à une autre - par exemple pour exploiter les caractéristiques de fiabilité ou de performance spécifiques d'une couche de transport particulière - sans affecter le code de votre application.
 
 #### Installation
 
-To start building microservices, first install the required package:
+Pour commencer à construire des microservices, il faut d'abord installer le package requis :
 
 ```bash
 $ npm i --save @nestjs/microservices
 ```
 
-#### Getting started
+#### Pour commencer
 
-To instantiate a microservice, use the `createMicroservice()` method of the `NestFactory` class:
+Pour instancier un microservice, utilisez la méthode `createMicroservice()` de la classe `NestFactory` :
 
 ```typescript
 @@filename(main)
@@ -50,54 +50,53 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> info **Hint** Microservices use the **TCP** transport layer by default.
+> info **Astuce** Les microservices utilisent par défaut la couche de transport **TCP**.
 
-The second argument of the `createMicroservice()` method is an `options` object. This object may consist of two members:
+Le second argument de la méthode `createMicroservice()` est un objet `options`. Cet objet peut être composé de deux membres :
 
 <table>
   <tr>
     <td><code>transport</code></td>
-    <td>Specifies the transporter (for example, <code>Transport.NATS</code>)</td>
+    <td>Spécifie le transporteur (par exemple, <code>Transport.NATS</code>)</td>
   </tr>
   <tr>
     <td><code>options</code></td>
-    <td>A transporter-specific options object that determines transporter behavior</td>
+    <td>Un objet d'options spécifiques au transporteur qui détermine le comportement du transporteur</td>
   </tr>
 </table>
 <p>
-  The <code>options</code> object is specific to the chosen transporter. The <strong>TCP</strong> transporter exposes
-  the properties described below.  For other transporters (e.g, Redis, MQTT, etc.), see the relevant chapter for a description of the available options.
+  L'objet <code>options</code> est spécifique au transporteur choisi. Le transporteur <strong>TCP</strong> expose les propriétés décrites ci-dessous.  Pour les autres transporteurs (par exemple Redis, MQTT, etc.), voir le chapitre correspondant pour une description des options disponibles.
 </p>
 <table>
   <tr>
     <td><code>host</code></td>
-    <td>Connection hostname</td>
+    <td>Nom d'hôte de la connexion</td>
   </tr>
   <tr>
     <td><code>port</code></td>
-    <td>Connection port</td>
+    <td>Port de connexion</td>
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
-    <td>Number of times to retry message (default: <code>0</code>)</td>
+    <td>Nombre de tentatives pour réessayer le message (par défaut : <code>0</code>)</td>
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
-    <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
+    <td>Délai entre les tentatives de réessai des messages (ms) (par défaut : <code>0</code>)</td>
   </tr>
 </table>
 
-#### Patterns
+#### Modèles
 
-Microservices recognize both messages and events by **patterns**. A pattern is a plain value, for example, a literal object or a string. Patterns are automatically serialized and sent over the network along with the data portion of a message. In this way, message senders and consumers can coordinate which requests are consumed by which handlers.
+Les microservices reconnaissent les messages et les événements par des **modèles**. Un modèle est une valeur simple, par exemple un objet littéral ou une chaîne de caractères. Les modèles sont automatiquement sérialisés et envoyés sur le réseau avec les données d'un message. De cette manière, les expéditeurs et les consommateurs de messages peuvent coordonner les demandes qui sont traitées par les différents gestionnaires.
 
-#### Request-response
+#### Requête-réponse
 
-The request-response message style is useful when you need to **exchange** messages between various external services. With this paradigm, you can be certain that the service has actually received the message (without the need to manually implement a message ACK protocol). However, the request-response paradigm is not always the best choice. For example, streaming transporters that use log-based persistence, such as [Kafka](https://docs.confluent.io/3.0.0/streams/) or [NATS streaming](https://github.com/nats-io/node-nats-streaming), are optimized for solving a different range of issues, more aligned with an event messaging paradigm (see [event-based messaging](https://docs.nestjs.com/microservices/basics#event-based) below for more details).
+Le style de message requête-réponse est utile lorsque vous devez **échanger** des messages entre différents services externes. Avec ce paradigme, vous pouvez être certain que le service a effectivement reçu le message (sans avoir besoin d'implémenter manuellement un protocole d'accusé de réception de message). Cependant, le paradigme demande-réponse n'est pas toujours le meilleur choix. Par exemple, les transporteurs de flux qui utilisent une persistance basée sur les journaux, tels que [Kafka](https://docs.confluent.io/3.0.0/streams/) ou [NATS streaming](https://github.com/nats-io/node-nats-streaming), sont optimisés pour résoudre une gamme différente de problèmes, plus alignés sur un paradigme de messagerie événementielle (voir [messagerie événementielle](/microservices/basics#messagerie-événementielle) ci-dessous pour plus de détails).
 
-To enable the request-response message type, Nest creates two logical channels - one is responsible for transferring the data while the other waits for incoming responses. For some underlying transports, such as [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. There can be overhead for this, so if you do not require a request-response message style, you should consider using the event-based method.
+Pour activer le type de message requête-réponse, Nest crée deux canaux logiques - l'un est responsable du transfert des données tandis que l'autre attend les réponses entrantes. Pour certains transports sous-jacents, tels que [NATS](https://nats.io/), cette prise en charge à double canal est fournie d'emblée. Pour d'autres, Nest compense en créant manuellement des canaux distincts. Si vous n'avez pas besoin d'un message de type demande-réponse, vous devriez envisager d'utiliser la méthode basée sur les événements.
 
-To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator should be used only within the [controller](https://docs.nestjs.com/controllers) classes since they are the entry points for your application. Using them inside providers won't have any effect as they are simply ignored by Nest runtime.
+Pour créer un gestionnaire de message basé sur le paradigme requête-réponse, utilisez le décorateur `@MessagePattern()`, qui est importé du package `@nestjs/microservices`. Ce décorateur ne devrait être utilisé que dans les classes [controller](/controllers) puisqu'elles sont les points d'entrée de votre application. Les utiliser à l'intérieur des providers n'aura aucun effet car ils sont simplement ignorés par le runtime de Nest.
 
 ```typescript
 @@filename(math.controller)
@@ -124,11 +123,11 @@ export class MathController {
 }
 ```
 
-In the above code, the `accumulate()` **message handler** listens for messages that fulfill the `{{ '{' }} cmd: 'sum' {{ '}' }}` message pattern. The message handler takes a single argument, the `data` passed from the client. In this case, the data is an array of numbers which are to be accumulated.
+Dans le code ci-dessus, le **gestionnaire de messages** `accumulate()` écoute les messages qui correspondent au modèle de message `{ '{' }} cmd : 'sum' {{ '}' }}`. Le gestionnaire de message prend un seul argument, les `données` transmises par le client. Dans ce cas, les données sont un tableau de nombres qui doivent être accumulés.
 
-#### Asynchronous responses
+#### Réponses asynchrones
 
-Message handlers are able to respond either synchronously or **asynchronously**. Hence, `async` methods are supported.
+Les gestionnaires de messages peuvent répondre de manière synchrone ou **asynchrone**. Les méthodes `async` sont donc supportées.
 
 ```typescript
 @@filename()
@@ -143,7 +142,7 @@ async accumulate(data) {
 }
 ```
 
-A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
+Un gestionnaire de message peut également renvoyer un `Observable`, auquel cas les valeurs de résultat seront émises jusqu'à ce que le flux soit terminé.
 
 ```typescript
 @@filename()
@@ -158,68 +157,68 @@ accumulate(data: number[]): Observable<number> {
 }
 ```
 
-In the example above, the message handler will respond **3 times** (with each item from the array).
+Dans l'exemple ci-dessus, le gestionnaire de message répondra **3 fois** (avec chaque élément du tableau).
 
-#### Event-based
+#### Messagerie événementielle
 
-While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based - when you just want to publish **events** without waiting for a response. In that case, you do not want the overhead required by request-response for maintaining two channels.
+Si la méthode requête-réponse est idéale pour l'échange de messages entre services, elle est moins adaptée lorsque votre style de message est basé sur les événements - lorsque vous souhaitez simplement publier des **événements** sans attendre de réponse. Dans ce cas, vous n'avez pas besoin de la surcharge requise par la méthode requête-réponse pour maintenir deux canaux.
 
-Suppose you would like to simply notify another service that a certain condition has occurred in this part of the system. This is the ideal use case for the event-based message style.
+Supposons que vous souhaitiez simplement informer un autre service qu'une certaine condition s'est produite dans cette partie du système. C'est le cas d'utilisation idéal pour le style de message basé sur les événements.
 
-To create an event handler, we use the `@EventPattern()` decorator, which is imported from the `@nestjs/microservices` package.
+Pour créer un gestionnaire d'événement, nous utilisons le décorateur `@EventPattern()`, qui est importé du package `@nestjs/microservices`.
 
 ```typescript
 @@filename()
 @EventPattern('user_created')
 async handleUserCreated(data: Record<string, unknown>) {
-  // business logic
+  // logique métier
 }
 @@switch
 @EventPattern('user_created')
 async handleUserCreated(data) {
-  // business logic
+  // logique métier
 }
 ```
 
-> info **Hint** You can register multiple event handlers for a **single** event pattern and all of them will be automatically triggered in parallel.
+> info **Astuce** Vous pouvez enregistrer plusieurs gestionnaires d'événements pour un **seul** modèle d'événement et tous seront automatiquement déclenchés en parallèle.
 
-The `handleUserCreated()` **event handler** listens for the `'user_created'` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
+Le **manipulateur d'événements** `handleUserCreated()` écoute l'événement `'user_created''. Le gestionnaire d'événement prend un seul argument, les `données` transmises par le client (dans ce cas, une charge utile d'événement qui a été envoyée sur le réseau).
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Decorators
+#### Décorateurs
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. For example, in the case of NATS with wildcard subscriptions, you may want to get the original subject that the producer has sent the message to. Likewise, in Kafka you may want to access the message headers. In order to accomplish that, you can use built-in decorators as follows:
+Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à davantage d'informations sur la demande entrante. Par exemple, dans le cas de NATS avec des abonnements de type "wildcard", vous pouvez vouloir obtenir le sujet original auquel le producteur a envoyé le message. De même, dans Kafka, vous pouvez vouloir accéder aux en-têtes du message. Pour ce faire, vous pouvez utiliser des décorateurs intégrés comme suit :
 
 ```typescript
 @@filename()
 @MessagePattern('time.us.*')
 getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  console.log(`Subject: ${context.getSubject()}`); // par exemple "time.us.east"
   return new Date().toLocaleTimeString(...);
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('time.us.*')
 getDate(data, context) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  console.log(`Subject: ${context.getSubject()}`); // par exemple "time.us.east"
   return new Date().toLocaleTimeString(...);
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
+> info **Astuce** `@Payload()`, `@Ctx()` et `NatsContext` sont importés de `@nestjs/microservices`.
 
-> info **Hint** You can also pass in a property key to the `@Payload()` decorator to extract a specific property from the incoming payload object, for example, `@Payload('id')`.
+> info **Astuce** Vous pouvez également passer une clé de propriété au décorateur `@Payload()` pour extraire une propriété spécifique de l'objet payload entrant, par exemple, `@Payload('id')`.
 
 #### Client
 
-A client Nest application can exchange messages or publish events to a Nest microservice using the `ClientProxy` class. This class defines several methods, such as `send()` (for request-response messaging) and `emit()` (for event-driven messaging) that let you communicate with a remote microservice. Obtain an instance of this class in one of the following ways.
+Une application Nest cliente peut échanger des messages ou publier des événements vers un microservice Nest en utilisant la classe `ClientProxy`. Cette classe définit plusieurs méthodes, telles que `send()` (pour la messagerie requête-réponse) et `emit()` (pour la messagerie événementielle) qui vous permettent de communiquer avec un microservice distant. Obtenez une instance de cette classe de l'une des manières suivantes.
 
-One technique is to import the `ClientsModule`, which exposes the static `register()` method. This method takes an argument which is an array of objects representing microservice transporters. Each such object has a `name` property, an optional `transport` property (default is `Transport.TCP`), and an optional transporter-specific `options` property.
+Une technique consiste à importer le module `ClientsModule`, qui expose la méthode statique `register()`. Cette méthode prend un argument qui est un tableau d'objets représentant des transporteurs de microservices. Chacun de ces objets a une propriété `name`, une propriété optionnelle `transport` (par défaut `Transport.TCP`), et une propriété optionnelle `options` spécifique au transporteur.
 
-The `name` property serves as an **injection token** that can be used to inject an instance of a `ClientProxy` where needed. The value of the `name` property, as an injection token, can be an arbitrary string or JavaScript symbol, as described [here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
+La propriété `name` sert de **jeton d'injection** qui peut être utilisé pour injecter une instance de `ClientProxy` là où c'est nécessaire. La valeur de la propriété `name`, en tant que jeton d'injection, peut être une chaîne arbitraire ou un symbole JavaScript, comme décrit [ici](/fundamentals/custom-providers#jetons-de-fournisseur-non-basés-sur-une-classe).
 
-The `options` property is an object with the same properties we saw in the `createMicroservice()` method earlier.
+La propriété `options` est un objet avec les mêmes propriétés que nous avons vu dans la méthode `createMicroservice()` plus tôt.
 
 ```typescript
 @Module({
@@ -232,7 +231,7 @@ The `options` property is an object with the same properties we saw in the `crea
 })
 ```
 
-Once the module has been imported, we can inject an instance of the `ClientProxy` configured as specified via the `'MATH_SERVICE'` transporter options shown above, using the `@Inject()` decorator.
+Une fois le module importé, nous pouvons injecter une instance du `ClientProxy` configuré comme spécifié via les options du transporteur `'MATH_SERVICE'' montrées ci-dessus, en utilisant le décorateur `@Inject()`.
 
 ```typescript
 constructor(
@@ -240,9 +239,9 @@ constructor(
 ) {}
 ```
 
-> info **Hint** The `ClientsModule` and `ClientProxy` classes are imported from the `@nestjs/microservices` package.
+> info **Astuce** Les classes `ClientsModule` et `ClientProxy` sont importées du package `@nestjs/microservices`.
 
-At times we may need to fetch the transporter configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can register a [custom provider](/fundamentals/custom-providers) using the `ClientProxyFactory` class. This class has a static `create()` method, which accepts a transporter options object, and returns a customized `ClientProxy` instance.
+Parfois, nous pouvons avoir besoin de récupérer la configuration du transporteur depuis un autre service (disons un `ConfigService`), plutôt que de la coder en dur dans notre application cliente. Pour ce faire, nous pouvons enregistrer un [fournisseur personnalisé](/fundamentals/custom-providers) en utilisant la classe `ClientProxyFactory`. Cette classe possède une méthode statique `create()`, qui accepte un objet d'options de transporteur, et retourne une instance personnalisée de `ClientProxy`.
 
 ```typescript
 @Module({
@@ -260,20 +259,20 @@ At times we may need to fetch the transporter configuration from another service
 })
 ```
 
-> info **Hint** The `ClientProxyFactory` is imported from the `@nestjs/microservices` package.
+> info **Astuce** Le `ClientProxyFactory` est importé du package `@nestjs/microservices`.
 
-Another option is to use the `@Client()` property decorator.
+Une autre option consiste à utiliser le décorateur de propriétés `@Client()`.
 
 ```typescript
 @Client({ transport: Transport.TCP })
 client: ClientProxy;
 ```
 
-> info **Hint** The `@Client()` decorator is imported from the `@nestjs/microservices` package.
+> info **Astuce** Le décorateur `@Client()` est importé du package `@nestjs/microservices`.
 
-Using the `@Client()` decorator is not the preferred technique, as it is harder to test and harder to share a client instance.
+L'utilisation du décorateur `@Client()` n'est pas la technique préférée, car il est plus difficile de tester et de partager une instance de client.
 
-The `ClientProxy` is **lazy**. It doesn't initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay the application bootstrapping process until a connection is established, you can manually initiate a connection using the `ClientProxy` object's `connect()` method inside the `OnApplicationBootstrap` lifecycle hook.
+Le `ClientProxy` est **lazy**. Il n'initie pas de connexion immédiatement. Au lieu de cela, elle sera établie avant le premier appel au microservice, puis réutilisée pour chaque appel suivant. Cependant, si vous voulez retarder le processus de démarrage de l'application jusqu'à ce qu'une connexion soit établie, vous pouvez initier manuellement une connexion en utilisant la méthode `connect()` de l'objet `ClientProxy` à l'intérieur du hook du cycle de vie `OnApplicationBootstrap`.
 
 ```typescript
 @@filename()
@@ -282,11 +281,11 @@ async onApplicationBootstrap() {
 }
 ```
 
-If the connection cannot be created, the `connect()` method will reject with the corresponding error object.
+Si la connexion ne peut pas être créée, la méthode `connect()` sera rejetée avec l'objet d'erreur correspondant.
 
-#### Sending messages
+#### Envoi de messages
 
-The `ClientProxy` exposes a `send()` method. This method is intended to call the microservice and returns an `Observable` with its response. Thus, we can subscribe to the emitted values easily.
+Le `ClientProxy` expose une méthode `send()`. Cette méthode est destinée à appeler le microservice et retourne un `Observable` avec sa réponse. Ainsi, nous pouvons facilement nous abonner aux valeurs émises.
 
 ```typescript
 @@filename()
@@ -303,11 +302,11 @@ accumulate() {
 }
 ```
 
-The `send()` method takes two arguments, `pattern` and `payload`. The `pattern` should match one defined in a `@MessagePattern()` decorator. The `payload` is a message that we want to transmit to the remote microservice. This method returns a **cold `Observable`**, which means that you have to explicitly subscribe to it before the message will be sent.
+La méthode `send()` prend deux arguments, `pattern` et `payload`. Le `pattern` doit correspondre à un modèle défini dans un décorateur `@MessagePattern()`. Le `payload` est un message que nous voulons transmettre au microservice distant. Cette méthode retourne un **cold `Observable`**, ce qui signifie que vous devez explicitement vous y abonner avant que le message ne soit envoyé.
 
-#### Publishing events
+#### Publication d'événements
 
-To send an event, use the `ClientProxy` object's `emit()` method. This method publishes an event to the message broker.
+Pour envoyer un événement, utilisez la méthode `emit()` de l'objet `ClientProxy`. Cette méthode publie un événement au courtier de messages.
 
 ```typescript
 @@filename()
@@ -320,17 +319,17 @@ async publish() {
 }
 ```
 
-The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern`should match one defined in an `@EventPattern()` decorator. The `payload` is an event payload that we want to transmit to the remote microservice. This method returns a **hot `Observable`** (unlike the cold `Observable` returned by `send()`), which means that whether or not you explicitly subscribe to the observable, the proxy will immediately try to deliver the event.
+La méthode `emit()` prend deux arguments, `pattern` et `payload`. Le `pattern` doit correspondre à un modèle défini dans un décorateur `@EventPattern()`. Le `payload` est une charge utile d'événement que nous voulons transmettre au microservice distant. Cette méthode retourne un **hot `Observable`** (contrairement au `Observable` froid retourné par `send()`), ce qui signifie que, que vous vous abonniez explicitement ou non à l'observable, le proxy va immédiatement essayer de délivrer l'événement.
 
 <app-banner-devtools></app-banner-devtools>
 
-#### Scopes
+#### Portées
 
-For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
+Pour les personnes issues de différents langages de programmation, il peut être surprenant d'apprendre que dans Nest, presque tout est partagé entre les requêtes entrantes. Nous avons un pool de connexion à la base de données, des services singleton avec un état global, etc. N'oubliez pas que Node.js ne suit pas le modèle sans état multithreadé demande/réponse dans lequel chaque demande est traitée par un thread séparé. Par conséquent, l'utilisation d'instances singleton est totalement **sécurisée** pour nos applications.
 
-However, there are edge-cases when request-based lifetime of the handler may be the desired behavior, for instance per-request caching in GraphQL applications, request tracking or multi-tenancy. Learn how to control scopes [here](/fundamentals/injection-scopes).
+Cependant, il existe des cas où la durée de vie du gestionnaire basée sur les requêtes peut être le comportement souhaité, par exemple la mise en cache par requête dans les applications GraphQL, le suivi des requêtes ou la multi-location. Apprenez à contrôler les portées [ici](/fundamentals/injection-scopes).
 
-Request-scoped handlers and providers can inject `RequestContext` using the `@Inject()` decorator in combination with `CONTEXT` token:
+Les handlers et les providers à portée de requête peuvent injecter `RequestContext` en utilisant le décorateur `@Inject()` en combinaison avec le jeton `CONTEXT` :
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -342,7 +341,7 @@ export class CatsService {
 }
 ```
 
-This provides access to the `RequestContext` object, which has two properties:
+Cela permet d'accéder à l'objet `RequestContext`, qui possède deux propriétés :
 
 ```typescript
 export interface RequestContext<T = any> {
@@ -351,13 +350,13 @@ export interface RequestContext<T = any> {
 }
 ```
 
-The `data` property is the message payload sent by the message producer. The `pattern` property is the pattern used to identify an appropriate handler to handle the incoming message.
+La propriété `data` est la charge utile du message envoyé par le producteur du message. La propriété `pattern` est le modèle utilisé pour identifier le gestionnaire approprié pour traiter le message entrant.
 
-#### Handling timeouts
+#### Gestion des dépassements de délai
 
-In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the [RxJS](https://rxjs.dev) `timeout` operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
+Dans les systèmes distribués, il arrive que des microservices soient en panne ou indisponibles. Pour éviter une attente infinie, vous pouvez utiliser des délais d'attente. Un timeout est un modèle incroyablement utile lors de la communication avec d'autres services. Pour appliquer des timeouts à vos appels de microservices, vous pouvez utiliser l'opérateur [RxJS](https://rxjs.dev) `timeout`. Si le microservice ne répond pas à la requête dans un certain délai, une exception est levée, qui peut être attrapée et gérée de manière appropriée.
 
-To solve this problem you have to use [`rxjs`](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
+Pour résoudre ce problème, vous devez utiliser le package [`rxjs`](https://github.com/ReactiveX/rxjs). Il suffit d'utiliser l'opérateur `timeout` dans le pipe :
 
 ```typescript
 @@filename()
@@ -370,6 +369,6 @@ this.client
       .pipe(timeout(5000));
 ```
 
-> info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.
+> info **Astuce** L'opérateur `timeout` est importé du package `rxjs/operators`.
 
-After 5 seconds, if the microservice isn't responding, it will throw an error.
+Après 5 secondes, si le microservice ne répond pas, il lance une erreur.
