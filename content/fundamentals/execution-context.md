@@ -124,64 +124,46 @@ const methodKey = ctx.getHandler().name; // "create"
 const className = ctx.getClass().name; // "CatsController"
 ```
 
-La possibilité d'accéder aux références à la fois à la classe courante et à la méthode du handler offre une grande flexibilité. Plus important encore, cela nous donne la possibilité d'accéder aux métadonnées définies par le décorateur `@SetMetadata()` depuis les gardiens ou les intercepteurs. Nous couvrons ce cas d'utilisation ci-dessous.
+La possibilité d'accéder aux références à la fois à la classe courante et à la méthode du handler offre une grande flexibilité. Plus important encore, cela nous donne la possibilité d'accéder aux métadonnées définies soit par les decorateurs créés via `Reflector#createDecorator` ou du décorateur integré `@SetMetadata()` depuis les gardiens ou les intercepteurs. Nous couvrons ce cas d'utilisation ci-dessous.
 
 <app-banner-enterprise></app-banner-enterprise>
 
 #### Réflexion et métadonnées
 
-Nest offre la possibilité d'attacher des **métadonnées personnalisées** aux gestionnaires de routes grâce au décorateur `@SetMetadata()`. Nous pouvons alors accéder à ces métadonnées depuis notre classe pour prendre certaines décisions.
+Nest offre la possibilité d'attacher des **métadonnées personnalisées** aux gestionnaires de routes grâce aux décorateurs créés via la méthode `Reflector#createDecorator`, et le décorateur integré `@SetMetadata()`. Dans cette section, comparons les deux approches et voyons comment accéder aux métadonnées depuis une garde ou un intercepteur.
 
-```typescript
-@@filename(cats.controller)
-@Post()
-@SetMetadata('roles', ['admin'])
-async create(@Body() createCatDto: CreateCatDto) {
-  this.catsService.create(createCatDto);
-}
-@@switch
-@Post()
-@SetMetadata('roles', ['admin'])
-@Bind(Body())
-async create(createCatDto) {
-  this.catsService.create(createCatDto);
-}
-```
+Pour créer des décorateurs fortement typés en utilisant `Reflector#createDecorator`, nous devons spécifier l'argument de type. Par exemple, créons un décorateur `Roles` qui prend un tableau de chaînes de caractères comme argument.
 
-> info **Astuce** Le décorateur `@SetMetadata()` est importé du package `@nestjs/common`.
-
-Avec la construction ci-dessus, nous avons attaché les métadonnées `roles` (`roles` est une clé de métadonnées et `['admin']` est la valeur associée) à la méthode `create()`. Bien que cela fonctionne, ce n'est pas une bonne pratique d'utiliser `@SetMetadata()` directement dans vos routes. A la place, créez vos propres décorateurs, comme montré ci-dessous :
-
-```typescript
+```ts
 @@filename(roles.decorator)
-import { SetMetadata } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
-@@switch
-import { SetMetadata } from '@nestjs/common';
-
-export const Roles = (...roles) => SetMetadata('roles', roles);
+export const Roles = Reflector.createDecorator<string[]>();
 ```
 
-Cette approche est beaucoup plus propre et lisible, et est fortement typée. Maintenant que nous avons un décorateur `@Roles()` personnalisé, nous pouvons l'utiliser pour décorer la méthode `create()`.
+Le decorateur `Roles` ici est une fonction qui prend un seul argument de type `string[]`.
+
+Maintenant, pour utiliser ce décorateur, nous l'appliquons simplement au gestionnaire (handler):
 
 ```typescript
 @@filename(cats.controller)
 @Post()
-@Roles('admin')
+@Roles(['admin'])
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
-@Roles('admin')
+@Roles(['admin'])
 @Bind(Body())
 async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
 
-Pour accéder au(x) rôle(s) de la route (métadonnées personnalisées), nous allons utiliser la classe utilitaire `Reflector`, qui est fournie par le framework et exposée dans le package `@nestjs/core`. `Reflector` peut être injecté dans une classe de la manière habituelle :
+Ici, nous avons attaché les métadonnées du décorateur `Roles` à la méthode `create()`, indiquant que seuls les utilisateurs ayant le rôle `admin` devraient être autorisés à accéder à cette route.
+
+Pour accéder au(x) rôle(s) de la route (métadonnées personnalisées), nous utiliserons à nouveau la classe d'aide `Reflector`. `Reflector` peut être injecté dans une classe de la manière habituelle:
 
 ```typescript
 @@filename(roles.guard)
@@ -201,23 +183,23 @@ export class CatsService {
 
 > info **Astuce** La classe `Reflector` est importée du package `@nestjs/core`.
 
-Maintenant, pour lire les métadonnées du gestionnaire, utilisez la méthode `get()`.
+Maintenant, pour lire le gestionnaire de métadonnées, utilisez la méthode `get()`.
 
 ```typescript
-const roles = this.reflector.get<string[]>('roles', context.getHandler());
+const roles = this.reflector.get(Roles, context.getHandler());
 ```
 
-La méthode `Reflector#get` nous permet d'accéder facilement aux métadonnées en passant deux arguments : une **clé** de métadonnées et un **contexte** (cible du décorateur) pour récupérer les métadonnées. Dans cet exemple, la **clé** spécifiée est `'roles'` (référez-vous au fichier `roles.decorator.ts` ci-dessus et à l'appel `SetMetadata()` qui y a été fait). Le contexte est fourni par l'appel à `context.getHandler()`, qui permet d'extraire les métadonnées du gestionnaire de route en cours de traitement. Rappelez-vous, `getHandler()` nous donne une **référence** à la fonction du gestionnaire de route.
+La méthode `Reflector#get` nous permet d'accéder facilement aux métadonnées en passant deux arguments : une référence au décorateur et un **contexte** (cible du décorateur) à partir duquel récupérer les métadonnées. Dans cet exemple, le **décorateur** spécifié est `'Roles'` (référez-vous au fichier `roles.decorator.ts` ci-dessus et à l'appel `SetMetadata()` qui y a été fait). Le contexte est fourni par l'appel à `context.getHandler()`, ce qui permet d'extraire les métadonnées du gestionnaire de route en cours de traitement. Rappelez-vous, `getHandler()` nous donne une **référence** à la fonction du gestionnaire de route.
 
 Nous pouvons également organiser notre contrôleur en appliquant des métadonnées au niveau du contrôleur, qui s'appliquent à toutes les routes de la classe du contrôleur.
 
 ```typescript
 @@filename(cats.controller)
-@Roles('admin')
+@Roles(['admin'])
 @Controller('cats')
 export class CatsController {}
 @@switch
-@Roles('admin')
+@Roles(['admin'])
 @Controller('cats')
 export class CatsController {}
 ```
@@ -226,32 +208,30 @@ Dans ce cas, pour extraire les métadonnées du contrôleur, nous passons `conte
 
 ```typescript
 @@filename(roles.guard)
-const roles = this.reflector.get<string[]>('roles', context.getClass());
-@@switch
-const roles = this.reflector.get('roles', context.getClass());
+const roles = this.reflector.get(Roles, context.getClass());
 ```
 
 Etant donné la possibilité de fournir des métadonnées à plusieurs niveaux, vous pouvez avoir besoin d'extraire et de fusionner des métadonnées provenant de plusieurs contextes. La classe `Reflector` fournit deux méthodes utilitaires utilisées pour aider à cela. Ces méthodes extraient **à la fois** les métadonnées du contrôleur et de la méthode, et les combinent de différentes manières.
 
-Considérons le scénario suivant, dans lequel vous avez fourni des métadonnées `'roles'` aux deux niveaux.
+Considérons le scénario suivant, dans lequel vous avez fourni des métadonnées `Roles` aux deux niveaux.
 
 ```typescript
 @@filename(cats.controller)
-@Roles('user')
+@Roles(['user'])
 @Controller('cats')
 export class CatsController {
   @Post()
-  @Roles('admin')
+  @Roles(['admin'])
   async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
 }
 @@switch
-@Roles('user')
+@Roles(['user'])
 @Controller('cats')
 export class CatsController {}
   @Post()
-  @Roles('admin')
+  @Roles(['admin'])
   @Bind(Body())
   async create(createCatDto) {
     this.catsService.create(createCatDto);
@@ -262,10 +242,7 @@ export class CatsController {}
 Si votre intention est de spécifier `'user'` comme rôle par défaut, et de le surcharger sélectivement pour certaines méthodes, vous devriez probablement utiliser la méthode `getAllAndOverride()`.
 
 ```typescript
-const roles = this.reflector.getAllAndOverride<string[]>('roles', [
-  context.getHandler(),
-  context.getClass(),
-]);
+const roles = this.reflector.getAllAndOverride(Roles, [context.getHandler(), context.getClass()]);
 ```
 
 Une garde avec ce code, exécutée dans le contexte de la méthode `create()`, avec les métadonnées ci-dessus, résulterait en un `roles` contenant `['admin']`.
@@ -273,12 +250,92 @@ Une garde avec ce code, exécutée dans le contexte de la méthode `create()`, a
 Pour obtenir les métadonnées des deux et les fusionner (cette méthode fusionne à la fois les tableaux et les objets), utilisez la méthode `getAllAndMerge()` :
 
 ```typescript
-const roles = this.reflector.getAllAndMerge<string[]>('roles', [
-  context.getHandler(),
-  context.getClass(),
-]);
+const roles = this.reflector.getAllAndMerge(Roles, [context.getHandler(), context.getClass()]);
 ```
 
 Le résultat serait que `roles` contiendrait `['user', 'admin']`.
 
-Pour ces deux méthodes de fusion, vous passez la clé de métadonnées comme premier argument, et un tableau de contextes cibles de métadonnées (c'est-à-dire les appels aux méthodes `getHandler()` et/ou `getClass())`) comme second argument.
+Pour ces deux méthodes de fusion, vous passez la référence du décorateur comme premier argument, et un tableau de contextes cibles de métadonnées (c'est-à-dire les appels aux méthodes `getHandler()` et/ou `getClass())`) comme second argument.
+
+#### Approche de bas niveau
+
+Comme mentionné précédemment, au lieu d'utiliser `Reflector#createDecorator`, vous pouvez également utiliser le décorateur intégré `@SetMetadata()` pour attacher des métadonnées à un gestionnaire.
+
+```typescript
+@@filename(cats.controller)
+@Post()
+@SetMetadata('roles', ['admin'])
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}
+@@switch
+@Post()
+@SetMetadata('roles', ['admin'])
+@Bind(Body())
+async create(createCatDto) {
+  this.catsService.create(createCatDto);
+}
+```
+
+> info Astuce Le décorateur @SetMetadata() est importé depuis le package @nestjs/common.
+
+Avec la construction ci-dessus, nous avons attaché les métadonnées roles (roles est une clé de métadonnées et ['admin'] est la valeur associée) à la méthode create(). Bien que cela fonctionne, il n'est pas recommandé d'utiliser @SetMetadata() directement dans vos routes. Au lieu de cela, vous pouvez créer vos propres décorateurs, comme illustré ci-dessous :
+
+```typescript
+@@filename(roles.decorator)
+import { SetMetadata } from '@nestjs/common';
+
+export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
+@@switch
+import { SetMetadata } from '@nestjs/common';
+
+export const Roles = (...roles) => SetMetadata('roles', roles);
+```
+
+Cette approche est beaucoup plus propre et lisible, et ressemble en quelque sorte à l'approche Reflector#createDecorator. La différence réside dans le fait qu'avec @SetMetadata, vous avez plus de contrôle sur la clé et la valeur des métadonnées, et vous pouvez également créer des décorateurs qui prennent plus d'un argument.
+
+Maintenant que nous avons un décorateur `@Roles()` personnalisé, nous pouvons l'utiliser pour décorer la méthode `create()`.
+
+```typescript
+@@filename(cats.controller)
+@Post()
+@Roles('admin')
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}
+@@switch
+@Post()
+@Roles('admin')
+@Bind(Body())
+async create(createCatDto) {
+  this.catsService.create(createCatDto);
+}
+```
+
+Pour accéder aux rôles de la route (métadonnées personnalisées), nous utiliserons à nouveau la classe d'aide Reflector :
+
+```typescript
+@@filename(roles.guard)
+@Injectable()
+export class RolesGuard {
+  constructor(private reflector: Reflector) {}
+}
+@@switch
+@Injectable()
+@Dependencies(Reflector)
+export class CatsService {
+  constructor(reflector) {
+    this.reflector = reflector;
+  }
+}
+```
+
+> info Astuce La classe Reflector est importée depuis le package @nestjs/core.
+
+Maintenant, pour lire les métadonnées du gestionnaire, utilisez la méthode get().
+
+```typescript
+const roles = this.reflector.get<string[]>('roles', context.getHandler());
+```
+
+Ici, au lieu de passer une référence au décorateur, nous passons la clé des métadonnées en tant que premier argument (dans notre cas, c'est 'roles'). Tout le reste reste identique à l'exemple `Reflector#createDecorator`.
