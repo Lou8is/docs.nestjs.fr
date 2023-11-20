@@ -277,9 +277,9 @@ async create(createCatDto) {
 }
 ```
 
-> info Astuce Le décorateur @SetMetadata() est importé depuis le package @nestjs/common.
+> info **Astuce** Le décorateur @SetMetadata() est importé depuis le package @nestjs/common.
 
-Avec la construction ci-dessus, nous avons attaché les métadonnées roles (roles est une clé de métadonnées et ['admin'] est la valeur associée) à la méthode create(). Bien que cela fonctionne, il n'est pas recommandé d'utiliser @SetMetadata() directement dans vos routes. Au lieu de cela, vous pouvez créer vos propres décorateurs, comme illustré ci-dessous :
+Avec la construction ci-dessus, nous avons attaché les métadonnées `roles` (`roles` est une clé de métadonnées et `['admin']` est la valeur associée) à la méthode `create()`. Bien que cela fonctionne, il n'est pas recommandé d'utiliser `@SetMetadata()` directement dans vos routes. Au lieu de cela, vous pouvez créer vos propres décorateurs, comme illustré ci-dessous :
 
 ```typescript
 @@filename(roles.decorator)
@@ -292,7 +292,7 @@ import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles) => SetMetadata('roles', roles);
 ```
 
-Cette approche est beaucoup plus propre et lisible, et ressemble en quelque sorte à l'approche Reflector#createDecorator. La différence réside dans le fait qu'avec @SetMetadata, vous avez plus de contrôle sur la clé et la valeur des métadonnées, et vous pouvez également créer des décorateurs qui prennent plus d'un argument.
+Cette approche est beaucoup plus propre et lisible, et ressemble en quelque sorte à l'approche `Reflector#createDecorator`. La différence réside dans le fait qu'avec `@SetMetadata`, vous avez plus de contrôle sur la clé et la valeur des métadonnées, et vous pouvez également créer des décorateurs qui prennent plus d'un argument.
 
 Maintenant que nous avons un décorateur `@Roles()` personnalisé, nous pouvons l'utiliser pour décorer la méthode `create()`.
 
@@ -312,7 +312,7 @@ async create(createCatDto) {
 }
 ```
 
-Pour accéder aux rôles de la route (métadonnées personnalisées), nous utiliserons à nouveau la classe d'aide Reflector :
+Pour accéder aux rôles de la route (métadonnées personnalisées), nous utiliserons à nouveau la classe d'aide `Reflector` :
 
 ```typescript
 @@filename(roles.guard)
@@ -330,7 +330,7 @@ export class CatsService {
 }
 ```
 
-> info Astuce La classe Reflector est importée depuis le package @nestjs/core.
+> info **Astuce** La classe Reflector est importée depuis le package @nestjs/core.
 
 Maintenant, pour lire les métadonnées du gestionnaire, utilisez la méthode get().
 
@@ -338,4 +338,4 @@ Maintenant, pour lire les métadonnées du gestionnaire, utilisez la méthode ge
 const roles = this.reflector.get<string[]>('roles', context.getHandler());
 ```
 
-Ici, au lieu de passer une référence au décorateur, nous passons la clé des métadonnées en tant que premier argument (dans notre cas, c'est 'roles'). Tout le reste reste identique à l'exemple `Reflector#createDecorator`.
+Ici, au lieu de passer une référence au décorateur, nous passons la **clé** des métadonnées en tant que premier argument (dans notre cas, c'est `'roles'`). Tout le reste reste identique à l'exemple `Reflector#createDecorator`.
