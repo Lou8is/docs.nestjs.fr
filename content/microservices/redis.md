@@ -1,20 +1,20 @@
 ### Redis
 
-The [Redis](https://redis.io/) transporter implements the publish/subscribe messaging paradigm and leverages the [Pub/Sub](https://redis.io/topics/pubsub) feature of Redis. Published messages are categorized in channels, without knowing what subscribers (if any) will eventually receive the message. Each microservice can subscribe to any number of channels. In addition, more than one channel can be subscribed to at a time. Messages exchanged through channels are **fire-and-forget**, which means that if a message is published and there are no subscribers interested in it, the message is removed and cannot be recovered. Thus, you don't have a guarantee that either messages or events will be handled by at least one service. A single message can be subscribed to (and received) by multiple subscribers.
+Le transporteur [Redis](https://redis.io/) met en œuvre le paradigme de messagerie publication/abonnement et exploite la fonctionnalité [Pub/Sub](https://redis.io/topics/pubsub) de Redis. Les messages publiés sont classés dans des canaux, sans savoir quels abonnés (s'il y en a) recevront finalement le message. Chaque microservice peut s'abonner à un nombre quelconque de canaux. En outre, il est possible de s'abonner à plus d'un canal à la fois. Les messages échangés par l'intermédiaire des canaux sont **fire-and-forget**, ce qui signifie que si un message est publié et qu'il n'y a pas d'abonnés intéressés, le message est supprimé et ne peut pas être récupéré. Vous n'avez donc aucune garantie que les messages ou les événements seront traités par au moins un service. Un même message peut être souscrit (et reçu) par plusieurs abonnés.
 
 <figure><img src="/assets/Redis_1.png" /></figure>
 
 #### Installation
 
-To start building Redis-based microservices, first install the required package:
+Pour commencer à construire des microservices basés sur Redis, installez d'abord le package requis :
 
 ```bash
 $ npm i --save ioredis
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-To use the Redis transporter, pass the following options object to the `createMicroservice()` method:
+Pour utiliser le transporteur Redis, passez l'objet d'options suivant à la méthode `createMicroservice()` :
 
 ```typescript
 @@filename(main)
@@ -35,42 +35,42 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Astuce** L'enum `Transport` est importé du package `@nestjs/microservices`.
 
 #### Options
 
-The `options` property is specific to the chosen transporter. The <strong>Redis</strong> transporter exposes the properties described below.
+La propriété `options` est spécifique au transporteur choisi. Le transporteur **Redis** expose les propriétés décrites ci-dessous.
 
 <table>
   <tr>
     <td><code>host</code></td>
-    <td>Connection url</td>
+    <td>URL de connexion</td>
   </tr>
   <tr>
     <td><code>port</code></td>
-    <td>Connection port</td>
+    <td>Port de connexion</td>
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
-    <td>Number of times to retry message (default: <code>0</code>)</td>
+    <td>Nombre de tentatives d'envoi du message (par défaut : <code>0</code>)</td>
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
-    <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
+    <td>Délai entre les tentatives de renvoi des messages (ms) (par défaut :  <code>0</code>)</td>
   </tr>
    <tr>
     <td><code>wildcards</code></td>
-    <td>Enables Redis wilcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
+    <td>Active les abonnements Redis wilcard, en demandant au transporteur d'utiliser <code>psubscribe</code>/<code>pmessage</code> sous le capot. (par défaut :  <code>false</code>)</td>
   </tr>
 </table>
 
-All the properties supported by the official [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
+Toutes les propriétés supportées par le client officiel [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) sont également supportées par ce transporteur.
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a Redis `ClientProxy` instance.
+Comme d'autres transporteurs de microservices, vous avez [plusieurs options](/microservices/basics#client) pour créer une instance Redis `ClientProxy`.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+Une méthode pour créer une instance est d'utiliser le `ClientsModule`. Pour créer une instance de client avec le `ClientsModule`, importez-le et utilisez la méthode `register()` pour passer un objet options avec les mêmes propriétés que celles montrées ci-dessus dans la méthode `createMicroservice()`, ainsi qu'une propriété `name` à utiliser comme jeton d'injection. Apprenez en plus sur `ClientsModule` [ici](/microservices/basics#client).
 
 ```typescript
 @Module({
@@ -90,11 +90,11 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`) peuvent également être utilisées. Vous pouvez en prendre connaissance [ici](/microservices/basics#client).
 
-#### Context
+#### Contexte
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the Redis transporter, you can access the `RedisContext` object.
+Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur Redis, vous pouvez accéder à l'objet `RedisContext`.
 
 ```typescript
 @@filename()
@@ -110,4 +110,4 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `RedisContext` are imported from the `@nestjs/microservices` package.
+> info **Astuce** `@Payload()`, `@Ctx()` et `RedisContext` sont importés du package `@nestjs/microservices`.
