@@ -522,6 +522,28 @@ export async function getStorageModule() {
 
 Cette construction garantit qu'après la résolution de la promesse `ConfigModule.envVariablesLoaded`, toutes les variables de configuration sont chargées.
 
+#### Configuration conditionnelle du module
+
+Il peut arriver que vous souhaitiez charger un module de manière conditionnelle et spécifier la condition dans une variable d'environnement. Heureusement, `@nestjs/config` fournit un `ConditionalModule` qui vous permet de faire exactement cela.
+
+```typescript
+@Module({
+  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooModule, 'USE_FOO')],
+})
+export class AppModule {}
+```
+
+Le module ci-dessus ne chargera le `FooModule` que si, dans le fichier `.env`, il n'y a pas de valeur `false` pour la variable d'environnement `USE_FOO`. Vous pouvez également spécifier une condition personnalisée en fournissant vous-même une fonction qui reçoit la référence `process.env` et qui doit renvoyer un booléen pour que le `ConditionalModule` le gère :
+
+```typescript
+@Module({
+  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooBarModule, (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'])],
+})
+export class AppModule {}
+```
+
+Il est important de s'assurer que lorsque vous utilisez le `ConditionalModule`, vous avez également le `ConfigModule` chargé dans l'application, afin que le hook `ConfigModule.envVariablesLoaded` puisse être correctement référencé et utilisé. Si le hook n'est pas activé dans les 5 secondes, ou dans le délai en millisecondes, défini par l'utilisateur dans le troisième paramètre des méthodes `registerWhen`, alors le `ConditionalModule` lancera une erreur et Nest annulera le démarrage de l'application.
+
 #### Variables extensibles
 
 Le package `@nestjs/config` supporte l'expansion des variables d'environnement. Avec cette technique, vous pouvez créer des variables d'environnement imbriquées, où une variable est référencée dans la définition d'une autre. Par exemple :

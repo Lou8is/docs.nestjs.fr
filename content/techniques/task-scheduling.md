@@ -8,7 +8,6 @@ Pour commencer à l'utiliser, nous devons d'abord installer les dépendances né
 
 ```bash
 $ npm install --save @nestjs/schedule
-$ npm install --save-dev @types/cron
 ```
 
 Pour activer la planification des tâches, importez le module `ScheduleModule` dans le module racine `AppModule` et exécutez la méthode statique `forRoot()` comme indiqué ci-dessous :
@@ -258,7 +257,7 @@ La méthode `getCronJob()` retourne la tâche cron nommée. L'objet `CronJob` re
 
 > info **Astuce** Utilisez `toDate()` sur les objets `moment` pour les rendre lisibles par l'homme.
 
-**Créez** un nouveau job cron dynamiquement en utilisant la méthode `SchedulerRegistry.addCronJob()`, comme suit :
+**Créez** un nouveau job cron dynamiquement en utilisant la méthode `SchedulerRegistry#addCronJob`, comme suit :
 
 ```typescript
 addCronJob(name: string, seconds: string) {
@@ -275,11 +274,11 @@ addCronJob(name: string, seconds: string) {
 }
 ```
 
-Dans ce code, nous utilisons l'objet `CronJob` du package `cron` pour créer la tâche cron. Le constructeur `CronJob` prend un motif cron (tout comme le  <a href="techniques/task-scheduling#tâches-cron-déclaratives">décorateur</a> `@Cron()`) comme premier argument, et un callback à exécuter lorsque le timer cron se déclenche comme second argument. La méthode `SchedulerRegistry.addCronJob()` prend deux arguments : un nom pour le `CronJob`, et l'objet `CronJob` lui-même.
+Dans ce code, nous utilisons l'objet `CronJob` du package `cron` pour créer la tâche cron. Le constructeur `CronJob` prend un motif cron (tout comme le  <a href="techniques/task-scheduling#tâches-cron-déclaratives">décorateur</a> `@Cron()`) comme premier argument, et un callback à exécuter lorsque le timer cron se déclenche comme second argument. La méthode `SchedulerRegistry#addCronJob` prend deux arguments : un nom pour le `CronJob`, et l'objet `CronJob` lui-même.
 
 > warning **Attention** N'oubliez pas d'injecter le `SchedulerRegistry` avant d'y accéder. Importez `CronJob` depuis le package `cron`.
 
-**Supprimez** une tâche cron nommée en utilisant la méthode `SchedulerRegistry.deleteCronJob()`, comme suit :
+**Supprimez** une tâche cron nommée en utilisant la méthode `SchedulerRegistry#deleteCronJob`, comme suit :
 
 ```typescript
 deleteCron(name: string) {
@@ -288,7 +287,7 @@ deleteCron(name: string) {
 }
 ```
 
-**Listez** tous les jobs cron en utilisant la méthode `SchedulerRegistry.getCronJobs()` comme suit :
+**Listez** tous les jobs cron en utilisant la méthode `SchedulerRegistry#getCronJobs` comme suit :
 
 ```typescript
 getCrons() {
@@ -309,7 +308,7 @@ La méthode `getCronJobs()` retourne une `map`. Dans ce code, nous itérons sur 
 
 #### Intervalles dynamiques
 
-Obtenez une référence à un intervalle avec la méthode `SchedulerRegistry.getInterval()`. Comme ci-dessus, injectez `SchedulerRegistry` en utilisant l'injection de constructeur standard :
+Obtenez une référence à un intervalle avec la méthode `SchedulerRegistry#getInterval`. Comme ci-dessus, injectez `SchedulerRegistry` en utilisant l'injection de constructeur standard :
 
 ```typescript
 constructor(private schedulerRegistry: SchedulerRegistry) {}
@@ -322,7 +321,7 @@ const interval = this.schedulerRegistry.getInterval('notifications');
 clearInterval(interval);
 ```
 
-**Créez** un nouvel intervalle dynamiquement en utilisant la méthode `SchedulerRegistry.addInterval()`, comme suit :
+**Créez** un nouvel intervalle dynamiquement en utilisant la méthode `SchedulerRegistry#addInterval`, comme suit :
 
 ```typescript
 addInterval(name: string, milliseconds: number) {
@@ -335,10 +334,10 @@ addInterval(name: string, milliseconds: number) {
 }
 ```
 
-Dans ce code, nous créons un intervalle JavaScript standard, puis nous le passons à la méthode `ScheduleRegistry.addInterval()`.
+Dans ce code, nous créons un intervalle JavaScript standard, puis nous le passons à la méthode `SchedulerRegistry#addInterval`.
 Cette méthode prend deux arguments : un nom pour l'intervalle et l'intervalle lui-même.
 
-**Supprimez** un intervalle nommé en utilisant la méthode `SchedulerRegistry.deleteInterval()`, comme suit :
+**Supprimez** un intervalle nommé en utilisant la méthode `SchedulerRegistry#deleteInterval`, comme suit :
 
 ```typescript
 deleteInterval(name: string) {
@@ -347,7 +346,7 @@ deleteInterval(name: string) {
 }
 ```
 
-**Listez** tous les intervalles en utilisant la méthode `SchedulerRegistry.getIntervals()` comme suit :
+**Listez** tous les intervalles en utilisant la méthode `SchedulerRegistry#getIntervals` comme suit :
 
 ```typescript
 getIntervals() {
@@ -358,10 +357,10 @@ getIntervals() {
 
 #### Délais dynamiques
 
-Obtenir une référence à un délai avec la méthode `SchedulerRegistry.getTimeout()`. Comme ci-dessus, injectez `SchedulerRegistry` en utilisant l'injection de constructeur standard :
+Obtenir une référence à un délai avec la méthode `SchedulerRegistry#getTimeout`. Comme ci-dessus, injectez `SchedulerRegistry` en utilisant l'injection de constructeur standard :
 
 ```typescript
-constructor(private schedulerRegistry: SchedulerRegistry) {}
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 ```
 
 Et utilisez-le comme suit :
@@ -371,7 +370,7 @@ const timeout = this.schedulerRegistry.getTimeout('notifications');
 clearTimeout(timeout);
 ```
 
-**Créez** un nouveau timeout dynamiquement en utilisant la méthode `SchedulerRegistry.addTimeout()`, comme suit :
+**Créez** un nouveau timeout dynamiquement en utilisant la méthode `SchedulerRegistry#addTimeout`, comme suit :
 
 ```typescript
 addTimeout(name: string, milliseconds: number) {
@@ -384,10 +383,10 @@ addTimeout(name: string, milliseconds: number) {
 }
 ```
 
-Dans ce code, nous créons un timeout JavaScript standard, puis nous le passons à la méthode `ScheduleRegistry.addTimeout()`.
+Dans ce code, nous créons un timeout JavaScript standard, puis nous le passons à la méthode `ScheduleRegistry#addTimeout`.
 Cette méthode prend deux arguments : un nom pour le délai d'attente et le délai d'attente lui-même.
 
-**Supprimez** un timeout nommé en utilisant la méthode `SchedulerRegistry.deleteTimeout()`, comme suit :
+**Supprimez** un timeout nommé en utilisant la méthode `SchedulerRegistry#deleteTimeout`, comme suit :
 
 ```typescript
 deleteTimeout(name: string) {
@@ -396,7 +395,7 @@ deleteTimeout(name: string) {
 }
 ```
 
-**Listez** tous les timeouts en utilisant la méthode `SchedulerRegistry.getTimeouts()` de la manière suivante :
+**Listez** tous les timeouts en utilisant la méthode `SchedulerRegistry#getTimeouts` de la manière suivante :
 
 ```typescript
 getTimeouts() {
