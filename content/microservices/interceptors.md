@@ -1,6 +1,6 @@
-### Interceptors
+### Intercepteurs
 
-There is no difference between [regular interceptors](/interceptors) and microservices interceptors. The following example uses a manually instantiated method-scoped interceptor. Just as with HTTP based applications, you can also use controller-scoped interceptors (i.e., prefix the controller class with a `@UseInterceptors()` decorator).
+Il n'y a pas de différence entre les [intercepteurs ordinaires](/intercepteurs) et les intercepteurs de microservices. L'exemple suivant utilise un intercepteur à portée de méthode instancié manuellement. Tout comme pour les applications basées sur HTTP, vous pouvez également utiliser des intercepteurs à l'échelle du contrôleur (c'est-à-dire préfixer la classe du contrôleur avec un décorateur `@UseInterceptors()`).
 
 ```typescript
 @@filename()
