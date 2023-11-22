@@ -1,24 +1,24 @@
 ### Kafka
 
-[Kafka](https://kafka.apache.org/) is an open source, distributed streaming platform which has three key capabilities:
+[Kafka](https://kafka.apache.org/) est une plateforme de diffusion en continu distribuée, à code source ouvert, qui présente trois caractéristiques essentielles :
 
-- Publish and subscribe to streams of records, similar to a message queue or enterprise messaging system.
-- Store streams of records in a fault-tolerant durable way.
-- Process streams of records as they occur.
+- Publier des flux d'enregistrements et s'y abonner, à l'instar d'une file d'attente de messages ou d'un système de messagerie d'entreprise.
+- Stocker les flux d'enregistrements de manière durable et tolérante aux pannes.
+- Traiter les flux d'enregistrements au fur et à mesure qu'ils se produisent.
 
-The Kafka project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates very well with Apache Storm and Spark for real-time streaming data analysis.
+Le projet Kafka vise à fournir une plateforme unifiée, à haut débit et à faible latence pour traiter les flux de données en temps réel. Il s'intègre très bien avec Apache Storm et Spark pour l'analyse des données en temps réel.
 
 #### Installation
 
-To start building Kafka-based microservices, first install the required package:
+Pour commencer à construire des microservices basés sur Kafka, installez d'abord le package requis :
 
 ```bash
 $ npm i --save kafkajs
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-Like other Nest microservice transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
+Comme pour les autres implémentations de la couche de transport des microservices Nest, vous sélectionnez le mécanisme de transport Kafka en utilisant la propriété `transport` de l'objet options passé à la méthode `createMicroservice()`, ainsi qu'une propriété optionnelle `options`, comme indiqué ci-dessous :
 
 ```typescript
 @@filename(main)
@@ -41,90 +41,90 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Astuce** L'enum `Transport` est importé du package `@nestjs/microservices`.
 
 #### Options
 
-The `options` property is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the properties described below.
+La propriété `options` est spécifique au transporteur choisi. Le transporteur **Kafka** expose les propriétés décrites ci-dessous.
 
 <table>
   <tr>
     <td><code>client</code></td>
-    <td>Client configuration options (read more
+    <td>Options de configuration du client (en lire plus
       <a
         href="https://kafka.js.org/docs/configuration"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
-    <td>Consumer configuration options (read more
+    <td>Options de configuration du consommateur (en lire plus
       <a
         href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>run</code></td>
-    <td>Run configuration options (read more
+    <td>Options de configuration d'exécution (en lire plus
       <a
         href="https://kafka.js.org/docs/consuming"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>subscribe</code></td>
-    <td>Subscribe configuration options (read more
+    <td>Options de configuration des abonnements (en lire plus
       <a
         href="https://kafka.js.org/docs/consuming#frombeginning"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
-    <td>Producer configuration options (read more
+    <td>Options de configuration des producteurs (en lire plus
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>send</code></td>
-    <td>Send configuration options (read more
+    <td>Options de configuration de l'envoi (en lire plus
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
-        >here</a
+        >ici</a
       >)</td>
   </tr>
   <tr>
     <td><code>producerOnlyMode</code></td>
-    <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
+    <td>Indicateur de fonctionnalité permettant d'ignorer l'enregistrement d'un groupe de consommateurs et d'agir uniquement en tant que producteur (<code>boolean</code>)</td>
   </tr>
   <tr>
     <td><code>postfixId</code></td>
-    <td>Change suffix of clientId value (<code>string</code>)</td>
+    <td>Modifier le suffixe de la valeur clientId (<code>string</code>)</td>
   </tr>
 </table>
 
 #### Client
 
-There is a small difference in Kafka compared to other microservice transporters. Instead of the `ClientProxy` class, we use the `ClientKafka` class.
+Il y a une petite différence entre Kafka et les autres transporteurs de microservices. Au lieu de la classe `ClientProxy`, nous utilisons la classe `ClientKafka`.
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a `ClientKafka` instance.
+Comme d'autres transporteurs de microservices, vous avez [plusieurs options](/microservices/basics#client) pour créer une instance `ClientKafka`.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+Une méthode pour créer une instance est d'utiliser le `ClientsModule`. Pour créer une instance de client avec le `ClientsModule`, importez-le et utilisez la méthode `register()` pour passer un objet options avec les mêmes propriétés que celles montrées ci-dessus dans la méthode `createMicroservice()`, ainsi qu'une propriété `name` à utiliser comme jeton d'injection. Lisez-en plus à propos du `ClientsModule` [ici](/microservices/basics#client).
 
 ```typescript
 @Module({
@@ -149,9 +149,9 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`) peuvent également être utilisées. Vous pouvez lire à leur sujet [ici](/microservices/basics#client).
 
-Use the `@Client()` decorator as follows:
+Utilisez le décorateur `@Client()` comme suit :
 
 ```typescript
 @Client({
@@ -169,23 +169,23 @@ Use the `@Client()` decorator as follows:
 client: ClientKafka;
 ```
 
-#### Message pattern
+#### Modèle de message
 
-The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafka#send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafka` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
+Le modèle de message de microservice Kafka utilise deux sujets pour les canaux de demande et de réponse. Le modèle `ClientKafka#send()` envoie des messages avec une [adresse de retour](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) en associant un [identifiant de corrélation](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), un sujet de réponse et une partition de réponse au message de demande. Cela nécessite que l'instance `ClientKafka` soit abonnée au sujet de réponse et assignée à au moins une partition avant d'envoyer un message.
 
-Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
+Par la suite, vous devez avoir au moins une partition de sujet de réponse pour chaque application Nest en cours d'exécution. Par exemple, si vous exécutez 4 applications Nest mais que le sujet de réponse n'a que 3 partitions, alors une des applications Nest échouera lorsqu'elle essaiera d'envoyer un message.
 
-When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
+Lorsque de nouvelles instances `ClientKafka` sont lancées, elles rejoignent le groupe de consommateurs et s'abonnent à leurs sujets respectifs. Ce processus déclenche un rééquilibrage des partitions de sujets attribuées aux consommateurs du groupe de consommateurs.
 
-Normally, topic partitions are assigned using the round robin partitioner, which assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer can be positioned anywhere within the collection of consumers. This creates a condition where pre-existing consumers can be assigned different partitions when the pre-existing consumer is positioned after the new consumer. As a result, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
+Normalement, les partitions thématiques sont attribuées à l'aide du système de partitionnement à la ronde, qui attribue les partitions thématiques à une collection de consommateurs triés par noms de consommateurs qui sont définis de manière aléatoire lors du lancement de l'application. Toutefois, lorsqu'un nouveau consommateur rejoint le groupe de consommateurs, il peut être positionné n'importe où dans la collection de consommateurs. Il s'ensuit que des consommateurs préexistants peuvent se voir attribuer des partitions différentes lorsque le consommateur préexistant est placé après le nouveau consommateur. Par conséquent, les consommateurs auxquels sont attribuées des partitions différentes perdront les messages de réponse des requêtes envoyées avant le rééquilibrage.
 
-To prevent the `ClientKafka` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
+Pour éviter que les consommateurs `ClientKafka` ne perdent des messages de réponse, un partitionneur personnalisé intégré spécifique à Nest est utilisé. Ce partitionneur personnalisé attribue des partitions à une collection de consommateurs triés par des horodatages à haute résolution (`process.hrtime()`) qui sont définis au lancement de l'application.
 
-#### Message response subscription
+#### Abonnement aux réponses aux messages
 
-> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafka#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafka#emit` method).
+> warning **Note** Cette section n'est pertinente que si vous utilisez le style de message [requête-réponse](/microservices/basics#request-response) (avec le décorateur `@MessagePattern` et la méthode `ClientKafka#send`). L'abonnement au sujet de réponse n'est pas nécessaire pour la communication [basée sur les événements](/microservices/basics#event-based) (décorateur `@EventPattern` et méthode `@ClientKafka#emit`).
 
-The `ClientKafka` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
+La classe `ClientKafka` fournit la méthode `subscribeToResponseOf()`. La méthode `subscribeToResponseOf()` prend le nom du sujet d'une requête comme argument et ajoute le nom du sujet de réponse dérivé à une collection de sujets de réponse. Cette méthode est nécessaire lors de l'implémentation du modèle de message.
 
 ```typescript
 @@filename(heroes.controller)
@@ -194,7 +194,7 @@ onModuleInit() {
 }
 ```
 
-If the `ClientKafka` instance is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
+Si l'instance `ClientKafka` est créée de manière asynchrone, la méthode `subscribeToResponseOf()` doit être appelée avant d'appeler la méthode `connect()`.
 
 ```typescript
 @@filename(heroes.controller)
@@ -204,13 +204,13 @@ async onModuleInit() {
 }
 ```
 
-#### Incoming
+#### Messages entrants
 
-Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of type `Buffer`. Nest then parses these values by transforming the buffers into strings. If the string is "object like", Nest attempts to parse the string as `JSON`. The `value` is then passed to its associated handler.
+Nest reçoit les messages Kafka entrants sous la forme d'un objet avec les propriétés `key`, `value` et `headers` qui ont des valeurs de type `Buffer`. Nest analyse ensuite ces valeurs en transformant les tampons en chaînes de caractères. Si la chaîne est "semblable à un objet", Nest tente d'analyser la chaîne en tant que `JSON`. La `value` est alors transmise au gestionnaire qui lui est associé.
 
-#### Outgoing
+#### Messages sortants
 
-Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages. This occurs on arguments passed to the `ClientKafka` `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest envoie des messages Kafka sortants après un processus de sérialisation lors de la publication d'événements ou de l'envoi de messages. Cela se produit sur les arguments passés aux méthodes `emit()` et `send()` de `ClientKafka` ou sur les valeurs renvoyées par une méthode `@MessagePattern`. Cette sérialisation "stringifie" les objets qui ne sont pas des chaînes ou des tampons en utilisant `JSON.stringify()` ou la méthode prototype `toString()`.
 
 ```typescript
 @@filename(heroes.controller)
@@ -220,17 +220,17 @@ export class HeroesController {
   killDragon(@Payload() message: KillDragonMessage): any {
     const dragonId = message.dragonId;
     const items = [
-      { id: 1, name: 'Mythical Sword' },
-      { id: 2, name: 'Key to Dungeon' },
+      { id: 1, name: 'Épée mythique' },
+      { id: 2, name: 'Clé du donjon' },
     ];
     return items;
   }
 }
 ```
 
-> info **Hint** `@Payload()` is imported from the `@nestjs/microservices`.
+> info **AStuce** `@Payload()` est importé de `@nestjs/microservices`.
 
-Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
+Les messages sortants peuvent également être codés en passant un objet avec les propriétés `key` et `value`. L'attribution d'une clé aux messages est importante pour répondre à [l'exigence de copartition](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
 ```typescript
 @@filename(heroes.controller)
@@ -243,8 +243,8 @@ export class HeroesController {
     const dragonId = message.dragonId;
 
     const items = [
-      { id: 1, name: 'Mythical Sword' },
-      { id: 2, name: 'Key to Dungeon' },
+      { id: 1, name: 'Épée mythique' },
+      { id: 2, name: 'Clé du donjon' },
     ];
 
     return {
@@ -258,7 +258,7 @@ export class HeroesController {
 }
 ```
 
-Additionally, messages passed in this format can also contain custom headers set in the `headers` hash property. Header hash property values must be either of type `string` or type `Buffer`.
+De plus, les messages passés dans ce format peuvent également contenir des en-têtes personnalisés définis dans la propriété de hachage `headers`. Les valeurs de la propriété de hachage des en-têtes doivent être de type `string` ou de type `Buffer`.
 
 ```typescript
 @@filename(heroes.controller)
@@ -271,8 +271,8 @@ export class HeroesController {
     const dragonId = message.dragonId;
 
     const items = [
-      { id: 1, name: 'Mythical Sword' },
-      { id: 2, name: 'Key to Dungeon' },
+      { id: 1, name: 'Épée mythique' },
+      { id: 2, name: 'Clé du donjon' },
     ];
 
     return {
@@ -286,15 +286,15 @@ export class HeroesController {
 }
 ```
 
-#### Event-based
+#### Basé sur les événements
 
-While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based (which in turn is ideal for Kafka) - when you just want to publish events **without waiting for a response**. In that case, you do not want the overhead required by request-response for maintaining two topics.
+Si la méthode requête-réponse est idéale pour l'échange de messages entre services, elle l'est moins lorsque votre style de message est basé sur les événements (ce qui est idéal pour Kafka) - lorsque vous souhaitez simplement publier des événements **sans attendre de réponse**. Dans ce cas, vous ne voulez pas de la surcharge requise par la méthode requête-réponse pour maintenir deux sujets.
 
-Check out these two sections to learn more about this: [Overview: Event-based](/microservices/basics#event-based) and [Overview: Publishing events](/microservices/basics#publishing-events).
+Pour en savoir plus, consultez les deux sections suivantes : [Vue d'ensemble : basée sur les événements](/microservices/basics#messagerie-événementielle) et [Vue d'ensemble : publier des événements](/microservices/basics#publication-dévénements).
 
-#### Context
+#### Contexte
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
+Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur Kafka, vous pouvez accéder à l'objet `KafkaContext`.
 
 ```typescript
 @@filename()
@@ -310,9 +310,9 @@ killDragon(message, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `KafkaContext` are imported from the `@nestjs/microservices` package.
+> info **Astuce** `@Payload()`, `@Ctx()` et `KafkaContext` sont importés du package `@nestjs/microservices`.
 
-To access the original Kafka `IncomingMessage` object, use the `getMessage()` method of the `KafkaContext` object, as follows:
+Pour accéder à l'objet Kafka `IncomingMessage` original, utilisez la méthode `getMessage()` de l'objet `KafkaContext`, comme suit :
 
 ```typescript
 @@filename()
@@ -332,7 +332,7 @@ killDragon(message, context) {
 }
 ```
 
-Where the `IncomingMessage` fulfills the following interface:
+Le `IncomingMessage` remplit l'interface suivante :
 
 ```typescript
 interface IncomingMessage {
@@ -348,7 +348,7 @@ interface IncomingMessage {
 }
 ```
 
-If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+Si votre handler implique un temps de traitement lent pour chaque message reçu, vous devriez envisager d'utiliser le callback `heartbeat`. Pour récupérer la fonction `heartbeat`, utilisez la méthode `getHeartbeat()` du `KafkaContext`, comme suit :
 
 ```typescript
 @@filename()
@@ -356,20 +356,20 @@ If your handler involves a slow processing time for each received message you sh
 async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
   const heartbeat = context.getHeartbeat();
 
-  // Do some slow processing
+  // Effectuer un traitement lent
   await doWorkPart1();
 
-  // Send heartbeat to not exceed the sessionTimeout
+  // Envoi d'un heartbeat pour ne pas dépasser le sessionTimeout
   await heartbeat();
 
-  // Do some slow processing again
+  // Effectuer à nouveau un traitement lent
   await doWorkPart2();
 }
 ```
 
-#### Naming conventions
+#### Conventions de nommage
 
-The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
+Les composants de microservices Kafka ajoutent une description de leur rôle respectif aux options `client.clientId` et `consumer.groupId` pour éviter les collisions entre les composants clients et serveurs des microservices Nest. Par défaut, les composants `ClientKafka` ajoutent `-client` et les composants `ServerKafka` ajoutent `-server` à ces deux options. Notez comment les valeurs fournies ci-dessous sont transformées de cette manière (comme indiqué dans les commentaires).
 
 ```typescript
 @@filename(main)
@@ -387,7 +387,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 });
 ```
 
-And for the client:
+Et pour le client :
 
 ```typescript
 @@filename(heroes.controller)
@@ -406,9 +406,9 @@ And for the client:
 client: ClientKafka;
 ```
 
-> info **Hint** Kafka client and consumer naming conventions can be customized by extending `ClientKafka` and `KafkaServer` in your own custom provider and overriding the constructor.
+> info **Astuce** Les conventions de nommage des clients et des consommateurs Kafka peuvent être personnalisées en étendant `ClientKafka` et `KafkaServer` dans votre propre fournisseur personnalisé et en surchargeant le constructeur.
 
-Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic. By default, the name of the reply topic is the composite of the request topic name with `.reply` appended.
+Puisque le modèle de message de microservice Kafka utilise deux sujets pour les canaux de demande et de réponse, un modèle de réponse doit être dérivé du sujet de demande. Par défaut, le nom du sujet de réponse est le composite du nom du sujet de demande avec `.reply` ajouté.
 
 ```typescript
 @@filename(heroes.controller)
@@ -417,31 +417,31 @@ onModuleInit() {
 }
 ```
 
-> info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+> info **Astuce** Les conventions de nommage des sujets de réponse Kafka peuvent être personnalisées en étendant `ClientKafka` dans votre propre fournisseur personnalisé et en surchargeant la méthode `getResponsePatternName`.
 
-#### Retriable exceptions
+#### Exceptions récupérables
 
-Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+Comme pour les autres transporteurs, toutes les exceptions non gérées sont automatiquement enveloppées dans une `RpcException` et converties dans un format "convivial". Cependant, il y a des cas où vous voudrez contourner ce mécanisme et laisser les exceptions être consommées par le pilote `kafkajs` à la place. Lancer une exception lors du traitement d'un message demande à `kafkajs` de **retry** (le livrer à nouveau), ce qui signifie que même si le gestionnaire de message (ou d'événement) a été déclenché, le décalage ne sera pas enregistré dans Kafka.
 
-> warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
+> warning **Attention** Pour les gestionnaires d'événements (communication basée sur les événements), toutes les exceptions non gérées sont considérées par défaut comme des **exceptions récupérables**.
 
-For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
+Pour cela, vous pouvez utiliser une classe dédiée appelée `KafkaRetriableException`, comme suit :
 
 ```typescript
 throw new KafkaRetriableException('...');
 ```
 
-> info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
+> info **Astuce** La classe `KafkaRetriableException` est exportée depuis le package `@nestjs/microservices`.
 
-#### Commit offsets
+#### Validation des décalages
 
-Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+La validation des décalages est essentielle lorsque l'on travaille avec Kafka. Par défaut, les messages sont automatiquement validés après un certain temps. Pour plus d'informations, visitez [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offre un moyen de valider manuellement les décalages qui fonctionnent comme [l'implémentation native de KafkaJS](https://kafka.js.org/docs/consuming#manual-committing).
 
 ```typescript
 @@filename()
 @EventPattern('user.created')
 async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
-  // business logic
+  // logique métier
   
   const { offset } = context.getMessage();
   const partition = context.getPartition();
@@ -452,7 +452,7 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
 @Bind(Payload(), Ctx())
 @EventPattern('user.created')
 async handleUserCreated(data, context) {
-  // business logic
+  // logique métier
 
   const { offset } = context.getMessage();
   const partition = context.getPartition();
@@ -461,7 +461,7 @@ async handleUserCreated(data, context) {
 }
 ```
 
-To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
+Pour désactiver la validation automatique des messages, mettez `autoCommit : false` dans la configuration `run`, comme suit :
 
 ```typescript
 @@filename(main)
