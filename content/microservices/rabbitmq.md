@@ -1,18 +1,18 @@
 ### RabbitMQ
 
-[RabbitMQ](https://www.rabbitmq.com/) is an open-source and lightweight message broker which supports multiple messaging protocols. It can be deployed in distributed and federated configurations to meet high-scale, high-availability requirements. In addition, it's the most widely deployed message broker, used worldwide at small startups and large enterprises.
+[RabbitMQ](https://www.rabbitmq.com/) est un broker (courtier) de messages léger et open-source qui prend en charge de nombreux protocoles de messagerie. Il peut être déployé dans des configurations distribuées et fédérées pour répondre aux exigences de haute disponibilité. En outre, il s'agit du courtier de messages le plus largement déployé, utilisé dans le monde entier par de petites startups et de grandes entreprises.
 
 #### Installation
 
-To start building RabbitMQ-based microservices, first install the required packages:
+Pour commencer à construire des microservices basés sur RabbitMQ, il faut d'abord installer les packages nécessaires :
 
 ```bash
 $ npm i --save amqplib amqp-connection-manager
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-To use the RabbitMQ transporter, pass the following options object to the `createMicroservice()` method:
+Pour utiliser le transporteur RabbitMQ, passez l'objet d'options suivant à la méthode `createMicroservice()` :
 
 ```typescript
 @@filename(main)
@@ -39,52 +39,52 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Astuce** L'enum `Transport` est importé du package `@nestjs/microservices`.
 
 #### Options
 
-The `options` property is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the properties described below.
+La propriété `options` est spécifique au transporteur choisi. Le transporteur **RabbitMQ** expose les propriétés décrites ci-dessous.
 
 <table>
   <tr>
     <td><code>urls</code></td>
-    <td>Connection urls</td>
+    <td>Urls de connexion</td>
   </tr>
   <tr>
     <td><code>queue</code></td>
-    <td>Queue name which your server will listen to</td>
+    <td>Nom de la file d'attente que votre serveur écoutera</td>
   </tr>
   <tr>
     <td><code>prefetchCount</code></td>
-    <td>Sets the prefetch count for the channel</td>
+    <td>Définit le nombre de préchargement pour le canal</td>
   </tr>
   <tr>
     <td><code>isGlobalPrefetchCount</code></td>
-    <td>Enables per channel prefetching</td>
+    <td>Activation du préchargement par canal</td>
   </tr>
   <tr>
     <td><code>noAck</code></td>
-    <td>If <code>false</code>, manual acknowledgment mode enabled</td>
+    <td>Si <code>false</code>, mode d'accusé de réception manuel activé</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
-    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">here</a>)</td>
+    <td>Options supplémentaires de file d'attente (en lire plus <a href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">ici</a>)</td>
   </tr>
   <tr>
     <td><code>socketOptions</code></td>
-    <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a>)</td>
+    <td>Options supplémentaires de socket (en lire plus <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">ici</a>)</td>
   </tr>
   <tr>
     <td><code>headers</code></td>
-    <td>Headers to be sent along with every message</td>
+    <td>En-têtes à envoyer avec chaque message</td>
   </tr>
 </table>
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a RabbitMQ `ClientProxy` instance.
+Comme d'autres transporteurs de microservices, vous avez [plusieurs options](/microservices/basics#client) pour créer une instance RabbitMQ `ClientProxy`.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+Une méthode pour créer une instance est d'utiliser le `ClientsModule`. Pour créer une instance de client avec le `ClientsModule`, importez-le et utilisez la méthode `register()` pour passer un objet options avec les mêmes propriétés que celles montrées ci-dessus dans la méthode `createMicroservice()`, ainsi qu'une propriété `name` à utiliser comme jeton d'injection. Lisez en plus à propos de `ClientsModule` [ici](/microservices/basics#client).
 
 ```typescript
 @Module({
@@ -107,11 +107,11 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`) peuvent également être utilisées. Vous pouvez en prendre connaissance [ici](/microservices/basics#client).
 
-#### Context
+#### Contexte
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
+Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur RabbitMQ, vous pouvez accéder à l'objet `RmqContext`.
 
 ```typescript
 @@filename()
@@ -127,9 +127,9 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices` package.
+> info **Astuce** `@Payload()`, `@Ctx()` et `RmqContext` sont importés du package `@nestjs/microservices`.
 
-To access the original RabbitMQ message (with the `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object, as follows:
+Pour accéder au message RabbitMQ original (avec les `properties`, `fields` et `content`), utilisez la méthode `getMessage()` de l'objet `RmqContext`, comme suit :
 
 ```typescript
 @@filename()
@@ -145,7 +145,7 @@ getNotifications(data, context) {
 }
 ```
 
-To retrieve a reference to the RabbitMQ [channel](https://www.rabbitmq.com/channels.html), use the `getChannelRef` method of the `RmqContext` object, as follows:
+Pour récupérer une référence au [channel](https://www.rabbitmq.com/channels.html) RabbitMQ, utilisez la méthode `getChannelRef` de l'objet `RmqContext`, comme suit :
 
 ```typescript
 @@filename()
@@ -161,11 +161,11 @@ getNotifications(data, context) {
 }
 ```
 
-#### Message acknowledgement
+#### Accusé de réception des messages
 
-To make sure a message is never lost, RabbitMQ supports [message acknowledgements](https://www.rabbitmq.com/confirms.html). An acknowledgement is sent back by the consumer to tell RabbitMQ that a particular message has been received, processed and that RabbitMQ is free to delete it. If a consumer dies (its channel is closed, connection is closed, or TCP connection is lost) without sending an ack, RabbitMQ will understand that a message wasn't processed fully and will re-queue it.
+Pour s'assurer qu'un message n'est jamais perdu, RabbitMQ supporte les [accusés de réception de message](https://www.rabbitmq.com/confirms.html). Un accusé de réception est renvoyé par le consommateur pour indiquer à RabbitMQ qu'un message particulier a été reçu, traité et que RabbitMQ est libre de le supprimer. Si un consommateur meurt (son canal est fermé, sa connexion est fermée ou la connexion TCP est perdue) sans avoir envoyé d'ack, RabbitMQ comprendra qu'un message n'a pas été entièrement traité et le remettra en file d'attente.
 
-To enable manual acknowledgment mode, set the `noAck` property to `false`:
+Pour activer le mode d'acquittement manuel, fixez la propriété `noAck` à `false` :
 
 ```typescript
 options: {
@@ -178,7 +178,7 @@ options: {
 },
 ```
 
-When manual consumer acknowledgements are turned on, we must send a proper acknowledgement from the worker to signal that we are done with a task.
+Lorsque les accusés de réception manuels sont activés, le travailleur doit envoyer un accusé de réception approprié pour signaler qu'il a terminé sa tâche.
 
 ```typescript
 @@filename()
@@ -200,9 +200,9 @@ getNotifications(data, context) {
 }
 ```
 
-#### Record builders
+#### Constructeurs d'enregistrements
 
-To configure message options, you can use the `RmqRecordBuilder` class (note: this is doable for event-based flows as well). For example, to set `headers` and `priority` properties, use the `setOptions` method, as follows:
+Pour configurer les options des messages, vous pouvez utiliser la classe `RmqRecordBuilder` (note : ceci est également possible pour les flux basés sur les événements). Par exemple, pour définir les propriétés `headers` et `priority`, utilisez la méthode `setOptions`, comme suit :
 
 ```typescript
 const message = ':cat:';
@@ -218,9 +218,9 @@ const record = new RmqRecordBuilder(message)
 this.client.send('replace-emoji', record).subscribe(...);
 ```
 
-> info **Hint** `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.
+> info **Astuce** La classe `RmqRecordBuilder` est exportée depuis le package `@nestjs/microservices`.
 
-And you can read these values on the server-side as well, by accessing the `RmqContext`, as follows:
+Vous pouvez également lire ces valeurs côté serveur, en accédant au `RmqContext`, comme suit :
 
 ```typescript
 @@filename()
