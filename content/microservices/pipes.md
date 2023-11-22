@@ -1,12 +1,12 @@
 ### Pipes
 
-There is no fundamental difference between [regular pipes](/pipes) and microservices pipes. The only difference is that instead of throwing `HttpException`, you should use `RpcException`.
+Il n'y a pas de différence fondamentale entre les [pipes ordinaires](/pipes) et les pipes microservices. La seule différence est qu'au lieu de lancer `HttpException`, vous devriez utiliser `RpcException`.
 
-> info **Hint** The `RpcException` class is exposed from `@nestjs/microservices` package.
+> info **Astuce** La classe `RpcException` est exposée dans le package `@nestjs/microservices`.
 
-#### Binding pipes
+#### Lier les pipes
 
-The following example uses a manually instantiated method-scoped pipe. Just as with HTTP based applications, you can also use controller-scoped pipes (i.e., prefix the controller class with a `@UsePipes()` decorator).
+L'exemple suivant utilise un pipe à portée de méthode instancié manuellement. Tout comme pour les applications basées sur HTTP, vous pouvez également utiliser des pipes à l'échelle du contrôleur (c'est-à-dire préfixer la classe du contrôleur avec un décorateur `@UsePipes()`).
 
 ```typescript
 @@filename()
