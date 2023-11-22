@@ -123,7 +123,7 @@ export class MathController {
 }
 ```
 
-Dans le code ci-dessus, le **gestionnaire de messages** `accumulate()` écoute les messages qui correspondent au modèle de message `{ '{' }} cmd : 'sum' {{ '}' }}`. Le gestionnaire de message prend un seul argument, les `données` transmises par le client. Dans ce cas, les données sont un tableau de nombres qui doivent être accumulés.
+Dans le code ci-dessus, le **gestionnaire de messages** `accumulate()` écoute les messages qui correspondent au modèle de message `{{ '{' }} cmd : 'sum' {{ '}' }}`. Le gestionnaire de message prend un seul argument, les `données` transmises par le client. Dans ce cas, les données sont un tableau de nombres qui doivent être accumulés.
 
 #### Réponses asynchrones
 
