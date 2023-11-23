@@ -38,7 +38,15 @@ import compression from '@fastify/compress';
 await app.register(compression);
 ```
 
-Par défaut, `@fastify/compress` utilisera la compression Brotli (sur Node >= 11.7.0) lorsque les navigateurs indiquent qu'ils supportent cet encodage. Bien que Brotli soit assez efficace en termes de taux de compression, il est également assez lent. Pour cette raison, vous pouvez demander à fastify-compress de n'utiliser que deflate et gzip pour compresser les réponses ; vous vous retrouverez avec des réponses plus volumineuses mais elles seront délivrées beaucoup plus rapidement.
+Par défaut, `@fastify/compress` utilisera la compression Brotli (sur Node >= 11.7.0) lorsque les navigateurs indiquent qu'ils supportent cet encodage. Bien que Brotli puisse être assez efficace en termes de taux de compression, il peut aussi être assez lent. Par défaut, Brotli définit une qualité de compression maximale de 11, bien qu'elle puisse être ajustée pour réduire le temps de compression au détriment de la qualité de compression en ajustant le paramètre `BROTLI_PARAM_QUALITY` entre 0 (minimum) et 11 (maximum). Cela nécessitera un réglage fin pour optimiser les performances en termes d'espace et de temps. Voici un exemple avec une qualité de 4 :
+
+```typescript
+import { constants } from 'zlib';
+// quelque part dans votre fichier d'initialisation
+await app.register(compression, { brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } } });
+```
+
+Pour simplifier, vous pouvez demander à `fastify-compress` d'utiliser uniquement la compression deflate et gzip pour compresser les réponses; cela peut entraîner des réponses potentiellement plus volumineuses, mais elles seront livrées beaucoup plus rapidement.
 
 Pour spécifier les encodages, il faut fournir un second argument à `app.register` :
 

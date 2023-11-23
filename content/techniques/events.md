@@ -83,16 +83,34 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 }
 ```
 
-> warning **Attentinon** Les abonnés aux événements ne peuvent pas faire l'objet d'une requête.
+> warning **Attention** Les abonnés aux événements ne peuvent pas faire l'objet d'une requête.
 
-Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'événement simple et un `string | symbol | Array<string | symbol>` dans le cas d'un émetteur joker. Le second argument (optionnel) est un objet d'options d'écoute ( [en lire plus](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
+Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'événement simple et un `string | symbol | Array<string | symbol>` dans le cas d'un émetteur joker.
+
+Le second argument (optionnel) est un objet d'options d'écoute comme suit:
+
 
 ```typescript
-@OnEvent('order.created', { async: true })
-handleOrderCreatedEvent(payload: OrderCreatedEvent) {
-  // gère et traite l'événement "OrderCreatedEvent"
-}
+export type OnEventOptions = OnOptions & {
+  /**
+   * If "true", prepends (instead of append) the given listener to the array of listeners.
+   *
+   * @see https://github.com/EventEmitter2/EventEmitter2#emitterprependlistenerevent-listener-options
+   *
+   * @default false
+   */
+  prependListener?: boolean;
+
+  /**
+   * If "true", the onEvent callback will not throw an error while handling the event. Otherwise, if "false" it will throw an error.
+   * 
+   * @default true
+   */
+  suppressErrors?: boolean;
+};
 ```
+
+> info **Astuce** En savoir plus sur l'objet d'options OnOptions depuis [`eventemitter2`](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean).
 
 Pour utiliser les espaces de noms et les jokers, passez l'option `wildcard` dans la méthode `EventEmitterModule#forRoot()`. Lorsque les espaces de noms et les caractères génériques sont activés, les événements peuvent être soit des chaînes de caractères (`foo.bar`) séparées par un délimiteur, soit des tableaux (`['foo', 'bar']`). Le délimiteur est également configurable en tant que propriété de configuration (`delimiter`). Avec la fonctionnalité namespaces activée, vous pouvez vous abonner à des événements en utilisant un joker :
 
