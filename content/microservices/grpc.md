@@ -1,22 +1,22 @@
 ### gRPC
 
-[gRPC](https://github.com/grpc/grpc-node) is a modern, open source, high performance RPC framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication.
+[gRPC](https://github.com/grpc/grpc-node) est un cadre RPC moderne, open source et très performant qui peut fonctionner dans n'importe quel environnement. Il permet de connecter efficacement des services dans et entre les centres de données grâce à une prise en charge enfichable de l'équilibrage de la charge, du traçage, de la vérification de l'état et de l'authentification.
 
-Like many RPC systems, gRPC is based on the concept of defining a service in terms of functions (methods) that can be called remotely. For each method, you define the parameters and return types. Services, parameters, and return types are defined in `.proto` files using Google's open source language-neutral <a href="https://protobuf.dev">protocol buffers</a> mechanism.
+Comme de nombreux systèmes RPC, gRPC est basé sur le concept de définition d'un service en termes de fonctions (méthodes) qui peuvent être appelées à distance. Pour chaque méthode, vous définissez les paramètres et les types de retour. Les services, les paramètres et les types de retour sont définis dans les fichiers `.proto` à l'aide du mécanisme [protocol buffers](https://protobuf.dev) de Google, qui est neutre sur le plan du langage.
 
-With the gRPC transporter, Nest uses `.proto` files to dynamically bind clients and servers to make it easy to implement remote procedure calls, automatically serializing and deserializing structured data.
+Avec le transporteur gRPC, Nest utilise des fichiers `.proto` pour lier dynamiquement les clients et les serveurs afin de faciliter la mise en œuvre des appels de procédure à distance, en sérialisant et désérialisant automatiquement les données structurées.
 
 #### Installation
 
-To start building gRPC-based microservices, first install the required packages:
+Pour commencer à construire des microservices basés sur gRPC, il faut d'abord installer les paquets nécessaires :
 
 ```bash
 $ npm i --save @grpc/grpc-js @grpc/proto-loader
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-Like other Nest microservices transport layer implementations, you select the gRPC transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method. In the following example, we'll set up a hero service. The `options` property provides metadata about that service; its properties are described <a href="microservices/grpc#options">below</a>.
+Comme pour les autres implémentations de la couche de transport des microservices Nest, vous sélectionnez le mécanisme de transport gRPC en utilisant la propriété `transport` de l'objet options passé à la méthode `createMicroservice()`. Dans l'exemple suivant, nous allons mettre en place un service "hero". La propriété `options` fournit des métadonnées sur ce service ; ses propriétés sont décrites [ci-dessous] (microservices/grpc#options).
 
 ```typescript
 @@filename(main)
@@ -37,9 +37,9 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-> info **Hint** The `join()` function is imported from the `path` package; the `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Astuce** La fonction `join()` est importée du paquet `path` ; l'enum `Transport` est importé du paquet `@nestjs/microservices`.
 
-In the `nest-cli.json` file, we add the `assets` property that allows us to distribute non-TypeScript files, and `watchAssets` - to turn on watching all non-TypeScript assets. In our case, we want `.proto` files to be automatically copied to the `dist` folder.
+Dans le fichier `nest-cli.json`, nous ajoutons la propriété `assets` qui nous permet de distribuer des fichiers non-TypeScript, et `watchAssets` - pour activer la surveillance de tous les assets non-TypeScript. Dans notre cas, nous voulons que les fichiers `.proto` soient automatiquement copiés dans le dossier `dist`.
 
 ```json
 {
@@ -52,56 +52,56 @@ In the `nest-cli.json` file, we add the `assets` property that allows us to dist
 
 #### Options
 
-The <strong>gRPC</strong> transporter options object exposes the properties described below.
+L'objet **gRPC** "transporter options" expose les propriétés décrites ci-dessous.
 
 <table>
   <tr>
     <td><code>package</code></td>
-    <td>Protobuf package name (matches <code>package</code> setting from <code>.proto</code> file).  Required</td>
+    <td>Nom du paquet Protobuf (correspond à la configuration du <code>package</code> dans le fichier <code>.proto</code>). Requis</td>
   </tr>
   <tr>
     <td><code>protoPath</code></td>
     <td>
-      Absolute (or relative to the root dir) path to the
-      <code>.proto</code> file. Required
+      Chemin absolu (ou relatif au répertoire racine) vers le fichier
+      <code>.proto</code>. Requis
     </td>
   </tr>
   <tr>
     <td><code>url</code></td>
-    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'localhost:50051'</code>) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code></td>
+    <td>URL de connexion.  Chaîne au format adresse <code>IP/nom DNS:port</code> (par exemple, <code>'localhost:50051'</code>) définissant l'adresse/port sur lequel le transporteur établit une connexion.  Facultatif.  La valeur par défaut est <code>'localhost:5000'</code></td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>
-    <td>NPM package name for the utility to load <code>.proto</code> files.  Optional.  Defaults to <code>'@grpc/proto-loader'</code></td>
+    <td>Nom du paquet NPM pour l'utilitaire de chargement des fichiers <code>.proto</code>. Facultatif.  La valeur par défaut est <code>'@grpc/proto-loader'</code></td>
   </tr>
   <tr>
     <td><code>loader</code></td>
     <td>
-      <code>@grpc/proto-loader</code> options. These provide detailed control over the behavior of <code>.proto</code> files. Optional. See
+      Options de <code>@grpc/proto-loader</code>. Elles permettent de contrôler en détail le comportement des fichiers <code>.proto</code>. Facultatif. Voir
       <a
         href="https://github.com/grpc/grpc-node/blob/master/packages/proto-loader/README.md"
         rel="nofollow"
         target="_blank"
         >here</a
-      > for more details
+      > pour plus de détails
     </td>
   </tr>
   <tr>
     <td><code>credentials</code></td>
     <td>
-      Server credentials.  Optional. <a
+      Identifiants du serveur.  Facultatif. <a
         href="https://grpc.io/grpc/node/grpc.ServerCredentials.html"
         rel="nofollow"
         target="_blank"
-        >Read more here</a
+        >En lire plus ici</a
       >
     </td>
   </tr>
 </table>
 
-#### Sample gRPC service
+#### Exemple de service gRPC
 
-Let's define our sample gRPC service called `HeroesService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
+Définissons notre exemple de service gRPC appelé `HeroesService`. Dans l'objet `options` ci-dessus, la propriété `protoPath` définit un chemin vers le fichier de définitions `.proto` `hero.proto`. Le fichier `hero.proto` est structuré en utilisant [protocol buffers](https://developers.google.com/protocol-buffers). Voici à quoi il ressemble :
 
 ```typescript
 // hero/hero.proto
@@ -123,11 +123,11 @@ message Hero {
 }
 ```
 
-Our `HeroesService` exposes a `FindOne()` method. This method expects an input argument of type `HeroById` and returns a `Hero` message (protocol buffers use `message` elements to define both parameter types and return types).
+Notre `HeroesService` expose une méthode `FindOne()`. Cette méthode attend un argument d'entrée de type `HeroById` et retourne un message `Hero` (les tampons de protocole utilisent les éléments `message` pour définir à la fois les types de paramètres et les types de retour).
 
-Next, we need to implement the service. To define a handler that fulfills this definition, we use the `@GrpcMethod()` decorator in a controller, as shown below. This decorator provides the metadata needed to declare a method as a gRPC service method.
+Ensuite, nous devons implémenter le service. Pour définir un handler qui réponde à cette définition, nous utilisons le décorateur `@GrpcMethod()` dans un contrôleur, comme montré ci-dessous. Ce décorateur fournit les métadonnées nécessaires pour déclarer une méthode en tant que méthode de service gRPC.
 
-> info **Hint** The `@MessagePattern()` decorator (<a href="microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
+> info **Astuce** Le décorateur `@MessagePattern()` ([en savoir plus](microservices/basics#request-response)) introduit dans les chapitres précédents sur les microservices n'est pas utilisé avec les microservices basés sur gRPC. Le décorateur `@GrpcMethod()` prend effectivement sa place pour les microservices basés sur gRPC.
 
 ```typescript
 @@filename(heroes.controller)
@@ -156,14 +156,14 @@ export class HeroesController {
 }
 ```
 
-> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package, while `Metadata` and `ServerUnaryCall` from the `grpc` package.
+> info **Astuce** Le décorateur `@GrpcMethod()` est importé du paquetage `@nestjs/microservices`, tandis que `Metadata` et `ServerUnaryCall` sont importés du paquetage `grpc`.
 
-The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroesService'`), corresponding to the `HeroesService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroesService` in the `hero.proto` file.
+Le décorateur montré ci-dessus prend deux arguments. Le premier est le nom du service (par exemple, `'HeroesService''), correspondant à la définition du service `HeroesService` dans `hero.proto`. La seconde (la chaîne `'FindOne'`) correspond à la méthode rpc `FindOne()` définie dans `HeroesService` dans le fichier `hero.proto`.
 
-The `findOne()` handler method takes three arguments, the `data` passed from the caller, `metadata` that stores gRPC
-request metadata and `call` to obtain the `GrpcCall` object properties such as `sendMetadata` for send metadata to client.
+La méthode `findOne()` prend trois arguments, les `data` transmises par l'appelant, `metadata` qui stocke les métadonnées de la requête gRPC
+et `call` pour obtenir les propriétés de l'objet `GrpcCall` telles que `sendMetadata` pour envoyer les métadonnées au client.
 
-Both `@GrpcMethod()` decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the `.proto` file rpc method with the handler based on converting the handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition). This is shown below.
+Les deux arguments du décorateur `@GrpcMethod()` sont optionnels. S'il est appelé sans le second argument (par exemple, `'FindOne'`), Nest associera automatiquement la méthode rpc du fichier `.proto` avec le handler en convertissant le nom du handler en majuscules (par exemple, le handler `findOne` est associé à la définition de l'appel rpc `FindOne`). Ceci est illustré ci-dessous.
 
 ```typescript
 @@filename(heroes.controller)
@@ -192,7 +192,7 @@ export class HeroesController {
 }
 ```
 
-You can also omit the first `@GrpcMethod()` argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the **class** name where the handler is defined. For example, in the following code, class `HeroesService` associates its handler methods with the `HeroesService` service definition in the `hero.proto` file based on the matching of the name `'HeroesService'`.
+Vous pouvez également omettre le premier argument `@GrpcMethod()`. Dans ce cas, Nest associe automatiquement le gestionnaire à la définition du service à partir du fichier de définitions du proto, en se basant sur le nom de la **classe** dans laquelle le gestionnaire est défini. Par exemple, dans le code suivant, la classe `HeroesService` associe ses méthodes de gestion à la définition du service `HeroesService` dans le fichier `hero.proto` en se basant sur la correspondance du nom `'HeroesService''.
 
 ```typescript
 @@filename(heroes.controller)
@@ -223,9 +223,9 @@ export class HeroesService {
 
 #### Client
 
-Nest applications can act as gRPC clients, consuming services defined in `.proto` files. You access remote services through a `ClientGrpc` object. You can obtain a `ClientGrpc` object in several ways.
+Les applications Nest peuvent agir en tant que clients gRPC, consommant des services définis dans les fichiers `.proto`. Vous accédez aux services distants par l'intermédiaire d'un objet `ClientGrpc`. Vous pouvez obtenir un objet `ClientGrpc` de plusieurs façons.
 
-The preferred technique is to import the `ClientsModule`. Use the `register()` method to bind a package of services defined in a `.proto` file to an injection token, and to configure the service. The `name` property is the injection token. For gRPC services, use `transport: Transport.GRPC`. The `options` property is an object with the same properties described <a href="microservices/grpc#options">above</a>.
+La technique privilégiée est d'importer le module `ClientsModule`. Utilisez la méthode `register()` pour lier un paquet de services défini dans un fichier `.proto` à un jeton d'injection, et pour configurer le service. La propriété `name` est le jeton d'injection. Pour les services gRPC, utilisez `transport : Transport.GRPC`. La propriété `options` est un objet avec les mêmes propriétés que celles décrites [ci-dessus](microservices/grpc#options).
 
 ```typescript
 imports: [
@@ -242,9 +242,9 @@ imports: [
 ];
 ```
 
-> info **Hint** The `register()` method takes an array of objects. Register multiple packages by providing a comma separated list of registration objects.
+> info **Astuce** La méthode `register()` prend un tableau d'objets. Vous pouvez enregistrer plusieurs paquets en fournissant une liste d'objets d'enregistrement séparés par des virgules.
 
-Once registered, we can inject the configured `ClientGrpc` object with `@Inject()`. Then we use the `ClientGrpc` object's `getService()` method to retrieve the service instance, as shown below.
+Une fois enregistré, nous pouvons injecter l'objet `ClientGrpc` configuré avec `@Inject()`. Nous utilisons ensuite la méthode `getService()` de l'objet `ClientGrpc` pour récupérer l'instance de service, comme indiqué ci-dessous.
 
 ```typescript
 @Injectable()
@@ -263,11 +263,11 @@ export class AppService implements OnModuleInit {
 }
 ```
 
-> error **Warning** gRPC Client will not send fields that contain underscore `_` in their names unless the `keepCase` options is set to `true` in the proto loader configuration (`options.loader.keepcase` in the microservice transporter configuration).
+> error **Attention** Le client gRPC n'enverra pas les champs qui contiennent le trait de soulignement `_` dans leur nom à moins que l'option `keepCase` soit fixée à `true` dans la configuration du chargeur de proto (`options.loader.keepcase` dans la configuration du transporteur de microservices).
 
-Notice that there is a small difference compared to the technique used in other microservice transport methods. Instead of the `ClientProxy` class, we use the `ClientGrpc` class, which provides the `getService()` method. The `getService()` generic method takes a service name as an argument and returns its instance (if available).
+Remarquez qu'il y a une petite différence par rapport à la technique utilisée dans d'autres méthodes de transport de microservices. Au lieu de la classe `ClientProxy`, nous utilisons la classe `ClientGrpc`, qui fournit la méthode `getService()`. La méthode générique `getService()` prend un nom de service comme argument et retourne son instance (si disponible).
 
-Alternatively, you can use the `@Client()` decorator to instantiate a `ClientGrpc` object, as follows:
+Vous pouvez également utiliser le décorateur `@Client()` pour instancier un objet `ClientGrpc`, comme suit :
 
 ```typescript
 @Injectable()
@@ -293,11 +293,11 @@ export class AppService implements OnModuleInit {
 }
 ```
 
-Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described <a href="/microservices/basics#client">here</a>.
+Enfin, pour des scénarios plus complexes, nous pouvons injecter un client configuré dynamiquement en utilisant la classe `ClientProxyFactory` comme décrit [ici] (/microservices/basics#client).
 
-In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroesService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroesService` looks and acts like a local provider.
+Dans les deux cas, nous obtenons une référence à notre objet proxy `HeroesService`, qui expose le même ensemble de méthodes que celles définies dans le fichier `.proto`. Maintenant, quand nous accédons à cet objet proxy (c'est-à-dire `heroesService`), le système gRPC sérialise automatiquement les requêtes, les transmet au système distant, renvoie une réponse, et désérialise la réponse. Parce que gRPC nous protège de ces détails de communication réseau, `heroesService` ressemble et agit comme un fournisseur local.
 
-Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroesService` definition contains the `FindOne()` function, the `heroesService` instance will provide the `findOne()` method.
+Notez que toutes les méthodes du service sont en **majuscules** (afin de suivre la convention naturelle du langage). Ainsi, par exemple, alors que la définition du fichier `.proto` `HeroesService` contient la fonction `FindOne()`, l'instance `heroesService` fournira la méthode `findOne()`.
 
 ```typescript
 interface HeroesService {
@@ -305,7 +305,7 @@ interface HeroesService {
 }
 ```
 
-A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
+Un gestionnaire de message peut également renvoyer un `Observable`, auquel cas les valeurs de résultat seront émises jusqu'à ce que le flux soit terminé.
 
 ```typescript
 @@filename(heroes.controller)
@@ -320,7 +320,7 @@ call() {
 }
 ```
 
-To send gRPC metadata (along with the request), you can pass a second argument, as follows:
+Pour envoyer des métadonnées gRPC (en même temps que la requête), vous pouvez passer un deuxième argument, comme suit :
 
 ```typescript
 call(): Observable<any> {
@@ -331,28 +331,28 @@ call(): Observable<any> {
 }
 ```
 
-> info **Hint** The `Metadata` class is imported from the `grpc` package.
+> info **Astuce** La classe `Metadata` est importée du paquet `grpc`.
 
-Please note that this would require updating the `HeroesService` interface that we've defined a few steps earlier.
+Notez que cela nécessite la mise à jour de l'interface `HeroesService` que nous avons définie quelques étapes plus tôt.
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
-#### gRPC Streaming
+#### Flux de données gRPC
 
-gRPC on its own supports long-term live connections, conventionally known as `streams`. Streams are useful for cases such as Chatting, Observations or Chunk-data transfers. Find more details in the official documentation [here](https://grpc.io/docs/guides/concepts/).
+gRPC supporte les connexions en direct à long terme, connues sous le nom de `streams` (flux). Les flux sont utiles dans des cas tels que le chat, les observations ou les transferts de données. Vous trouverez plus de détails dans la documentation officielle [ici](https://grpc.io/docs/guides/concepts/).
 
-Nest supports GRPC stream handlers in two possible ways:
+Nest prend en charge les gestionnaires de flux GRPC de deux manières différentes :
 
-- RxJS `Subject` + `Observable` handler: can be useful to write responses right inside of a Controller method or to be passed down to `Subject`/`Observable` consumer
-- Pure GRPC call stream handler: can be useful to be passed to some executor which will handle the rest of dispatch for the Node standard `Duplex` stream handler.
+- RxJS `Subject` + `Observable` handler : peut être utile pour écrire des réponses à l'intérieur d'une méthode de contrôleur ou pour être passé au consommateur `Subject`/`Observable`.
+- Gestionnaire de flux d'appels GRPC purs : peut être utile pour être passé à un exécuteur qui gérera le reste de la distribution pour le gestionnaire de flux `Duplex` standard de Node.
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Streaming sample
+#### Exemple de flux en continu
 
-Let's define a new sample gRPC service called `HelloService`. The `hello.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
+Définissons un nouvel exemple de service gRPC appelé `HelloService`. Le fichier `hello.proto` est structuré en utilisant [protocol buffers](https://developers.google.com/protocol-buffers). Voici à quoi il ressemble :
 
 ```typescript
 // hello/hello.proto
@@ -374,9 +374,9 @@ message HelloResponse {
 }
 ```
 
-> info **Hint** The `LotsOfGreetings` method can be simply implemented with the `@GrpcMethod` decorator (as in the examples above) since the returned stream can emit multiple values.
+> info **Astuce** La méthode `LotsOfGreetings` peut être simplement implémentée avec le décorateur `@GrpcMethod` (comme dans les exemples ci-dessus) puisque le flux retourné peut émettre plusieurs valeurs.
 
-Based on this `.proto` file, let's define the `HelloService` interface:
+Sur la base de ce fichier `.proto`, définissons l'interface `HelloService` :
 
 ```typescript
 interface HelloService {
@@ -395,11 +395,11 @@ interface HelloResponse {
 }
 ```
 
-> info **Hint** The proto interface can be automatically generated by the [ts-proto](https://github.com/stephenh/ts-proto) package, learn more [here](https://github.com/stephenh/ts-proto/blob/main/NESTJS.markdown).
+> info **Astuce** L'interface proto peut être générée automatiquement par le paquetage [ts-proto](https://github.com/stephenh/ts-proto), apprenez-en plus [ici](https://github.com/stephenh/ts-proto/blob/main/NESTJS.markdown).
 
-#### Subject strategy
+#### Stratégie Subject
 
-The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `Observable`. Thus, we can receive and process multiple messages.
+Le décorateur `@GrpcStreamMethod()` fournit le paramètre de la fonction comme un `Observable` RxJS. Ainsi, nous pouvons recevoir et traiter plusieurs messages.
 
 ```typescript
 @GrpcStreamMethod()
@@ -423,11 +423,11 @@ bidiHello(messages: Observable<any>, metadata: Metadata, call: ServerDuplexStrea
 }
 ```
 
-> warning **Warning** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
+> warning **Attention** Pour supporter l'interaction full-duplex avec le décorateur `@GrpcStreamMethod()`, la méthode du contrôleur doit retourner un `Observable` RxJS.
 
-> info **Hint** The `Metadata` and `ServerUnaryCall` classes/interfaces are imported from the `grpc` package.
+> info **Astuce** Les classes/interfaces `Metadata` et `ServerUnaryCall` sont importées du paquet `grpc`.
 
-According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplaySubject` class.
+Selon la définition du service (dans le fichier `.proto`), la méthode `BidiHello` doit envoyer des requêtes au service. Pour envoyer plusieurs messages asynchrones au flux depuis un client, nous nous appuyons sur une classe RxJS `ReplaySubject`.
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');
@@ -440,15 +440,15 @@ helloRequest$.complete();
 return helloService.bidiHello(helloRequest$);
 ```
 
-In the example above, we wrote two messages to the stream (`next()` calls) and notified the service that we've completed sending the data (`complete()` call).
+Dans l'exemple ci-dessus, nous avons écrit deux messages dans le flux (appels `next()`) et notifié au service que nous avions terminé d'envoyer les données (appel `complete()`).
 
-#### Call stream handler
+#### Gestionnaire d'appel de flux
 
-When the method return value is defined as `stream`, the `@GrpcStreamCall()` decorator provides the function parameter as `grpc.ServerDuplexStream`, which supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`. Full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
+Lorsque la valeur de retour de la méthode est définie comme `stream`, le décorateur `@GrpcStreamCall()` fournit le paramètre de fonction comme `grpc.ServerDuplexStream`, qui supporte les méthodes standards comme `.on('data', callback)`, `.write(message)` ou `.cancel()`. Une documentation complète sur les méthodes disponibles est disponible [ici](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
 
-Alternatively, when the method return value is not a `stream`, the `@GrpcStreamCall()` decorator provides two function parameters, respectively `grpc.ServerReadableStream` (read more [here](https://grpc.github.io/grpc/node/grpc-ServerReadableStream.html)) and `callback`.
+Alternativement, lorsque la valeur de retour de la méthode n'est pas un `stream`, le décorateur `@GrpcStreamCall()` fournit deux paramètres de fonction, respectivement `grpc.ServerReadableStream` ([en savoir plus](https://grpc.github.io/grpc/node/grpc-ServerReadableStream.html)) et `callback`.
 
-Let's start with implementing the `BidiHello` which should support a full-duplex interaction.
+Commençons par l'implémentation de `BidiHello` qui devrait supporter une interaction full-duplex.
 
 ```typescript
 @GrpcStreamCall()
@@ -462,11 +462,11 @@ bidiHello(requestStream: any) {
 }
 ```
 
-> info **Hint** This decorator does not require any specific return parameter to be provided. It is expected that the stream will be handled similar to any other standard stream type.
+> info **Astuce** Ce décorateur n'exige pas la fourniture d'un paramètre de retour spécifique. On s'attend à ce que le flux soit traité de la même manière que tout autre type de flux standard.
 
-In the example above, we used the `write()` method to write objects to the response stream. The callback passed into the `.on()` method as a second parameter will be called every time our service receives a new chunk of data.
+Dans l'exemple ci-dessus, nous avons utilisé la méthode `write()` pour écrire des objets dans le flux de réponse. Le callback passé dans la méthode `.on()` en tant que second paramètre sera appelé à chaque fois que notre service recevra un nouveau morceau de données.
 
-Let's implement the `LotsOfGreetings` method.
+Implémentons la méthode `LotsOfGreetings`.
 
 ```typescript
 @GrpcStreamCall()
@@ -478,15 +478,15 @@ lotsOfGreetings(requestStream: any, callback: (err: unknown, value: HelloRespons
 }
 ```
 
-Here we used the `callback` function to send the response once processing of the `requestStream` has been completed.
+Ici, nous avons utilisé la fonction `callback` pour envoyer la réponse une fois que le traitement du `requestStream` est terminé.
 
-#### gRPC Metadata
+#### Métadonnées gRPC
 
-Metadata is information about a particular RPC call in the form of a list of key-value pairs, where the keys are strings and the values are typically strings but can be binary data. Metadata is opaque to gRPC itself - it lets the client provide information associated with the call to the server and vice versa. Metadata may include authentication tokens, request identifiers and tags for monitoring purposes, and data information such as the number of records in a data set.
+Les métadonnées sont des informations sur un appel RPC particulier sous la forme d'une liste de paires clé-valeur, où les clés sont des chaînes de caractères et les valeurs sont généralement des chaînes de caractères mais peuvent être des données binaires. Les métadonnées sont opaques à gRPC lui-même - elles permettent au client de fournir des informations associées à l'appel au serveur et vice versa. Les métadonnées peuvent inclure des jetons d'authentification, des identifiants de requête et des balises à des fins de surveillance, ainsi que des informations de données telles que le nombre d'enregistrements dans un ensemble de données.
 
-To read the metadata in `@GrpcMethod()` handler, use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
+Pour lire les métadonnées dans le gestionnaire `@GrpcMethod()`, utilisez le second argument (metadata), qui est de type `Metadata` (importé du paquet `grpc`).
 
-To send back metadata from the handler, use the `ServerUnaryCall#sendMetadata()` method (third handler argument).
+Pour renvoyer les métadonnées du gestionnaire, utilisez la méthode `ServerUnaryCall#sendMetadata()` (troisième argument du gestionnaire).
 
 ```typescript
 @@filename(heroes.controller)
@@ -525,11 +525,11 @@ export class HeroesService {
 }
 ```
 
-Likewise, to read the metadata in handlers annotated with the `@GrpcStreamMethod()` handler ([subject strategy](microservices/grpc#subject-strategy)), use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
+De même, pour lire les métadonnées dans les gestionnaires annotés avec le gestionnaire `@GrpcStreamMethod()` ([Stratégie Subject](microservices/grpc#stratégie-subject)), utilisez le deuxième argument (metadata), qui est de type `Metadata` (importé du paquet `grpc`).
 
-To send back metadata from the handler, use the `ServerDuplexStream#sendMetadata()` method (third handler argument).
+Pour renvoyer les métadonnées du gestionnaire, utilisez la méthode `ServerDuplexStream#sendMetadata()` (troisième argument du gestionnaire).
 
-To read metadata from within the [call stream handlers](microservices/grpc#call-stream-handler) (handlers annotated with `@GrpcStreamCall()` decorator), listen to the `metadata` event on the `requestStream` reference, as follows:
+Pour lire les métadonnées à partir d'un [gestionnaire d'appel de flux](microservices/grpc#gestionnaire-dappel-de-flux) (handlers annotés avec le décorateur `@GrpcStreamCall()`), écoutez l'événement `metadata` sur la référence `requestStream`, comme suit :
 
 ```typescript
 requestStream.on('metadata', (metadata: Metadata) => {
