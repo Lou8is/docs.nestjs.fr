@@ -182,7 +182,7 @@ async handleUserCreated(data) {
 
 > info **Astuce** Vous pouvez enregistrer plusieurs gestionnaires d'événements pour un **seul** modèle d'événement et tous seront automatiquement déclenchés en parallèle.
 
-Le **manipulateur d'événements** `handleUserCreated()` écoute l'événement `'user_created''. Le gestionnaire d'événement prend un seul argument, les `données` transmises par le client (dans ce cas, une charge utile d'événement qui a été envoyée sur le réseau).
+Le **manipulateur d'événements** `handleUserCreated()` écoute l'événement `'user_created'`. Le gestionnaire d'événement prend un seul argument, les `données` transmises par le client (dans ce cas, une charge utile d'événement qui a été envoyée sur le réseau).
 
 <app-banner-enterprise></app-banner-enterprise>
 
