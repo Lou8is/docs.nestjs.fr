@@ -1,18 +1,18 @@
 ### NATS
 
-[NATS](https://nats.io) is a simple, secure and high performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures. The NATS server is written in the Go programming language, but client libraries to interact with the server are available for dozens of major programming languages. NATS supports both **At Most Once** and **At Least Once** delivery. It can run anywhere, from large servers and cloud instances, through edge gateways and even Internet of Things devices.
+[NATS](https://nats.io) est un système de messagerie open source simple, sécurisé et performant pour les applications natives du cloud, la messagerie IoT et les architectures microservices. Le serveur NATS est écrit dans le langage de programmation Go, mais des bibliothèques clientes pour interagir avec le serveur sont disponibles pour des dizaines de langages de programmation majeurs. NATS prend en charge les livraisons **At Most Once** (au plus une fois) et **At Least Once** (au moins une fois). Il peut fonctionner n'importe où, depuis les grands serveurs et les instances cloud, en passant par les gateways de périphérie et même les appareils de l'Internet des objets.
 
 #### Installation
 
-To start building NATS-based microservices, first install the required package:
+Pour commencer à construire des microservices basés sur les NATS, il faut d'abord installer le package requis :
 
 ```bash
 $ npm i --save nats
 ```
 
-#### Overview
+#### Vue d'ensemble
 
-To use the NATS transporter, pass the following options object to the `createMicroservice()` method:
+Pour utiliser le transporteur NATS, passez l'objet d'options suivant à la méthode `createMicroservice()` :
 
 ```typescript
 @@filename(main)
@@ -31,18 +31,18 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Astuce** L'enum `Transport` est importé du package `@nestjs/microservices`.
 
 #### Options
 
-The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connection-options).
-Additionally, there is a `queue` property which allows you to specify the name of the queue that your server should subscribe to (leave `undefined` to ignore this setting). Read more about NATS queue groups <a href="https://docs.nestjs.com/microservices/nats#queue-groups">below</a>.
+L'objet `options` est spécifique au transporteur choisi. Le transporteur **NATS** expose les propriétés décrites [ici](https://github.com/nats-io/node-nats#connection-options).
+De plus, il y a une propriété `queue` qui vous permet de spécifier le nom de la file d'attente à laquelle votre serveur doit s'abonner (laissez `undefined` pour ignorer ce paramètre). Pour en savoir plus sur les groupes de files d'attente NATS, voir [ci-dessous](/microservices/nats#groupes-de-files-dattente).
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
+Comme d'autres transporteurs de microservices, vous avez [plusieurs options](/microservices/basics#client) pour créer une instance NATS `ClientProxy`.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+Une méthode pour créer une instance est d'utiliser le `ClientsModule`. Pour créer une instance de client avec le `ClientsModule`, importez-le et utilisez la méthode `register()` pour passer un objet options avec les mêmes propriétés que celles montrées ci-dessus dans la méthode `createMicroservice()`, ainsi qu'une propriété `name` à utiliser comme jeton d'injection. Pour en savoir plus sur `ClientsModule` [ici](/microservices/basics#client).
 
 ```typescript
 @Module({
@@ -61,19 +61,19 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`) peuvent également être utilisées. Vous pouvez en prendre connaissance [ici](/microservices/basics#client).
 
-#### Request-response
+#### Requête-réponse
 
-For the **request-response** message style ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter does not use the NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. Instead, a "request" is published on a given subject using the `publish()` method with a unique reply subject name, and responders listen on that subject and send responses to the reply subject. Reply subjects are directed back to the requestor dynamically, regardless of location of either party.
+Pour le style de message **requête-réponse** ([en lire plus](/microservices/basics#requête-réponse)), le transporteur NATS n'utilise pas le mécanisme NATS intégré [Request-Reply](https://docs.nats.io/nats-concepts/reqreply). Au lieu de cela, une "requête" est publiée sur un sujet donné en utilisant la méthode `publish()` avec un nom de sujet de réponse unique, et les répondeurs écoutent sur ce sujet et envoient des réponses au sujet de réponse. Les sujets de réponse sont renvoyés dynamiquement au demandeur, indépendamment de l'emplacement de l'une ou l'autre des parties.
 
-#### Event-based
+#### Basé sur les événements
 
-For the **event-based** message style ([read more](https://docs.nestjs.com/microservices/basics#event-based)), the NATS transporter uses NATS built-in [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression. This one-to-many pattern is sometimes called fan-out.
+Pour le style de message **basé sur les événements** ([lire la suite](/microservices/basics#event-based)), le transporteur NATS utilise le mécanisme [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) intégré au NATS. Un éditeur envoie un message sur un sujet et tout abonné actif écoutant sur ce sujet reçoit le message. Les abonnés peuvent également manifester leur intérêt pour des sujets génériques qui fonctionnent un peu comme des expressions régulières. Ce modèle "un pour plusieurs" est parfois appelé "fan-out".
 
-#### Queue groups
+#### Groupes de files d'attente
 
-NATS provides a built-in load balancing feature called [distributed queues](https://docs.nats.io/nats-concepts/queue). To create a queue subscription, use the `queue` property as follows:
+Le NATS fournit une fonction intégrée d'équilibrage de la charge appelée [files d'attente distribuées](https://docs.nats.io/nats-concepts/queue). Pour créer un abonnement à une file d'attente, utilisez la propriété `queue` comme suit :
 
 ```typescript
 @@filename(main)
@@ -86,9 +86,9 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 });
 ```
 
-#### Context
+#### Contexte
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the NATS transporter, you can access the `NatsContext` object.
+Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur NATS, vous pouvez accéder à l'objet `NatsContext`.
 
 ```typescript
 @@filename()
@@ -104,36 +104,36 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from the `@nestjs/microservices` package.
+> info **Astuce** `@Payload()`, `@Ctx()` et `NatsContext` sont importés du package `@nestjs/microservices`.
 
-#### Wildcards
+#### Caractères génériques
 
-A subscription may be to an explicit subject, or it may include wildcards.
+Un abonnement peut porter sur un sujet explicite ou inclure des caractères génériques.
 
 ```typescript
 @@filename()
 @MessagePattern('time.us.*')
 getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  console.log(`Subject: ${context.getSubject()}`); // par exemple "time.us.east"
   return new Date().toLocaleTimeString(...);
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('time.us.*')
 getDate(data, context) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  console.log(`Subject: ${context.getSubject()}`); // par exemple "time.us.east"
   return new Date().toLocaleTimeString(...);
 }
 ```
 
-#### Record builders
+#### Constructeurs d'enregistrements
 
-To configure message options, you can use the `NatsRecordBuilder` class (note: this is doable for event-based flows as well). For example, to add `x-version` header, use the `setHeaders` method, as follows:
+Pour configurer les options du message, vous pouvez utiliser la classe `NatsRecordBuilder` (note : ceci est également possible pour les flux basés sur les évènements). Par exemple, pour ajouter l'en-tête `x-version`, utilisez la méthode `setHeaders`, comme suit :
 
 ```typescript
 import * as nats from 'nats';
 
-// somewhere in your code
+// quelque part dans votre code
 const headers = nats.headers();
 headers.set('x-version', '1.0.0');
 
@@ -141,9 +141,9 @@ const record = new NatsRecordBuilder(':cat:').setHeaders(headers).build();
 this.client.send('replace-emoji', record).subscribe(...);
 ```
 
-> info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
+> info **Astuce** La classe `NatsRecordBuilder` est exportée du package `@nestjs/microservices`.
 
-And you can read these headers on the server-side as well, by accessing the `NatsContext`, as follows:
+Vous pouvez également lire ces en-têtes côté serveur, en accédant au `NatsContext`, comme suit :
 
 ```typescript
 @@filename()
@@ -161,7 +161,7 @@ replaceEmoji(data, context) {
 }
 ```
 
-In some cases you might want to configure headers for multiple requests, you can pass these as options to the `ClientProxyFactory`:
+Dans certains cas, vous pouvez vouloir configurer des en-têtes pour plusieurs requêtes, vous pouvez les passer en tant qu'options à la `ClientProxyFactory` :
 
 ```typescript
 import { Module } from '@nestjs/common';

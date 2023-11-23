@@ -1,14 +1,14 @@
-### Exception filters
+### Filtres d'exception
 
-The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding microservices layer is that instead of throwing `HttpException`, you should use `RpcException`.
+La seule différence entre la couche HTTP [exception filter](/exception-filters) et la couche microservices correspondante est qu'au lieu de lancer `HttpException`, vous devez utiliser `RpcException`.
 
 ```typescript
 throw new RpcException('Invalid credentials.');
 ```
 
-> info **Hint** The `RpcException` class is imported from the `@nestjs/microservices` package.
+> info **Astuce** La classe `RpcException` est importée du package `@nestjs/microservices`.
 
-With the sample above, Nest will handle the thrown exception and return the `error` object with the following structure:
+Avec l'exemple ci-dessus, Nest va gérer l'exception lancée et retourner l'objet `error` avec la structure suivante :
 
 ```json
 {
@@ -17,9 +17,9 @@ With the sample above, Nest will handle the thrown exception and return the `err
 }
 ```
 
-#### Filters
+#### Filtres
 
-Microservice exception filters behave similarly to HTTP exception filters, with one small difference. The `catch()` method must return an `Observable`.
+Les filtres d'exception des microservices se comportent de manière similaire aux filtres d'exception HTTP, avec une petite différence. La méthode `catch()` doit retourner un `Observable`.
 
 ```typescript
 @@filename(rpc-exception.filter)
@@ -45,9 +45,9 @@ export class ExceptionFilter {
 }
 ```
 
-> warning **Warning** Global microservice exception filters aren't enabled by default when using a [hybrid application](/faq/hybrid-application).
+> warning **Attention** Les filtres d'exception globaux des microservices ne sont pas activés par défaut lors de l'utilisation d'une [application hybride](/faq/hybrid-application).
 
-The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
+L'exemple suivant utilise un filtre à portée de méthode instancié manuellement. Tout comme pour les applications basées sur HTTP, vous pouvez également utiliser des filtres à l'échelle du contrôleur (c'est-à-dire préfixer la classe du contrôleur avec un décorateur `@UseFilters()`).
 
 ```typescript
 @@filename()
@@ -64,11 +64,11 @@ accumulate(data) {
 }
 ```
 
-#### Inheritance
+#### Héritage
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the **core exception filter**, and override the behavior based on certain factors.
+En règle générale, vous créerez des filtres d'exception entièrement personnalisés, conçus pour répondre aux exigences de votre application. Cependant, il peut y avoir des cas d'utilisation où vous souhaiteriez simplement étendre le **filtre d'exception de base**, et modifier son comportement en fonction de certains facteurs.
 
-In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call the inherited `catch()` method.
+Pour déléguer le traitement des exceptions au filtre de base, vous devez étendre `BaseExceptionFilter` et appeler la méthode `catch()` héritée.
 
 ```typescript
 @@filename()
@@ -93,4 +93,4 @@ export class AllExceptionsFilter extends BaseRpcExceptionFilter {
 }
 ```
 
-The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business logic** (e.g., handling various conditions).
+L'implémentation ci-dessus n'est qu'une coquille démontrant l'approche. Votre implémentation du filtre d'exception étendu inclurait votre **logique métier** personnalisée (par exemple, le traitement de diverses conditions).
