@@ -87,7 +87,7 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 
 Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'événement simple et un `string | symbol | Array<string | symbol>` dans le cas d'un émetteur joker.
 
-Le second argument (optionnel) est un objet d'options d'écoute ( [en lire plus](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
+Le second argument (optionnel) est un objet d'options d'écoute comme suit:
 
 
 ```typescript
