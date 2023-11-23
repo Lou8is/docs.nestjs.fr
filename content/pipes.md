@@ -218,7 +218,7 @@ export class CreateCatDto {
 }
 ```
 
-Nous voulons nous assurer que toute requête entrante vers la méthode create contient un corps valide. Nous devons donc valider les trois membres de l'objet `createCatDto`. Nous pourrions le faire à l'intérieur de la méthode de gestion de la route, mais ce n'est pas l'idéal car cela enfreindrait la **règle de la responsabilité unique** (SRP).
+Nous voulons nous assurer que toute requête entrante vers la méthode create contient un corps valide. Nous devons donc valider les trois membres de l'objet `createCatDto`. Nous pourrions le faire à l'intérieur de la méthode de gestion de la route, mais ce n'est pas l'idéal car cela enfreindrait le **principe de la responsabilité unique** (SRP).
 
 Une autre approche pourrait consister à créer une **classe de validateur** et à y déléguer la tâche. Cela présente l'inconvénient de devoir se souvenir d'appeler ce validateur au début de chaque méthode.
 
@@ -232,15 +232,15 @@ Bien entendu, c'est exactement le cas d'utilisation pour lequel les pipes sont c
 
 Il existe plusieurs approches pour effectuer la validation des objets d'une manière propre et [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). Une approche courante consiste à utiliser une validation basée sur le **schéma**. Essayons cette approche.
 
-La bibliothèque [Joi](https://github.com/sideway/joi) vous permet de créer des schémas de manière simple, avec une API lisible. Construisons un pipe de validation qui utilise les schémas basés sur Joi.
+La bibliothèque [Zod](https://zod.dev/) vous permet de créer des schémas de manière simple, avec une API lisible. Construisons un pipe de validation qui utilise les schémas basés sur Zod.
 
 Commencez par installer le package requis :
 
 ```bash
-$ npm install --save joi
+$ npm install --save zod
 ```
 
-Dans l'exemple de code ci-dessous, nous créons une classe simple qui prend un schéma comme argument du constructeur. Nous appliquons ensuite la méthode `schema.validate()`, qui valide notre argument entrant par rapport au schéma fourni.
+Dans l'exemple de code ci-dessous, nous créons une classe simple qui prend un schéma comme argument du constructeur. Nous appliquons ensuite la méthode `schema.parse()`, qui valide notre argument entrant par rapport au schéma fourni.
 
 Comme indiqué précédemment, un **pipe de validation** renvoie la valeur inchangée ou lève une exception.
 
@@ -248,38 +248,38 @@ Dans la section suivante, vous verrez comment nous fournissons le schéma approp
 
 ```typescript
 @@filename()
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ObjectSchema } from 'joi';
+import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ZodObject } from 'zod';
 
-@Injectable()
-export class JoiValidationPipe implements PipeTransform {
-  constructor(private schema: ObjectSchema) {}
+export class ZodValidationPipe implements PipeTransform {
+  constructor(private schema: ZodObject<any>) {}
 
-  transform(value: any, metadata: ArgumentMetadata) {
-    const { error } = this.schema.validate(value);
-    if (error) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
+    try {
+      this.schema.parse(value);
+    } catch (error) {
       throw new BadRequestException('Validation failed');
     }
     return value;
   }
 }
 @@switch
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
+import { ZodObject } from 'zod';
 
-@Injectable()
-export class JoiValidationPipe {
-  constructor(schema) {
-    this.schema = schema;
-  }
+export class ZodValidationPip {
+  constructor(private schema) {}
 
   transform(value, metadata) {
-    const { error } = this.schema.validate(value);
-    if (error) {
+    try {
+      this.schema.parse(value);
+    } catch (error) {
       throw new BadRequestException('Validation failed');
     }
     return value;
   }
 }
+
 ```
 
 #### Liaison des pipes de validation
@@ -288,41 +288,41 @@ Plus tôt, nous avons vu comment lier des pipes de transformation (comme `ParseI
 
 La liaison des pipes de validation est également très simple.
 
-Dans ce cas, nous voulons lier le pipe au niveau de l'appel de la méthode. Dans notre exemple actuel, nous devons faire ce qui suit pour utiliser le `JoiValidationPipe` :
+Dans ce cas, nous voulons lier le pipe au niveau de l'appel de la méthode. Dans notre exemple actuel, nous devons faire ce qui suit pour utiliser le `ZodValidationPipe` :
 
-1. Créer une instance de `JoiValidationPipe`
-2. Passer le schéma Joi spécifique au contexte dans le constructeur de classe du pipe.
+1. Créer une instance de `ZodValidationPipe`
+2. Passer le schéma Zod spécifique au contexte dans le constructeur de classe du pipe.
 3. Lier le pipe à la méthode
 
-Exemple de schéma de Joi :
+Exemple de schéma de Zod :
 
 ```typescript
-const createCatSchema = Joi.object({
-  name: Joi.string().required(),
-  age: Joi.number().required(),
-  breed: Joi.string().required(),
-})
+import { z } from 'zod';
 
-export interface CreateCatDto {
-  name: string;
-  age: number;
-  breed: string;
-}
+export const createCatSchema = z
+  .object({
+    name: z.string(),
+    age: z.number(),
+    breed: z.string(),
+  })
+  .required();
+
+export type CreateCatDto = z.infer<typeof createCatSchema>;
 ```
 
 Nous le faisons en utilisant le décorateur `@UsePipes()` comme indiqué ci-dessous :
 
 ```typescript
-@@filename()
+@@filename(cats.controller)
 @Post()
-@UsePipes(new JoiValidationPipe(createCatSchema))
+@UsePipes(new ZodValidationPipe(createCatSchema))
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
 @Bind(Body())
-@UsePipes(new JoiValidationPipe(createCatSchema))
+@UsePipes(new ZodValidationPipe(createCatSchema))
 async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
@@ -330,6 +330,7 @@ async create(createCatDto) {
 
 > info **Astuce** Le décorateur `@UsePipes()` est importé du package `@nestjs/common`.
 
+> warning **Attention** La bibliothèque `zod` nécessite que la configuration `strictNullChecks` soit activée dans votre fichier `tsconfig.json`.
  
 #### Valideur de classe
 
@@ -392,7 +393,9 @@ export class ValidationPipe implements PipeTransform<any> {
 }
 ```
 
-> warning **Remarque** Ci-dessus, nous avons utilisé la bibliothèque [class-transformer](https://github.com/typestack/class-transformer). Elle a été créée par le même auteur que la bibliothèque **class-validator**, et par conséquent, elles fonctionnent très bien ensemble.
+> info **Astuce** Pour rappel, vous n'avez pas à créer vous-même un pipe de validation générique, car le `ValidationPipe` est fourni par la version standard de Nest. Le `ValidationPipe` intégré offre plus d'options que l'exemple que nous avons construit dans ce chapitre, qui a été maintenu de manière basique pour illustrer le fonctionnement d'un pipe personnalisé. Vous pouvez trouver tous les détails, ainsi que de nombreux exemples ici.
+
+> warning **Remarque** Nous avons utilisé la bibliothèque [class-transformer](https://github.com/typestack/class-transformer) ci-dessus, qui est créée par le même auteur que la bibliothèque **class-validator**, et par conséquent, elles fonctionnent très bien ensemble.
 
 Passons en revue ce code. Tout d'abord, notez que la méthode `transform()` est marquée comme `asynchrone`. Ceci est possible parce que Nest supporte à la fois les pipes synchrones et **asynchrones**. Nous rendons cette méthode `async` parce que certaines des validations du class-validator [peuvent être asynchrones](https://github.com/typestack/class-validator#custom-validation-classes) (utilise les promesses).
 
