@@ -83,7 +83,7 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 }
 ```
 
-> warning **Attentinon** Les abonnés aux événements ne peuvent pas faire l'objet d'une requête.
+> warning **Attention** Les abonnés aux événements ne peuvent pas faire l'objet d'une requête.
 
 Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'événement simple et un `string | symbol | Array<string | symbol>` dans le cas d'un émetteur joker.
 
