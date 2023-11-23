@@ -222,7 +222,7 @@ Nous voulons nous assurer que toute requête entrante vers la méthode create co
 
 Une autre approche pourrait consister à créer une **classe de validateur** et à y déléguer la tâche. Cela présente l'inconvénient de devoir se souvenir d'appeler ce validateur au début de chaque méthode.
 
-Pourquoi ne pas créer un middleware de validation ? Cela pourrait fonctionner, mais il n'est malheureusement, pas possible de créer un ** middleware générique** qui puisse être utilisé dans tous les contextes de l'ensemble de l'application. En effet, le middleware ne connaît pas le **contexte d'exécution**, y compris le handler qui sera appelé et ses paramètres.
+Pourquoi ne pas créer un middleware de validation ? Cela pourrait fonctionner, mais il n'est malheureusement pas possible de créer un ** middleware générique** qui puisse être utilisé dans tous les contextes de l'ensemble de l'application. En effet, le middleware ne connaît pas le **contexte d'exécution**, y compris le handler qui sera appelé et ses paramètres.
 
 Bien entendu, c'est exactement le cas d'utilisation pour lequel les pipes sont conçus. Continuons donc à affiner notre pipe de validation.
 
@@ -393,7 +393,7 @@ export class ValidationPipe implements PipeTransform<any> {
 }
 ```
 
-> info **Astuce** Pour rappel, vous n'avez pas à créer vous-même un tuyau de validation générique, car le ValidationPipe est fourni par Nest en standard. Le ValidationPipe intégré offre plus d'options que l'exemple que nous avons construit dans ce chapitre, qui a été maintenu de manière basique pour illustrer le fonctionnement d'un tuyau personnalisé. Vous pouvez trouver tous les détails, ainsi que de nombreux exemples ici.
+> info **Astuce** Pour rappel, vous n'avez pas à créer vous-même un pipe de validation générique, car le `ValidationPipe` est fourni par la version standard de Nest. Le `ValidationPipe` intégré offre plus d'options que l'exemple que nous avons construit dans ce chapitre, qui a été maintenu de manière basique pour illustrer le fonctionnement d'un pipe personnalisé. Vous pouvez trouver tous les détails, ainsi que de nombreux exemples ici.
 
 > warning **Remarque** Nous avons utilisé la bibliothèque [class-transformer](https://github.com/typestack/class-transformer) ci-dessus, qui est créée par le même auteur que la bibliothèque **class-validator**, et par conséquent, elles fonctionnent très bien ensemble.
 

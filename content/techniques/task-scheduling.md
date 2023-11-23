@@ -274,7 +274,7 @@ addCronJob(name: string, seconds: string) {
 }
 ```
 
-Dans ce code, nous utilisons l'objet `CronJob` du package `cron` pour créer la tâche cron. Le constructeur `CronJob` prend un motif cron (tout comme le  <a href="techniques/task-scheduling#tâches-cron-déclaratives">décorateur</a> `@Cron()`) comme premier argument, et un callback à exécuter lorsque le timer cron se déclenche comme second argument. La méthode `SchedulerRegistry#addCronJob` prend deux arguments : un nom pour le `CronJob`, et l'objet `CronJob` lui-même.
+Dans ce code nous utilisons l'objet `CronJob` du package `cron` pour créer la tâche cron. Le constructeur `CronJob` prend un motif cron (tout comme le  [décorateur](/techniques/task-scheduling#tâches-cron-déclaratives) `@Cron()`) comme premier argument, et un callback à exécuter lorsque le timer cron se déclenche comme second argument. La méthode `SchedulerRegistry#addCronJob` prend deux arguments : un nom pour le `CronJob`, et l'objet `CronJob` lui-même.
 
 > warning **Attention** N'oubliez pas d'injecter le `SchedulerRegistry` avant d'y accéder. Importez `CronJob` depuis le package `cron`.
 

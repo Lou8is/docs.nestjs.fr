@@ -49,7 +49,7 @@ findAll(@Res({ passthrough: true }) response: Response) {
 }
 ```
 
-> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez [ici](/controllers#appendix-library-specific-approach).
+> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez ici (/controllers#approche-spécifique-aux-bibliothèques).
 
 > info **Astuce** Le décorateur `@Res()` est importé du package `@nestjs/common`, tandis que `Response` est importé du package `express`.
 
@@ -98,7 +98,7 @@ findAll(@Res({ passthrough: true }) response: FastifyReply) {
 
 Pour en savoir plus sur la méthode `FastifyReply#setCookie()`, consultez cette [page](https://github.com/fastify/fastify-cookie#sending).
 
-> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez [ici](/controllers#library-specific-approach).
+> warning **Attention** Si vous voulez laisser la logique de gestion des réponses au framework, n'oubliez pas de mettre l'option `passthrough` à `true`, comme indiqué ci-dessus. Pour en savoir plus, cliquez ici (/controllers#approche-spécifique-aux-bibliothèques).
 
 > info **Astuce** Le décorateur `@Res()` est importé du paquet `@nestjs/common`, tandis que `FastifyReply` est importé du paquet `fastify`.
 
