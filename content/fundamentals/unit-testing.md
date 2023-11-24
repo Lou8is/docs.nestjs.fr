@@ -336,8 +336,6 @@ Chaque type de méthode de surcharge, à son tour, renvoie l'instance `TestingMo
 
 De plus, vous pouvez parfois vouloir fournir un logger personnalisé, par exemple lorsque les tests sont exécutés (par exemple, sur un serveur CI). Utilisez la méthode `setLogger()` et passez un objet qui remplit l'interface `LoggerService` pour indiquer au `TestModuleBuilder` comment journaliser pendant les tests (par défaut, seuls les logs "error" seront journalisés sur la console).
 
-> warning **Attention** Le package `@nestjs/core` expose des jetons de fournisseur uniques avec le préfixe `APP_` pour aider à définir des améliorateurs globaux. Ces jetons ne peuvent pas être surchargés car ils peuvent représenter plusieurs fournisseurs. Vous ne pouvez donc pas utiliser `.overrideProvider(APP_GUARD)` (et ainsi de suite). Si vous souhaitez remplacer un améliorateur global, suivez [cette solution de contournement](https://github.com/nestjs/nest/issues/4053#issuecomment-585612462).
-
 Le module compilé dispose de plusieurs méthodes utiles, décrites dans le tableau suivant :
 
 <table>
