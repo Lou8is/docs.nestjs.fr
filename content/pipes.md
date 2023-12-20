@@ -252,31 +252,30 @@ import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/co
 import { ZodObject } from 'zod';
 
 export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodObject<any>) {}
+  constructor(private schema: ZodSchema) {}
 
   transform(value: unknown, metadata: ArgumentMetadata) {
     try {
-      this.schema.parse(value);
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
     } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
 @@switch
 import { BadRequestException } from '@nestjs/common';
-import { ZodObject } from 'zod';
 
-export class ZodValidationPip {
+export class ZodValidationPipe {
   constructor(private schema) {}
 
   transform(value, metadata) {
     try {
-      this.schema.parse(value);
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
     } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
 
@@ -331,7 +330,7 @@ async create(createCatDto) {
 > info **Astuce** Le décorateur `@UsePipes()` est importé du package `@nestjs/common`.
 
 > warning **Attention** La bibliothèque `zod` nécessite que la configuration `strictNullChecks` soit activée dans votre fichier `tsconfig.json`.
- 
+
 #### Valideur de classe
 
 > warning **Attention** Les techniques présentées dans cette section requièrent TypeScript et ne sont pas disponibles si votre application est écrite en JavaScript classique.
@@ -407,7 +406,7 @@ Ensuite, nous utilisons la fonction de transformateur de classe `plainToInstance
 
 Enfin, comme indiqué précédemment, puisqu'il s'agit d'un **pipe de validation**, il renvoie la valeur inchangée ou lève une exception.
 
-La dernière étape consiste à lier le `ValidationPipe`. Les pipes peuvent être à l'échelle du paramètre, de la méthode, du contrôleur ou de l'ensemble. Plus tôt, avec notre pipe de validation basé sur Joi, nous avons vu un exemple de liaison du pipe au niveau de la méthode.
+La dernière étape consiste à lier le `ValidationPipe`. Les pipes peuvent être à l'échelle du paramètre, de la méthode, du contrôleur ou de l'ensemble. Plus tôt, avec notre pipe de validation basé sur Zod, nous avons vu un exemple de liaison du pipe au niveau de la méthode.
 Dans l'exemple ci-dessous, nous allons lier l'instance du pipe au décorateur `@Body()` du gestionnaire de route afin que notre pipe soit appelé pour valider le corps du message.
 
 ```typescript
