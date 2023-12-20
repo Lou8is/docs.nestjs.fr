@@ -207,7 +207,7 @@ return {
   resolve: (info: HostComponentInfo) =>
     info.isTreeDurable ? tenantSubTreeId : contextId,
   payload: { tenantId },
-  }
+}
 ```
 
 Maintenant, chaque fois que vous injectez le fournisseur `REQUEST` (ou `CONTEXT` pour les applications GraphQL) en utilisant `@Inject(REQUEST)`/`@Inject(CONTEXT)`, l'objet `payload` sera injecté (composé d'une seule propriété - `tenantId` dans ce cas).
