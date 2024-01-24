@@ -112,7 +112,7 @@ Le `CatsService` est **injecté** à travers le constructeur de la classe. Notez
 
 #### Injection de dépendance
 
-Nest est construit autour du modèle de conception communément appelé **Injection de dépendance**. Nous vous recommandons de lire un excellent article sur ce concept dans la documentation officielle [Angular](https://angular.io/guide/dependency-injection).
+Nest est construit autour du modèle de conception communément appelé **Injection de dépendance**. Nous vous recommandons de lire un excellent article sur ce concept dans la documentation officielle [Angular](https://angular.dev/guide/di).
 
 Dans Nest, grâce aux capacités de TypeScript, il est extrêmement facile de gérer les dépendances parce qu'elles sont résolues simplement par type. Dans l'exemple ci-dessous, Nest va résoudre la dépendance `catsService` en créant et en retournant une instance de `CatsService` (ou, dans le cas normal d'un singleton, en retournant l'instance existante si elle a déjà été demandée ailleurs). Cette dépendance est résolue et passée au constructeur de votre contrôleur (ou assignée à la propriété indiquée) :
 
