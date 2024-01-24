@@ -26,7 +26,7 @@ Vous pouvez passer plusieurs options au middleware `cookieParser` :
 
 Le middleware va analyser l'en-tête `Cookie` de la requête et exposer les données du cookie en tant que propriété `req.cookies` et, si un secret a été fourni, en tant que propriété `req.signedCookies`. Ces propriétés sont des paires nom-valeur du nom du cookie et de la valeur du cookie.
 
-Lorsque secret est fourni, ce module désignera et validera toutes les valeurs des cookies signés et déplacera ces paires nom-valeur de `req.cookies` dans `req.signedCookies`. Un cookie signé est un cookie dont la valeur est préfixée par `s:`. Les cookies signés qui échouent à la validation de la signature auront la valeur `false` à la place de la valeur altérée.
+Lorsqu'un secret est fourni, ce module désignera et validera toutes les valeurs des cookies signés et déplacera ces paires nom-valeur de `req.cookies` dans `req.signedCookies`. Un cookie signé est un cookie dont la valeur est préfixée par `s:`. Les cookies signés qui échouent à la validation de la signature auront la valeur `false` à la place de la valeur altérée.
 
 Ainsi, vous pouvez maintenant lire les cookies à partir des gestionnaires de routes, comme suit :
 
@@ -67,10 +67,7 @@ Une fois l'installation terminée, enregistrez le plugin `@fastify/cookie` :
 import fastifyCookie from '@fastify/cookie';
 
 // quelque part dans votre fichier d'initialisation
-const app = await NestFactory.create<NestFastifyApplication>(
-  AppModule,
-  new FastifyAdapter(),
-);
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 await app.register(fastifyCookie, {
   secret: 'my-secret', // pour la signature des cookies
 });
@@ -109,12 +106,10 @@ Pour disposer d'un moyen pratique et déclaratif d'accéder aux cookies entrants
 ```typescript
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const Cookies = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    return data ? request.cookies?.[data] : request.cookies;
-  },
-);
+export const Cookies = createParamDecorator((data: string, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  return data ? request.cookies?.[data] : request.cookies;
+});
 ```
 
 Le décorateur `@Cookies()` extrait tous les cookies ou un cookie nommé de l'objet `req.cookies` et remplit le paramètre décoré avec cette valeur.
