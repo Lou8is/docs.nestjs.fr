@@ -1,4 +1,4 @@
-### Générateur CRUD
+### Générateur CRUD (TypeScript uniquement)
 
 Tout au long de la durée de vie d'un projet, lorsque nous développons de nouvelles fonctionnalités, nous avons souvent besoin d'ajouter de nouvelles ressources à notre application. Ces ressources nécessitent généralement des opérations multiples et répétitives que nous devons répéter à chaque fois que nous définissons une nouvelle ressource.
 

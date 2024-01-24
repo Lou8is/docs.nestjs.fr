@@ -65,13 +65,13 @@ $ nest g <schéma> <nom> [options]
 | `gateway`    | `ga`  | Génère une déclaration de passerelle.                                                                                          |
 | `guard`      | `gu`  | Génère une déclaration de garde.                                                                                               |
 | `interface`  | `itf` | Génère un interface.                                                                                                           |
-| `interceptor` | `itc` | Génère une déclaration d'intercepteur.                                                                                         |
+| `interceptor` | `itc` | Génère une déclaration d'intercepteur.                                                                                        |
 | `middleware` | `mi`  | Génère une déclaration de middleware.                                                                                          |
 | `module`     | `mo`  | Génère une déclaration de module.                                                                                              |
 | `pipe`       | `pi`  | Génère une déclaration de pipe.                                                                                                |
 | `provider`   | `pr`  | Génère une déclaration de fournisseur.                                                                                         |
 | `resolver`   | `r`   | Génère une déclaration de résolveur.                                                                                           |
-| `resource`   | `res` | Génère une nouvelle ressource CRUD. Pour plus de détails veuillez voir: [CRUD (resource) generator](/recipes/crud-generator) . |
+| `resource`   | `res` | Génère une nouvelle ressource CRUD. Pour plus de détails veuillez voir: [CRUD (resource) generator](/recipes/crud-generator). (TS seulement) |
 | `service`    | `s`   | Génère une déclaration de service.                                                                                             |
 
 ##### Options
@@ -146,6 +146,7 @@ $ nest start <nom> [options]
 | `--webpackPath`        | Chemin vers la configuration de webpack.                                                                                                     |
 | `--tsc`                | FForce l'utilisation de `tsc` pour la compilation.                                                                                           |
 | `--exec [binary]`      | Exécutable à utiliser (par défaut: `node`). <br/>Alias `-e`                                                                                          |
+| `-- [key=value]`        | Arguments de la ligne de commande qui peuvent être référencés avec `process.argv`.                                                   |
 
 #### nest add
 
