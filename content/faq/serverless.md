@@ -176,7 +176,7 @@ avec le framework [Serverless](https://www.serverless.com/) (dans ce cas, ciblan
 Tout d'abord, installons les packages nécessaires :
 
 ```bash
-$ npm i @vendia/serverless-express aws-lambda
+$ npm i @codegenie/serverless-express aws-lambda
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
@@ -212,7 +212,7 @@ Avec cela, nous pouvons maintenant naviguer vers le fichier `main.ts` et mettre 
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import serverlessExpress from '@vendia/serverless-express';
+import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
@@ -240,7 +240,7 @@ export const handler: Handler = async (
 
 > warning **Attention** Si vous utilisez le paquet `@nestjs/swagger`, il y a quelques étapes supplémentaires requises pour le faire fonctionner correctement dans le contexte de la fonction sans serveur. Consultez ce [thread](https://github.com/nestjs/swagger/issues/199) pour plus d'informations.
 
-Ensuite, ouvrez le fichier `tsconfig.json` et assurez-vous d'activer l'option `esModuleInterop` pour que le paquet `@vendia/serverless-express` se charge correctement.
+Ensuite, ouvrez le fichier `tsconfig.json` et assurez-vous d'activer l'option `esModuleInterop` pour que le paquet `@codegenie/serverless-express` se charge correctement.
 
 ```json
 {
