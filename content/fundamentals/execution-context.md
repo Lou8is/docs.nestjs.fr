@@ -117,7 +117,7 @@ export interface ExecutionContext extends ArgumentsHost {
 }
 ```
 
-La méthode `getHandler()` renvoie une référence au gestionnaire qui va être invoqué. La méthode `getClass()` renvoie le type de la classe `Controller` à laquelle appartient ce handler particulier. Par exemple, dans un contexte HTTP, si la requête en cours de traitement est une requête `POST`, liée à la méthode `create()` du `CatsController`, `getHandler()` renvoie une référence à la méthode `create()` et `getClass()` renvoie le **type** (et non l'instance) du `CatsController`.
+La méthode `getHandler()` renvoie une référence au gestionnaire qui va être invoqué. La méthode `getClass()` renvoie le type de la classe `Controller` à laquelle appartient ce handler particulier. Par exemple, dans un contexte HTTP, si la requête en cours de traitement est une requête `POST`, liée à la méthode `create()` du `CatsController`, `getHandler()` renvoie une référence à la méthode `create()` et `getClass()` renvoie la **classe** (et non l'instance) du `CatsController`.
 
 ```typescript
 const methodKey = ctx.getHandler().name; // "create"
