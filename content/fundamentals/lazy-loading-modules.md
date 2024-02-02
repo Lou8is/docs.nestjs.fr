@@ -4,7 +4,7 @@ Par défaut, les modules sont chargés avec avidité, ce qui signifie que dès q
 
 Le lazy loading peut aider à réduire le temps de démarrage en chargeant uniquement les modules requis par l'invocation spécifique de la fonction serverless. En outre, vous pouvez également charger d'autres modules de manière asynchrone une fois que la fonction sans serveur est "chaude" afin d'accélérer encore davantage le temps d'amorçage pour les appels ultérieurs (enregistrement différé des modules).
 
-> info **Astuce** Si vous êtes familier avec le framework **Angular**, vous avez peut-être déjà vu le terme " modules lazy-loading ". Sachez que cette technique est **fonctionnellement différente** dans Nest et qu'il s'agit donc d'une fonctionnalité entièrement différente qui partage des conventions de dénomination similaires.
+> info **Astuce** Si vous êtes familier avec le framework **[Angular](https://angular.dev/)**, vous avez peut-être déjà vu le terme "[modules lazy-loading](https://angular.dev/guide/ngmodules/lazy-loading#lazy-loading-basics)". Sachez que cette technique est **fonctionnellement différente** dans Nest et qu'il s'agit donc d'une fonctionnalité entièrement différente qui partage des conventions de dénomination similaires.
 
 > warning **Attention** Notez que les [méthodes d'accrochage au cycle de vie](/fundamentals/lifecycle-events) ne sont pas invoquées dans les modules et services chargés paresseusement.
 
