@@ -83,9 +83,9 @@ Voir la capture d'écran ci-dessous :
 
 La possibilité de remonter dans le temps vous permet d'enquêter et de résoudre le problème en comparant le graphique actuel avec le précédent. Selon la façon dont vous avez configuré les choses, chaque pull request (ou même chaque commit) aura un snapshot correspondant dans le registre, de sorte que vous pouvez facilement remonter dans le temps et voir ce qui a changé. Considérez Devtools comme un Git, mais avec une compréhension de la façon dont Nest construit votre graphe d'application, et avec la capacité de **visualiser** ce graphe.
 
-#### Intégrations : Github Actions
+#### Intégrations : GitHub Actions
 
-Commençons par créer un nouveau workflow Github dans le répertoire `.github/workflows` de notre projet et appelons-le, par exemple, `publish-graph.yml`. Dans ce fichier, utilisons la définition suivante :
+Commençons par créer un nouveau workflow GitHub dans le répertoire `.github/workflows` de notre projet et appelons-le, par exemple, `publish-graph.yml`. Dans ce fichier, utilisons la définition suivante :
 
 ```yaml
 name: Devtools
@@ -130,11 +130,11 @@ jobs:
           TARGET_SHA: {{ '${{' }} github.event.pull_request.base.sha {{ '}}' }}
 ```
 
-Idéalement, la variable d'environnement `DEVTOOLS_API_KEY` devrait être récupérée à partir de Github Secrets, pour en savoir plus [ici](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
+Idéalement, la variable d'environnement `DEVTOOLS_API_KEY` devrait être récupérée à partir de GitHub Secrets, pour en savoir plus [ici](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
 
 Ce workflow sera exécuté pour chaque pull request qui cible la branche `master` OU dans le cas où il y a un commit direct vers la branche `master`. N'hésitez pas à adapter cette configuration aux besoins de votre projet. Ce qui est essentiel ici est de fournir les variables d'environnement nécessaires à notre classe `GraphPublisher` (pour qu'elle s'exécute).
 
-Cependant, il y a une variable qui doit être mise à jour avant que nous puissions commencer à utiliser ce flux de travail - `DEVTOOLS_API_KEY`. Nous pouvons générer une clé API dédiée à notre projet sur votre compte Devtools.
+Cependant, il y a une variable qui doit être mise à jour avant que nous puissions commencer à utiliser ce flux de travail - `DEVTOOLS_API_KEY`. Nous pouvons générer une clé API dédiée à notre projet sur votre [compte Devtools](https://devtools.nestjs.com/settings/manage-api-keys).
 
 Enfin, naviguons à nouveau vers le fichier `main.ts` et mettons à jour l'objet `publishOptions` que nous avons précédemment laissé vide.
 
@@ -150,7 +150,7 @@ const publishOptions = {
 };
 ```
 
-Pour une meilleure expérience de développement, assurez-vous d'intégrer l'application **Github** pour votre projet en cliquant sur le bouton "Intégrer l'application Github" (voir la capture d'écran ci-dessous). Remarque : cette opération n'est pas obligatoire.
+Pour une meilleure expérience de développement, assurez-vous d'intégrer l'application **GitHub** pour votre projet en cliquant sur le bouton "Intégrer l'application GitHub" (voir la capture d'écran ci-dessous). Remarque : cette opération n'est pas obligatoire.
 
 <figure><img src="/assets/devtools/integrate-github-app.png" /></figure>
 
