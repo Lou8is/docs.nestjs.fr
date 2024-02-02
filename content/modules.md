@@ -151,7 +151,7 @@ Cependant, les classes de modules elles-mêmes ne peuvent pas être injectées e
 
 #### Modules globaux
 
-Si vous devez importer le même ensemble de modules partout, cela peut devenir fastidieux. Contrairement à Nest, les `providers` [Angular](https://angular.io) sont enregistrés dans la portée globale. Une fois définis, ils sont disponibles partout. Nest, cependant, encapsule les fournisseurs dans la portée du module. Vous ne pouvez pas utiliser les providers d'un module ailleurs sans importer d'abord le module d'encapsulation.
+Si vous devez importer le même ensemble de modules partout, cela peut devenir fastidieux. Contrairement à Nest, les `providers` [Angular](https://angular.dev) sont enregistrés dans la portée globale. Une fois définis, ils sont disponibles partout. Nest, cependant, encapsule les fournisseurs dans la portée du module. Vous ne pouvez pas utiliser les providers d'un module ailleurs sans importer d'abord le module d'encapsulation.
 
 Lorsque vous voulez fournir un ensemble de fournisseurs qui devraient être disponibles partout prêts à l'emploi (par exemple, les helpers, les connexions aux bases de données, etc.), rendez le module **global** avec le décorateur `@Global()`.
 
