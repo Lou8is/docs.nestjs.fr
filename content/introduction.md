@@ -8,7 +8,7 @@ Nest fournit un niveau d'abstraction au-dessus de ces frameworks Node.js communs
 
 #### Philosophie
 
-Ces dernières années, grâce à Node.js, JavaScript est devenu la "lingua franca" du web pour les applications frontend et backend. Cela a donné naissance à des projets géniaux comme [Angular](https://angular.io/), [React](https://github.com/facebook/react) et [Vue](https://github.com/vuejs/vue), qui améliorent la productivité des développeurs et permettent la création d'applications frontend rapides, testables et extensibles. Cependant, bien qu'il existe de nombreuses bibliothèques, aides et outils superbes pour Node (et JavaScript côté serveur), aucun d'entre eux ne résout efficacement le problème principal de **l'Architecture**.
+Ces dernières années, grâce à Node.js, JavaScript est devenu la "lingua franca" du web pour les applications frontend et backend. Cela a donné naissance à des projets géniaux comme [Angular](https://angular.dev/), [React](https://github.com/facebook/react) et [Vue](https://github.com/vuejs/vue), qui améliorent la productivité des développeurs et permettent la création d'applications frontend rapides, testables et extensibles. Cependant, bien qu'il existe de nombreuses bibliothèques, aides et outils superbes pour Node (et JavaScript côté serveur), aucun d'entre eux ne résout efficacement le problème principal de **l'Architecture**.
 
 Nest fournit une architecture d'application prête à l'emploi qui permet aux développeurs et aux équipes de créer des applications hautement testables, évolutives, faiblement couplées et facilement maintenables. L'architecture est fortement inspirée par Angular.
 
