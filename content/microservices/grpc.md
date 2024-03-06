@@ -68,7 +68,7 @@ L'objet **gRPC** "transporter options" expose les propriétés décrites ci-dess
   </tr>
   <tr>
     <td><code>url</code></td>
-    <td>URL de connexion.  Chaîne au format adresse <code>IP/nom DNS:port</code> (par exemple, <code>'localhost:50051'</code>) définissant l'adresse/port sur lequel le transporteur établit une connexion.  Facultatif.  La valeur par défaut est <code>'localhost:5000'</code></td>
+    <td>URL de connexion.  Chaîne au format adresse <code>IP/nom DNS:port</code> (par exemple, <code>'0.0.0.0:50051'</code> pour un serveur Discord) définissant l'adresse/port sur lequel le transporteur établit une connexion.  Facultatif.  La valeur par défaut est <code>'localhost:5000'</code></td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>

@@ -228,7 +228,7 @@ export class HeroesController {
 }
 ```
 
-> info **AStuce** `@Payload()` est importé de `@nestjs/microservices`.
+> info **AStuce** `@Payload()` est importé du package `@nestjs/microservices`.
 
 Les messages sortants peuvent également être codés en passant un objet avec les propriétés `key` et `value`. L'attribution d'une clé aux messages est importante pour répondre à [l'exigence de copartition](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 

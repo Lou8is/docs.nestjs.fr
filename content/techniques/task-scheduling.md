@@ -252,10 +252,11 @@ La méthode `getCronJob()` retourne la tâche cron nommée. L'objet `CronJob` re
 - `stop()` - arrête une tâche dont l'exécution est programmée.
 - `start()` - redémarre une tâche qui a été arrêtée.
 - `setTime(time: CronTime)` - arrête une tâche, fixe une nouvelle heure pour celle-ci, puis la démarre
-- `lastDate()` - renvoie une chaîne de caractères de la dernière date d'exécution d'un job
-- `nextDates(count: number)` - renvoie un tableau (taille `count`) d'objets `moment` représentant les dates d'exécution des travaux à venir.
+- `lastDate()` - renvoie une représentation `DateTime` de la date à laquelle la dernière exécution d'une tâche a eu lieu.
+- `nextDate()` - renvoie une représentation `DateTime` de la date à laquelle la prochaine exécution d'une tâche est programmée.
+- `nextDates(count: number)` - Fournit un tableau (de taille `count`) de représentations `DateTime` pour la prochaine série de dates qui déclencheront l'exécution de la tâche. La valeur par défaut de `count` est 0, ce qui renvoie un tableau vide.
 
-> info **Astuce** Utilisez `toDate()` sur les objets `moment` pour les rendre lisibles par l'homme.
+> info **Astuce** Utilisez `toJSDate()` sur les objets `DateTime` pour les convertir en une date JavaScript équivalente à cette DateTime.
 
 **Créez** un nouveau job cron dynamiquement en utilisant la méthode `SchedulerRegistry#addCronJob`, comme suit :
 
@@ -295,7 +296,7 @@ getCrons() {
   jobs.forEach((value, key, map) => {
     let next;
     try {
-      next = value.nextDates().toDate();
+      next = value.nextDate().toJSDate();
     } catch (e) {
       next = 'erreur : la date de la prochaine exécution est dépassée !';
     }
@@ -304,7 +305,7 @@ getCrons() {
 }
 ```
 
-La méthode `getCronJobs()` retourne une `map`. Dans ce code, nous itérons sur la carte et essayons d'accéder à la méthode `nextDates()` de chaque `CronJob`. Dans l'API `CronJob`, si un job a déjà été exécuté et n'a pas de date d'exécution future, une exception est levée.
+La méthode `getCronJobs()` retourne une `map`. Dans ce code, nous itérons sur la carte et essayons d'accéder à la méthode `nextDate()` de chaque `CronJob`. Dans l'API `CronJob`, si un job a déjà été exécuté et n'a pas de date d'exécution future, une exception est levée.
 
 #### Intervalles dynamiques
 
