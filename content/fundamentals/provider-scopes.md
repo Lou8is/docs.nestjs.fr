@@ -80,6 +80,8 @@ Les dépendances transitoires ne suivent pas ce modèle. Si un `DogsService` à 
 
 Dans une application basée sur un serveur HTTP (par exemple, en utilisant `@nestjs/platform-express` ou `@nestjs/platform-fastify`), vous pouvez vouloir accéder à une référence à l'objet de requête original lorsque vous utilisez des fournisseurs à portée de requête. Vous pouvez le faire en injectant l'objet `REQUEST`.
 
+Le fournisseur `REQUEST` est à portée de requête, donc il n'est pas nécessaire d'utiliser le scope `REQUEST` ici.
+
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';

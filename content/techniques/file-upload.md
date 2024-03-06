@@ -155,6 +155,8 @@ Enfin, vous pouvez utiliser la classe spéciale `ParseFilePipeBuilder` qui vous 
 file: Express.Multer.File,
 ```
 
+> info **Astuce** La présence d'un fichier est requise par défaut, mais vous pouvez la rendre optionnelle en ajoutant le paramètre `fileIsRequired : false` dans les options de la fonction `build` (au même niveau que `errorHttpStatusCode`).
+
 #### Liste de fichiers
 
 Pour télécharger un ensemble de fichiers (identifiés par un seul nom de champ), utilisez le décorateur `FilesInterceptor()` (notez le pluriel **Files** dans le nom du décorateur). Ce décorateur prend trois arguments :
