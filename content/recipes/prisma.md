@@ -1,54 +1,54 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. It is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL, SQL Server, SQLite, MongoDB and CockroachDB ([Preview](https://www.prisma.io/docs/reference/database-reference/supported-databases)).
+[Prisma](https://www.prisma.io) est un ORM [open-source](https://github.com/prisma/prisma) pour Node.js et TypeScript. Il est utilisé comme **alternative** à l'écriture de SQL simple, ou à l'utilisation d'un autre outil d'accès à la base de données comme les constructeurs de requêtes SQL (comme [knex.js](https://knexjs.org/)) ou les ORM (comme [TypeORM](https://typeorm.io/) et [Sequelize](https://sequelize.org/)). Prisma supporte actuellement PostgreSQL, MySQL, SQL Server, SQLite, MongoDB et CockroachDB ([Voir les bases de données supportées](https://www.prisma.io/docs/reference/database-reference/supported-databases)).
 
-While Prisma can be used with plain JavaScript, it embraces TypeScript and provides a level to type-safety that goes beyond the guarantees other ORMs in the TypeScript ecosystem. You can find an in-depth comparison of the type-safety guarantees of Prisma and TypeORM [here](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm#type-safety).
+Bien que Prisma puisse être utilisé avec du JavaScript simple, il embrasse TypeScript et fournit un niveau de sécurité de type qui va au-delà des garanties d'autres ORMs dans l'écosystème TypeScript. Vous pouvez trouver une comparaison approfondie des garanties de sécurité de type de Prisma et TypeORM [ici](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm#type-safety).
 
-> info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/). There also are ready-to-run examples for [REST](https://github.com/prisma/prisma-examples/tree/latest/typescript/rest-nestjs) and [GraphQL](https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-nestjs) in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repo.
+> info **Note** Si vous voulez avoir un aperçu rapide du fonctionnement de Prisma, vous pouvez suivre le [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) ou lire l'[Introduction](https://www.prisma.io/docs/understand-prisma/introduction) dans la [documentation](https://www.prisma.io/docs/). Il existe également des exemples prêts à l'emploi pour [REST](https://github.com/prisma/prisma-examples/tree/latest/typescript/rest-nestjs) et [GraphQL](https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-nestjs) dans le répertoire [`prisma-examples`](https://github.com/prisma/prisma-examples/).
 
-#### Getting started
+#### Pour commencer
 
-In this recipe, you'll learn how to get started with NestJS and Prisma from scratch. You are going to build a sample NestJS application with a REST API that can read and write data in a database.
+Dans cette recette, vous apprendrez à démarrer avec NestJS et Prisma à partir de zéro. Vous allez construire un exemple d'application NestJS avec une API REST qui peut lire et écrire des données dans une base de données.
 
-For the purpose of this guide, you'll use a [SQLite](https://sqlite.org/) database to save the overhead of setting up a database server. Note that you can still follow this guide, even if you're using PostgreSQL or MySQL – you'll get extra instructions for using these databases at the right places.
+Dans le cadre de ce guide, vous utiliserez une base de données [SQLite](https://sqlite.org/) pour éviter de devoir configurer un serveur de base de données. Notez que vous pouvez toujours suivre ce guide, même si vous utilisez PostgreSQL ou MySQL - vous trouverez des instructions supplémentaires pour l'utilisation de ces bases de données aux bons endroits.
 
-> info **Note** If you already have an existing project and consider migrating to Prisma, you can follow the guide for [adding Prisma to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres). If you are migrating from TypeORM, you can read the guide [Migrating from TypeORM to Prisma](https://www.prisma.io/docs/guides/migrate-to-prisma/migrate-from-typeorm).
+> info **Note** Si vous avez déjà un projet existant et que vous envisagez de migrer vers Prisma, vous pouvez suivre le guide pour [ajouter Prisma à un projet existant](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres). Si vous migrez de TypeORM, vous pouvez lire le guide [Migrating from TypeORM to Prisma](https://www.prisma.io/docs/guides/migrate-to-prisma/migrate-from-typeorm).
 
-#### Create your NestJS project
+#### Créez votre projet NestJS
 
-To get started, install the NestJS CLI and create your app skeleton with the following commands:
+Pour commencer, installez la CLI NestJS et créez votre squelette d'application avec les commandes suivantes :
 
 ```bash
 $ npm install -g @nestjs/cli
 $ nest new hello-prisma
 ```
 
-See the [First steps](https://docs.nestjs.com/first-steps) page to learn more about the project files created by this command. Note also that you can now run `npm start` to start your application. The REST API running at `http://localhost:3000/` currently serves a single route that's implemented in `src/app.controller.ts`. Over the course of this guide, you'll implement additional routes to store and retrieve data about _users_ and _posts_.
+Voir la page [Premiers pas](/first-steps) pour en savoir plus sur les fichiers de projet créés par cette commande. Notez aussi que vous pouvez maintenant lancer `npm start` pour démarrer votre application. L'API REST fonctionnant à `http://localhost:3000/` sert actuellement une seule route qui est implémentée dans `src/app.controller.ts`. Au cours de ce guide, vous allez implémenter des routes supplémentaires pour stocker et récupérer des données sur _users_ et _posts_.
 
-#### Set up Prisma
+#### Mise en place de Prisma
 
-Start by installing the Prisma CLI as a development dependency in your project:
+Commencez par installer la CLI Prisma en tant que dépendance de développement dans votre projet :
 
 ```bash
 $ cd hello-prisma
 $ npm install prisma --save-dev
 ```
 
-In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
+Dans les étapes suivantes, nous utiliserons la [CLI Prisma](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). Comme meilleure pratique, il est recommandé d'invoquer la CLI localement en la préfixant avec `npx` :
 
 ```bash
 $ npx prisma
 ```
 
-<details><summary>Expand if you're using Yarn</summary>
+<details><summary>Développer si vous utilisez Yarn</summary>
 
-If you're using Yarn, then you can install the Prisma CLI as follows:
+Si vous utilisez Yarn, vous pouvez installer la CLI Prisma comme suit :
 
 ```bash
 $ yarn add prisma --dev
 ```
 
-Once installed, you can invoke it by prefixing it with `yarn`:
+Une fois installé, vous pouvez l'invoquer en le préfixant avec `yarn` :
 
 ```bash
 $ yarn prisma
@@ -56,20 +56,20 @@ $ yarn prisma
 
 </details>
 
-Now create your initial Prisma setup using the `init` command of the Prisma CLI:
+Maintenant, créez votre configuration initiale de Prisma en utilisant la commande `init` de la CLI de Prisma :
 
 ```bash
 $ npx prisma init
 ```
 
-This command creates a new `prisma` directory with the following contents:
+Cette commande crée un nouveau répertoire `prisma` avec le contenu suivant :
 
-- `schema.prisma`: Specifies your database connection and contains the database schema
-- `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
+- `schema.prisma`: Spécifie la connexion à la base de données et contient le schéma de la base de données.
+- `.env`: Un fichier [dotenv](https://github.com/motdotla/dotenv), généralement utilisé pour stocker les informations d'identification de la base de données dans un groupe de variables d'environnement.
 
-#### Set the database connection
+#### Définir la connexion à la base de données
 
-Your database connection is configured in the `datasource` block in your `schema.prisma` file. By default it's set to `postgresql`, but since you're using a SQLite database in this guide you need to adjust the `provider` field of the `datasource` block to `sqlite`:
+Votre connexion à la base de données est configurée dans le bloc `datasource` de votre fichier `schema.prisma`. Par défaut, elle est définie à `postgresql`, mais puisque vous utilisez une base de données SQLite dans ce guide, vous devez ajuster le champ `provider` du bloc `datasource` à `sqlite` :
 
 ```groovy
 datasource db {
@@ -82,23 +82,23 @@ generator client {
 }
 ```
 
-Now, open up `.env` and adjust the `DATABASE_URL` environment variable to look as follows:
+Maintenant, ouvrez `.env` et ajustez la variable d'environnement `DATABASE_URL` pour qu'elle ressemble à ce qui suit :
 
 ```bash
 DATABASE_URL="file:./dev.db"
 ```
 
-Make sure you have a [ConfigModule](https://docs.nestjs.com/techniques/configuration) configured, otherwise the `DATABASE_URL` variable will not be picked up from `.env`.
+Assurez-vous d'avoir un [ConfigModule](/techniques/configuration) configuré, sinon la variable `DATABASE_URL` ne sera pas récupérée dans `.env`.
 
-SQLite databases are simple files; no server is required to use a SQLite database. So instead of configuring a connection URL with a _host_ and _port_, you can just point it to a local file which in this case is called `dev.db`. This file will be created in the next step.
+Les bases de données SQLite sont de simples fichiers ; aucun serveur n'est nécessaire pour utiliser une base de données SQLite. Ainsi, au lieu de configurer une URL de connexion avec un _host_ et un _port_, vous pouvez simplement la faire pointer vers un fichier local qui, dans ce cas, s'appelle `dev.db`. Ce fichier sera créé dans l'étape suivante.
 
-<details><summary>Expand if you're using PostgreSQL or MySQL</summary>
+<details><summary>Développez si vous utilisez PostgreSQL ou MySQL</summary>
 
-With PostgreSQL and MySQL, you need to configure the connection URL to point to the _database server_. You can learn more about the required connection URL format [here](https://www.prisma.io/docs/reference/database-reference/connection-urls).
+Avec PostgreSQL et MySQL, vous devez configurer l'URL de connexion pour qu'elle pointe vers le _serveur de base de données_. Vous pouvez en savoir plus sur le format requis de l'URL de connexion [ici](https://www.prisma.io/docs/reference/database-reference/connection-urls).
 
 **PostgreSQL**
 
-If you're using PostgreSQL, you have to adjust the `schema.prisma` and `.env` files as follows:
+Si vous utilisez PostgreSQL, vous devez ajuster les fichiers `schema.prisma` et `.env` comme suit :
 
 **`schema.prisma`**
 
@@ -119,17 +119,17 @@ generator client {
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA"
 ```
 
-Replace the placeholders spelled in all uppercase letters with your database credentials. Note that if you're unsure what to provide for the `SCHEMA` placeholder, it's most likely the default value `public`:
+Remplacez les caractères de remplacement en majuscules par les informations d'identification de votre base de données. Notez que si vous n'êtes pas sûr de ce que vous devez fournir pour l'espace réservé `SCHEMA`, c'est très probablement la valeur par défaut `public` :
 
 ```bash
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
 ```
 
-If you want to learn how to set up a PostgreSQL database, you can follow this guide on [setting up a free PostgreSQL database on Heroku](https://dev.to/prisma/how-to-setup-a-free-postgresql-database-on-heroku-1dc1).
+Si vous souhaitez apprendre à configurer une base de données PostgreSQL, vous pouvez suivre ce guide sur [la configuration d'une base de données PostgreSQL gratuite sur Heroku](https://dev.to/prisma/how-to-setup-a-free-postgresql-database-on-heroku-1dc1).
 
 **MySQL**
 
-If you're using MySQL, you have to adjust the `schema.prisma` and `.env` files as follows:
+Si vous utilisez MySQL, vous devez ajuster les fichiers `schema.prisma` et `.env` comme suit :
 
 **`schema.prisma`**
 
@@ -150,15 +150,15 @@ generator client {
 DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
-Replace the placeholders spelled in all uppercase letters with your database credentials.
+Remplacez les caractères de remplacement écrits en majuscules par les informations d'identification de votre base de données.
 
 </details>
 
-#### Create two database tables with Prisma Migrate
+#### Créer deux tables de base de données avec Prisma Migrate
 
-In this section, you'll create two new tables in your database using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). Prisma Migrate generates SQL migration files for your declarative data model definition in the Prisma schema. These migration files are fully customizable so that you can configure any additional features of the underlying database or include additional commands, e.g. for seeding.
+Dans cette section, vous allez créer deux nouvelles tables dans votre base de données en utilisant [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). Prisma Migrate génère des fichiers de migration SQL pour votre définition de modèle de données déclaratif dans le schéma Prisma. Ces fichiers de migration sont entièrement personnalisables, ce qui vous permet de configurer toutes les fonctionnalités supplémentaires de la base de données sous-jacente ou d'inclure des commandes supplémentaires, par exemple pour l'ensemencement.
 
-Add the following two models to your `schema.prisma` file:
+Ajoutez les deux modèles suivants à votre fichier `schema.prisma` :
 
 ```groovy
 model User {
@@ -178,13 +178,13 @@ model Post {
 }
 ```
 
-With your Prisma models in place, you can generate your SQL migration files and run them against the database. Run the following commands in your terminal:
+Avec vos modèles Prisma en place, vous pouvez générer vos fichiers de migration SQL et les exécuter contre la base de données. Exécutez les commandes suivantes dans votre terminal :
 
 ```bash
 $ npx prisma migrate dev --name init
 ```
 
-This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files was created in the existing `prisma` directory:
+Cette commande `prisma migrate dev` génère des fichiers SQL et les exécute directement sur la base de données. Dans ce cas, les fichiers de migration suivants ont été créés dans le répertoire `prisma` existant :
 
 ```bash
 $ tree prisma
@@ -196,9 +196,9 @@ prisma
 └── schema.prisma
 ```
 
-<details><summary>Expand to view the generated SQL statements</summary>
+<details><summary>Développer pour visualiser les instructions SQL générées</summary>
 
-The following tables were created in your SQLite database:
+Les tables suivantes ont été créées dans votre base de données SQLite :
 
 ```sql
 -- CreateTable
@@ -225,27 +225,27 @@ CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 </details>
 
-#### Install and generate Prisma Client
+#### Installer et générer le Prisma Client
 
-Prisma Client is a type-safe database client that's _generated_ from your Prisma model definition. Because of this approach, Prisma Client can expose [CRUD](https://www.prisma.io/docs/concepts/components/prisma-client/crud) operations that are _tailored_ specifically to your models.
+Prisma Client est un client de base de données à sécurité de type qui est _généré_ à partir de votre définition de modèle Prisma. Grâce à cette approche, Prisma Client peut exposer des opérations [CRUD](https://www.prisma.io/docs/concepts/components/prisma-client/crud) qui sont _taillées_ spécifiquement pour vos modèles.
 
-To install Prisma Client in your project, run the following command in your terminal:
+Pour installer Prisma Client dans votre projet, lancez la commande suivante dans votre terminal :
 
 ```bash
 $ npm install @prisma/client
 ```
 
-Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
+Notez que pendant l'installation, Prisma invoque automatiquement la commande `prisma generate` pour vous. Dans le futur, vous devrez lancer cette commande après _chaque_ changement dans vos modèles Prisma pour mettre à jour votre client Prisma généré.
 
-> info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
+> info **Note** La commande `prisma generate` lit votre schéma Prisma et met à jour la bibliothèque Prisma Client générée dans `node_modules/@prisma/client`.
 
-#### Use Prisma Client in your NestJS services
+#### Utiliser Prisma Client dans vos services NestJS
 
-You're now able to send database queries with Prisma Client. If you want to learn more about building queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
+Vous êtes maintenant en mesure d'envoyer des requêtes de base de données avec Prisma Client. Si vous souhaitez en savoir plus sur la création de requêtes avec Prisma Client, consultez la [documentation API](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
 
-When setting up your NestJS application, you'll want to abstract away the Prisma Client API for database queries within a service. To get started, you can create a new `PrismaService` that takes care of instantiating `PrismaClient` and connecting to your database.
+Lors de la mise en place de votre application NestJS, vous voudrez abstraire l'API du client Prisma pour les requêtes de base de données à l'intérieur d'un service. Pour commencer, vous pouvez créer un nouveau `PrismaService` qui se charge d'instancier `PrismaClient` et de se connecter à votre base de données.
 
-Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
+Dans le répertoire `src`, créez un nouveau fichier appelé `prisma.service.ts` et ajoutez-y le code suivant :
 
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -259,11 +259,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 }
 ```
 
-> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
+> info **Note** Le `onModuleInit` est optionnel - si vous l'omettez, Prisma se connectera paresseusement lors de son premier appel à la base de données.
 
-Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
+Ensuite, vous pouvez écrire des services que vous pouvez utiliser pour faire des appels à la base de données pour les modèles `User` et `Post` de votre schéma Prisma.
 
-Still inside the `src` directory, create a new file called `user.service.ts` and add the following code to it:
+Toujours dans le répertoire `src`, créez un nouveau fichier appelé `user.service.ts` et ajoutez-y le code suivant :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -324,11 +324,11 @@ export class UserService {
 }
 ```
 
-Notice how you're using Prisma Client's generated types to ensure that the methods that are exposed by your service are properly typed. You therefore save the boilerplate of typing your models and creating additional interface or DTO files.
+Remarquez que vous utilisez les types générés par Prisma Client pour vous assurer que les méthodes exposées par votre service sont correctement typées. Vous évitez ainsi de taper vos modèles et de créer des fichiers d'interface ou de DTO supplémentaires.
 
-Now do the same for the `Post` model.
+Maintenant faites la même chose pour le modèle `Post`.
 
-Still inside the `src` directory, create a new file called `post.service.ts` and add the following code to it:
+Toujours dans le répertoire `src`, créez un nouveau fichier appelé `post.service.ts` et ajoutez-y le code suivant :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -389,13 +389,13 @@ export class PostService {
 }
 ```
 
-Your `UserService` and `PostService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UserService` that would be responsible for updating the password of a user.
+Vos `UserService` et `PostService` contiennent actuellement les requêtes CRUD disponibles dans Prisma Client. Dans une application réelle, le service serait également l'endroit où ajouter de la logique métier à votre application. Par exemple, vous pourriez avoir une méthode appelée `updatePassword` dans le `UserService` qui serait responsable de la mise à jour du mot de passe d'un utilisateur.
 
-##### Implement your REST API routes in the main app controller
+##### Implémenter les routes de l'API REST dans le contrôleur principal de l'application
 
-Finally, you'll use the services you created in the previous sections to implement the different routes of your app. For the purpose of this guide, you'll put all your routes into the already existing `AppController` class.
+Enfin, vous utiliserez les services que vous avez créés dans les sections précédentes pour implémenter les différentes routes de votre application. Pour les besoins de ce guide, vous placerez toutes vos routes dans la classe `AppController` déjà existante.
 
-Replace the contents of the `app.controller.ts` file with the following code:
+Remplacez le contenu du fichier `app.controller.ts` par le code suivant :
 
 ```typescript
 import {
@@ -484,41 +484,41 @@ export class AppController {
 }
 ```
 
-This controller implements the following routes:
+Ce contrôleur met en œuvre les routes suivantes :
 
 ###### `GET`
 
-- `/post/:id`: Fetch a single post by its `id`
-- `/feed`: Fetch all _published_ posts
-- `/filter-posts/:searchString`: Filter posts by `title` or `content`
+- `/post/:id`: Récupèrer un seul message par son `id`.
+- `/feed`: Récupèrer tous les articles _publiés
+- `/filter-posts/:searchString`: Filtrer les messages par `title` ou `content`
 
 ###### `POST`
 
-- `/post`: Create a new post
-  - Body:
-    - `title: String` (required): The title of the post
-    - `content: String` (optional): The content of the post
-    - `authorEmail: String` (required): The email of the user that creates the post
-- `/user`: Create a new user
-  - Body:
-    - `email: String` (required): The email address of the user
-    - `name: String` (optional): The name of the user
+- `/post`: Créer un nouveau message
+  - Corps :
+    - `title: String` (obligatoire) : Le titre de l'article
+    - `content: String` (facultatif) : Le contenu du message
+    - `authorEmail: String` (obligatoire) : L'adresse électronique de l'utilisateur qui crée le message
+- `/user`: Créer un nouvel utilisateur
+  - Corps :
+    - `email: String` (obligatoire) : L'adresse électronique de l'utilisateur
+    - `name: String` (facultatif) : Le nom de l'utilisateur
 
 ###### `PUT`
 
-- `/publish/:id`: Publish a post by its `id`
+- `/publish/:id`: Publier un message par son `id`
 
 ###### `DELETE`
 
-- `/post/:id`: Delete a post by its `id`
+- `/post/:id`: Supprimer un message par son `id`
 
-#### Summary
+#### Résumé
 
-In this recipe, you learned how to use Prisma along with NestJS to implement a REST API. The controller that implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
+Dans cette recette, vous avez appris à utiliser Prisma avec NestJS pour implémenter une API REST. Le contrôleur qui implémente les routes de l'API appelle un `PrismaService` qui à son tour utilise Prisma Client pour envoyer des requêtes à une base de données pour répondre aux besoins de données des requêtes entrantes.
 
-If you want to learn more about using NestJS with Prisma, be sure to check out the following resources:
+Si vous souhaitez en savoir plus sur l'utilisation de NestJS avec Prisma, n'hésitez pas à consulter les ressources suivantes (en anglais) :
 
 - [NestJS & Prisma](https://www.prisma.io/nestjs)
-- [Ready-to-run example projects for REST & GraphQL](https://github.com/prisma/prisma-examples/)
-- [Production-ready starter kit](https://github.com/notiz-dev/nestjs-prisma-starter#instructions)
-- [Video: Accessing Databases using NestJS with Prisma (5min)](https://www.youtube.com/watch?v=UlVJ340UEuk&ab_channel=Prisma) by [Marc Stammerjohann](https://github.com/marcjulian)
+- [Exemples de projets prêts à l'emploi pour REST et GraphQL](https://github.com/prisma/prisma-examples/)
+- [Kit de démarrage prêt pour la production](https://github.com/notiz-dev/nestjs-prisma-starter#instructions)
+- [Vidéo : Accéder aux bases de données avec NestJS et Prisma (5min)](https://www.youtube.com/watch?v=UlVJ340UEuk&ab_channel=Prisma) par [Marc Stammerjohann](https://github.com/marcjulian)
