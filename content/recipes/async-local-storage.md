@@ -155,7 +155,7 @@ npm i nestjs-cls
 
 #### Usage
 
-Une fonctionnalité similaire à celle décrite [ci-dessus](#implémentation-personnalisée) peut être implémentée en utilisant `nestjs-cls` comme suit :
+Une fonctionnalité similaire à celle décrite [ci-dessus](recipes/async-local-storage#implémentation-personnalisée) peut être implémentée en utilisant `nestjs-cls` comme suit :
 
 1. Importer le `ClsModule` dans le module racine.
 
