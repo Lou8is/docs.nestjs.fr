@@ -98,7 +98,7 @@ Before...
 After... 1ms
 ```
 
-Notez que nous avons passé le type `LoggingInterceptor` (au lieu d'une instance), laissant la responsabilité de l'instanciation au framework et permettant l'injection de dépendance. Comme pour les pipes, les gardes et les filtres d'exception, nous pouvons également passer une instance :
+Notez que nous avons passé la classe `LoggingInterceptor` (au lieu d'une instance), laissant la responsabilité de l'instanciation au framework et permettant l'injection de dépendance. Comme pour les pipes, les gardes et les filtres d'exception, nous pouvons également passer une instance :
 
 ```typescript
 @@filename(cats.controller)

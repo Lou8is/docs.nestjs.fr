@@ -67,12 +67,16 @@ La propriété `options` est spécifique au transporteur choisi. Le transporteur
     <td>Si <code>false</code>, mode d'accusé de réception manuel activé</td>
   </tr>
   <tr>
+    <td><code>consumerTag</code></td>
+    <td>Identifiant de Consumer Tag (en lire plus <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">ici</a>)</td>
+  </tr>
+  <tr>
     <td><code>queueOptions</code></td>
-    <td>Options supplémentaires de file d'attente (en lire plus <a href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">ici</a>)</td>
+    <td>Options supplémentaires de file d'attente (en lire plus <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">ici</a>)</td>
   </tr>
   <tr>
     <td><code>socketOptions</code></td>
-    <td>Options supplémentaires de socket (en lire plus <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">ici</a>)</td>
+    <td>Options supplémentaires de socket (en lire plus <a href="https://amqp-node.github.io/amqplib/channel_api.html#socket-options" rel="nofollow" target="_blank">ici</a>)</td>
   </tr>
   <tr>
     <td><code>headers</code></td>

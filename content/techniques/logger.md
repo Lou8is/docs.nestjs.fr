@@ -53,6 +53,7 @@ L'implémentation de votre propre logger personnalisé est simple. Il suffit d'i
 ```typescript
 import { LoggerService } from '@nestjs/common';
 
+@Injectable()
 export class MyLogger implements LoggerService {
   /**
    * Écrit un journal de niveau "log".
