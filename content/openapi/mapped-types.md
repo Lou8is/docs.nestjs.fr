@@ -1,14 +1,14 @@
-### Mapped types
+### Types mappés
 
-As you build out features like **CRUD** (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
+Lorsque vous développez des fonctionnalités telles que **CRUD** (Create/Read/Update/Delete, littéralement Créer/Lire/Mettre à jour/Supprimer), il est souvent utile de construire des variantes d'un type d'entité de base. Nest fournit plusieurs fonctions utilitaires qui effectuent des transformations de type pour rendre cette tâche plus pratique.
 
 #### Partial
 
-When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
+Lors de la création de types de validation d'entrée (également appelés DTO), il est souvent utile de créer des variantes **create** et **update** du même type. Par exemple, la variante **create** peut exiger tous les champs, tandis que la variante **update** peut rendre tous les champs optionnels.
 
-Nest provides the `PartialType()` utility function to make this task easier and minimize boilerplate.
+Nest fournit la fonction utilitaire `PartialType()` pour rendre cette tâche plus facile et minimiser le travail fastidieux.
 
-The `PartialType()` function returns a type (class) with all the properties of the input type set to optional. For example, suppose we have a **create** type as follows:
+La fonction `PartialType()` renvoie un type (classe) avec toutes les propriétés du type d'entrée définies comme optionnelles. Par exemple, supposons que nous ayons un type **create** comme suit :
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
@@ -25,17 +25,17 @@ export class CreateCatDto {
 }
 ```
 
-By default, all of these fields are required. To create a type with the same fields, but with each one optional, use `PartialType()` passing the class reference (`CreateCatDto`) as an argument:
+Par défaut, tous ces champs sont obligatoires. Pour créer un type avec les mêmes champs, mais avec chacun d'entre eux optionnel, utilisez `PartialType()` en passant la référence de la classe (`CreateCatDto`) comme argument :
 
 ```typescript
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
-> info **Hint** The `PartialType()` function is imported from the `@nestjs/swagger` package.
+> info **Astuce** La fonction `PartialType()` est importée du paquet `@nestjs/swagger`.
 
 #### Pick
 
-The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
+La fonction `PickType()` construit un nouveau type (classe) en choisissant un ensemble de propriétés à partir d'un type d'entrée. Par exemple, supposons que nous commencions avec un type comme :
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
@@ -52,17 +52,17 @@ export class CreateCatDto {
 }
 ```
 
-We can pick a set of properties from this class using the `PickType()` utility function:
+Nous pouvons choisir un ensemble de propriétés dans cette classe en utilisant la fonction utilitaire `PickType()` :
 
 ```typescript
 export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
-> info **Hint** The `PickType()` function is imported from the `@nestjs/swagger` package.
+> info **Astuce** La fonction `PickType()` est importée du paquet `@nestjs/swagger`.
 
 #### Omit
 
-The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
+La fonction `OmitType()` construit un type en prenant toutes les propriétés d'un type d'entrée et en supprimant un ensemble particulier de clés. Par exemple, supposons que nous commencions avec un type comme :
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
@@ -79,17 +79,17 @@ export class CreateCatDto {
 }
 ```
 
-We can generate a derived type that has every property **except** `name` as shown below. In this construct, the second argument to `OmitType` is an array of property names.
+Nous pouvons générer un type dérivé qui possède toutes les propriétés **excepté** `name` comme montré ci-dessous. Dans cette construction, le second argument de `OmitType` est un tableau de noms de propriétés.
 
 ```typescript
 export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
-> info **Hint** The `OmitType()` function is imported from the `@nestjs/swagger` package.
+> info **Astuce** La fonction `OmitType()` est importée du paquet `@nestjs/swagger`.
 
 #### Intersection
 
-The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
+La fonction `IntersectionType()` combine deux types en un nouveau type (classe). Par exemple, supposons que nous commencions avec deux types comme :
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
@@ -108,7 +108,7 @@ export class AdditionalCatInfo {
 }
 ```
 
-We can generate a new type that combines all properties in both types.
+Nous pouvons générer un nouveau type qui combine toutes les propriétés des deux types.
 
 ```typescript
 export class UpdateCatDto extends IntersectionType(
@@ -117,11 +117,11 @@ export class UpdateCatDto extends IntersectionType(
 ) {}
 ```
 
-> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/swagger` package.
+> info **Astuce** La fonction `IntersectionType()` est importée du paquet `@nestjs/swagger`.
 
 #### Composition
 
-The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateCatDto` type except for `name`, and those properties will be set to optional:
+Les fonctions utilitaires de mise en correspondance des types sont composables. Par exemple, la fonction suivante produira un type (classe) qui possède toutes les propriétés du type `CreateCatDto` à l'exception de `name`, et ces propriétés seront définies comme optionnelles :
 
 ```typescript
 export class UpdateCatDto extends PartialType(
