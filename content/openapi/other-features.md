@@ -1,10 +1,10 @@
-### Other features
+### Autres fonctionnalités
 
-This page lists all the other available features that you may find useful.
+Cette page énumère toutes les autres fonctions disponibles qui peuvent vous être utiles.
 
-#### Global prefix
+#### Préfixe global
 
-To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignoreGlobalPrefix`:
+Pour ignorer un préfixe global pour les routes définies par `setGlobalPrefix()`, utilisez `ignoreGlobalPrefix` :
 
 ```typescript
 const document = SwaggerModule.createDocument(app, options, {
@@ -12,9 +12,9 @@ const document = SwaggerModule.createDocument(app, options, {
 });
 ```
 
-#### Global parameters
+#### Paramètres globaux
 
-You can add parameter definitions to all routes using `DocumentBuilder`:
+Vous pouvez ajouter des définitions de paramètres à toutes les routes en utilisant `DocumentBuilder` :
 
 ```typescript
 const options = new DocumentBuilder().addGlobalParameters({
@@ -23,13 +23,13 @@ const options = new DocumentBuilder().addGlobalParameters({
 });
 ```
 
-#### Multiple specifications
+#### Spécifications multiples
 
-The `SwaggerModule` provides a way to support multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.
+Le `SwaggerModule` fournit un moyen de supporter des spécifications multiples. En d'autres termes, vous pouvez servir différentes documentations, avec différentes interfaces utilisateur, sur différents points d'accès.
 
-To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes a 3rd argument, `extraOptions`, which is an object with a property named `include`. The `include` property takes a value which is an array of modules.
+Pour supporter des spécifications multiples, votre application doit être écrite avec une approche modulaire. La méthode `createDocument()` prend un troisième argument, `extraOptions`, qui est un objet avec une propriété nommée `include`. La propriété `include` prend une valeur qui est un tableau de modules.
 
-You can setup multiple specifications support as shown below:
+Vous pouvez configurer le support de spécifications multiples comme indiqué ci-dessous :
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -44,11 +44,11 @@ async function bootstrap() {
   /**
    * createDocument(application, configurationOptions, extraOptions);
    *
-   * createDocument method takes an optional 3rd argument "extraOptions"
-   * which is an object with "include" property where you can pass an Array
-   * of Modules that you want to include in that Swagger Specification
-   * E.g: CatsModule and DogsModule will have two separate Swagger Specifications which
-   * will be exposed on two different SwaggerUI with two different endpoints.
+   * La méthode createDocument prend un troisième argument optionnel "extraOptions"
+   * qui est un objet avec la propriété "include" où vous pouvez passer un tableau 
+   * de modules que vous voulez inclure dans cette spécification Swagger : 
+   * CatsModule et DogsModule auront deux spécifications Swagger distinctes qui seront exposées 
+   * sur deux SwaggerUI différentes avec deux points de terminaison différents.
    */
 
   const options = new DocumentBuilder()
@@ -80,16 +80,16 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Now you can start your server with the following command:
+Vous pouvez maintenant démarrer votre serveur avec la commande suivante :
 
 ```bash
 $ npm run start
 ```
 
-Navigate to `http://localhost:3000/api/cats` to see the Swagger UI for cats:
+Naviguez vers `http://localhost:3000/api/cats` pour voir l'interface utilisateur Swagger pour les `cats` :
 
 <figure><img src="/assets/swagger-cats.png" /></figure>
 
-In turn, `http://localhost:3000/api/dogs` will expose the Swagger UI for dogs:
+A son tour, `http://localhost:3000/api/dogs` exposera l'interface Swagger pour les `dogs` :
 
 <figure><img src="/assets/swagger-dogs.png" /></figure>

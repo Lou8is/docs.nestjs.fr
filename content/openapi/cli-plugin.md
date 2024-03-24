@@ -1,28 +1,27 @@
-### CLI Plugin
+### Plugin CLI
 
-[TypeScript](https://www.typescriptlang.org/docs/handbook/decorators.html)'s metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
+Le système de réflexion sur les métadonnées de [TypeScript](https://www.typescriptlang.org/docs/handbook/decorators.html) présente plusieurs limites qui l'empêchent, par exemple, de déterminer les propriétés d'une classe ou de reconnaître si une propriété donnée est facultative ou obligatoire. Cependant, certaines de ces contraintes peuvent être résolues au moment de la compilation. Nest fournit un plugin qui améliore le processus de compilation de TypeScript afin de réduire la quantité de code de type "boilerplate" nécessaire.
 
-> info **Hint** This plugin is **opt-in**. If you prefer, you can declare all decorators manually, or only specific decorators where you need them.
+> info **Astuce** Ce plugin est **sur activation**. Si vous préférez, vous pouvez déclarer tous les décorateurs manuellement, ou seulement les décorateurs spécifiques dont vous avez besoin.
 
-#### Overview
+#### Vue d'ensemble
 
-The Swagger plugin will automatically:
+Le plugin Swagger va automatiquement :
 
-- annotate all DTO properties with `@ApiProperty` unless `@ApiHideProperty` is used
-- set the `required` property depending on the question mark (e.g. `name?: string` will set `required: false`)
-- set the `type` or `enum` property depending on the type (supports arrays as well)
-- set the `default` property based on the assigned default value
-- set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
-- add a response decorator to every endpoint with a proper status and `type` (response model)
-- generate descriptions for properties and endpoints based on comments (if `introspectComments` set to `true`)
-- generate example values for properties based on comments (if `introspectComments` set to `true`)
+- annoter toutes les propriétés DTO avec `@ApiProperty` sauf si `@ApiHideProperty` est utilisé
+- définir la propriété `required` en fonction du point d'interrogation (par exemple, `name? : string` définira `required : false`)
+- fixer la propriété `type` ou `enum` en fonction du type (supporte aussi les tableaux)
+- définir la propriété `default` en fonction de la valeur par défaut assignée
+- définir plusieurs règles de validation basées sur les décorateurs `class-validator` (si `classValidatorShim` est fixé à `true`)
+- ajouter un décorateur de réponse à chaque endpoint avec un statut et un `type` appropriés (modèle de réponse)
+- générer des descriptions pour les propriétés et les endpoints en se basant sur les commentaires (si `introspectComments` est fixé à `true`)
+- générer des exemples de valeurs pour les propriétés en se basant sur les commentaires (si `introspectComments` est fixé à `true`)
 
-Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
+Veuillez noter que vos noms de fichiers **doivent avoir** l'un des suffixes suivants : `['.dto.ts', '.entity.ts']` (par exemple, `create-user.dto.ts`) afin d'être analysé par le plugin.
 
-If you are using a different suffix, you can adjust the plugin's behavior by specifying the `dtoFileNameSuffix` option (see below).
+Si vous utilisez un suffixe différent, vous pouvez ajuster le comportement du plugin en spécifiant l'option `dtoFileNameSuffix` (voir ci-dessous).
 
-Previously, if you wanted to provide an interactive experience with the Swagger UI,
-you had to duplicate a lot of code to let the package know how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
+Auparavant, si vous vouliez fournir une expérience interactive avec l'interface Swagger, vous deviez dupliquer beaucoup de code pour faire savoir au package comment vos modèles/composants devaient être déclarés dans la spécification. Par exemple, vous pouviez définir une simple classe `CreateUserDto` comme suit :
 
 ```typescript
 export class CreateUserDto {
@@ -40,9 +39,9 @@ export class CreateUserDto {
 }
 ```
 
-While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
+Bien qu'il ne s'agisse pas d'un problème important pour les projets de taille moyenne, il devient verbeux et difficile à maintenir une fois que vous avez un grand nombre de classes.
 
-By [enabling the Swagger plugin](/openapi/cli-plugin#using-the-cli-plugin), the above class definition can be declared simply:
+En [activant le plugin Swagger](/openapi/cli-plugin#utiliser-le-plugin-cli), la définition de la classe ci-dessus peut être déclarée simplement :
 
 ```typescript
 export class CreateUserDto {
@@ -53,67 +52,67 @@ export class CreateUserDto {
 }
 ```
 
-> info **Note** The Swagger plugin will derive the @ApiProperty() annotations from the TypeScript types and class-validator decorators. This helps in clearly describing your API for the generated Swagger UI documentation. However, the validation at runtime would still be handled by class-validator decorators. So, it is required to continue using validators like `IsEmail()`, `IsNumber()`, etc.
+> info **Note** Le plugin Swagger dérive les annotations @ApiProperty() des types TypeScript et des décorateurs de validation de classe. Cela permet de décrire clairement votre API dans la documentation générée par l'interface utilisateur Swagger. Cependant, la validation au moment de l'exécution sera toujours gérée par les décorateurs class-validator. Il est donc nécessaire de continuer à utiliser des validateurs comme `IsEmail()`, `IsNumber()`, etc.
 
-Hence, if you intend to relay on automatic annotations for generating documentations and still wish for runtime validations, then the class-validator decorators are still necessary.
+Par conséquent, si vous avez l'intention de vous appuyer sur des annotations automatiques pour générer des documentations et que vous souhaitez toujours des validations au moment de l'exécution, les décorateurs class-validator sont toujours nécessaires.
 
-> info **Hint** When using [mapped types utilities](https://docs.nestjs.com/openapi/mapped-types) (like `PartialType`) in DTOs import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema.
+> info **Astuce** Lorsque vous utilisez des [utilitaires de types mappés](/openapi/mapped-types) (comme `PartialType`) dans les DTOs, importez-les depuis `@nestjs/swagger` au lieu de `@nestjs/mapped-types` pour que le plugin prenne en compte le schéma.
 
-The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Thus you won't have to struggle with `@ApiProperty` decorators scattered throughout the code.
+Le plugin ajoute les décorateurs appropriés à la volée en se basant sur l'**Arbre Syntaxique Abstrait**. Ainsi, vous n'aurez pas à vous battre avec les décorateurs `@ApiProperty` disséminés dans le code.
 
-> info **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
+> info **Astuce** Le plugin génère automatiquement toutes les propriétés swagger manquantes, mais si vous avez besoin de les surcharger, il vous suffit de les définir explicitement via `@ApiProperty()`.
 
-#### Comments introspection
+#### Introspection des commentaires
 
-With the comments introspection feature enabled, CLI plugin will generate descriptions and example values for properties based on comments.
+Lorsque la fonction d'introspection des commentaires est activée, le plugin CLI génère des descriptions et des exemples de valeurs pour les propriétés en se basant sur les commentaires.
 
-For example, given an example `roles` property:
+Par exemple, voici un exemple de propriété `roles` :
 
 ```typescript
 /**
- * A list of user's roles
+ * Une liste des rôles de l'utilisateur
  * @example ['admin']
  */
 @ApiProperty({
-  description: `A list of user's roles`,
+  description: `Une liste des rôles de l'utilisateur`,
   example: ['admin'],
 })
 roles: RoleEnum[] = [];
 ```
 
-You must duplicate both description and example values. With `introspectComments` enabled, the CLI plugin can extract these comments and automatically provide descriptions (and examples, if defined) for properties. Now, the above property can be declared simply as follows:
+Vous devez dupliquer les valeurs de description et d'exemple. Avec `introspectComments` activé, le plugin CLI peut extraire ces commentaires et fournir automatiquement des descriptions (et des exemples, si définis) pour les propriétés. Maintenant, la propriété ci-dessus peut être déclarée simplement comme suit :
 
 ```typescript
 /**
- * A list of user's roles
+ * Une liste des rôles de l'utilisateur
  * @example ['admin']
  */
 roles: RoleEnum[] = [];
 ```
 
-There are `dtoKeyOfComment` and `controllerKeyOfComment` plugin options that you can use to customize how the plugin will set the value for `ApiProperty` and `ApiOperation` decorators respectively. Take a look at the following example:
+Il y a des options de plugin `dtoKeyOfComment` et `controllerKeyOfComment` que vous pouvez utiliser pour personnaliser la façon dont le plugin va définir la valeur des décorateurs `ApiProperty` et `ApiOperation` respectivement. Regardez l'exemple suivant :
 
 ```typescript
 export class SomeController {
   /**
-   * Create some resource
+   * Créer une ressource
    */
   @Post()
   create() {}
 }
 ```
 
-By default, these options are set to `"description"`. This means the plugin will assign `"Create some resource"` to `description` key on the `ApiOperation` operator. Like so:
+Par défaut, ces options sont réglées sur `"description"`. Cela signifie que le plugin assignera `"Créer une ressource"` à la clé `description` de l'opérateur `ApiOperation`. Comme cela :
 
 ```ts
-@ApiOperation({ description: "Create some resource" })
+@ApiOperation({ description: "Créer une ressource" })
 ```
 
-> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead.
+> info **Astuce** Pour les modèles, la même logique s'applique mais avec le décorateur `ApiProperty` à la place.
 
-#### Using the CLI plugin
+#### Utiliser le plugin CLI
 
-To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
+Pour activer le plugin, ouvrez `nest-cli.json` (si vous utilisez [Nest CLI](/cli/overview)) et ajoutez la configuration `plugins` suivante :
 
 ```javascript
 {
@@ -125,7 +124,7 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
 }
 ```
 
-You can use the `options` property to customize the behavior of the plugin.
+Vous pouvez utiliser la propriété `options` pour personnaliser le comportement du plugin.
 
 ```javascript
 "plugins": [
@@ -139,7 +138,7 @@ You can use the `options` property to customize the behavior of the plugin.
 ]
 ```
 
-The `options` property has to fulfill the following interface:
+La propriété `options` doit remplir l'interface suivante :
 
 ```typescript
 export interface PluginOptions {
@@ -155,43 +154,43 @@ export interface PluginOptions {
 <table>
   <tr>
     <th>Option</th>
-    <th>Default</th>
+    <th>Par défaut</th>
     <th>Description</th>
   </tr>
   <tr>
     <td><code>dtoFileNameSuffix</code></td>
     <td><code>['.dto.ts', '.entity.ts']</code></td>
-    <td>DTO (Data Transfer Object) files suffix</td>
+    <td>Suffixe des fichiers DTO (Data Transfer Object)</td>
   </tr>
   <tr>
     <td><code>controllerFileNameSuffix</code></td>
     <td><code>.controller.ts</code></td>
-    <td>Controller files suffix</td>
+    <td>Suffixe des fichiers du contrôleur</td>
   </tr>
   <tr>
     <td><code>classValidatorShim</code></td>
     <td><code>true</code></td>
-    <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+    <td>Si la valeur est fixée à true, le module réutilisera les décorateurs de validation <code>class-validator</code> (par exemple, <code>@Max(10)</code> ajoutera <code>max: 10</code> à la définition du schéma) </td>
   </tr>
   <tr>
     <td><code>dtoKeyOfComment</code></td>
     <td><code>'description'</code></td>
-    <td>The property key to set the comment text to on <code>ApiProperty</code>.</td>
+    <td>Clé de propriété à laquelle attribuer le texte du commentaire sur <code>ApiProperty</code>.</td>
   </tr>
   <tr>
     <td><code>controllerKeyOfComment</code></td>
     <td><code>'description'</code></td>
-    <td>The property key to set the comment text to on <code>ApiOperation</code>.</td>
+    <td>Clé de propriété à laquelle attribuer le texte du commentaire  <code>ApiOperation</code>.</td>
   </tr>
   <tr>
   <td><code>introspectComments</code></td>
     <td><code>false</code></td>
-    <td>If set to true, plugin will generate descriptions and example values for properties based on comments</td>
+    <td>Si la valeur est fixée à true, le plugin génère des descriptions et des exemples de valeurs pour les propriétés en se basant sur les commentaires.</td>
   </tr>
 </table>
 
-Make sure to delete the `/dist` folder and rebuild your application whenever plugin options are updated.
-If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
+Assurez-vous de supprimer le dossier `/dist` et de reconstruire votre application à chaque fois que les options du plugin sont mises à jour.
+Si vous n'utilisez pas le CLI mais que vous avez une configuration personnalisée de `webpack`, vous pouvez utiliser ce plugin en combinaison avec `ts-loader` :
 
 ```javascript
 getCustomTransformers: (program: any) => ({
@@ -199,79 +198,79 @@ getCustomTransformers: (program: any) => ({
 }),
 ```
 
-#### SWC builder
+#### Constructeur SWC 
 
-For standard setups (non-monorepo), to use CLI Plugins with the SWC builder, you need to enable type checking, as described [here](/recipes/swc#type-checking).
+Pour les configurations standard (non monorepo), pour utiliser les plugins CLI avec le constructeur SWC, vous devez activer le contrôle de type, comme décrit [ici](/recipes/swc#vérification-de-type).
 
 ```bash
 $ nest start -b swc --type-check
 ```
 
-For monorepo setups, follow the instructions [here](/recipes/swc#monorepo-and-cli-plugins).
+Pour les installations monorepo, suivez les instructions [ici](/recipes/swc#monorepo-et-plugins-cli).
 
 ```bash
 $ npx ts-node src/generate-metadata.ts
-# OR npx ts-node apps/{YOUR_APP}/src/generate-metadata.ts
+# OU npx ts-node apps/{YOUR_APP}/src/generate-metadata.ts
 ```
 
-Now, the serialized metadata file must be loaded by the `SwaggerModule#loadPluginMetadata` method, as shown below:
+Maintenant, le fichier de métadonnées sérialisé doit être chargé par la méthode `SwaggerModule#loadPluginMetadata`, comme montré ci-dessous :
 
 ```typescript
-import metadata from './metadata'; // <-- file auto-generated by the "PluginMetadataGenerator"
+import metadata from './metadata'; // <-- fichier généré automatiquement par le "PluginMetadataGenerator"
 
-await SwaggerModule.loadPluginMetadata(metadata); // <-- here
+await SwaggerModule.loadPluginMetadata(metadata); // <-- ici
 const document = SwaggerModule.createDocument(app, config);
 ```
 
-#### Integration with `ts-jest` (e2e tests)
+#### Intégration avec `ts-jest` (tests e2e)
 
-To run e2e tests, `ts-jest` compiles your source code files on the fly, in memory. This means, it doesn't use Nest CLI compiler and does not apply any plugins or perform AST transformations.
+Pour exécuter les tests e2e, `ts-jest` compile vos fichiers de code source à la volée, en mémoire. Cela signifie qu'il n'utilise pas le compilateur Nest CLI et n'applique aucun plugin ou n'effectue aucune transformation AST.
 
-To enable the plugin, create the following file in your e2e tests directory:
+Pour activer le plugin, créez le fichier suivant dans votre répertoire de tests e2e :
 
 ```javascript
 const transformer = require('@nestjs/swagger/plugin');
 
 module.exports.name = 'nestjs-swagger-transformer';
-// you should change the version number anytime you change the configuration below - otherwise, jest will not detect changes
+// vous devez changer le numéro de version à chaque fois que vous modifiez la configuration ci-dessous - sinon, jest ne détectera pas les changements
 module.exports.version = 1;
 
 module.exports.factory = (cs) => {
   return transformer.before(
     {
-      // @nestjs/swagger/plugin options (can be empty)
+      // options @nestjs/swagger/plugin (peut être vide)
     },
-    cs.program, // "cs.tsCompiler.program" for older versions of Jest (<= v27)
+    cs.program, // "cs.tsCompiler.program" pour les anciennes versions de Jest (<= v27)
   );
 };
 ```
 
-With this in place, import AST transformer within your `jest` configuration file. By default (in the starter application), e2e tests configuration file is located under the `test` folder and is named `jest-e2e.json`.
+Avec ceci en place, importez le transformateur AST dans votre fichier de configuration `jest`. Par défaut (dans l'application de démarrage), le fichier de configuration des tests e2e est situé dans le dossier `test` et est nommé `jest-e2e.json`.
 
 ```json
 {
-  ... // other configuration
+  ... // autres configurations
   "globals": {
     "ts-jest": {
       "astTransformers": {
-        "before": ["<path to the file created above>"]
+        "before": ["<chemin d'accès au fichier créé ci-dessus>"]
       }
     }
   }
 }
 ```
 
-If you use `jest@^29`, then use the snippet below, as the previous approach got deprecated.
+Si vous utilisez `jest@^29`, alors utilisez l'extrait ci-dessous, car l'approche précédente a été dépréciée.
 
 ```json
 {
-  ... // other configuration
+  ... // autres configurations
   "transform": {
     "^.+\\.(t|j)s$": [
       "ts-jest",
       {
         "astTransformers": {
-          "before": ["<path to the file created above>"]
+          "before": ["<chemin d'accès au fichier créé ci-dessus>"]
         }
       }
     ]
@@ -279,28 +278,28 @@ If you use `jest@^29`, then use the snippet below, as the previous approach got 
 }
 ```
 
-#### Troubleshooting `jest` (e2e tests)
+#### Dépannage de `jest` (tests e2e)
 
-In case `jest` does not seem to pick up your configuration changes, it's possible that Jest has already **cached** the build result. To apply the new configuration, you need to clear Jest's cache directory.
+Dans le cas où `jest` ne semble pas prendre en compte vos changements de configuration, il est possible que Jest ait déjà **mis en cache** le résultat de la construction. Pour appliquer la nouvelle configuration, vous devez vider le répertoire de cache de Jest.
 
-To clear the cache directory, run the following command in your NestJS project folder:
+Pour vider le répertoire de cache, exécutez la commande suivante dans le dossier de votre projet NestJS :
 
 ```bash
 $ npx jest --clearCache
 ```
 
-In case the automatic cache clearance fails, you can still manually remove the cache folder with the following commands:
+Si la suppression automatique du cache échoue, vous pouvez toujours supprimer manuellement le dossier cache à l'aide des commandes suivantes :
 
 ```bash
-# Find jest cache directory (usually /tmp/jest_rs)
-# by running the following command in your NestJS project root
+# Trouver le répertoire de cache de jest (habituellement /tmp/jest_rs)
+# en exécutant la commande suivante à la racine de votre projet NestJS
 $ npx jest --showConfig | grep cache
-# ex result:
+# exemple de résultat :
 #   "cache": true,
 #   "cacheDirectory": "/tmp/jest_rs"
 
-# Remove or empty the Jest cache directory
-$ rm -rf  <cacheDirectory value>
-# ex:
+# Supprimer ou vider le répertoire de cache de Jest
+$ rm -rf  <valeur de cacheDirectory>
+# par exemple :
 # rm -rf /tmp/jest_rs
 ```

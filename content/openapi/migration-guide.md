@@ -1,33 +1,33 @@
-### Migration guide
+### Guide de migration
 
-If you're currently using `@nestjs/swagger@3.*`, note the following breaking/API changes in version 4.0.
+Si vous utilisez actuellement `@nestjs/swagger@3.*`, notez les changements suivants dans la version 4.0.
 
-#### Breaking changes
+#### Changements de rupture
 
-The following decorators have been changed/renamed:
+Les décorateurs suivants ont été modifiés/renommés :
 
-- `@ApiModelProperty` is now `@ApiProperty`
-- `@ApiModelPropertyOptional` is now `@ApiPropertyOptional`
-- `@ApiResponseModelProperty` is now `@ApiResponseProperty`
-- `@ApiImplicitQuery` is now `@ApiQuery`
-- `@ApiImplicitParam` is now `@ApiParam`
-- `@ApiImplicitBody` is now `@ApiBody`
-- `@ApiImplicitHeader` is now `@ApiHeader`
-- `@ApiOperation({{ '{' }} title: 'test' {{ '}' }})` is now `@ApiOperation({{ '{' }} summary: 'test' {{ '}' }})`
-- `@ApiUseTags` is now `@ApiTags`
+- `@ApiModelProperty` est maintenant `@ApiProperty`
+- `@ApiModelPropertyOptional` est maintenant `@ApiPropertyOptional`
+- `@ApiResponseModelProperty` est maintenant `@ApiResponseProperty`
+- `@ApiImplicitQuery` est maintenant `@ApiQuery`
+- `@ApiImplicitParam` est maintenant `@ApiParam`
+- `@ApiImplicitBody` est maintenant `@ApiBody`
+- `@ApiImplicitHeader` est maintenant `@ApiHeader`
+- `@ApiOperation({{ '{' }} title: 'test' {{ '}' }})` est maintenant `@ApiOperation({{ '{' }} summary: 'test' {{ '}' }})`
+- `@ApiUseTags` est maintenant `@ApiTags`
 
-`DocumentBuilder` breaking changes (updated method signatures):
+`DocumentBuilder` changements radicaux (mise à jour des signatures de méthodes) :
 
 - `addTag`
 - `addBearerAuth`
 - `addOAuth2`
-- `setContactEmail` is now `setContact`
-- `setHost` has been removed
-- `setSchemes` has been removed (use the `addServer` instead, e.g., `addServer('http://')`)
+- `setContactEmail` est maintenant `setContact`
+- `setHost` a été supprimé
+- `setSchemes` a été supprimé (utiliser `addServer` à la place, par exemple, `addServer('http://')`)
 
-#### New methods
+#### Nouvelles méthodes
 
-The following methods have been added:
+Les méthodes suivantes ont été ajoutées :
 
 - `addServer`
 - `addApiKey`
