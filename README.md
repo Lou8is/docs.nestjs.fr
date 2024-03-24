@@ -30,7 +30,7 @@ Le README original est accessible <a href="https://github.com/nestjs/docs.nestjs
 
 ## Description
 
-Ce projet est construit sur la [CLI Angular] (https://github.com/angular/angular-cli). Il utilise le [générateur de documentation Dgeni](https://github.com/angular/dgeni) pour compiler la documentation source au format markdown dans le format publié. Le dépôt contient le code source de la traduction de [docs.nestjs.com](https://docs.nestjs.com), la documentation officielle de Nest.
+Ce projet est construit sur la [CLI Angular](https://github.com/angular/angular-cli). Il utilise le [générateur de documentation Dgeni](https://github.com/angular/dgeni) pour compiler la documentation source au format markdown dans le format publié. Le dépôt contient le code source de la traduction de [docs.nestjs.com](https://docs.nestjs.com), la documentation officielle de Nest.
 
 ## Installation
 
