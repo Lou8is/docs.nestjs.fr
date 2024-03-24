@@ -1,10 +1,10 @@
-### Operations
+### Opérations
 
-In OpenAPI terms, paths are endpoints (resources), such as `/users` or `/reports/summary`, that your API exposes, and operations are the HTTP methods used to manipulate these paths, such as `GET`, `POST` or `DELETE`.
+En termes d'OpenAPI, les chemins sont des endpoints (ressources), tels que `/users` ou `/reports/summary`, que votre API expose, et les opérations sont les méthodes HTTP utilisées pour manipuler ces chemins, telles que `GET`, `POST` ou `DELETE`.
 
 #### Tags
 
-To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
+Pour attacher un contrôleur à un tag spécifique, utilisez le décorateur `@ApiTags(...tags)`.
 
 ```typescript
 @ApiTags('cats')
@@ -12,33 +12,33 @@ To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 export class CatsController {}
 ```
 
-#### Headers
+#### En-têtes
 
-To define custom headers that are expected as part of the request, use `@ApiHeader()`.
+Pour définir des en-têtes personnalisés qui sont attendus dans le cadre de la requête, utilisez `@ApiHeader()`.
 
 ```typescript
 @ApiHeader({
   name: 'X-MyHeader',
-  description: 'Custom header',
+  description: 'En-tête personnalisé',
 })
 @Controller('cats')
 export class CatsController {}
 ```
 
-#### Responses
+#### Réponses
 
-To define a custom HTTP response, use the `@ApiResponse()` decorator.
+Pour définir une réponse HTTP personnalisée, utilisez le décorateur `@ApiResponse()`.
 
 ```typescript
 @Post()
-@ApiResponse({ status: 201, description: 'The record has been successfully created.'})
-@ApiResponse({ status: 403, description: 'Forbidden.'})
+@ApiResponse({ status: 201, description: 'L enregistrement a été créé avec succès.'})
+@ApiResponse({ status: 403, description: 'Interdit.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
 
-Nest provides a set of short-hand **API response** decorators that inherit from the `@ApiResponse` decorator:
+Nest fournit un ensemble de décorateurs **API response** qui héritent du décorateur `@ApiResponse` :
 
 - `@ApiOkResponse()`
 - `@ApiCreatedResponse()`
@@ -69,14 +69,14 @@ Nest provides a set of short-hand **API response** decorators that inherit from 
 
 ```typescript
 @Post()
-@ApiCreatedResponse({ description: 'The record has been successfully created.'})
-@ApiForbiddenResponse({ description: 'Forbidden.'})
+@ApiCreatedResponse({ description: 'L enregistrement a été créé avec succès.'})
+@ApiForbiddenResponse({ description: 'Interdit.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
 
-To specify a return model for a request, we must create a class and annotate all properties with the `@ApiProperty()` decorator.
+Pour spécifier un modèle de retour pour une requête, nous devons créer une classe et annoter toutes les propriétés avec le décorateur `@ApiProperty()`.
 
 ```typescript
 export class Cat {
@@ -94,7 +94,7 @@ export class Cat {
 }
 ```
 
-Then the `Cat` model can be used in combination with the `type` property of the response decorator.
+Le modèle `Cat` peut alors être utilisé en combinaison avec la propriété `type` du décorateur de réponse.
 
 ```typescript
 @ApiTags('cats')
@@ -102,7 +102,7 @@ Then the `Cat` model can be used in combination with the `type` property of the 
 export class CatsController {
   @Post()
   @ApiCreatedResponse({
-    description: 'The record has been successfully created.',
+    description: 'L enregistrement a été créé avec succès.',
     type: Cat,
   })
   async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
@@ -111,25 +111,25 @@ export class CatsController {
 }
 ```
 
-Let's open the browser and verify the generated `Cat` model:
+Ouvrons le navigateur et vérifions le modèle `Cat` généré :
 
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
-#### File upload
+#### Téléchargement de fichiers
 
-You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using the [File Upload](/techniques/file-upload) technique:
+Vous pouvez activer le téléchargement de fichiers pour une méthode spécifique avec le décorateur `@ApiBody` et `@ApiConsumes()`. Voici un exemple complet utilisant la technique de [Téléchargement de fichiers](/techniques/file-upload) :
 
 ```typescript
 @UseInterceptors(FileInterceptor('file'))
 @ApiConsumes('multipart/form-data')
 @ApiBody({
-  description: 'List of cats',
+  description: 'Liste des chats',
   type: FileUploadDto,
 })
 uploadFile(@UploadedFile() file) {}
 ```
 
-Where `FileUploadDto` is defined as follows:
+Où `FileUploadDto` est défini comme suit :
 
 ```typescript
 class FileUploadDto {
@@ -138,7 +138,7 @@ class FileUploadDto {
 }
 ```
 
-To handle multiple files uploading, you can define `FilesUploadDto` as follows:
+Pour gérer le téléchargement de plusieurs fichiers, vous pouvez définir `FilesUploadDto` comme suit :
 
 ```typescript
 class FilesUploadDto {
@@ -149,15 +149,15 @@ class FilesUploadDto {
 
 #### Extensions
 
-To add an Extension to a request use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-`.
+Pour ajouter une extension à une requête, utilisez le décorateur `@ApiExtension()`. Le nom de l'extension doit être préfixé par `x-`.
 
 ```typescript
 @ApiExtension('x-foo', { hello: 'world' })
 ```
 
-#### Advanced: Generic `ApiResponse`
+#### Avancé : Générique `ApiResponse`
 
-With the ability to provide [Raw Definitions](/openapi/types-and-parameters#raw-definitions), we can define Generic schema for Swagger UI. Assume we have the following DTO:
+Avec la possibilité de fournir des [définitions brutes] (/openapi/types-and-parameters#définitions-brutes), nous pouvons définir un schéma générique pour l'interface utilisateur de Swagger. Supposons que nous ayons le DTO suivant :
 
 ```ts
 export class PaginatedDto<TData> {
@@ -174,7 +174,7 @@ export class PaginatedDto<TData> {
 }
 ```
 
-We skip decorating `results` as we will be providing a raw definition for it later. Now, let's define another DTO and name it, for example, `CatDto`, as follows:
+Nous sautons la décoration de `results` car nous lui fournirons une définition brute plus tard. Maintenant, définissons un autre DTO et nommons-le, par exemple, `CatDto`, comme suit :
 
 ```ts
 export class CatDto {
@@ -189,7 +189,7 @@ export class CatDto {
 }
 ```
 
-With this in place, we can define a `PaginatedDto<CatDto>` response, as follows:
+Nous pouvons alors définir une réponse `PaginatedDto<CatDto>`, comme suit :
 
 ```ts
 @ApiOkResponse({
@@ -210,12 +210,12 @@ With this in place, we can define a `PaginatedDto<CatDto>` response, as follows:
 async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-In this example, we specify that the response will have allOf `PaginatedDto` and the `results` property will be of type `Array<CatDto>`.
+Dans cet exemple, nous spécifions que la réponse aura allOf `PaginatedDto` et que la propriété `results` sera de type `Array<CatDto>`.
 
-- `getSchemaPath()` function that returns the OpenAPI Schema path from within the OpenAPI Spec File for a given model.
-- `allOf` is a concept that OAS 3 provides to cover various Inheritance related use-cases.
+- La fonction `getSchemaPath()` qui renvoie le chemin du schéma OpenAPI à partir du fichier de spécification OpenAPI pour un modèle donné.
+- `allOf` est un concept fourni par l'OAS 3 pour couvrir divers cas d'utilisation liés à l'héritage.
 
-Lastly, since `PaginatedDto` is not directly referenced by any controller, the `SwaggerModule` will not be able to generate a corresponding model definition just yet. In this case, we must add it as an [Extra Model](/openapi/types-and-parameters#extra-models). For example, we can use the `@ApiExtraModels()` decorator on the controller level, as follows:
+Enfin, puisque `PaginatedDto` n'est pas directement référencé par un contrôleur, le `SwaggerModule` ne sera pas capable de générer une définition de modèle correspondante pour le moment. Dans ce cas, nous devons l'ajouter en tant que [Extra Model](/openapi/types-and-parameters#modèles-additionels). Par exemple, nous pouvons utiliser le décorateur `@ApiExtraModels()` au niveau du contrôleur, comme suit :
 
 ```ts
 @Controller('cats')
@@ -223,7 +223,7 @@ Lastly, since `PaginatedDto` is not directly referenced by any controller, the `
 export class CatsController {}
 ```
 
-If you run Swagger now, the generated `swagger.json` for this specific endpoint should have the following response defined:
+Si vous lancez Swagger maintenant, le fichier `swagger.json` généré pour ce point de terminaison spécifique devrait avoir la réponse suivante définie :
 
 ```json
 "responses": {
@@ -251,7 +251,7 @@ If you run Swagger now, the generated `swagger.json` for this specific endpoint 
 }
 ```
 
-To make it reusable, we can create a custom decorator for `PaginatedDto`, as follows:
+Pour le rendre réutilisable, nous pouvons créer un décorateur personnalisé pour `PaginatedDto`, comme suit :
 
 ```ts
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
@@ -278,25 +278,25 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
 };
 ```
 
-> info **Hint** `Type<any>` interface and `applyDecorators` function are imported from the `@nestjs/common` package.
+> info **Astuce** L'interface `Type<any>` et la fonction `applyDecorators` sont importées du paquet `@nestjs/common`.
 
-To ensure that `SwaggerModule` will generate a definition for our model, we must add it as an extra model, like we did earlier with the `PaginatedDto` in the controller.
+Pour s'assurer que `SwaggerModule` génère une définition pour notre modèle, nous devons l'ajouter comme un modèle supplémentaire, comme nous l'avons fait plus tôt avec le `PaginatedDto` dans le contrôleur.
 
-With this in place, we can use the custom `@ApiPaginatedResponse()` decorator on our endpoint:
+Avec ceci en place, nous pouvons utiliser le décorateur personnalisé `@ApiPaginatedResponse()` sur notre point de terminaison :
 
 ```ts
 @ApiPaginatedResponse(CatDto)
 async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-For client generation tools, this approach poses an ambiguity in how the `PaginatedResponse<TModel>` is being generated for the client. The following snippet is an example of a client generator result for the above `GET /` endpoint.
+Pour les outils de génération de clients, cette approche pose une ambiguïté sur la façon dont le `PaginatedResponse<TModel>` est généré pour le client. L'extrait suivant est un exemple de résultat d'un générateur de client pour le point d'arrivée `GET /` ci-dessus.
 
 ```typescript
 // Angular
 findAll(): Observable<{ total: number, limit: number, offset: number, results: CatDto[] }>
 ```
 
-As you can see, the **Return Type** here is ambiguous. To workaround this issue, you can add a `title` property to the `schema` for `ApiPaginatedResponse`:
+Comme vous pouvez le voir, le **Type de retour** ici est ambigu. Pour contourner ce problème, vous pouvez ajouter une propriété `title` au `schema` pour `ApiPaginatedResponse` :
 
 ```typescript
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
@@ -313,7 +313,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
 };
 ```
 
-Now the result of the client generator tool will become:
+Le résultat de l'outil de génération de clients est maintenant le suivant :
 
 ```ts
 // Angular
