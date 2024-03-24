@@ -1,27 +1,27 @@
-### Decorators
+### Décorateurs
 
-All of the available OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. Below is a full list of the exported decorators along with a designation of the level at which the decorator may be applied.
+Tous les décorateurs OpenAPI disponibles ont un préfixe `Api` pour les distinguer des décorateurs de base. Vous trouverez ci-dessous la liste complète des décorateurs exportés, ainsi que la désignation du niveau auquel le décorateur peut être appliqué.
 
-|                           |                     |
-| ------------------------- | ------------------- |
-| `@ApiBasicAuth()`         | Method / Controller |
-| `@ApiBearerAuth()`        | Method / Controller |
-| `@ApiBody()`              | Method              |
-| `@ApiConsumes()`          | Method / Controller |
-| `@ApiCookieAuth()`        | Method / Controller |
-| `@ApiExcludeController()` | Controller          |
-| `@ApiExcludeEndpoint()`   | Method              |
-| `@ApiExtension()`         | Method              |
-| `@ApiExtraModels()`       | Method / Controller |
-| `@ApiHeader()`            | Method / Controller |
-| `@ApiHideProperty()`      | Model               |
-| `@ApiOAuth2()`            | Method / Controller |
-| `@ApiOperation()`         | Method              |
-| `@ApiParam()`             | Method              |
-| `@ApiProduces()`          | Method / Controller |
-| `@ApiProperty()`          | Model               |
-| `@ApiPropertyOptional()`  | Model               |
-| `@ApiQuery()`             | Method              |
-| `@ApiResponse()`          | Method / Controller |
-| `@ApiSecurity()`          | Method / Controller |
-| `@ApiTags()`              | Method / Controller |
+|                           |                      |
+| ------------------------- | -------------------- |
+| `@ApiBasicAuth()`         | Méthode / Contrôleur |
+| `@ApiBearerAuth()`        | Méthode / Contrôleur |
+| `@ApiBody()`              | Méthode              |
+| `@ApiConsumes()`          | Méthode / Contrôleur |
+| `@ApiCookieAuth()`        | Méthode / Contrôleur |
+| `@ApiExcludeController()` | Contrôleur           |
+| `@ApiExcludeEndpoint()`   | Méthode              |
+| `@ApiExtension()`         | Méthode              |
+| `@ApiExtraModel()`        | Méthode / Contrôleur |
+| `@ApiHeader()`            | Méthode / Contrôleur |
+| `@ApiHideProperty()`      | Modèle               |
+| `@ApiOAuth2()`            | Méthode / Contrôleur |
+| `@ApiOperation()`         | Méthode              |
+| `@ApiParam()`             | Méthode              |
+| `@ApiProduces()`          | Méthode / Contrôleur |
+| `@ApiProperty()`          | Modèle               |
+| `@ApiPropertyOptional()`  | Modèle               |
+| `@ApiQuery()`             | Méthode              |
+| `@ApiResponse()`          | Méthode / Contrôleur |
+| `@ApiSecurity()`          | Méthode / Contrôleur |
+| `@ApiTags()`              | Méthode / Contrôleur |
