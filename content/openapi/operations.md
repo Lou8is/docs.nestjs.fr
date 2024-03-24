@@ -215,7 +215,7 @@ Dans cet exemple, nous spécifions que la réponse aura allOf `PaginatedDto` et 
 - La fonction `getSchemaPath()` qui renvoie le chemin du schéma OpenAPI à partir du fichier de spécification OpenAPI pour un modèle donné.
 - `allOf` est un concept fourni par l'OAS 3 pour couvrir divers cas d'utilisation liés à l'héritage.
 
-Enfin, puisque `PaginatedDto` n'est pas directement référencé par un contrôleur, le `SwaggerModule` ne sera pas capable de générer une définition de modèle correspondante pour le moment. Dans ce cas, nous devons l'ajouter en tant que [Extra Model](/openapi/types-and-parameters#modèles-additionels). Par exemple, nous pouvons utiliser le décorateur `@ApiExtraModels()` au niveau du contrôleur, comme suit :
+Enfin, puisque `PaginatedDto` n'est pas directement référencé par un contrôleur, le `SwaggerModule` ne sera pas capable de générer une définition de modèle correspondante pour le moment. Dans ce cas, nous devons l'ajouter en tant que [modèle additionnel](/openapi/types-and-parameters#modèles-additionnels). Par exemple, nous pouvons utiliser le décorateur `@ApiExtraModels()` au niveau du contrôleur, comme suit :
 
 ```ts
 @Controller('cats')

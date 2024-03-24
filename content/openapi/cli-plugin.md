@@ -1,6 +1,6 @@
 ### Plugin CLI
 
-Le système de réflexion sur les métadonnées de [TypeScript] (https://www.typescriptlang.org/docs/handbook/decorators.html) présente plusieurs limites qui l'empêchent, par exemple, de déterminer les propriétés d'une classe ou de reconnaître si une propriété donnée est facultative ou obligatoire. Cependant, certaines de ces contraintes peuvent être résolues au moment de la compilation. Nest fournit un plugin qui améliore le processus de compilation de TypeScript afin de réduire la quantité de code de type "boilerplate" nécessaire.
+Le système de réflexion sur les métadonnées de [TypeScript](https://www.typescriptlang.org/docs/handbook/decorators.html) présente plusieurs limites qui l'empêchent, par exemple, de déterminer les propriétés d'une classe ou de reconnaître si une propriété donnée est facultative ou obligatoire. Cependant, certaines de ces contraintes peuvent être résolues au moment de la compilation. Nest fournit un plugin qui améliore le processus de compilation de TypeScript afin de réduire la quantité de code de type "boilerplate" nécessaire.
 
 > info **Astuce** Ce plugin est **sur activation**. Si vous préférez, vous pouvez déclarer tous les décorateurs manuellement, ou seulement les décorateurs spécifiques dont vous avez besoin.
 
@@ -300,6 +300,6 @@ $ npx jest --showConfig | grep cache
 
 # Supprimer ou vider le répertoire de cache de Jest
 $ rm -rf  <valeur de cacheDirectory>
-# par exemple:
+# par exemple :
 # rm -rf /tmp/jest_rs
 ```
