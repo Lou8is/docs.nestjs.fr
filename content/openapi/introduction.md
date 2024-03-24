@@ -1,10 +1,10 @@
 ### Introduction
 
-The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows generating such a specification by leveraging decorators.
+La spécification [OpenAPI](https://swagger.io/specification/) est un format de définition indépendant du langage utilisé pour décrire les API REST. Nest fournit un [module](https://github.com/nestjs/swagger) dédié qui permet de générer une telle spécification en s'appuyant sur des décorateurs.
 
 #### Installation
 
-To begin using it, we first install the required dependency.
+Pour commencer à l'utiliser, nous devons d'abord installer les dépendances nécessaires.
 
 ```bash
 $ npm install --save @nestjs/swagger
@@ -12,7 +12,7 @@ $ npm install --save @nestjs/swagger
 
 #### Bootstrap
 
-Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
+Une fois le processus d'installation terminé, ouvrez le fichier `main.ts` et initialisez Swagger en utilisant la classe `SwaggerModule` :
 
 ```typescript
 @@filename(main)
@@ -37,32 +37,32 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> info **Hint** `document` (returned by the `SwaggerModule#createDocument()` method) is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a JSON/YAML file, and consume it in different ways.
+> info **Astuce** `document` (retourné par la méthode `SwaggerModule#createDocument()`) est un objet sérialisable conforme à [OpenAPI Document](https://swagger.io/specification/#openapi-document). Au lieu de l'héberger via HTTP, vous pouvez également le sauvegarder en tant que fichier JSON/YAML, et le consommer de différentes manières.
 
-The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
+Le `DocumentBuilder` aide à structurer un document de base conforme à la spécification OpenAPI. Il fournit plusieurs méthodes qui permettent de définir des propriétés telles que le titre, la description, la version, etc. Afin de créer un document complet (avec toutes les routes HTTP définies), nous utilisons la méthode `createDocument()` de la classe `SwaggerModule`. Cette méthode prend deux arguments, une instance d'application et un objet d'options Swagger. Alternativement, nous pouvons fournir un troisième argument, qui doit être de type `SwaggerDocumentOptions`. Plus d'informations à ce sujet dans la section [Document options](/openapi/introduction#options-de-document).
 
-Once we create a document, we can call the `setup()` method. It accepts:
+Une fois que nous avons créé un document, nous pouvons appeler la méthode `setup()`. Elle accepte :
 
-1. The path to mount the Swagger UI
-2. An application instance
-3. The document object instantiated above
-4. Optional configuration parameter (read more [here](/openapi/introduction#document-options))
+1. Le chemin pour monter l'interface utilisateur Swagger
+2. Une instance d'application
+3. L'objet document instancié ci-dessus
+4. Un paramètre de configuration optionnel (en savoir plus [ici](/openapi/introduction#options-de-document))
 
-Now you can run the following command to start the HTTP server:
+Vous pouvez maintenant exécuter la commande suivante pour démarrer le serveur HTTP :
 
 ```bash
 $ npm run start
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see the Swagger UI.
+Pendant que l'application fonctionne, ouvrez votre navigateur et naviguez vers `http://localhost:3000/api`. Vous devriez voir l'interface utilisateur de Swagger.
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
-As you can see, the `SwaggerModule` automatically reflects all of your endpoints.
+Comme vous pouvez le voir, le `SwaggerModule` reflète automatiquement tous vos endpoints.
 
-> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Astuce** Pour générer et télécharger un fichier Swagger JSON, naviguez vers `http://localhost:3000/api-json` (en supposant que votre documentation Swagger soit disponible sous `http://localhost:3000/api`).
 
-> warning **Warning** When using `fastify` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
+> warning **Attention** Lors de l'utilisation de `fastify` et `helmet`, il peut y avoir un problème avec la [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), pour résoudre cette collision, configurez la CSP comme indiqué ci-dessous :
 >
 > ```typescript
 > app.register(helmet, {
@@ -76,48 +76,48 @@ As you can see, the `SwaggerModule` automatically reflects all of your endpoints
 >   },
 > });
 >
-> // If you are not going to use CSP at all, you can use this:
+> // Si vous n'avez pas l'intention d'utiliser CSP, vous pouvez utiliser ceci :
 > app.register(helmet, {
 >   contentSecurityPolicy: false,
 > });
 > ```
 
-#### Document options
+#### Options de document
 
-When creating a document, it is possible to provide some extra options to fine tune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
+Lors de la création d'un document, il est possible de fournir quelques options supplémentaires pour affiner le comportement de la bibliothèque. Ces options doivent être de type `SwaggerDocumentOptions`, qui peuvent être les suivantes :
 
 ```TypeScript
 export interface SwaggerDocumentOptions {
   /**
-   * List of modules to include in the specification
+   * Liste des modules à inclure dans la spécification
    */
   include?: Function[];
 
   /**
-   * Additional, extra models that should be inspected and included in the specification
+   * Modèles supplémentaires qui devraient être inspectés et inclus dans la spécification
    */
   extraModels?: Function[];
 
   /**
-   * If `true`, swagger will ignore the global prefix set through `setGlobalPrefix()` method
+   * Si `true`, swagger ignorera le préfixe global défini par la méthode `setGlobalPrefix()`.
    */
   ignoreGlobalPrefix?: boolean;
 
   /**
-   * If `true`, swagger will also load routes from the modules imported by `include` modules
+   * Si `true`, swagger chargera également les routes des modules importés par les modules `include`.
    */
   deepScanRoutes?: boolean;
 
   /**
-   * Custom operationIdFactory that will be used to generate the `operationId`
-   * based on the `controllerKey` and `methodKey`
+   * OperationIdFactory personnalisé qui sera utilisé pour générer le `operationId`
+   * basé sur `controllerKey` et `methodKey`.
    * @default () => controllerKey_methodKey
    */
   operationIdFactory?: (controllerKey: string, methodKey: string) => string;
 }
 ```
 
-For example, if you want to make sure that the library generates operation names like `createUser` instead of `UserController_createUser`, you can set the following:
+Par exemple, si vous voulez vous assurer que la bibliothèque génère des noms d'opérations comme `createUser` au lieu de `UserController_createUser`, vous pouvez définir ce qui suit :
 
 ```TypeScript
 const options: SwaggerDocumentOptions =  {
@@ -129,46 +129,46 @@ const options: SwaggerDocumentOptions =  {
 const document = SwaggerModule.createDocument(app, config, options);
 ```
 
-#### Setup options
+#### Options de configuration
 
-You can configure Swagger UI by passing the options object which fulfills the `SwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method.
+Vous pouvez configurer l'interface utilisateur de Swagger en passant l'objet options qui remplit l'interface `SwaggerCustomOptions` comme quatrième argument de la méthode `SwaggerModule#setup`.
 
 ```TypeScript
 export interface SwaggerCustomOptions {
   /**
-   * If `true`, Swagger resources paths will be prefixed by the global prefix set through `setGlobalPrefix()`.
-   * Default: `false`.
+   * Si `true`, les chemins des ressources Swagger seront préfixés par le préfixe global défini par `setGlobalPrefix()`.
+   * Par défaut : `false`.
    * @see https://docs.nestjs.com/faq/global-prefix
    */
   useGlobalPrefix?: boolean;
 
   /**
-   * If `false`, only API definitions (JSON and YAML) will be served (on `/{path}-json` and `/{path}-yaml`).
-   * This is particularly useful if you are already hosting a Swagger UI somewhere else and just want to serve API definitions.
-   * Default: `true`.
+   * Si `false`, seules les définitions d'API (JSON et YAML) seront servies (sur `/{path}-json` et `/{path}-yaml`).
+   * Ceci est particulièrement utile si vous hébergez déjà une interface Swagger ailleurs et que vous souhaitez simplement servir des définitions d'API.
+   * Par défaut : `true`.
    */
   swaggerUiEnabled?: boolean;
 
   /**
-   * Url point the API definition to load in Swagger UI.
+   * Url de la définition de l'API à charger dans Swagger UI.
    */
   swaggerUrl?: string;
 
   /**
-   * Path of the JSON API definition to serve.
-   * Default: `<path>-json`.
+   * Chemin d'accès à la définition JSON de l'API à servir.
+   * Par défaut : `<path>-json`.
    */
   jsonDocumentUrl?: string;
 
   /**
-   * Path of the YAML API definition to serve.
-   * Default: `<path>-yaml`.
+   * Chemin d'accès à la définition YAML de l'API à servir.
+   * Par défaut : `<path>-yaml`.
    */
   yamlDocumentUrl?: string;
 
   /**
-   * Hook allowing to alter the OpenAPI document before being served.
-   * It's called after the document is generated and before it is served as JSON & YAML.
+   * Hook permettant de modifier le document OpenAPI avant qu'il ne soit servi.
+   * Il est appelé après la génération du document et avant qu'il ne soit servi en tant que JSON & YAML.
    */
   patchDocumentOnRequest?: <TRequest = any, TResponse = any>(
     req: TRequest,
@@ -177,69 +177,69 @@ export interface SwaggerCustomOptions {
   ) => OpenAPIObject;
 
   /**
-   * If `true`, the selector of OpenAPI definitions is displayed in the Swagger UI interface.
-   * Default: `false`.
+   * Si `true`, le sélecteur de définitions OpenAPI est affiché dans l'interface Swagger UI.
+   * Par défaut : `false`.
    */
   explorer?: boolean;
 
   /**
-   * Additional Swagger UI options
+   * Options supplémentaires de l'interface utilisateur de Swagger
    */
   swaggerOptions?: SwaggerUiOptions;
 
   /**
-   * Custom CSS styles to inject in Swagger UI page.
+   * Styles CSS personnalisés à injecter dans la page Swagger UI.
    */
   customCss?: string;
 
   /**
-   * URL(s) of a custom CSS stylesheet to load in Swagger UI page.
+   * URL(s) d'une feuille de style CSS personnalisée à charger dans la page Swagger UI.
    */
   customCssUrl?: string | string[];
 
   /**
-   * URL(s) of custom JavaScript files to load in Swagger UI page.
+   * URL(s) des fichiers JavaScript personnalisés à charger dans la page Swagger UI.
    */
   customJs?: string | string[];
 
   /**
-   * Custom JavaScript scripts to load in Swagger UI page.
+   * Scripts JavaScript personnalisés à charger dans la page Swagger UI.
    */
   customJsStr?: string | string[];
 
   /**
-   * Custom favicon for Swagger UI page.
+   * Favicon personnalisé pour la page Swagger UI.
    */
   customfavIcon?: string;
 
   /**
-   * Custom title for Swagger UI page.
+   * Titre personnalisé pour la page Swagger UI.
    */
   customSiteTitle?: string;
 
   /**
-   * File system path (ex: ./node_modules/swagger-ui-dist) containing static Swagger UI assets.
+   * Chemin du système de fichiers (ex : ./node_modules/swagger-ui-dist) contenant les éléments statiques de l'interface utilisateur de Swagger.
    */
   customSwaggerUiPath?: string;
 
   /**
-   * @deprecated This property has no effect.
+   * @deprecated Cette propriété n'a aucun effet.
    */
   validatorUrl?: string;
 
   /**
-   * @deprecated This property has no effect.
+   * @deprecated Cette propriété n'a aucun effet.
    */
   url?: string;
 
   /**
-   * @deprecated This property has no effect.
+   * @deprecated Cette propriété n'a aucun effet.
    */
   urls?: Record<'url' | 'name', string>[];
 
 }
 ```
 
-#### Example
+#### Exemple
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
+Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
