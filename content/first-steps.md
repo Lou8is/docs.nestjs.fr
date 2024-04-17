@@ -14,7 +14,7 @@ Veuillez vous assurer que [Node.js](https://nodejs.org) (version >= 16) est inst
 
 #### Mise en place
 
-La mise en place d'un nouveau projet est assez simple avec l'[CLI Nest](/cli/overview). Si [npm](https://www.npmjs.com/) est installé, vous pouvez créer un nouveau projet Nest à l'aide des commandes suivantes dans le terminal de votre système d'exploitation :
+La mise en place d'un nouveau projet est assez simple avec le [CLI Nest](/cli/overview). Si [npm](https://www.npmjs.com/) est installé, vous pouvez créer un nouveau projet Nest à l'aide des commandes suivantes dans le terminal de votre système d'exploitation :
 
 ```bash
 $ npm i -g @nestjs/cli
