@@ -36,7 +36,7 @@ const routes: Routes = [
       {
         path: 'controllers',
         component: ControllersComponent,
-        data: { title: 'Fournisseurs' },
+        data: { title: 'Contrôleurs' },
       },
       {
         path: 'components',
