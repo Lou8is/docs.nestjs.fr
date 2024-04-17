@@ -14,7 +14,7 @@ Veuillez vous assurer que [Node.js](https://nodejs.org) (version >= 16) est inst
 
 #### Mise en place
 
-La mise en place d'un nouveau projet est assez simple avec le [CLI Nest](/cli/overview). Si [npm](https://www.npmjs.com/) est installé, vous pouvez créer un nouveau projet Nest à l'aide des commandes suivantes dans le terminal de votre système d'exploitation :
+La mise en place d'un nouveau projet est assez simple avec la [CLI Nest](/cli/overview). Si [npm](https://www.npmjs.com/) est installé, vous pouvez créer un nouveau projet Nest à l'aide des commandes suivantes dans le terminal de votre système d'exploitation :
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -117,7 +117,7 @@ Cette commande surveille vos fichiers, recompile et recharge automatiquement le 
 
 #### Linting et formatage
 
-[CLI](/cli/overview) s'efforce de mettre en place un flux de travail de développement fiable à grande échelle. Ainsi, un projet Nest généré est livré avec un **linter** et un **formateur** de code préinstallés (respectivement [eslint](https://eslint.org/) et [prettier](https://prettier.io/)).
+La [CLI](/cli/overview) s'efforce de mettre en place un flux de travail de développement fiable à grande échelle. Ainsi, un projet Nest généré est livré avec un **linter** et un **formateur** de code préinstallés (respectivement [eslint](https://eslint.org/) et [prettier](https://prettier.io/)).
 
 > info **Astuce** Vous n'êtes pas sûr du rôle des formateurs par rapport à celui des linters ? Apprenez la différence [ici](https://prettier.io/docs/en/comparison.html).
 
