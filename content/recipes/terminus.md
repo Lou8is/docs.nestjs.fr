@@ -1,7 +1,7 @@
 ### Contrôles de santé (Terminus)
 
 L'intégration de Terminus vous fournit des contrôles de santé **readiness/liveness**. Les contrôles de santé sont cruciaux lorsqu'il s'agit de configurations backend complexes. En bref, un contrôle de santé dans le domaine du développement web consiste généralement en une adresse spéciale, par exemple, `https://my-website.com/health/readiness`.
-Un service ou un composant de votre infrastructure (par exemple, Kubernetes) vérifie cette adresse en permanence. En fonction du code d'état HTTP renvoyé par une requête `GET` à cette adresse, le service prendra des mesures lorsqu'il recevra une réponse "malsaine".
+Un service ou un composant de votre infrastructure (par exemple, [Kubernetes](https://kubernetes.io/)) vérifie cette adresse en permanence. En fonction du code d'état HTTP renvoyé par une requête `GET` à cette adresse, le service prendra des mesures lorsqu'il recevra une réponse "malsaine".
 Étant donné que la définition de "sain" ou "malsain" varie selon le type de service que vous fournissez, l'intégration **Terminus** vous aide avec un ensemble d'**indicateurs de santé**.
 
 Par exemple, si votre serveur web utilise MongoDB pour stocker ses données, il serait vital de savoir si MongoDB est toujours opérationnel. Dans ce cas, vous pouvez utiliser le `MongooseHealthIndicator`. Si elle est configurée correctement - nous y reviendrons plus tard - votre adresse de contrôle de santé renverra un code de statut HTTP sain ou malsain, selon que MongoDB est en cours d'exécution ou non.

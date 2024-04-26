@@ -409,7 +409,7 @@ Dans cet exemple, nous allons procéder avec les packages `class-transformer` et
 ```typescript
 @@filename(env.validation)
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, validateSync } from 'class-validator';
+import { IsEnum, IsNumber, Max, Min, validateSync } from 'class-validator';
 
 enum Environment {
   Development = "development",

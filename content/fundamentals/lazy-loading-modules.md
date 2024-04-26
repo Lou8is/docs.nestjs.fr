@@ -1,4 +1,4 @@
-### Lazy-loading de modules
+### Lazy loading de modules
 
 Par défaut, les modules sont chargés avec avidité, ce qui signifie que dès que l'application est chargée, tous les modules le sont aussi, qu'ils soient nécessaires ou non dans l'immédiat. Bien que cela convienne à la plupart des applications, cela peut devenir un goulot d'étranglement pour les applications/travailleurs fonctionnant dans un **environnement sans serveur**, où la latence de démarrage ("démarrage à froid") est cruciale.
 
