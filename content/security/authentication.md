@@ -272,7 +272,7 @@ export class AuthService {
 }
 ```
 
-Nous utilisons la librairie `@nestjs/jwt`, qui fournit une fonction `signAsync()` pour générer notre JWT à partir d'un sous-ensemble de propriétés de l'objet `user`, que nous retournons ensuite comme un simple objet avec une seule propriété `access_token`. Note : nous avons choisi le nom de propriété `sub` pour contenir notre valeur `userId` afin d'être cohérent avec les standards JWT. N'oubliez pas d'injecter le fournisseur JwtService dans le `AuthService`.
+Nous utilisons la librairie `@nestjs/jwt`, qui fournit une fonction `signAsync()` pour générer notre JWT à partir d'un sous-ensemble de propriétés de l'objet `user`, que nous retournons ensuite comme un simple objet avec une seule propriété `access_token`. Note : nous avons choisi le nom de propriété `sub` pour contenir notre valeur `userId` afin d'être cohérent avec les standards JWT.
 
 Nous devons maintenant mettre à jour le `AuthModule` pour importer les nouvelles dépendances et configurer le `JwtModule`.
 
