@@ -161,7 +161,7 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Attention** Si votre classe n'étend pas une autre classe, vous devriez toujours préférer d'utiliser l'injection basée sur le constructeur.
+> warning **Attention** Si votre classe n'étend pas une autre classe, vous devriez toujours préférer d'utiliser l'injection basée sur le constructeur. Le constructeur décrit explicitement les dépendances requises et offre une meilleure visibilité que les attributs de classe annotés avec `@Inject`.
 
 #### Enregistrement des fournisseurs
 

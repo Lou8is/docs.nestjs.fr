@@ -81,7 +81,7 @@ Chaque file d'attente peut avoir un ou plusieurs producteurs, consommateurs et a
 
 #### Configurations nommées
 
-Si vos files d'attente se connectent à plusieurs instances Redis différentes, vous pouvez utiliser une technique appelée **configurations nommées**. Cette fonctionnalité vous permet d'enregistrer plusieurs configurations sous des clés spécifiques, auxquelles vous pouvez ensuite vous référer dans les options de la file d'attente.
+Si vos files d'attente se connectent à plusieurs instances Redis, vous pouvez utiliser une technique appelée **configurations nommées**. Cette fonctionnalité vous permet d'enregistrer plusieurs configurations sous des clés spécifiques, auxquelles vous pouvez ensuite vous référer dans les options de la file d'attente.
 
 Par exemple, si vous avez une instance Redis supplémentaire (en plus de l'instance par défaut) utilisée par quelques files d'attente enregistrées dans votre application, vous pouvez enregistrer sa configuration comme suit :
 

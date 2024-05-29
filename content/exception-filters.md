@@ -70,7 +70,7 @@ Voici un exemple de surcharge de l'ensemble du corps de la réponse et d'indicat
 async findAll() {
   try {
     await this.service.findAll()
-  } catch (error) { 
+  } catch (error) {
     throw new HttpException({
       status: HttpStatus.FORBIDDEN,
       error: 'This is a custom message',
@@ -381,8 +381,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 ```
 
 > warning **Attention** Les filtres à portée de méthode et à portée de contrôleur qui étendent le `BaseExceptionFilter` ne doivent pas être instanciés avec `new`. A la place, laissez le framework les instancier automatiquement.
-
-L'implémentation ci-dessus n'est qu'une ébauche de démonstration de l'approche. Votre implémentation du filtre d'exception étendu inclurait votre logique **professionnelle** personnalisée (par exemple, le traitement de diverses conditions).
 
 Les filtres globaux **peuvent** étendre le filtre de base. Cela peut se faire de deux manières.
 

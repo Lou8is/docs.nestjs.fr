@@ -51,7 +51,7 @@ await app.listen(3000);
 L'implémentation de votre propre logger personnalisé est simple. Il suffit d'implémenter chacune des méthodes de l'interface `LoggerService` comme indiqué ci-dessous.
 
 ```typescript
-import { LoggerService } from '@nestjs/common';
+import { LoggerService, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MyLogger implements LoggerService {
