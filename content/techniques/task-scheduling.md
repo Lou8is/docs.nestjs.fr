@@ -53,7 +53,7 @@ export class TasksService {
 
 Dans cet exemple, la méthode `handleCron()` sera appelée chaque fois que la seconde courante est `45`. En d'autres termes, la méthode sera exécutée une fois par minute, au bout de 45 secondes.
 
-Le décorateur `@Cron()` supporte tous les [motifs cron](http://crontab.org/) standards :
+Le décorateur `@Cron()` supporte les [motifs cron](http://crontab.org/) standards suivants :
 
 - Astérisque (par exemple `*`)
 - Plages (par exemple `1-3,5`)
