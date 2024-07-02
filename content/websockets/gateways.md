@@ -232,13 +232,20 @@ Il existe trois hooks utiles pour le cycle de vie. Ils ont tous des interfaces c
 
 > info **Astuce** Chaque interface de cycle de vie est exposée dans le package `@nestjs/websockets`.
 
-#### Serveur
+#### Serveur et Namespace
 
 Occasionnellement, vous pouvez vouloir avoir un accès direct à l'instance du serveur natif, **spécifique à la plateforme**. La référence à cet objet est passée comme argument à la méthode `afterInit()` (interface `OnGatewayInit`). Une autre option consiste à utiliser le décorateur `@WebSocketServer()`.
 
 ```typescript
 @WebSocketServer()
 server: Server;
+```
+
+Vous pouvez également récupérer le namespace correspondant en utilisant l'attribut `namespace`, comme suit :
+
+```typescript
+@WebSocketServer({ namespace : 'my-namespace' })
+namespace : Namespace ;
 ```
 
 > warning **Remarque** Le décorateur `@WebSocketServer()` est importé du package `@nestjs/websockets`.

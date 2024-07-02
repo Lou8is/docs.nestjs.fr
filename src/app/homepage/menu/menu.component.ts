@@ -294,7 +294,10 @@ export class MenuComponent implements OnInit {
     {
       title: 'Découvrir',
       isOpened: false,
-      children: [{ title: 'Qui utilise Nest ?', path: '/discover/companies' }],
+      children: [
+        { title: 'Qui utilise Nest ?', path: '/discover/companies' },
+        { title: 'Jobs board', externalUrl: 'https://jobs.nestjs.com/' },
+      ],
     },
     // {
     //   title: 'T-Shirts and Hoodies',
