@@ -55,6 +55,8 @@ Pour ajouter un élément au cache, utilisez la méthode `set` :
 await this.cacheManager.set('key', 'value');
 ```
 
+> warning **Note** La mémoire cache en mémoire ne peut stocker que des valeurs de types pris en charge par [l'algorithme de clonage structuré](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
+
 Le délai d'expiration par défaut du cache est de 5 secondes.
 
 Vous pouvez spécifier manuellement un TTL (délai d'expiration en secondes) pour cette clé spécifique, comme suit :
@@ -147,8 +149,11 @@ CacheModule.register({
 
 Lorsque le cache global est activé, les entrées du cache sont stockées sous une `CacheKey` qui est générée automatiquement en fonction du chemin de la route. Vous pouvez surcharger certains paramètres de cache (`@CacheKey()` et `@CacheTTL()`) pour chaque méthode, ce qui permet de personnaliser les stratégies de mise en cache pour les méthodes individuelles des contrôleurs. Cela peut s'avérer très utile lors de l'utilisation de [différents stockages de cache](/techniques/caching#différents-stockages).
 
+Vous pouvez appliquer le décorateur `@CacheTTL()` à chaque contrôleur pour définir un TTL de cache pour l'ensemble du contrôleur. Dans les situations où des paramètres de TTL de cache au niveau du contrôleur et au niveau de la méthode sont définis, les paramètres de TTL de cache spécifiés au niveau de la méthode auront la priorité sur ceux définis au niveau du contrôleur.
+
 ```typescript
 @Controller()
+@CacheTTL(50)
 export class AppController {
   @CacheKey('custom_key')
   @CacheTTL(20)
