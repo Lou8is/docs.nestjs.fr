@@ -22,7 +22,7 @@ export class CatsService {
 
 #### Récupérer des instances
 
-L'instance `ModuleRef` (ci-après nous nous y référerons en tant que **référence de module**) a une méthode `get()`. Cette méthode récupère un fournisseur, un contrôleur ou un objet injectable (par exemple, une garde, un intercepteur, etc.) qui existe (a été instancié) dans le module **actuel** en utilisant son jeton d'injection/nom de classe.
+L'instance `ModuleRef` (ci-après nous nous y référerons en tant que **référence de module**) a une méthode `get()`. Par défaut, cette méthode renvoie un fournisseur, un contrôleur ou un objet injectable (par exemple, une garde, un intercepteur, etc.) qui a été enregistré et instancié dans le **module actuel** en utilisant son jeton d'injection/nom de classe. Si l'instance n'est pas trouvée, une exception sera levée.
 
 ```typescript
 @@filename(cats.service)
