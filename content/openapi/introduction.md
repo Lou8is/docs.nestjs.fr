@@ -46,7 +46,7 @@ Une fois que nous avons créé un document, nous pouvons appeler la méthode `se
 1. Le chemin pour monter l'interface utilisateur Swagger
 2. Une instance d'application
 3. L'objet document instancié ci-dessus
-4. Un paramètre de configuration optionnel (en savoir plus [ici](/openapi/introduction#options-de-document))
+4. Un paramètre de configuration optionnel (en savoir plus [ici](/openapi/introduction#options-de-configuration))
 
 Vous pouvez maintenant exécuter la commande suivante pour démarrer le serveur HTTP :
 
@@ -61,6 +61,13 @@ Pendant que l'application fonctionne, ouvrez votre navigateur et naviguez vers `
 Comme vous pouvez le voir, le `SwaggerModule` reflète automatiquement tous vos endpoints.
 
 > info **Astuce** Pour générer et télécharger un fichier Swagger JSON, naviguez vers `http://localhost:3000/api-json` (en supposant que votre documentation Swagger soit disponible sous `http://localhost:3000/api`).
+> Il est également possible de l'exposer sur une route de votre choix en utilisant uniquement la méthode setup de `@nestjs/swagger`, comme ceci :
+> ```typescript
+> SwaggerModule.setup('swagger', app, document, {
+>   jsonDocumentUrl: 'swagger/json',
+> });
+> ```
+> Ce qui l'exposerait à l'adresse `http://localhost:3000/swagger/json`
 
 > warning **Attention** Lors de l'utilisation de `fastify` et `helmet`, il peut y avoir un problème avec la [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), pour résoudre cette collision, configurez la CSP comme indiqué ci-dessous :
 >
@@ -82,7 +89,7 @@ Comme vous pouvez le voir, le `SwaggerModule` reflète automatiquement tous vos 
 > });
 > ```
 
-#### Options de document
+#### Options de configuration
 
 Lors de la création d'un document, il est possible de fournir quelques options supplémentaires pour affiner le comportement de la bibliothèque. Ces options doivent être de type `SwaggerDocumentOptions`, qui peuvent être les suivantes :
 
