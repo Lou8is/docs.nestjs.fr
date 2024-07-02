@@ -342,7 +342,7 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 ```
 
-> hint **Astuce** Nous enregistrons le `JwtModule` comme global pour nous faciliter la tâche. Cela signifie que nous n'avons pas besoin d'importer le `JwtModule` ailleurs dans notre application.
+> info **Astuce** Nous enregistrons le `JwtModule` comme global pour nous faciliter la tâche. Cela signifie que nous n'avons pas besoin d'importer le `JwtModule` ailleurs dans notre application.
 
 Nous configurons le `JwtModule` en utilisant `register()`, en passant un objet de configuration. Voir [ici](https://github.com/nestjs/jwt/blob/master/README.md) pour plus de détails sur le Nest `JwtModule` et [ici](https://github.com/auth0/node-jsonwebtoken#usage) pour plus de détails sur les options de configuration disponibles.
 
