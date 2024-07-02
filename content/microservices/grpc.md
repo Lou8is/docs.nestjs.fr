@@ -339,6 +339,33 @@ Notez que cela nécessite la mise à jour de l'interface `HeroesService` que nou
 
 Un exemple concret est disponible [ici](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
+#### Réflexion gRPC
+
+La [spécification de réflexion du serveur gRPC](https://grpc.io/docs/guides/reflection/#overview) est une norme qui permet aux clients gRPC de demander des détails sur l'API que le serveur expose, un peu comme l'exposition d'un document OpenAPI pour une API REST. Cela peut faciliter considérablement le travail avec des outils de débogage pour développeurs tels que grpc-ui ou postman.
+
+Pour ajouter la prise en charge de la réflexion gRPC à votre serveur, installez d'abord le paquetage d'implémentation requis :
+
+```bash
+$ npm i --save @grpc/reflection
+```
+
+Ensuite, il peut être connecté au serveur gRPC en utilisant le hook `onLoadPackageDefinition` dans les options du serveur gRPC, comme suit :
+
+```typescript
+@@filename(main)
+import { ReflectionService } from '@grpc/reflection';
+
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  options: {
+    onLoadPackageDefinition: (pkg, server) => {
+      new ReflectionService(pkg).addToServer(server);
+    },
+  },
+});
+```
+
+Désormais, votre serveur répondra aux messages demandant des détails sur l'API en utilisant la spécification de réflexion.
+
 #### Flux de données gRPC
 
 gRPC supporte les connexions en direct à long terme, connues sous le nom de `streams` (flux). Les flux sont utiles dans des cas tels que le chat, les observations ou les transferts de données. Vous trouverez plus de détails dans la documentation officielle [ici](https://grpc.io/docs/guides/concepts/).
