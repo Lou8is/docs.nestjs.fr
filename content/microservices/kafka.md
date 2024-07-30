@@ -435,7 +435,7 @@ throw new KafkaRetriableException('...');
 
 #### Validation des décalages
 
-La validation des décalages est essentielle lorsque l'on travaille avec Kafka. Par défaut, les messages sont automatiquement validés après un certain temps. Pour plus d'informations, visitez [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offre un moyen de valider manuellement les décalages qui fonctionnent comme [l'implémentation native de KafkaJS](https://kafka.js.org/docs/consuming#manual-committing).
+La validation des décalages est essentielle lorsque l'on travaille avec Kafka. Par défaut, les messages sont automatiquement validés après un certain temps. Pour plus d'informations, visitez [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `KafkaContext` offre un moyen d'accèder au consommateur actif pour valider manuellement les décalages. Ce consommateur est le consomamteur KafkaJS et fonctionne comme [l'implémentation native de KafkaJS](https://kafka.js.org/docs/consuming#manual-committing).
 
 ```typescript
 @@filename()
@@ -446,7 +446,8 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
   const { offset } = context.getMessage();
   const partition = context.getPartition();
   const topic = context.getTopic();
-  await this.client.commitOffsets([{ topic, partition, offset }])
+  const consumer = context.getConsumer();
+  await consumer.commitOffsets([{ topic, partition, offset }])
 }
 @@switch
 @Bind(Payload(), Ctx())
@@ -457,7 +458,8 @@ async handleUserCreated(data, context) {
   const { offset } = context.getMessage();
   const partition = context.getPartition();
   const topic = context.getTopic();
-  await this.client.commitOffsets([{ topic, partition, offset }])
+  const consumer = context.getConsumer();
+  await consumer.commitOffsets([{ topic, partition, offset }])
 }
 ```
 

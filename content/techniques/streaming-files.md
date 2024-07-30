@@ -46,18 +46,30 @@ export class FileController {
 }
 ```
 
-Le type de contenu par défaut est `application/octet-stream`, si vous avez besoin de personnaliser la réponse, vous pouvez utiliser la méthode `res.set` ou le décorateur [`@Header()`](/controllers#headers), comme ceci :
+Le type de contenu par défaut (la valeur de l'en-tête de réponse HTTP `Content-Type`) est `application/octet-stream`. Si vous avez besoin de personnaliser cette valeur, vous pouvez utiliser l'option `type` de `StreamableFile`, ou utiliser la méthode `res.set` ou le décorateur [`@Header()`](/controllers#headers), comme ceci :
 
 ```ts
 import { Controller, Get, StreamableFile, Res } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import type { Response } from 'express';
+import type { Response } from 'express'; // En partant du principe que nous utilisons l'adaptateur HTTP ExpressJS
 
 @Controller('file')
 export class FileController {
   @Get()
-  getFile(@Res({ passthrough: true }) res: Response): StreamableFile {
+  getFile(): StreamableFile {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    return new StreamableFile(file, {
+      type: 'application/json',
+      disposition: 'attachment; filename="package.json"',
+      // Si vous souhaitez définir la valeur Content-Length avec une autre valeur au lieu de la longueur du fichier :
+      // length: 123,
+    });
+  }
+
+  // Or even:
+  @Get()
+  getFileChangingResponseObjDirectly(@Res({ passthrough: true }) res: Response): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
     res.set({
       'Content-Type': 'application/json',
@@ -70,7 +82,7 @@ export class FileController {
   @Get()
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="package.json"')
-  getStaticFile(): StreamableFile {
+  getFileUsingStaticValues(): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
     return new StreamableFile(file);
   }  

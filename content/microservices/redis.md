@@ -60,7 +60,7 @@ La propriété `options` est spécifique au transporteur choisi. Le transporteur
   </tr>
    <tr>
     <td><code>wildcards</code></td>
-    <td>Active les abonnements Redis wilcard, en demandant au transporteur d'utiliser <code>psubscribe</code>/<code>pmessage</code> sous le capot. (par défaut :  <code>false</code>)</td>
+    <td>Active les abonnements Redis wildcard, en demandant au transporteur d'utiliser <code>psubscribe</code>/<code>pmessage</code> sous le capot. (par défaut :  <code>false</code>)</td>
   </tr>
 </table>
 

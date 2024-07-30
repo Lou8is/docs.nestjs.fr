@@ -351,7 +351,7 @@ async findAll() {
 }
 ```
 
-Le code ci-dessus est tout à fait valide. En outre, les gestionnaires de route Nest sont encore plus puissants car ils peuvent renvoyer des [flux observables](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html) RxJS. Nest s'abonnera automatiquement à la source sous-jacente et prendra la dernière valeur émise (une fois que le flux est terminé).
+Le code ci-dessus est tout à fait valide. En outre, les gestionnaires de route Nest sont encore plus puissants car ils peuvent renvoyer des [flux observables](https://rxjs-dev.firebaseapp.com/guide/observable) RxJS. Nest s'abonnera automatiquement à la source sous-jacente et prendra la dernière valeur émise (une fois que le flux est terminé).
 
 ```typescript
 @@filename(cats.controller)

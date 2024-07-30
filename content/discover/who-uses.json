@@ -87,6 +87,10 @@
       "logo": "/assets/logo/hingehealth.png",
       "url": "https://hingehealth.com",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/whiskey-house.svg",
+      "url": "https://whiskeyhouse.com"
     }
   ],
   "Body": [
@@ -171,6 +175,7 @@
     "https://phalco.de",
     "https://www.tesseractpro.io",
     "https://www.kwanso.com",
-    "https://cmdn.io"
+    "https://cmdn.io",
+    "https://ayo.so"
   ]
 }
