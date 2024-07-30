@@ -86,7 +86,7 @@ S'il y a plusieurs owners, la configuration de votre propriété doit être la s
 
 ```typescript
 @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }] })
-owner: Owner[];
+owners: Owner[];
 ```
 
 Enfin, la définition **brute** du schéma peut également être transmise au décorateur. Ceci est utile lorsque, par exemple, une propriété représente un objet imbriqué qui n'est pas défini comme une classe. Pour cela, utilisez la fonction `raw()` du package `@nestjs/mongoose`, comme suit :
