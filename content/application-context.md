@@ -10,24 +10,24 @@ Pour créer une application autonome Nest, utilisez la construction suivante :
 @@filename()
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  // logique d'application...
+  // votre logique d'application ici...
 }
 bootstrap();
 ```
 
-L'objet d'application autonome vous permet d'obtenir une référence à n'importe quelle instance enregistrée dans l'application Nest. Imaginons que nous ayons un `TasksService` dans le `TasksModule`. Cette classe fournit un ensemble de méthodes que nous voulons appeler à partir d'un travail CRON.
+#### Récupérer les fournisseurs à partir de modules statiques
+
+L'objet d'application autonome vous permet d'obtenir une référence à n'importe quelle instance enregistrée dans l'application Nest. Imaginons que nous ayons un fournisseur `TasksService` dans le module `TasksModule` qui a été importé par notre module `AppModule`. Cette classe fournit un ensemble de méthodes que nous voulons appeler à partir d'un travail CRON.
 
 ```typescript
 @@filename()
-const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.get(TasksService);
 ```
 
-Pour accéder à l'instance de `TasksService`, nous utilisons la méthode `get()`. La méthode `get()` agit comme une **requête** qui recherche une instance dans chaque module enregistré. Alternativement, pour une vérification stricte du contexte, passez un objet options avec la propriété `strict : true`. Avec cette option en vigueur, vous devez naviguer à travers des modules spécifiques pour obtenir une instance particulière du contexte sélectionné.
+Pour accéder à l'instance de `TasksService`, nous utilisons la méthode `get()`. La méthode `get()` agit comme une **requête** qui recherche une instance dans chaque module enregistré. Vous pouvez lui passer n'importe quel jeton de fournisseur. Alternativement, pour une vérification stricte du contexte, passez un objet options avec la propriété `strict : true`. Avec cette option en vigueur, vous devez naviguer à travers des modules spécifiques pour obtenir une instance particulière du contexte sélectionné.
 
 ```typescript
 @@filename()
-const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
@@ -54,17 +54,42 @@ Voici un résumé des méthodes disponibles pour récupérer les références d'
 
 > info **Astuce** En mode non strict, le module racine est sélectionné par défaut. Pour sélectionner un autre module, vous devez naviguer manuellement dans le graphe des modules, étape par étape.
 
-Si vous voulez que l'application node se ferme après la fin du script (par exemple, pour un script exécutant des tâches CRON), ajoutez `await app.close()` à la fin de votre fonction `bootstrap` :
+#### Récupérer les fournisseurs à partir de modules dynamiques
+
+Lorsqu'il s'agit de [modules dynamiques](/fundamentals/dynamic-modules.md), nous devons fournir à `app.select` le même objet qui représente le module dynamique enregistré dans l'application. Par exemple :
+
+```typescript
+@@filename()
+export const dynamicConfigModule = ConfigModule.register({ folder: './config' });
+
+@Module({
+  imports: [dynamicConfigModule],
+})
+export class AppModule {}
+```
+
+Vous pouvez ensuite sélectionner ce module plus tard :
+
+```typescript
+@@filename()
+const configService = app.select(dynamicConfigModule).get(ConfigService, { strict: true });
+```
+
+#### Phase de clôture
+
+Si vous voulez que l'application node se ferme après la fin du script (par exemple, pour un script exécutant des tâches CRON), vous devez appeler la méthode `app.close()` à la fin de votre fonction `bootstrap` comme ceci :
 
 ```typescript
 @@filename()
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  // logique d'application...
+  // votre logique d'application ici...
   await app.close();
 }
 bootstrap();
 ```
+
+Et comme indiqué dans le chapitre [Événements du cycle de vie](/fundamentals/lifecycle-events.md), cela déclenchera des hooks de cycle de vie.
 
 #### Exemple
 
