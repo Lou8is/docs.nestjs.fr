@@ -2,7 +2,7 @@
 
 Une garde est une classe annotée avec le décorateur `@Injectable()`, qui implémente l'interface `CanActivate`.
 
-<figure><img src="/assets/Guards_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Guards_1.png" /></figure>
 
 Les gardes ont une **responsabilité unique**. Elles déterminent si une requête donnée sera traitée par le gestionnaire de route ou non, en fonction de certaines conditions (comme les permissions, les rôles, les ACL, etc.) présentes au moment de l'exécution. C'est ce que l'on appelle souvent **autorisation**. L'autorisation (et sa cousine, l'**authentification**, avec laquelle elle collabore généralement) est généralement gérée par un [middleware](/middleware) dans les applications Express traditionnelles. Le middleware est un bon choix pour l'authentification, puisque des choses comme la validation de jetons et l'attachement de propriétés à l'objet `request` ne sont pas fortement liées à un contexte de route particulier (et à ses métadonnées).
 

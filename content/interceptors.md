@@ -2,7 +2,7 @@
 
 Un intercepteur est une classe annotée avec le décorateur `@Injectable()` et implémentant l'interface `NestInterceptor`.
 
-<figure><img src="/assets/Interceptors_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Interceptors_1.png" /></figure>
 
 Les intercepteurs disposent d'un ensemble de fonctionnalités utiles qui s'inspirent de la [Programmation Orientée Aspect](https://en.wikipedia.org/wiki/Aspect-oriented_programming) (POA). Ils permettent de :
 

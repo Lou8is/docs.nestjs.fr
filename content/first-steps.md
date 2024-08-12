@@ -4,7 +4,7 @@ Dans cette série d'articles, vous apprendrez les **fondamentaux** de Nest. Pour
 
 #### Langage
 
-Nous sommes amoureux de [TypeScript](https://www.typescriptlang.org/), mais surtout de [Node.js](https://nodejs.org/en/). C'est pourquoi Nest est compatible à la fois avec TypeScript et **le JavaScript pur**. Nest profite des dernières fonctionnalités du langage, donc pour l'utiliser avec du JavaScript de base, nous avons besoin d'un compilateur [Babel](https://babeljs.io/).
+Nous sommes amoureux de [TypeScript](https://www.typescriptlang.org/), mais surtout de [Node.js](https://nodejs.org/en/). C'est pourquoi Nest est compatible à la fois avec TypeScript et le JavaScript pur. Nest profite des dernières fonctionnalités du langage, donc pour l'utiliser avec du JavaScript de base, nous avons besoin d'un compilateur [Babel](https://babeljs.io/).
 
 Nous utiliserons principalement TypeScript dans les exemples que nous fournissons, mais vous pouvez toujours **changer les extraits de code** en syntaxe JavaScript pur (il suffit de cliquer pour basculer le bouton de langage dans le coin supérieur droit de chaque extrait).
 

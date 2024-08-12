@@ -4,7 +4,7 @@ La plupart des concepts abordés ailleurs dans cette documentation, tels que l'i
 
 Dans Nest, une gateway est simplement une classe annotée avec le décorateur `@WebSocketGateway()`. Techniquement, les gateways sont agnostiques en termes de plateforme, ce qui les rend compatibles avec n'importe quelle bibliothèque WebSockets une fois qu'un adaptateur est créé. Deux plates-formes WS sont prises en charge dès le départ : [socket.io](https://github.com/socketio/socket.io) et [ws](https://github.com/websockets/ws). Vous pouvez choisir celle qui correspond le mieux à vos besoins. Vous pouvez également créer votre propre adaptateur en suivant ce [guide](/websockets/adapter).
 
-<figure><img src="/assets/Gateways_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Gateways_1.png" /></figure>
 
 > info **Astuce** Les gateways peuvent être traitées comme des [providers](/providers) ; cela signifie qu'elles peuvent injecter des dépendances via le constructeur de la classe. Les passerelles peuvent également être injectées par d'autres classes (fournisseurs et contrôleurs).
 

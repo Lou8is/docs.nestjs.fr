@@ -2,7 +2,7 @@
 
 Le transporteur [Redis](https://redis.io/) met en œuvre le paradigme de messagerie publication/abonnement et exploite la fonctionnalité [Pub/Sub](https://redis.io/topics/pubsub) de Redis. Les messages publiés sont classés dans des canaux, sans savoir quels abonnés (s'il y en a) recevront finalement le message. Chaque microservice peut s'abonner à un nombre quelconque de canaux. En outre, il est possible de s'abonner à plus d'un canal à la fois. Les messages échangés par l'intermédiaire des canaux sont **fire-and-forget**, ce qui signifie que si un message est publié et qu'il n'y a pas d'abonnés intéressés, le message est supprimé et ne peut pas être récupéré. Vous n'avez donc aucune garantie que les messages ou les événements seront traités par au moins un service. Un même message peut être souscrit (et reçu) par plusieurs abonnés.
 
-<figure><img src="/assets/Redis_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Redis_1.png" /></figure>
 
 #### Installation
 

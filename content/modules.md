@@ -2,7 +2,7 @@
 
 Un module est une classe annotée avec un décorateur `@Module()`. Le décorateur `@Module()` fournit des métadonnées que **Nest** utilise pour organiser la structure de l'application.
 
-<figure><img src="/assets/Modules_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Modules_1.png" /></figure>
 
 Chaque application possède au moins un module, un **module racine**. Le module racine est le point de départ que Nest utilise pour construire le **graphe de l'application** - la structure de données interne que Nest utilise pour résoudre les relations et les dépendances entre les modules et les fournisseurs. Bien que de très petites applications puissent théoriquement n'avoir qu'un module racine, ce n'est pas le cas typique. Nous tenons à souligner que les modules sont **fortement** recommandés comme moyen efficace d'organiser vos composants. Ainsi, pour la plupart des applications, l'architecture résultante utilisera plusieurs modules, chacun encapsulant un ensemble de **capacités** étroitement liées.
 
@@ -79,7 +79,7 @@ Voici à quoi ressemble désormais la structure de notre répertoire :
 
 Dans Nest, les modules sont des **singletons** par défaut, et vous pouvez donc partager la même instance d'un fournisseur entre plusieurs modules sans effort.
 
-<figure><img src="/assets/Shared_Module_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Shared_Module_1.png" /></figure>
 
 Chaque module est automatiquement un **module partagé**. Une fois créé, il peut être réutilisé par n'importe quel module. Imaginons que nous voulions partager une instance de `CatsService` entre plusieurs autres modules. Pour ce faire, nous devons d'abord **exporter** le fournisseur `CatsService` en l'ajoutant au tableau `exports` du module, comme montré ci-dessous :
 

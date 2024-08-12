@@ -2,7 +2,7 @@
 
 Les contrôleurs sont chargés de traiter les **requêtes** entrantes et de renvoyer les **réponses** au client.
 
-<figure><img src="/assets/Controllers_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Controllers_1.png" /></figure>
 
 L'objectif d'un contrôleur est de recevoir des requêtes spécifiques pour l'application. Le mécanisme de **routage** permet de contrôler quel contrôleur reçoit quelles requêtes. Souvent, chaque contrôleur possède plus d'une route, et les différentes routes peuvent effectuer des actions différentes.
 

@@ -2,7 +2,7 @@
 
 Un middleware est une fonction qui est appelée **avant** le handler de route. Les fonctions intermédiaires ont accès aux objets [request](https://expressjs.com/en/4x/api.html#req) et [response](https://expressjs.com/en/4x/api.html#res), ainsi qu'à la fonction intermédiaire `next()` dans le cycle requête-réponse de l'application. La fonction **next** de l'intergiciel est généralement désignée par une variable nommée `next`.
 
-<figure><img src="/assets/Middlewares_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Middlewares_1.png" /></figure>
 
 Les middlewares Nest sont, par défaut, équivalents aux middlewares [express](https://expressjs.com/en/guide/using-middleware.html). La description suivante, tirée de la documentation officielle d'express, décrit les capacités des middlewares :
 
