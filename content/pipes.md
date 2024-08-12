@@ -3,7 +3,7 @@
 Un pipe est une classe annotée avec le décorateur `@Injectable()`, qui implémente l'interface `PipeTransform`.
 
 <figure>
-  <img src="/assets/Pipe_1.png" />
+  <img class="illustrative-image" src="/assets/Pipe_1.png" />
 </figure>
 
 Les pipes ont deux cas d'utilisation typiques :

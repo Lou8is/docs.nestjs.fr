@@ -4,7 +4,7 @@ En plus des architectures d'application traditionnelles (parfois appelées monol
 
 Dans Nest, un microservice est fondamentalement une application qui utilise une couche de **transport** différente de HTTP.
 
-<figure><img src="/assets/Microservices_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Microservices_1.png" /></figure>
 
 Nest supporte plusieurs implémentations intégrées de la couche de transport, appelées **transporteurs**, qui sont responsables de la transmission de messages entre différentes instances de microservices. La plupart des transporteurs supportent nativement les styles de messages **requête-réponse** et **événement**. Nest abstrait les détails d'implémentation de chaque transporteur derrière une interface canonique pour les messages de type requête-réponse et basés sur les événements. Il est ainsi facile de passer d'une couche de transport à une autre - par exemple pour exploiter les caractéristiques de fiabilité ou de performance spécifiques d'une couche de transport particulière - sans affecter le code de votre application.
 

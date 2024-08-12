@@ -2,118 +2,126 @@
 @use '../../../../scss/utils';
 
 :host {
-  position: relative;
-  display: block;
+    position: relative;
+    display: block;
 }
 
 h3 {
-  @extend .transition;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: variables.$black-color;
-  font-size: 15px;
-  margin: 10px 0;
-  &:hover {
-    color: variables.$red-color;
-    @include utils.text-gradient();
-  }
+    @extend .transition;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--color-1dp);
+    font-size: 15px;
+    margin: 10px 0;
+
+    &:hover {
+        color: variables.$red-color;
+        @include utils.text-gradient();
+    }
 }
 
 .new {
-  color: #fff;
-  background: variables.$red-gradient;
-  font-size: 11px;
-  padding: 2px 4px;
-  margin-right: 5px;
-  font-weight: 700;
-  border-radius: 2px;
-  -webkit-text-fill-color: #fff;
+    color: #fff;
+    background: variables.$red-gradient;
+    font-size: 11px;
+    padding: 2px 4px;
+    margin-right: 5px;
+    font-weight: 700;
+    border-radius: 2px;
+    -webkit-text-fill-color: #fff;
 }
 
 .active h3 {
-  color: variables.$red-color;
-  @include utils.text-gradient();
+    color: variables.$red-color;
+    @include utils.text-gradient();
 }
 
 .material-icons {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .arrow-icon {
-  @extend .transition;
-  @include utils.transform(rotate(90deg));
+    @extend .transition;
+    @include utils.transform(rotate(90deg));
 
-  position: absolute;
-  top: 1px;
-  right: 20px;
-  font-size: 20px;
-  cursor: pointer;
+    position: absolute;
+    top: 1px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 li {
-  display: block;
-  padding: 2.5px 0;
+    display: block;
+    padding: 2.5px 0;
 
-  &:first-of-type {
-    padding-top: 0;
-  }
-
-  a {
-    color: variables.$black-color;
-    font-size: 14px;
-    text-decoration: none;
-    cursor: pointer;
-    &:hover {
-      color: variables.$red-color;
-      @include utils.text-gradient();
+    &:first-of-type {
+        padding-top: 0;
     }
-    &.active {
-      font-weight: 600;
-      color: variables.$red-color;
-      @include utils.text-gradient();
-    }
-  }
 
-  .pending {
-    color: #afafaf !important;
-    pointer-events: none;
-  }
+    a {
+        color: var(--menu-color);
+        font-size: 14px;
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover {
+            color: variables.$red-color;
+            @include utils.text-gradient();
+        }
+
+        &.active {
+            font-weight: 600;
+            color: variables.$red-color;
+            @include utils.text-gradient();
+        }
+    }
+
+    .pending {
+        color: #afafaf !important;
+        pointer-events: none;
+    }
 }
 
 .nav-item {
-  ul {
-    margin: 10px 0 15px;
-  }
-
-  &.opened {
-    .arrow-icon {
-      @include utils.transform(rotate(-90deg));
-      fill: variables.$red-color;
+    ul {
+        margin: 10px 0 15px;
     }
-  }
+
+    .arrow-icon {
+        fill: var(--color);
+    }
+
+    &.opened {
+        .arrow-icon {
+            @include utils.transform(rotate(-90deg));
+            fill: var(--primary);
+        }
+    }
 }
 
 .heading {
-  cursor: pointer;
-  &:hover {
-    .arrow-icon {
-      color: variables.$red-color;
+    cursor: pointer;
+
+    &:hover {
+        .arrow-icon {
+            color: var(--primary);
+        }
     }
-  }
 }
 
 ul {
-  padding-left: 15px;
+    padding-left: 15px;
 }
 
 .material-icons {
-  font-size: 14px;
-  margin-left: 3px;
-  vertical-align: middle;
-  padding-bottom: 4px;
+    font-size: 14px;
+    margin-left: 3px;
+    vertical-align: middle;
+    padding-bottom: 4px;
 }
 
 .has-icon h3 {
-  color: variables.$red-color;
-  @include utils.text-gradient();
+    color: variables.$red-color;
+    @include utils.text-gradient();
 }

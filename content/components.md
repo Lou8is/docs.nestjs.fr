@@ -2,7 +2,7 @@
 
 Les fournisseurs sont un concept fondamental de Nest. De nombreuses classes de base de Nest peuvent être considérées comme des fournisseurs : services, répertoires, usines, aides, etc. L'idée principale d'un fournisseur est qu'il peut être **injecté** en tant que dépendance ; cela signifie que les objets peuvent créer diverses relations les uns avec les autres et que la fonction de "câblage" de ces objets peut être largement déléguée au système d'exécution Nest.
 
-<figure><img src="/assets/Components_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Components_1.png" /></figure>
 
 Dans le chapitre précédent, nous avons construit un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples qui sont déclarées comme `providers` dans un [module](/modules).
 

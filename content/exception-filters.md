@@ -3,7 +3,7 @@
 Nest est livré avec une **couche d'exceptions** intégrée qui est responsable du traitement de toutes les exceptions non gérées dans une application. Lorsqu'une exception n'est pas gérée par le code de votre application, elle est prise en charge par cette couche, qui envoie alors automatiquement une réponse appropriée et conviviale.
 
 <figure>
-  <img src="/assets/Filter_1.png" />
+  <img class="illustrative-image" src="/assets/Filter_1.png" />
 </figure>
 
 Cette action est effectuée par un **filtre d'exception global** intégré, qui gère les exceptions de type `HttpException` (et ses sous-classes). Quand une exception est **non reconnue** (n'est ni `HttpException` ni une classe qui hérite de `HttpException`), le filtre d'exception intégré génère la réponse JSON par défaut suivante :

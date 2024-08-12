@@ -6,7 +6,7 @@ Une application Nest, ainsi que chaque élément de l'application, a un cycle de
 
 Le diagramme suivant illustre la séquence des événements clés du cycle de vie de l'application, depuis le démarrage de l'application jusqu'à la fin du processus node. Nous pouvons diviser le cycle de vie global en trois phases : **initialisation**, **exécution** et **arrêt**. Grâce à ce cycle de vie, vous pouvez planifier l'initialisation appropriée des modules et des services, gérer les connexions actives et arrêter gracieusement votre application lorsqu'elle reçoit un signal d'arrêt.
 
-<figure><img src="/assets/lifecycle-events.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/lifecycle-events.png" /></figure>
 
 #### Événements du cycle de vie
 
