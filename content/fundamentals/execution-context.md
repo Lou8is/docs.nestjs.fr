@@ -255,7 +255,7 @@ const roles = this.reflector.getAllAndMerge(Roles, [context.getHandler(), contex
 
 Le résultat serait que `roles` contiendrait `['user', 'admin']`.
 
-Pour ces deux méthodes de fusion, vous passez la référence du décorateur comme premier argument, et un tableau de contextes cibles de métadonnées (c'est-à-dire les appels aux méthodes `getHandler()` et/ou `getClass())`) comme second argument.
+Pour ces deux méthodes de fusion, vous passez la référence du décorateur comme premier argument, et un tableau de contextes cibles de métadonnées (c'est-à-dire les appels aux méthodes `getHandler()` et/ou `getClass()`) comme second argument.
 
 #### Approche de bas niveau
 
