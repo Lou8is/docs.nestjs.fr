@@ -132,14 +132,29 @@ Ce module peut fonctionner avec des websockets, mais il nécessite une extension
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(context: ExecutionContext, limit: number, ttl: number, throttler: ThrottlerOptions): Promise<boolean> {
-    const client = context.switchToWs().getClient();
-    const ip = client._socket.remoteAddress;
-    const key = this.generateKey(context, ip, throttler.name);
-    const { totalHits } = await this.storageService.increment(key, ttl);
+  async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
+    const { context, limit, ttl, throttler, blockDuration, getTracker, generateKey } = requestProps;
 
-    if (totalHits > limit) {
-      throw new ThrottlerException();
+        const client = context.switchToWs().getClient();
+    const tracker = client._socket.remoteAddress;
+    const key = generateKey(context, tracker, throttler.name);
+    const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
+      await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name);
+
+    const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
+
+    // Lancer une erreur lorsque l'utilisateur a atteint sa limite.
+    if (isBlocked) {
+      await this.throwThrottlingException(context, {
+        limit,
+        ttl,
+        key,
+        tracker,
+        totalHits,
+        timeToExpire,
+        isBlocked,
+        timeToBlockExpire,
+      });
     }
 
     return true;
@@ -188,6 +203,10 @@ Les options suivantes sont valables pour l'objet passé au tableau des options d
     <td>le nombre maximum de requêtes dans la limite du TTL</td>
   </tr>
   <tr>
+    <td><code>blockDuration</code></td>
+    <td>le nombre de millisecondes pendant lesquelles la demande sera bloquée.</td>
+  </tr>
+  <tr>
     <td><code>ignoreUserAgents</code></td>
     <td>une liste d'expressions régulières d'agents-utilisateurs à ignorer pour les limitations de requêtes.</td>
   </tr>
@@ -215,6 +234,18 @@ Si vous avez besoin de configurer le stockage à la place, ou si vous voulez uti
   <tr>
     <td><code>throttlers</code></td>
     <td>un tableau d'ensembles de limitateurs, définis à l'aide du tableau ci-dessus</td>
+  </tr>
+  <tr>
+    <td><code>errorMessage</code></td>
+    <td>une <code>string</code> OU une fonction qui prend en compte le <code>ExecutionContext</code> et le <code>ThrottlerLimitDetail</code> et renvoie une <code>string</code> qui remplace le message d'erreur par défaut du throttler.</td>
+  </tr>
+  <tr>
+    <td><code>getTracker</code></td>
+    <td>une fonction qui prend en compte la <code>Request</code> et renvoie une <code>string</code> pour remplacer la logique par défaut de la méthode <code>getTracker</code></td>
+  </tr>
+  <tr>
+    <td><code>generateKey</code></td>
+    <td>une fonction qui prend en compte le <code>ExecutionContext</code>, la <code>string</code> du tacker et le nom du throttler en tant que <code>string</code> et renvoie une <code>string</code> pour surcharger la clé finale qui sera utilisée pour stocker la valeur de la limite de taux. Cette fonction remplace la logique par défaut de la méthode <code>generateKey</code>.</td>
   </tr>
 </table>
 
