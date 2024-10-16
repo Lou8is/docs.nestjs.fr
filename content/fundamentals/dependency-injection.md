@@ -242,20 +242,20 @@ La syntaxe `useFactory` permet de créer des fournisseurs **dynamiquement**. Le 
 @@filename()
 const connectionProvider = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider: OptionsProvider, optionalProvider?: string) => {
+  useFactory: (optionsProvider: MyOptionsProvider, optionalProvider?: string) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
-  //       \_____________/            \__________________/
-  //        Ce fournisseur         Le fournisseur avec ce jeton
-  //       est obligatoire        peut être résolu en `undefined`.
+  inject: [MyOptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \______________/             \__________________/
+  //        Ce fournisseur           Le fournisseur avec ce jeton
+  //       est obligatoire         peut être résolu en `undefined`.
 };
 
 @Module({
   providers: [
     connectionProvider,
-    OptionsProvider,
+    MyOptionsProvider, // fournisseur basé sur la classe
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })

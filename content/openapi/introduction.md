@@ -186,6 +186,10 @@ export interface SwaggerCustomOptions {
   /**
    * Si `true`, le sélecteur de définitions OpenAPI est affiché dans l'interface Swagger UI.
    * Par défaut : `false`.
+   * 
+   * Quand `true` et que `swaggerOptions.urls` est fourni, une liste déroulante intitulée « Select a definition » (sélectionner une définition)
+   * est affichée dans l'interface utilisateur Swagger, permettant aux utilisateurs de choisir parmi les définitions d'API disponibles
+   * spécifiées dans le tableau `urls`. 
    */
   explorer?: boolean;
 
