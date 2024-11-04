@@ -90,7 +90,7 @@ Vous devez dupliquer les valeurs de description et d'exemple. Avec `introspectCo
 roles: RoleEnum[] = [];
 ```
 
-Il y a des options de plugin `dtoKeyOfComment` et `controllerKeyOfComment` que vous pouvez utiliser pour personnaliser la façon dont le plugin va définir la valeur des décorateurs `ApiProperty` et `ApiOperation` respectivement. Regardez l'exemple suivant :
+Il y a des options de plugin `dtoKeyOfComment` et `controllerKeyOfComment` que vous disponible pour personnaliser la façon dont le plugin va assigner les valeurs aux décorateurs `ApiProperty` et `ApiOperation` respectivement. Voir l'exemple ci-dessous :
 
 ```typescript
 export class SomeController {
@@ -102,13 +102,29 @@ export class SomeController {
 }
 ```
 
-Par défaut, ces options sont réglées sur `"description"`. Cela signifie que le plugin assignera `"Créer une ressource"` à la clé `description` de l'opérateur `ApiOperation`. Comme cela :
+Cela équivaut à l'instruction suivante :
 
-```ts
-@ApiOperation({ description: "Créer une ressource" })
+```typescript
+@ApiOperation({ summary: "Créer une ressource" })
 ```
 
-> info **Astuce** Pour les modèles, la même logique s'applique mais avec le décorateur `ApiProperty` à la place.
+> info **Astuce** Pour les modèles, la même logique s'applique mais est utilisée avec le décorateur `ApiProperty` à la place.
+
+Pour les contrôleurs, vous pouvez fournir non seulement un résumé, mais aussi une description (remarques), des balises (telles que @deprecated`) et des exemples de réponses, comme ceci :
+
+```typescript
+/**
+ * Créer un nouveau chat
+ *
+ * @remarks Cette opération permet de créer un nouveau chat.
+ *
+ * @deprecated
+ * @throws {500} Something went wrong.
+ * @throws {400} Bad Request.
+ */
+@Post()
+async create(): Promise<Cat> {}
+```
 
 #### Utiliser le plugin CLI
 
@@ -179,7 +195,7 @@ export interface PluginOptions {
   </tr>
   <tr>
     <td><code>controllerKeyOfComment</code></td>
-    <td><code>'description'</code></td>
+    <td><code>'summary'</code></td>
     <td>Clé de propriété à laquelle attribuer le texte du commentaire  <code>ApiOperation</code>.</td>
   </tr>
   <tr>

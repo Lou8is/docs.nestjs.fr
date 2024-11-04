@@ -54,6 +54,10 @@ Voici un résumé des méthodes disponibles pour récupérer les références d'
 
 > info **Astuce** En mode non strict, le module racine est sélectionné par défaut. Pour sélectionner un autre module, vous devez naviguer manuellement dans le graphe des modules, étape par étape.
 
+Gardez à l'esprit qu'une application autonome n'a pas d'auditeurs réseau, donc toutes les fonctionnalités de Nest liées à HTTP (par exemple, middleware, intercepteurs, pipes, gardes, etc.) ne sont pas disponibles dans ce contexte.
+
+Par exemple, même si vous enregistrez un intercepteur global dans votre application et que vous récupérez une instance de contrôleur en utilisant la méthode `app.get()`, l'intercepteur ne sera pas exécuté.
+
 #### Récupérer les fournisseurs à partir de modules dynamiques
 
 Lorsqu'il s'agit de [modules dynamiques](/fundamentals/dynamic-modules.md), nous devons fournir à `app.select` le même objet qui représente le module dynamique enregistré dans l'application. Par exemple :

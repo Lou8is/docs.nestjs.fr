@@ -14,7 +14,7 @@ Nest fournit une architecture d'application prête à l'emploi qui permet aux d�
 
 #### Installation
 
-Pour commencer, vous pouvez soit créer le projet à l'aide de la [CLI Nest] (/cli/overview), soit cloner un projet de départ (les deux produiront le même résultat).
+Pour commencer, vous pouvez soit créer le projet à l'aide de la [CLI Nest](/cli/overview), soit [cloner un projet de départ](#alternatives) (les deux produiront le même résultat).
 
 Pour créer le projet à l'aide de l'interface de programmation Nest, exécutez les commandes suivantes. Cela créera un nouveau répertoire de projet et le remplira avec les fichiers de base initiaux de Nest et les modules de soutien, créant ainsi une structure de base conventionnelle pour votre projet. La création d'un nouveau projet à l'aide de l'interface de programmation **Nest** est recommandée pour les nouveaux utilisateurs. Nous poursuivrons cette approche dans [Premiers pas](first-steps).
 
@@ -42,8 +42,4 @@ Ouvrez votre navigateur et naviguez vers [`http://localhost:3000/`](http://local
 
 Pour installer la version JavaScript du projet de base, utilisez `javascript-starter.git` dans la séquence de commandes ci-dessus.
 
-Vous pouvez également créer manuellement un nouveau projet à partir de zéro en installant le noyau et les fichiers de support avec **npm** (ou **yarn**). Dans ce cas, bien sûr, vous serez responsable de la création des fichiers de base du projet vous-même.
-
-```bash
-$ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
-```
+Vous pouvez également démarrer un nouveau projet à partir de zéro en installant les paquets de base et de support. Gardez à l'esprit que vous devrez configurer vous-même les fichiers de base du projet. Au minimum, vous aurez besoin des dépendances suivantes : `@nestjs/core`, `@nestjs/common`, `rxjs`, et `reflect-metadata`. Consultez ce court article (en anglais) sur la façon de créer un projet complet : [5 étapes pour créer une application NestJS minimale à partir de zéro](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b).

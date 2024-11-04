@@ -80,7 +80,7 @@ Les dépendances transitoires ne suivent pas ce modèle. Si un `DogsService` à 
 
 Dans une application basée sur un serveur HTTP (par exemple, en utilisant `@nestjs/platform-express` ou `@nestjs/platform-fastify`), vous pouvez vouloir accéder à une référence à l'objet de requête original lorsque vous utilisez des fournisseurs à portée de requête. Vous pouvez le faire en injectant l'objet `REQUEST`.
 
-Le fournisseur `REQUEST` est à portée de requête, donc il n'est pas nécessaire d'utiliser le scope `REQUEST` ici.
+Le fournisseur `REQUEST` est intrinsèquement à portée de requête, ce qui signifie que vous n'avez pas besoin de spécifier explicitement la portée `REQUEST` lorsque vous l'utilisez. De plus, même si vous essayez de le faire, cela ne sera pas pris en compte. Tout fournisseur qui s'appuie sur un fournisseur à portée de requête adopte automatiquement une portée de requête, et ce comportement ne peut pas être modifié.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -209,7 +209,7 @@ return {
   resolve: (info: HostComponentInfo) =>
     info.isTreeDurable ? tenantSubTreeId : contextId,
   payload: { tenantId },
-}
+};
 ```
 
 Maintenant, chaque fois que vous injectez le fournisseur `REQUEST` (ou `CONTEXT` pour les applications GraphQL) en utilisant `@Inject(REQUEST)`/`@Inject(CONTEXT)`, l'objet `payload` sera injecté (composé d'une seule propriété - `tenantId` dans ce cas).

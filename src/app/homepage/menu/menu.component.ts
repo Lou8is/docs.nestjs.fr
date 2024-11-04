@@ -193,6 +193,11 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+        title: 'Déploiement',
+        isNew: true,
+        path: '/deployment',
+      },
+    {
       title: 'Applications indépendantes',
       isOpened: false,
       path: '/standalone-applications',
@@ -248,7 +253,8 @@ export class MenuComponent implements OnInit {
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
         { title: 'Async local storage', path: '/recipes/async-local-storage' },
-        { title: 'Automock', path: '/recipes/automock' },
+        { title: 'Necord', path: '/recipes/necord' },
+        { title: 'Suites (Automock)', path: '/recipes/suites' },
       ],
     },
     {
@@ -275,7 +281,6 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Devtools',
-      isNew: true,
       isOpened: false,
       children: [
         { title: 'Vue d\'ensemble', path: '/devtools/overview' },
@@ -318,7 +323,7 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationEnd))
-      .subscribe((event) => this.toggleCategory());
+      .subscribe(() => this.toggleCategory());
 
     this.toggleCategory();
   }

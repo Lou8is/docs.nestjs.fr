@@ -234,7 +234,7 @@ Une technique consiste à importer le module `ClientsModule`, qui expose la mét
 
 La propriété `name` sert de **jeton d'injection** qui peut être utilisé pour injecter une instance de `ClientProxy` là où c'est nécessaire. La valeur de la propriété `name`, en tant que jeton d'injection, peut être une chaîne arbitraire ou un symbole JavaScript, comme décrit [ici](/fundamentals/custom-providers#jetons-de-fournisseur-non-basés-sur-une-classe).
 
-La propriété `options` est un objet avec les mêmes propriétés que nous avons vu dans la méthode `createMicroservice()` plus tôt.
+La propriété `options` est un objet qui contient les mêmes propriétés que nous avons vu dans la méthode `createMicroservice()` plus tôt.
 
 ```typescript
 @Module({
@@ -242,12 +242,33 @@ La propriété `options` est un objet avec les mêmes propriétés que nous avon
     ClientsModule.register([
       { name: 'MATH_SERVICE', transport: Transport.TCP },
     ]),
-  ]
-  ...
+  ],
+})
+```
+ 
+Vous pouvez également utiliser la méthode `registerAsync()` si vous avez besoin de passer une configuration ou d'effectuer d'autres processus asynchrones.
+
+```typescript
+@Module({
+  imports: [
+    ClientsModule.registerAsync([
+      {
+        imports: [ConfigModule],
+        name: 'MATH_SERVICE',
+        useFactory: async (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            url: configService.get('URL'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
+  ],
 })
 ```
 
-Une fois le module importé, nous pouvons injecter une instance du `ClientProxy` configuré comme spécifié via les options du transporteur `'MATH_SERVICE'' montrées ci-dessus, en utilisant le décorateur `@Inject()`.
+Une fois le module importé, vous pouvez injecter une instance du `ClientProxy` configuré avec les options spécifiées pour le transporteur `'MATH_SERVICE'` en utilisant le décorateur `@Inject()`.
 
 ```typescript
 constructor(
@@ -388,3 +409,67 @@ this.client
 > info **Astuce** L'opérateur `timeout` est importé du package `rxjs/operators`.
 
 Après 5 secondes, si le microservice ne répond pas, il lance une erreur.
+
+#### Prise en charge TLS
+
+Lorsque l'on communique en dehors d'un réseau privé, il est important de chiffrer le trafic pour garantir la sécurité. Dans NestJS, cela peut être réalisé avec TLS sur TCP en utilisant le module [TLS](https://nodejs.org/api/tls.html) intégré de Node. Nest fournit un support intégré pour TLS dans son transport TCP, ce qui nous permet de chiffrer la communication entre les microservices ou les clients.
+
+Pour activer TLS pour un serveur TCP, vous aurez besoin d'une clé privée et d'un certificat au format PEM. Ceux-ci sont ajoutés aux options du serveur en définissant `tlsOptions` et en spécifiant les fichiers de clé et de certificat, comme indiqué ci-dessous :
+
+```typescript
+import * as fs from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+
+async function bootstrap() {
+  const key = fs.readFileSync('<pathToKeyFile>', 'utf8').toString();
+  const cert = fs.readFileSync('<pathToCertFile>', 'utf8').toString();
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        tlsOptions: {
+          key,
+          cert,
+        },
+      },
+    },
+  );
+
+  await app.listen();
+}
+bootstrap();
+```
+
+Pour qu'un client puisse communiquer de manière sécurisée via TLS, nous définissons également l'objet `tlsOptions`, mais cette fois avec le certificat CA. Il s'agit du certificat de l'autorité qui a signé le certificat du serveur. Cela garantit que le client fait confiance au certificat du serveur et peut établir une connexion sécurisée.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          tlsOptions: {
+            ca: [fs.readFileSync('<pathToCaFile>', 'utf-8').toString()],
+          },
+        },
+      },
+    ]),
+  ],
+})
+export class AppModule {}
+```
+
+Vous pouvez aussi passer un tableau de CAs si votre configuration implique plusieurs autorités de confiance.
+
+Une fois que tout est configuré, vous pouvez injecter le `ClientProxy` comme d'habitude en utilisant le décorateur `@Inject()` pour utiliser le client dans vos services. Cela assure une communication chiffrée à travers vos microservices NestJS, le module `TLS` de Node gérant les détails du chiffrement.
+
+Pour plus d'informations, reportez-vous à la [documentation TLS](https://nodejs.org/api/tls.html) de Node.

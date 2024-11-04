@@ -33,7 +33,7 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 @@switch
@@ -50,7 +50,7 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
@@ -156,7 +156,7 @@ async function bootstrap() {
     },
     templates: join(__dirname, '..', 'views'),
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 @@switch
@@ -177,12 +177,14 @@ async function bootstrap() {
     },
     templates: join(__dirname, '..', 'views'),
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
 
-L'API Fastify est légèrement différentes mais le résultat final de ces appels aux méthodes reste le même. Une différence notable avec Fastify est que le nom de modèle passé au décorateur `@Render()` doit inclure une extension de fichier.
+L'API Fastify a quelques différences, mais le résultat final de ces appels de méthode est le même. Une différence notable est que lorsque vous utilisez Fastify, le nom du modèle que vous passez dans le décorateur `@Render()` doit inclure l'extension du fichier.
+
+Voici comment vous pouvez le configurer :
 
 ```typescript
 @@filename(app.controller)
@@ -195,6 +197,18 @@ export class AppController {
   root() {
     return { message: 'Hello world!' };
   }
+}
+```
+
+Alternativement, vous pouvez utiliser le décorateur `@Res()` pour injecter directement la réponse et spécifier la vue que vous voulez rendre, comme montré ci-dessous :
+
+```typescript
+import { Res } from '@nestjs/common';
+import { FastifyReply } from 'fastify';
+
+@Get()
+root(@Res() res: FastifyReply) {
+  return res.view('index.hbs', { title: 'Hello world!' });
 }
 ```
 

@@ -21,7 +21,7 @@ Pour désactiver la journalisation, mettez la propriété `logger` à `false` da
 const app = await NestFactory.create(AppModule, {
   logger: false,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Pour activer des niveaux de journalisation spécifiques, définissez la propriété `logger` avec un tableau de caractères spécifiant les niveaux de journalisation à afficher, comme suit :
@@ -30,7 +30,7 @@ Pour activer des niveaux de journalisation spécifiques, définissez la proprié
 const app = await NestFactory.create(AppModule, {
   logger: ['error', 'warn'],
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Les valeurs du tableau peuvent être n'importe quelle combinaison de `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, et `'verbose'`.
@@ -45,7 +45,7 @@ Vous pouvez fournir une implémentation de logger personnalisée qui sera utilis
 const app = await NestFactory.create(AppModule, {
   logger: console,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 L'implémentation de votre propre logger personnalisé est simple. Il suffit d'implémenter chacune des méthodes de l'interface `LoggerService` comme indiqué ci-dessous.
@@ -93,7 +93,7 @@ Vous pouvez alors fournir une instance de `MyLogger` via la propriété `logger`
 const app = await NestFactory.create(AppModule, {
   logger: new MyLogger(),
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Cette technique, bien que simple, n'utilise pas l'injection de dépendance pour la classe `MyLogger`. Cela peut poser quelques problèmes, en particulier pour les tests, et limiter la réutilisation de `MyLogger`. Pour une meilleure solution, voir la section <a href="techniques/logger#injection-de-dépendance">Injection de dépendances</a> ci-dessous.
@@ -148,10 +148,10 @@ const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(app.get(MyLogger));
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
-> info **Remarque** Dans l'exemple ci-dessus, nous avons mis `bufferLogs` à `true` pour nous assurer que tous les logs seront mis en mémoire tampon jusqu'à ce qu'un logger personnalisé soit attaché (`MyLogger` dans ce cas) et que le processus d'initialisation de l'application soit terminé ou échoue. Si le processus d'initialisation échoue, Nest se rabattra sur le `ConsoleLogger` original pour imprimer tous les messages d'erreur rapportés. Vous pouvez également définir `autoFlushLogs` à `false` (par défaut `true`) pour vider manuellement les logs (en utilisant la méthode `Logger#flush()`).
+> info **Remarque** Dans l'exemple ci-dessus, nous avons mis `bufferLogs` à `true` pour nous assurer que tous les logs seront mis en mémoire tampon jusqu'à ce qu'un logger personnalisé soit attaché (`MyLogger` dans ce cas) et que le processus d'initialisation de l'application soit terminé ou échoue. Si le processus d'initialisation échoue, Nest se rabattra sur le `ConsoleLogger` original pour imprimer tous les messages d'erreur rapportés. Vous pouvez également définir `autoFlushLogs` à `false` (par défaut `true`) pour vider manuellement les logs (en utilisant la méthode `Logger.flush()`).
 
 Ici, nous utilisons la méthode `get()` sur l'instance `NestApplication` pour récupérer l'instance singleton de l'objet `MyLogger`. Cette technique est essentiellement un moyen d'"injecter" une instance d'un logger pour qu'il soit utilisé par Nest. L'appel à `app.get()` récupère l'instance singleton de `MyLogger`, et dépend de l'injection préalable de cette instance dans un autre module, comme décrit ci-dessus.
 
@@ -187,6 +187,31 @@ Si nous fournissons un logger personnalisé via `app.useLogger()`, il sera en fa
 Ainsi, si nous suivons les étapes de la section précédente et appelons `app.useLogger(app.get(MyLogger))`, les appels suivants à `this.logger.log()` depuis `MyService` résulteront en des appels à la méthode `log` depuis l'instance `MyLogger`.
 
 Cela devrait convenir dans la plupart des cas. Mais si vous avez besoin de plus de personnalisation (comme l'ajout et l'appel de méthodes personnalisées), passez à la section suivante.
+
+#### Logs avec timestamps
+
+Pour activer l'enregistrement de l'horodatage pour chaque message enregistré, vous pouvez utiliser le paramètre optionnel `timestamp : true` lors de la création de l'instance du logger.
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name, { timestamp: true });
+
+  doSomething() {
+    this.logger.log('Doing something with timestamp here ->');
+  }
+}
+```
+
+Cela produira un résultat dans le format suivant :
+
+```bash
+[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
+```
+
+Notez le `+5ms` à la fin de la ligne. Pour chaque déclaration, la différence de temps par rapport au message précédent est calculée et affichée à la fin de la ligne.
 
 #### Injection d'un logger personnalisé
 
@@ -249,7 +274,7 @@ const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(new MyLogger());
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Astuce** Alternativement, au lieu de mettre `bufferLogs` à `true`, vous pouvez désactiver temporairement le logger avec l'instruction `logger : false`. Soyez conscient que si vous fournissez `logger : false` à `NestFactory.create`, rien ne sera enregistré jusqu'à ce que vous appeliez `useLogger`, donc vous pourriez manquer d'importantes erreurs d'initialisation. Si cela ne vous dérange pas que certains de vos messages initiaux soient enregistrés avec le logger par défaut, vous pouvez simplement omettre l'option `logger : false`.

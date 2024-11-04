@@ -34,7 +34,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter()
   );
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
@@ -73,7 +73,6 @@ Vous pouvez passer des options au constructeur de Fastify à travers le construc
 ```typescript
 new FastifyAdapter({ logger: true });
 ```
-
 
 #### Middleware
 

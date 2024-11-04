@@ -52,7 +52,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.scrollSubscription = fromEvent(window, 'scroll')
       .pipe(debounceTime(this.scrollDebounceTime))
-      .subscribe(_ => {
+      .subscribe(() => {
         this.findCurrentHeading();
         this.checkViewportBoundaries();
       });
@@ -68,6 +68,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     this.scrollSubscription && this.scrollSubscription.unsubscribe();
+
     this.timerSubscription && this.timerSubscription.unsubscribe();
   }
 
@@ -164,7 +165,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  trackById(index, item) {
+  trackById(index: number, item: { id: number }) {
     return item.id;
   }
 }

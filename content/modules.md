@@ -99,6 +99,10 @@ export class CatsModule {}
 
 Maintenant, tout module qui importe le `CatsModule` a accès au `CatsService` et partagera la même instance avec tous les autres modules qui l'importent également.
 
+Si nous devions enregistrer directement le `CatsService` dans chaque module qui en a besoin, cela fonctionnerait en effet, mais chaque module obtiendrait sa propre instance du `CatsService`. Cela peut conduire à une augmentation de l'utilisation de la mémoire puisque de multiples instances du même service sont créées, et cela peut aussi causer un comportement inattendu, comme une incohérence d'état si le service maintient un état interne.
+
+En encapsulant le `CatsService` dans un module, comme le `CatsModule`, et en l'exportant, nous nous assurons que la même instance de `CatsService` est réutilisée dans tous les modules qui importent `CatsModule`. Cela permet non seulement de réduire la consommation de mémoire, mais aussi d'obtenir un comportement plus prévisible, puisque tous les modules partagent la même instance, ce qui facilite la gestion des états ou des ressources partagés. C'est l'un des principaux avantages de la modularité et de l'injection de dépendances dans des frameworks comme NestJS, qui permettent de partager efficacement les services dans l'ensemble de l'application.
+
 <app-banner-devtools></app-banner-devtools>
 
 #### Réexportation de modules

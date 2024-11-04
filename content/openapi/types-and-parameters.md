@@ -203,9 +203,34 @@ CatBreed:
 
 > info **Astuce** Tout **décorateur** qui prend `enum` comme propriété prendra aussi `enumName`.
 
+#### Exemples de valeurs de propriétés
+
+Vous pouvez définir un seul exemple pour une propriété en utilisant la clé `example`, comme ceci :
+
+```typescript
+@ApiProperty({
+  example: 'persian',
+})
+breed: string;
+```
+
+Si vous souhaitez fournir plusieurs exemples, vous pouvez utiliser la clé `examples` en passant un objet structuré comme suit :
+
+```typescript
+@ApiProperty({
+  examples: {
+    Persian: { value: 'persian' },
+    Tabby: { value: 'tabby' },
+    Siamese: { value: 'siamese' },
+    'Scottish Fold': { value: 'scottish_fold' },
+  },
+})
+breed: string;
+```
+
 #### Définitions brutes
 
-Dans certains cas particuliers (tableaux profondément imbriqués, matrices, etc.), vous pouvez souhaiter décrire votre type à la main.
+Dans certains cas, tels que les tableaux ou les matrices profondément imbriqués, vous devrez peut-être définir manuellement votre type :
 
 ```typescript
 @ApiProperty({
@@ -220,7 +245,27 @@ Dans certains cas particuliers (tableaux profondément imbriqués, matrices, etc
 coords: number[][];
 ```
 
-De même, pour définir manuellement le contenu de vos entrées/sorties dans les classes de contrôleurs, utilisez la propriété `schema` :
+Vous pouvez également spécifier des schémas d'objets bruts, comme ceci :
+
+```typescript
+@ApiProperty({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      example: 'Error'
+    },
+    status: {
+      type: 'number',
+      example: 400
+    }
+  },
+  required: ['name', 'status']
+})
+rawDefinition: Record<string, any>;
+```
+
+Pour définir manuellement le contenu de vos entrées/sorties dans les classes de contrôleurs, utilisez la propriété `schema` :
 
 ```typescript
 @ApiBody({
@@ -251,9 +296,10 @@ export class CreateCatDto {}
 Alternativement, vous pouvez passer un objet d'options avec la propriété `extraModels` spécifiée à la méthode `SwaggerModule#createDocument()`, comme suit :
 
 ```typescript
-const document = SwaggerModule.createDocument(app, options, {
-  extraModels: [ExtraModel],
-});
+const documentFactory = () =>
+  SwaggerModule.createDocument(app, options, {
+    extraModels: [ExtraModel],
+  });
 ```
 
 Pour obtenir une référence (`$ref`) à votre modèle, utilisez la fonction `getSchemaPath(ExtraModel)` :
@@ -298,3 +344,16 @@ pets: Pet[];
 > info **Astuce** La fonction `getSchemaPath()` est importée de `@nestjs/swagger`.
 
 Les deux modèles `Cat` et `Dog` doivent être définis comme des modèles supplémentaires en utilisant le décorateur `@ApiExtraModels()` (au niveau de la classe).
+
+#### Nom du schéma
+
+Comme vous avez pu le remarquer, le nom du schéma généré est basé sur le nom de la classe du modèle original (par exemple, le modèle `CreateCatDto` génère un schéma `CreateCatDto`). Si vous souhaitez changer le nom du schéma, vous pouvez utiliser le décorateur `@ApiSchema()`.
+
+Voici un exemple :
+
+```typescript
+@ApiSchema({ name: 'CreateCatRequest' })
+class CreateCatDto {}
+```
+
+Le modèle ci-dessus sera traduit dans le schéma en `CreateCatRequest`.

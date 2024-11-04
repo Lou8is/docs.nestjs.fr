@@ -29,15 +29,15 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
 
-> info **Astuce** `document` (retourné par la méthode `SwaggerModule#createDocument()`) est un objet sérialisable conforme à [OpenAPI Document](https://swagger.io/specification/#openapi-document). Au lieu de l'héberger via HTTP, vous pouvez également le sauvegarder en tant que fichier JSON/YAML, et le consommer de différentes manières.
+> info **Astuce** La méthode d'usine `SwaggerModule#createDocument()` est utilisée spécifiquement pour générer le document Swagger lorsque vous le demandez. Cette approche permet d'économiser du temps d'initialisation, et le document résultant est un objet sérialisable conforme à la spécification [OpenAPI Document](https://swagger.io/specification/#openapi-document). Au lieu de servir le document via HTTP, vous pouvez également le sauvegarder en tant que fichier JSON ou YAML et l'utiliser de différentes manières.
 
 Le `DocumentBuilder` aide à structurer un document de base conforme à la spécification OpenAPI. Il fournit plusieurs méthodes qui permettent de définir des propriétés telles que le titre, la description, la version, etc. Afin de créer un document complet (avec toutes les routes HTTP définies), nous utilisons la méthode `createDocument()` de la classe `SwaggerModule`. Cette méthode prend deux arguments, une instance d'application et un objet d'options Swagger. Alternativement, nous pouvons fournir un troisième argument, qui doit être de type `SwaggerDocumentOptions`. Plus d'informations à ce sujet dans la section [Document options](/openapi/introduction#options-de-document).
 
@@ -62,11 +62,13 @@ Comme vous pouvez le voir, le `SwaggerModule` reflète automatiquement tous vos 
 
 > info **Astuce** Pour générer et télécharger un fichier Swagger JSON, naviguez vers `http://localhost:3000/api-json` (en supposant que votre documentation Swagger soit disponible sous `http://localhost:3000/api`).
 > Il est également possible de l'exposer sur une route de votre choix en utilisant uniquement la méthode setup de `@nestjs/swagger`, comme ceci :
+>
 > ```typescript
 > SwaggerModule.setup('swagger', app, document, {
 >   jsonDocumentUrl: 'swagger/json',
 > });
 > ```
+>
 > Ce qui l'exposerait à l'adresse `http://localhost:3000/swagger/json`
 
 > warning **Attention** Lors de l'utilisation de `fastify` et `helmet`, il peut y avoir un problème avec la [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), pour résoudre cette collision, configurez la CSP comme indiqué ci-dessous :
@@ -121,6 +123,15 @@ export interface SwaggerDocumentOptions {
    * @default () => controllerKey_methodKey
    */
   operationIdFactory?: (controllerKey: string, methodKey: string) => string;
+
+  /*
+   * Génère automatiquement des balises basées sur le nom du contrôleur.
+   * Si `false`, vous devez utiliser le décorateur `@ApiTags()` pour définir les balises.
+   * Sinon, le nom du contrôleur sans le suffixe `Controller` sera utilisé.
+   *
+   * @default true
+   */
+  autoTagControllers?: boolean;
 }
 ```
 
@@ -133,7 +144,7 @@ const options: SwaggerDocumentOptions =  {
     methodKey: string
   ) => methodKey
 };
-const document = SwaggerModule.createDocument(app, config, options);
+const documentFactory = () => SwaggerModule.createDocument(app, config, options);
 ```
 
 #### Options de configuration
@@ -186,7 +197,7 @@ export interface SwaggerCustomOptions {
   /**
    * Si `true`, le sélecteur de définitions OpenAPI est affiché dans l'interface Swagger UI.
    * Par défaut : `false`.
-   * 
+   *
    * Quand `true` et que `swaggerOptions.urls` est fourni, une liste déroulante intitulée « Select a definition » (sélectionner une définition)
    * est affichée dans l'interface utilisateur Swagger, permettant aux utilisateurs de choisir parmi les définitions d'API disponibles
    * spécifiées dans le tableau `urls`. 

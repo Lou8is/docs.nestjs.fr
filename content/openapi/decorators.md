@@ -17,11 +17,13 @@ Tous les décorateurs OpenAPI disponibles ont un préfixe `Api` pour les disting
 | `@ApiHideProperty()`      | Modèle               |
 | `@ApiOAuth2()`            | Méthode / Contrôleur |
 | `@ApiOperation()`         | Méthode              |
-| `@ApiParam()`             | Méthode              |
+| `@ApiParam()`             | Méthode / Contrôleur |
 | `@ApiProduces()`          | Méthode / Contrôleur |
+| `@ApiSchema()`            | Modèle               |
 | `@ApiProperty()`          | Modèle               |
 | `@ApiPropertyOptional()`  | Modèle               |
-| `@ApiQuery()`             | Méthode              |
+| `@ApiQuery()`             | Méthode / Contrôleur |
 | `@ApiResponse()`          | Méthode / Contrôleur |
 | `@ApiSecurity()`          | Méthode / Contrôleur |
 | `@ApiTags()`              | Méthode / Contrôleur |
+| `@ApiCallbacks()`         | Méthode / Contrôleur |

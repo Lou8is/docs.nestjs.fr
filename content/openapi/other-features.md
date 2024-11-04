@@ -58,10 +58,11 @@ async function bootstrap() {
     .addTag('cats')
     .build();
 
-  const catDocument = SwaggerModule.createDocument(app, options, {
-    include: [CatsModule],
-  });
-  SwaggerModule.setup('api/cats', app, catDocument);
+  const catDocumentFactory = () =>
+    SwaggerModule.createDocument(app, options, {
+      include: [CatsModule],
+    });
+  SwaggerModule.setup('api/cats', app, catDocumentFactory);
 
   const secondOptions = new DocumentBuilder()
     .setTitle('Dogs example')
@@ -70,12 +71,13 @@ async function bootstrap() {
     .addTag('dogs')
     .build();
 
-  const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
-    include: [DogsModule],
-  });
-  SwaggerModule.setup('api/dogs', app, dogDocument);
+  const dogDocumentFactory = () =>
+    SwaggerModule.createDocument(app, secondOptions, {
+      include: [DogsModule],
+    });
+  SwaggerModule.setup('api/dogs', app, dogDocumentFactory);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
@@ -93,3 +95,97 @@ Naviguez vers `http://localhost:3000/api/cats` pour voir l'interface utilisateur
 A son tour, `http://localhost:3000/api/dogs` exposera l'interface Swagger pour les `dogs` :
 
 <figure><img src="/assets/swagger-dogs.png" /></figure>
+
+#### Menu déroulant dans la barre d'exploration
+
+Pour activer le support de multiples spécifications dans le menu déroulant de la barre d'exploration, vous devrez mettre `explorer : true` et configurer `swaggerOptions.urls` dans votre `SwaggerCustomOptions`.
+
+> info **Astuce** Assurez-vous que `swaggerOptions.urls` pointe vers le format JSON de vos documents Swagger ! Pour spécifier le document JSON, utilisez `jsonDocumentUrl` dans `SwaggerCustomOptions`. Pour plus d'options de configuration, consultez [ici](/openapi/introduction#options-de-configuration).
+>
+> Voici comment définir plusieurs spécifications à partir d'une liste déroulante dans la barre d'exploration :
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { CatsModule } from './cats/cats.module';
+import { DogsModule } from './dogs/dogs.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Main API options
+  const options = new DocumentBuilder()
+    .setTitle('Multiple Specifications Example')
+    .setDescription('Description for multiple specifications')
+    .setVersion('1.0')
+    .build();
+
+  // Create main API document
+  const document = SwaggerModule.createDocument(app, options);
+
+  // Setup main API Swagger UI with dropdown support
+  SwaggerModule.setup('api', app, document, {
+    explorer: true,
+    swaggerOptions: {
+      urls: [
+        {
+          name: '1. API',
+          url: 'api/swagger.json',
+        },
+        {
+          name: '2. Cats API',
+          url: 'api/cats/swagger.json',
+        },
+        {
+          name: '3. Dogs API',
+          url: 'api/dogs/swagger.json',
+        },
+      ],
+    },
+    jsonDocumentUrl: '/api/swagger.json',
+  });
+
+  // Cats API options
+  const catOptions = new DocumentBuilder()
+    .setTitle('Cats Example')
+    .setDescription('Description for the Cats API')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+
+  // Create Cats API document
+  const catDocument = SwaggerModule.createDocument(app, catOptions, {
+    include: [CatsModule],
+  });
+
+  // Setup Cats API Swagger UI
+  SwaggerModule.setup('api/cats', app, catDocument, {
+    jsonDocumentUrl: '/api/cats/swagger.json',
+  });
+
+  // Dogs API options
+  const dogOptions = new DocumentBuilder()
+    .setTitle('Dogs Example')
+    .setDescription('Description for the Dogs API')
+    .setVersion('1.0')
+    .addTag('dogs')
+    .build();
+
+  // Create Dogs API document
+  const dogDocument = SwaggerModule.createDocument(app, dogOptions, {
+    include: [DogsModule],
+  });
+
+  // Setup Dogs API Swagger UI
+  SwaggerModule.setup('api/dogs', app, dogDocument, {
+    jsonDocumentUrl: '/api/dogs/swagger.json',
+  });
+
+  await app.listen(3000);
+}
+
+bootstrap();
+```
+
+Dans cet exemple, nous avons mis en place une API principale ainsi que des spécifications distinctes pour les chats et les chiens, chacune étant accessible à partir du menu déroulant de la barre d'exploration.

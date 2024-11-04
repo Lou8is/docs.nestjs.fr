@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 ```
 
@@ -185,7 +185,7 @@ Cette page est très utile lorsque vous souhaitez identifier des problèmes pote
 Pour enregistrer un graphique sérialisé dans un fichier, utilisez le code suivant :
 
 ```typescript
-await app.listen(3000); // OR await app.init()
+await app.listen(process.env.PORT ?? 3000); // OR await app.init()
 fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 

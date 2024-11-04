@@ -17,7 +17,7 @@ import { AppModule } from './app.module';
 const app = await NestFactory.create<NestExpressApplication>(AppModule, {
   rawBody: true,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Pour accéder au corps de la requête brute dans un contrôleur, une interface de commodité `RawBodyRequest` est fournie pour exposer un champ `rawBody` sur la requête : utilisez le type d'interface `RawBodyRequest` :
@@ -77,7 +77,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
     rawBody: true,
   },
 );
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Pour accéder au corps de la requête brute dans un contrôleur, une interface de commodité `RawBodyRequest` est fournie pour exposer un champ `rawBody` sur la requête : utilisez le type d'interface `RawBodyRequest` :
