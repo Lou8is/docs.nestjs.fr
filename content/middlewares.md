@@ -132,7 +132,10 @@ export class AppModule {
 Les itinéraires basés sur des motifs sont également pris en charge. Par exemple, l'astérisque est utilisé comme **caractère générique**, et correspondra à n'importe quelle combinaison de caractères :
 
 ```typescript
-forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
+forRoutes({
+    path: 'ab*cd',
+    method: RequestMethod.ALL,
+});
 ```
 
 Le chemin d'accès `'ab*cd'` correspondra à `abcd`, `ab_cd`, `abecd`, et ainsi de suite. Les caractères `?`, `+`, `*`, et `()` peuvent être utilisés dans un chemin d'accès, et sont des sous-ensembles de leurs expressions régulières correspondantes. Le trait d'union ( `-`) et le point (`.`) sont interprétés littéralement par les chemins basés sur des chaînes de caractères.
@@ -245,7 +248,7 @@ Si nous voulons lier le middleware à chaque route enregistrée en une seule foi
 @@filename(main)
 const app = await NestFactory.create(AppModule);
 app.use(logger);
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Astuce** L'accès au conteneur DI dans un middleware global n'est pas possible. Vous pouvez utiliser un [middleware fonctionnel](middleware#middleware-fonctionnel) à la place en utilisant `app.use()`. Alternativement, vous pouvez utiliser un middleware de classe et le consommer avec `.forRoutes('*')` dans le `AppModule` (ou tout autre module).

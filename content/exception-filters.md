@@ -141,7 +141,10 @@ Nest fournit un ensemble d'exceptions standard qui héritent de la base `HttpExc
 Toutes les exceptions intégrées peuvent également fournir une `cause` et une description de l'erreur en utilisant le paramètre `options` :
 
 ```typescript
-throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' })
+throw new BadRequestException('Something bad happened', {
+  cause: new Error(),
+  description: 'Some error description',
+});
 ```
 
 Voici comment se présenterait la réponse :
@@ -150,7 +153,7 @@ Voici comment se présenterait la réponse :
 {
   "message": "Something bad happened",
   "error": "Some error description",
-  "statusCode": 400,
+  "statusCode": 400
 }
 ```
 
@@ -277,7 +280,7 @@ Pour créer un filtre global, vous devez procéder comme suit :
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
@@ -323,7 +326,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
+export class CatchEverythingFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -393,7 +396,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```

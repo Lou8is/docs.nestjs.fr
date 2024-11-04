@@ -370,6 +370,18 @@ async login(@Request() req) {
 }
 ```
 
+#### Route logout
+
+Pour se déconnecter, nous pouvons créer une route supplémentaire qui invoque `res.logout()` pour effacer la session de l'utilisateur. Il s'agit d'une approche typique utilisée dans l'authentification basée sur la session, mais elle ne s'applique pas aux JWTs.
+
+```typescript
+@UseGuards(LocalAuthGuard)
+@Post('auth/logout')
+async logout(@Request() req) {
+  return req.logout();
+}
+```
+
 #### Fonctionnalité JWT
 
 Nous sommes prêts à passer à la partie JWT de notre système d'authentification. Passons en revue et affinons nos exigences :
@@ -627,6 +639,8 @@ Avec notre `JwtStrategy`, nous avons suivi la même recette décrite précédemm
 La méthode `validate()` mérite qu'on s'y attarde. Pour la jwt-strategy, Passport vérifie d'abord la signature du JWT et décode le JSON. Il invoque ensuite notre méthode `validate()` en passant le JSON décodé comme unique paramètre. En se basant sur le fonctionnement de la signature JWT, **nous avons la garantie de recevoir un jeton valide** que nous avons préalablement signé et délivré à un utilisateur valide.
 
 En conséquence, notre réponse au callback `validate()` est triviale : nous renvoyons simplement un objet contenant les propriétés `userId` et `username`. Rappelons que Passport va construire un objet `user` basé sur la valeur de retour de notre méthode `validate()`, et l'attacher en tant que propriété de l'objet `Request`.
+
+De plus, vous pouvez renvoyer un tableau, où la première valeur est utilisée pour créer un objet `user` et la deuxième valeur est utilisée pour créer un objet `authInfo`.
 
 Il convient également de souligner que cette approche nous laisse de la place (des " hooks" en quelque sorte) pour injecter d'autres logiques d'entreprise dans le processus. Par exemple, nous pourrions faire une recherche dans la base de données dans notre méthode `validate()` pour extraire plus d'informations sur l'utilisateur, résultant en un objet `user` plus enrichi disponible dans notre `Request`. C'est aussi l'endroit où nous pouvons décider d'effectuer une validation plus poussée du token, comme rechercher l'`userId` dans une liste de tokens révoqués, ce qui nous permet d'effectuer la révocation du token. Le modèle que nous avons implémenté ici dans notre code d'exemple est un modèle rapide, "JWT sans état", où chaque appel à l'API est immédiatement autorisé en fonction de la présence d'un JWT valide, et où un petit nombre d'informations sur le demandeur (son `userId` et son `username`) est disponible dans notre pipeline de requête.
 
@@ -943,7 +957,7 @@ Ensuite, vous y faites référence via un décorateur comme `@UseGuards(AuthGuar
 
 #### GraphQL
 
-Pour utiliser un AuthGuard avec [GraphQL](/graphql/quick-start), il faut étendre la classe AuthGuard intégrée et surcharger la méthode getRequest().
+Pour utiliser un AuthGuard avec [GraphQL](/graphql/quick-start), il faut étendre la classe `AuthGuard` intégrée et surcharger la méthode `getRequest()`.
 
 ```typescript
 @Injectable()
@@ -972,9 +986,25 @@ export const CurrentUser = createParamDecorator(
 Pour utiliser le décorateur ci-dessus dans votre résolveur, assurez-vous de l'inclure en tant que paramètre de votre requête ou mutation :
 
 ```typescript
-@Query(returns => User)
+@Query(() => User)
 @UseGuards(GqlAuthGuard)
 whoAmI(@CurrentUser() user: User) {
   return this.usersService.findById(user.id);
+}
+```
+
+Pour la stratégie passport-local, vous devrez également ajouter les arguments du contexte GraphQL au corps de la requête afin que Passport puisse y accéder pour la validation. Sinon, vous obtiendrez une erreur « Unauthorized ».
+
+```typescript
+@Injectable()
+export class GqlLocalAuthGuard extends AuthGuard('local') {
+  getRequest(context: ExecutionContext) {
+    const gqlExecutionContext = GqlExecutionContext.create(context);
+    const gqlContext = gqlExecutionContext.getContext();
+    const gqlArgs = gqlExecutionContext.getArgs();
+
+    gqlContext.req.body = { ...gqlContext.req.body, ...gqlArgs };
+    return gqlContext.req;
+  }
 }
 ```

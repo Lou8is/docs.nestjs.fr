@@ -89,7 +89,6 @@ Le premier argument peut être une `string` ou un `symbol` pour un émetteur d'�
 
 Le second argument (optionnel) est un objet d'options d'écoute comme suit:
 
-
 ```typescript
 export type OnEventOptions = OnOptions & {
   /**
@@ -133,6 +132,22 @@ handleEverything(payload: any) {
 ```
 
 > info **Astuce** La classe `EventEmitter2` fournit plusieurs méthodes utiles pour interagir avec les événements, comme `waitFor` et `onAny`. Vous pouvez en savoir plus sur ces méthodes [ici](https://github.com/EventEmitter2/EventEmitter2).
+
+#### Prévenir la perte d'événements
+
+Les événements déclenchés avant ou pendant le hook de cycle de vie `onApplicationBootstrap` - tels que ceux provenant des constructeurs de modules ou de la méthode `onModuleInit` - peuvent être manqués parce que le `EventSubscribersLoader` n'a peut-être pas fini de configurer les listeners.
+
+Pour éviter ce problème, vous pouvez utiliser la méthode `waitUntilReady` du `EventEmitterReadinessWatcher`, qui retourne une promesse qui se résout une fois que tous les listeners ont été enregistrés. Cette méthode peut être appelée dans le hook de cycle de vie `onApplicationBootstrap` d'un module pour s'assurer que tous les événements sont correctement capturés.
+
+```typescript
+await this.eventEmitterReadinessWatcher.waitUntilReady();
+await this.eventEmitter.emit(
+  'order.created',
+  new OrderCreatedEvent({ orderId: 1, payload: {} }),
+);
+```
+
+> info **Note** Ceci n'est nécessaire que pour les événements émis avant que le hook du cycle de vie `onApplicationBootstrap` ne soit terminé.
 
 #### Exemple
 

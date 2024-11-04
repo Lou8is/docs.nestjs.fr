@@ -92,7 +92,7 @@ Assurez-vous d'avoir un [ConfigModule](/techniques/configuration) configuré, si
 
 Les bases de données SQLite sont de simples fichiers ; aucun serveur n'est nécessaire pour utiliser une base de données SQLite. Ainsi, au lieu de configurer une URL de connexion avec un _host_ et un _port_, vous pouvez simplement la faire pointer vers un fichier local qui, dans ce cas, s'appelle `dev.db`. Ce fichier sera créé dans l'étape suivante.
 
-<details><summary>Développez si vous utilisez PostgreSQL ou MySQL</summary>
+<details><summary>Développez si vous utilisez PostgreSQL, MySQL, MsSQL ou Azure SQL</summary>
 
 Avec PostgreSQL et MySQL, vous devez configurer l'URL de connexion pour qu'elle pointe vers le _serveur de base de données_. Vous pouvez en savoir plus sur le format requis de l'URL de connexion [ici](https://www.prisma.io/docs/reference/database-reference/connection-urls).
 
@@ -151,6 +151,30 @@ DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
 Remplacez les caractères de remplacement écrits en majuscules par les informations d'identification de votre base de données.
+
+**Microsoft SQL Server / Azure SQL Server**
+
+Si vous utilisez Microsoft SQL Server ou Azure SQL Server, vous devez ajuster les fichiers `schema.prisma` et `.env` comme suit :
+
+**`schema.prisma`**
+
+```groovy
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+}
+```
+
+**`.env`**
+
+Remplacez les caractères de remplacement en majuscules par les informations d'identification de votre base de données. Notez que si vous n'êtes pas sûr de ce que vous devez fournir pour l'espace réservé `encrypt`, c'est très probablement la valeur par défaut `true` :
+
+```bash
+DATABASE_URL="sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWORD;encrypt=true"
+```
 
 </details>
 

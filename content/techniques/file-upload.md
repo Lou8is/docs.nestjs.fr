@@ -135,6 +135,7 @@ Pour comprendre comment ils peuvent être utilisés en conjonction avec le `File
 )
 file: Express.Multer.File,
 ```
+
 > info **Astuce** Si le nombre de validateurs augmente considérablement ou si leurs options encombrent le fichier, vous pouvez définir ce tableau dans un fichier séparé et l'importer ici sous la forme d'une constante nommée comme `fileValidators`.
 
 Enfin, vous pouvez utiliser la classe spéciale `ParseFilePipeBuilder` qui vous permet de composer et de construire vos validateurs. En l'utilisant comme indiqué ci-dessous, vous pouvez éviter l'instanciation manuelle de chaque validateur et simplement passer leurs options directement :
@@ -318,6 +319,18 @@ MulterModule.registerAsync({
   useExisting: ConfigService,
 });
 ```
+
+Vous pouvez également passer ce que l'on appelle des `extraProviders` à la méthode `registerAsync()`. Ces fournisseurs seront fusionnés avec les fournisseurs du module.
+
+```typescript
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useClass: ConfigService,
+  extraProviders: [MyAdditionalProvider],
+});
+```
+
+C'est utile lorsque vous souhaitez fournir des dépendances supplémentaires à la fonction d'usine ou au constructeur de la classe.
 
 #### Exemple
 

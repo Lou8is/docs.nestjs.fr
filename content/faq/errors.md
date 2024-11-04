@@ -29,8 +29,9 @@ Si vous rencontrez cette erreur lors de votre développement, jetez un coup d'œ
 Si le `<unknown_token>` ci-dessus est `dependency`, il se peut que vous ayez une importation circulaire de fichiers. Ceci est différent de la [dépendance circulaire](/faq/common-errors#erreur-circular-dependency) ci-dessous car au lieu d'avoir des fournisseurs qui dépendent l'un de l'autre dans leurs constructeurs, cela signifie simplement que deux fichiers finissent par s'importer l'un l'autre. Un cas courant serait un fichier de module déclarant un token et important un fournisseur, et le fournisseur important la constante du token à partir du fichier de module. Si vous utilisez des "barrel files", veillez à ce que vos importations de "barrel" ne finissent pas par créer ces importations circulaires.
 
 Si le `<unknown_token>` ci-dessus est `Object`, cela signifie que vous injectez en utilisant un type/interface sans un token de fournisseur approprié. Pour corriger cela, assurez-vous que:
-  1. Vous importez la référence de la classe ou utilisez un token personnalisé avec le décorateur `@Inject()`. Lisez la [page des fournisseurs personnalisés](/fundamentals/custom-providers), et
-  2. pour les fournisseurs basés sur des classes, vous importez les classes concrètes au lieu de seulement le type par l'intermédiaire de la syntaxe [`import type ...`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export).
+
+1. Vous importez la référence de la classe ou utilisez un token personnalisé avec le décorateur `@Inject()`. Lisez la [page des fournisseurs personnalisés](/fundamentals/custom-providers), et
+2. pour les fournisseurs basés sur des classes, vous importez les classes concrètes au lieu de seulement le type par l'intermédiaire de la syntaxe [`import type ...`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export).
 
 De plus, assurez-vous que vous n'avez pas injecté le provider sur lui-même car les auto-injections ne sont pas autorisées dans NestJS. Dans ce cas, `<unknown_token>` sera probablement égal à `<provider>`.
 
@@ -63,7 +64,7 @@ Cela se produit probablement lorsque votre projet charge deux modules Node du pa
 Solutions :
 
 - Pour les espaces de travail **Yarn**, utilisez la fonctionnalité [nohoist](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) pour empêcher le package `@nestjs/core` d'être remonté.
-- Pour les espaces de travail **pnpm**, définissez `@nestjs/core` comme peerDependencies dans votre autre module et `"dependenciesMeta" : {{ '{' }} "other-module-name" : {{ '{' }} "injected" : true{{ '}}'". }}` dans le package.json de l'application où le module est importé. voir : [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
+- Pour les espaces de travail **pnpm**, définissez `@nestjs/core` comme peerDependencies dans votre autre module et `"dependenciesMeta" : {{ '{' }} "other-module-name" : {{ '{' }} "injected" : true &#125;&#125;` dans le package.json de l'application où le module est importé. voir : [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
 
 #### Erreur "Circular dependency"
 

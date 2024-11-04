@@ -11,9 +11,9 @@ $ npm install @nestjs/cache-manager cache-manager
 ```
 
 > warning **Attention** La version 4 de `cache-manager` utilise les secondes pour le `TTL (Time-To-Live)`. La version actuelle de `cache-manager` (v5) utilise des millisecondes à la place. NestJS ne convertit pas la valeur, et transmet simplement le ttl que vous fournissez à la bibliothèque. En d'autres termes :
-> * Si vous utilisez `cache-manager` v4, fournissez le ttl en secondes
-> * Si vous utilisez `cache-manager` v5, fournissez le ttl en millisecondes.
-> * La documentation se réfère à des secondes, puisque NestJS a été publié avec la version 4 du gestionnaire de cache.
+> - Si vous utilisez `cache-manager` v4, fournissez le ttl en secondes
+> - Si vous utilisez `cache-manager` v5, fournissez le ttl en millisecondes.
+> - La documentation se réfère à des secondes, puisque NestJS a été publié avec la version 4 du gestionnaire de cache.
 
 #### Cache en mémoire
 
@@ -228,23 +228,30 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Différents stockages
 
-Ce service tire parti de [cache-manager](https://github.com/node-cache-manager/node-cache-manager) sous le capot. Le package `cache-manager` supporte une large gamme de stockages utiles, par exemple, le [stockage Redis](https://github.com/dabroek/node-cache-manager-redis-store). Une liste complète des magasins supportés est disponible [ici](https://github.com/node-cache-manager/node-cache-manager#store-engines). Pour configurer le magasin Redis, il suffit de passer le package avec les options correspondantes à la méthode `register()`.
+Le paquetage `cache-manager` offre une variété d'options de stockage utiles, y compris le [Redis store](https://www.npmjs.com/package/cache-manager-redis-yet), qui est le package officiel pour l'intégration de Redis avec cache-manager. Vous pouvez trouver une liste complète des stores supportés [ici](https://github.com/jaredwray/cacheable/blob/main/packages/cache-manager/READMEv5.md#store-engines). Pour configurer le store Redis, utilisez la méthode `registerAsync()` pour l'initialiser, comme indiqué ci-dessous :
 
 ```typescript
-import type { RedisClientOptions } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 import { Module } from '@nestjs/common';
-import { CacheModule } from '@nestjs/cache-manager';
+import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    CacheModule.register<RedisClientOptions>({
-      store: redisStore,
+    CacheModule.registerAsync({
+      useFactory: async () => {
+        const store = await redisStore({
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
+        });
 
-      // Configuration spécifique au stockage :
-      host: 'localhost',
-      port: 6379,
+        return {
+          store: store as unknown as CacheStore,
+          ttl: 3 * 60000, // 3 minutes (milliseconds)
+        };
+      },
     }),
   ],
   controllers: [AppController],
@@ -252,8 +259,7 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-> warning **Attention** `cache-manager-redis-store` ne supporte pas redis v4. Pour que l'interface `ClientOpts` existe et fonctionne correctement, vous devez installer la
-> dernière version majeure de `redis` 3.x.x. Voir cette [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) pour suivre la progression de cette mise à jour.
+> warning **Attention** Le paquet `cache-manager-redis-yet` requiert que le paramètre `ttl` (time-to-live) soit spécifié directement plutôt que dans les options du module.
 
 #### Configuration asynchrone
 
@@ -314,6 +320,18 @@ CacheModule.registerAsync({
 Cela fonctionne de la même manière que `useClass` avec une différence essentielle - `CacheModule` va chercher dans les modules importés pour réutiliser tout `ConfigService` déjà créé, au lieu d'instancier le sien.
 
 > info **Astuce** `CacheModule#register` et `CacheModule#registerAsync` et `CacheOptionsFactory` ont un générique optionnel (argument de type) pour restreindre les options de configuration spécifiques au magasin, ce qui les rend sûrs du point de vue du type.
+
+Vous pouvez également passer ce que l'on appelle des `extraProviders` à la méthode `registerAsync()`. Ces fournisseurs seront fusionnés avec les fournisseurs du module.
+
+```typescript
+CacheModule.registerAsync({
+  imports: [ConfigModule],
+  useClass: ConfigService,
+  extraProviders: [MyAdditionalProvider],
+});
+```
+
+C'est utile lorsque vous souhaitez fournir des dépendances supplémentaires à la fonction de factory ou au constructeur de la classe.
 
 #### Exemple
 

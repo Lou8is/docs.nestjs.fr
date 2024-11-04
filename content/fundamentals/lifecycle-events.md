@@ -12,6 +12,8 @@ Le diagramme suivant illustre la séquence des événements clés du cycle de vi
 
 Les événements du cycle de vie se produisent pendant le démarrage et l'arrêt de l'application. Nest appelle les méthodes de hook de cycle de vie enregistrées sur les modules, les fournisseurs et les contrôleurs à chacun des événements de cycle de vie suivants (**les hooks d'arrêt** doivent être activés en premier, comme décrit [ci-dessous](/fundamentals/lifecycle-events#arrêt-de-lapplication)). Comme le montre le diagramme ci-dessus, Nest appelle également les méthodes sous-jacentes appropriées pour commencer à écouter les connexions, et pour arrêter d'écouter les connexions.
 
+Dans le tableau suivant, `onModuleInit` et `onApplicationBootstrap` ne sont déclenchés que si vous appelez explicitement `app.init()` ou `app.listen()`.
+
 Dans le tableau suivant, `onModuleDestroy`, `beforeApplicationShutdown` et `onApplicationShutdown` ne sont déclenchés que si vous appelez explicitement `app.close()` ou si le processus reçoit un signal système spécial (tel que SIGTERM) et que vous avez correctement appelé `enableShutdownHooks` au démarrage de l'application (voir ci-dessous la partie **Arrêt de l'application**).
 
 | Méthode hook du cycle de vie           | Événement du cycle de vie déclenchant l'appel à la méthode hook                                                                                                                                                                   |
@@ -84,7 +86,7 @@ async function bootstrap() {
   // Commence à écouter les hooks d'arrêt
   app.enableShutdownHooks();
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```

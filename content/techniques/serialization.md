@@ -37,8 +37,8 @@ Considérons maintenant un contrôleur avec un gestionnaire de méthode qui renv
 findOne(): UserEntity {
   return new UserEntity({
     id: 1,
-    firstName: 'Kamil',
-    lastName: 'Mysliwiec',
+    firstName: 'John',
+    lastName: 'Doe',
     password: 'password',
   });
 }
@@ -53,8 +53,8 @@ Lorsque ce point d'accès est sollicité, le client reçoit la réponse suivante
 ```json
 {
   "id": 1,
-  "firstName": "Kamil",
-  "lastName": "Mysliwiec"
+  "firstName": "John",
+  "lastName": "Doe"
 }
 ```
 
@@ -97,6 +97,37 @@ findOne(): UserEntity {
 > info **Astuce** Le décorateur `@SerializeOptions()` est importé de `@nestjs/common`.
 
 Les options passées via `@SerializeOptions()` sont passées en tant que second argument de la fonction sous-jacente `instanceToPlain()`. Dans cet exemple, nous excluons automatiquement toutes les propriétés qui commencent par le préfixe `_`.
+
+#### Transformer des objets simples
+
+Vous pouvez imposer des transformations au niveau du contrôleur en utilisant le décorateur `@SerializeOptions`. Cela garantit que toutes les réponses sont transformées en instances de la classe spécifiée, en appliquant tous les décorateurs de class-validator ou class-transformer, même lorsque des objets simples sont retournés. Cette approche conduit à un code plus propre sans avoir besoin de répéter l'instanciation de la classe ou d'appeler `plainToInstance`.
+
+Dans l'exemple ci-dessous, malgré le retour d'objets JavaScript simples dans les deux branches conditionnelles, ils seront automatiquement convertis en instances `UserEntity`, avec les décorateurs appropriés appliqués :
+
+```typescript
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: UserEntity })
+@Get()
+findOne(@Query() { id }: { id: number }): UserEntity {
+  if (id === 1) {
+    return {
+      id: 1,
+      firstName: 'John',
+      lastName: 'Doe',
+      password: 'password',
+    };
+  }
+
+  return {
+    id: 2,
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
+    password: 'password2',
+  };
+}
+```
+
+> info **Astuce** En spécifiant le type de retour attendu pour le contrôleur, vous pouvez exploiter les capacités de vérification de type de TypeScript pour vous assurer que l'objet simple renvoyé adhère à la forme du DTO ou de l'entité. La fonction `plainToInstance` ne fournit pas ce niveau d'indication de type, ce qui peut conduire à des bugs potentiels si l'objet simple ne correspond pas à la structure attendue du DTO ou de l'entité.
 
 #### Exemple
 

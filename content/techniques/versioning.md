@@ -40,7 +40,7 @@ const app = await NestFactory.create(AppModule);
 app.enableVersioning({
   type: VersioningType.URI,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > warning **Remarque** La version dans l'URI sera automatiquement préfixée par `v` par défaut, cependant la valeur du préfixe peut être configurée en définissant la clé `prefix` avec le préfixe désiré ou `false` si vous souhaitez le désactiver.
@@ -62,7 +62,7 @@ app.enableVersioning({
   type: VersioningType.HEADER,
   header: 'Custom-Header',
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 La propriété `header` doit être le nom de l'en-tête qui contiendra la version de la requête.
@@ -84,7 +84,7 @@ app.enableVersioning({
   type: VersioningType.MEDIA_TYPE,
   key: 'v=',
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 La propriété `key` doit être la clé et le séparateur de la paire clé-valeur qui contient la version. Pour l'exemple `Accept : application/json;v=2`, la propriété `key` serait fixée à `v=`.
@@ -124,7 +124,7 @@ app.enableVersioning({
   type: VersioningType.CUSTOM,
   extractor,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 #### Usage

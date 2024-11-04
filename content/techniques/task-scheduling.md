@@ -116,7 +116,7 @@ export class TasksService {
 }
 ```
 
-Dans cet exemple, la méthode `handleCron()` sera appelée toutes les `30` secondes.
+Dans cet exemple, la méthode `handleCron()` sera appelée toutes les `30` secondes. Si une exception se produit, elle sera enregistrée dans la console, car chaque méthode annotée avec `@Cron()` est automatiquement enveloppée dans un bloc `try-catch`.
 
 Vous pouvez également fournir un objet JavaScript `Date` au décorateur `@Cron()`. Dans ce cas, la tâche sera exécutée une seule fois, à la date spécifiée.
 
@@ -189,6 +189,8 @@ Si vous souhaitez contrôler votre intervalle déclaratif depuis l'extérieur de
 handleInterval() {}
 ```
 
+Si une exception se produit, elle sera enregistrée dans la console, car chaque méthode annotée avec `@Interval()` est automatiquement enveloppée dans un bloc `try-catch`.
+
 L'<a href="/techniques/task-scheduling#dynamic-schedule-module-api">API dynamique</a> permet également de **créer** des intervalles dynamiques, dont les propriétés sont définies au moment de l'exécution, et de **lister et supprimer** ces intervalles.
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -205,6 +207,8 @@ handleTimeout() {
 ```
 
 > info **Astuce** Ce mécanisme utilise la fonction JavaScript `setTimeout()` sous le capot.
+
+Si une exception se produit, elle sera enregistrée dans la console, car chaque méthode annotée avec `@Timeout()` est automatiquement enveloppée dans un bloc `try-catch`.
 
 Si vous souhaitez contrôler votre délai déclaratif depuis l'extérieur de la classe déclarante via l'<a href="/techniques/task-scheduling#dynamic-schedule-module-api">API dynamique</a>, associez le délai à un nom à l'aide de la construction suivante :
 

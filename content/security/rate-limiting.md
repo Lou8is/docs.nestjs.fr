@@ -103,10 +103,41 @@ findAll() {
 
 #### Proxys
 
-Si votre application tourne derrière un serveur proxy, vérifiez les options spécifiques de l'adaptateur HTTP ([express](http://expressjs.com/en/guide/behind-proxies.html) et [fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy)) pour l'option `trust proxy` et activez-la. Cela vous permettra d'obtenir l'adresse IP originale à partir de l'en-tête `X-Forwarded-For`, et vous pourrez surcharger la méthode `getTracker()` pour extraire la valeur de l'en-tête plutôt que de `req.ip`. L'exemple suivant fonctionne avec express et fastify :
+Si votre application tourne derrière un serveur proxy, il est essentiel de configurer l'adaptateur HTTP pour qu'il fasse confiance au proxy. Vous pouvez vous référer aux options spécifiques de l'adaptateur HTTP pour [Express](http://expressjs.com/en/guide/behind-proxies.html) et [Fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy) pour activer le paramètre `trust proxy`.
+
+Voici un exemple qui montre comment activer le paramètre `trust proxy` pour l'adaptateur Express :
 
 ```typescript
-// throttler-behind-proxy.guard.ts
+@@filename(main.ts)
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.set('trust proxy', 'loopback'); // Demandes de confiance provenant de l'adresse de loopback
+  await app.listen(3000);
+}
+
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.set('trust proxy', 'loopback'); // Demandes de confiance provenant de l'adresse de loopback
+  await app.listen(3000);
+}
+
+bootstrap();
+```
+
+Activer `trust proxy` vous permet de récupérer l'adresse IP originale à partir de l'en-tête `X-Forwarded-For`. Vous pouvez aussi personnaliser le comportement de votre application en surchargeant la méthode `getTracker()` pour extraire l'adresse IP de cet en-tête au lieu de vous baser sur `req.ip`. L'exemple suivant montre comment réaliser cela pour Express et Fastify :
+
+```typescript
+@@filename(throttler-behind-proxy.guard)
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
 
@@ -133,15 +164,30 @@ Ce module peut fonctionner avec des websockets, mais il nécessite une extension
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
   async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
-    const { context, limit, ttl, throttler, blockDuration, getTracker, generateKey } = requestProps;
+    const {
+        context,
+        limit,
+        ttl,
+        throttler,
+        blockDuration,
+        getTracker,
+        generateKey,
+    } = requestProps;
 
-        const client = context.switchToWs().getClient();
+    const client = context.switchToWs().getClient();
     const tracker = client._socket.remoteAddress;
     const key = generateKey(context, tracker, throttler.name);
     const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
-      await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name);
+      await this.storageService.increment(
+        key,
+        ttl,
+        limit,
+        blockDuration,
+        throttler.name,
+      );
 
-    const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
+    const getThrottlerSuffix = (name: string) =>
+      name === 'default' ? '' : `-${name}`;
 
     // Lancer une erreur lorsque l'utilisateur a atteint sa limite.
     if (isBlocked) {
@@ -293,7 +339,7 @@ C'est possible, tant que `ThrottlerConfigService` implémente l'interface `Throt
 
 Le stockage intégré est un cache en mémoire qui garde la trace des requêtes effectuées jusqu'à ce qu'elles aient passé le TTL fixé par les options globales. Vous pouvez ajouter votre propre option de stockage à l'option `storage` du `ThrottlerModule` tant que la classe implémente l'interface `ThrottlerStorage`.
 
-Pour les serveurs distribués, vous pouvez utiliser le fournisseur de stockage communautaire pour [Redis](https://github.com/kkoomen/nestjs-throttler-storage-redis) afin de disposer d'une source unique de vérité.
+Pour les serveurs distribués, vous pouvez utiliser le fournisseur de stockage communautaire pour [Redis](https://github.com/jmcdo29/nest-lab/tree/main/packages/throttler-storage-redis) afin de disposer d'une source unique de vérité.
 
 > info **Remarque** `ThrottlerStorage` peut être importé depuis `@nestjs/throttler`.
 

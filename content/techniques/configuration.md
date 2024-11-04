@@ -161,6 +161,25 @@ export default () => {
 
 > warning **Note** Nest CLI ne déplace pas automatiquement vos "assets" (fichiers non-TS) dans le dossier `dist` pendant le processus de construction. Pour vous assurer que vos fichiers YAML sont copiés, vous devez le spécifier dans l'objet `compilerOptions#assets` du fichier `nest-cli.json`. Par exemple, si le dossier `config` est au même niveau que le dossier `src`, ajoutez `compilerOptions#assets` avec la valeur `"assets" : [{{ '{' }}"include" : "../config/*.yaml", "outDir" : "./dist/config"{{ '}' }}]`. En savoir plus [ici](/cli/monorepo#assets).
 
+Juste une petite note - les fichiers de configuration ne sont pas automatiquement validés, même si vous utilisez l'option `validationSchema` dans le `ConfigModule` de NestJS. Si vous avez besoin d'une validation ou si vous voulez appliquer des transformations, vous devrez le faire à l'intérieur de la fonction factory où vous avez un contrôle complet sur l'objet de configuration. Cela vous permet d'implémenter une logique de validation personnalisée si nécessaire.
+
+Par exemple, si vous voulez vous assurer que le port se situe dans une certaine plage, vous pouvez ajouter une étape de validation à la fonction factory :
+
+```typescript
+@@filename(config/configuration)
+export default () => {
+  const config = yaml.load(
+    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+  ) as Record<string, any>;
+  if (config.http.port < 1024 || config.http.port > 49151) {
+    throw new Error('HTTP port must be between 1024 and 49151');
+  }
+  return config;
+};
+```
+
+Désormais, si le port se trouve en dehors de la plage spécifiée, l'application génère une erreur au démarrage.
+
 <app-banner-devtools></app-banner-devtools>
 
 #### Utilisation de `ConfigService`
@@ -302,7 +321,36 @@ constructor(
 ) {}
 ```
 
-> info **AStuce** Le `ConfigType` est exporté depuis le package `@nestjs/config`.
+> info **Astuce** Le `ConfigType` est exporté depuis le package `@nestjs/config`.
+
+#### Les configurations à namespace dans les modules
+
+Pour utiliser une configuration à namespace comme objet de configuration pour un autre module de votre application, vous pouvez utiliser la méthode `.asProvider()` de l'objet de configuration. Cette méthode convertit votre configuration à namespace en un fournisseur, qui peut ensuite être passé à la méthode `forRootAsync()` (ou toute autre méthode équivalente) du module que vous souhaitez utiliser.
+
+Voici un exemple :
+
+```typescript
+import databaseConfig from './config/database.config';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync(databaseConfig.asProvider()),
+  ],
+})
+```
+
+Pour comprendre le fonctionnement de la méthode `.asProvider()`, examinons la valeur de retour :
+
+```typescript
+// Valeur de retour de la méthode .asProvider()
+{
+  imports: [ConfigModule.forFeature(databaseConfig)],
+  useFactory: (configuration: ConfigType<typeof databaseConfig>) => configuration,
+  inject: [databaseConfig.KEY]
+}
+```
+
+Cette structure vous permet d'intégrer de manière transparente des configurations à namespace dans vos modules, ce qui garantit que votre application reste organisée et modulaire, sans avoir à écrire du code répétitif et de type « boilerplate ».
 
 #### Variables d'environnement du cache
 
@@ -530,7 +578,10 @@ Il peut arriver que vous souhaitiez charger un module de manière conditionnelle
 
 ```typescript
 @Module({
-  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooModule, 'USE_FOO')],
+  imports: [
+    ConfigModule.forRoot(),
+    ConditionalModule.registerWhen(FooModule, 'USE_FOO'),
+  ],
 })
 export class AppModule {}
 ```
@@ -539,7 +590,13 @@ Le module ci-dessus ne chargera le `FooModule` que si, dans le fichier `.env`, i
 
 ```typescript
 @Module({
-  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooBarModule, (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'])],
+  imports: [
+    ConfigModule.forRoot(),
+    ConditionalModule.registerWhen(
+      FooBarModule,
+      (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'],
+    ),
+  ],
 })
 export class AppModule {}
 ```

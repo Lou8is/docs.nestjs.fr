@@ -1,5 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import {
+    provideHttpClient,
+    withInterceptorsFromDi,
+} from '@angular/common/http';import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -29,15 +31,9 @@ import { BasePageComponent } from './homepage/pages/page/page.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
+import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    SharedModule,
-  ],
   declarations: [
     AppComponent,
     HomepageComponent,
@@ -64,8 +60,15 @@ import { SharedModule } from './shared/shared.module';
     EnterpriseComponent,
     SocialWrapperComponent,
     NewsletterComponent,
+    DeploymentComponent,
   ],
   bootstrap: [AppComponent],
-  providers: [],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    SharedModule,
+  ],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class AppModule {}
