@@ -193,6 +193,30 @@ export class CatsService {
 }
 ```
 
+#### Sessions
+
+Pour démarrer une session avec Mongoose, il est recommandé d'injecter la connexion à la base de données en utilisant `@InjectConnection` plutôt que d'appeler directement `mongoose.startSession()`. Cette approche permet une meilleure intégration avec le système d'injection de dépendances de NestJS, assurant une bonne gestion des connexions.
+
+Voici un exemple de démarrage d'une session :
+
+```typescript
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Injectable()
+export class CatsService {
+  constructor(@InjectConnection() private readonly connection: Connection) {}
+
+  async startTransaction() {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    // Your transaction logic here
+  }
+}
+```
+
+Dans cet exemple, `@InjectConnection()` est utilisé pour injecter la connexion Mongoose dans le service. Une fois la connexion injectée, vous pouvez utiliser `connection.startSession()` pour démarrer une nouvelle session. Cette session peut être utilisée pour gérer les transactions de la base de données, en garantissant des opérations atomiques sur plusieurs requêtes. Après avoir démarré la session, n'oubliez pas de valider ou d'annuler la transaction en fonction de votre logique.
+
 #### Bases de données multiples
 
 Certains projets nécessitent plusieurs connexions à des bases de données. Ce module permet également d'y parvenir. Pour travailler avec des connexions multiples, il faut d'abord créer les connexions. Dans ce cas, le nom de la connexion devient **obligatoire**.
@@ -526,6 +550,130 @@ MongooseModule.forRootAsync({
   useExisting: ConfigService,
 });
 ```
+
+#### Événements de connexion
+
+Vous pouvez écouter les [événements de connexion de Mongoose](https://mongoosejs.com/docs/connections.html#connection-events) en utilisant l'option de configuration `onConnectionCreate`. Cela vous permet d'implémenter une logique personnalisée chaque fois qu'une connexion est établie. Par exemple, vous pouvez enregistrer des récepteurs d'événements pour les événements `connected`, `open`, `disconnected`, `reconnected`, et `disconnecting`, comme démontré ci-dessous :
+
+```typescript
+MongooseModule.forRoot('mongodb://localhost/test', {
+  onConnectionCreate: (connection: Connection) => {
+    connection.on('connected', () => console.log('connected'));
+    connection.on('open', () => console.log('open'));
+    connection.on('disconnected', () => console.log('disconnected'));
+    connection.on('reconnected', () => console.log('reconnected'));
+    connection.on('disconnecting', () => console.log('disconnecting'));
+
+    return connection;
+  },
+}),
+```
+
+Dans cet extrait de code, nous établissons une connexion à une base de données MongoDB à l'adresse `mongodb://localhost/test`. L'option `onConnectionCreate` vous permet de mettre en place des récepteurs d'événements spécifiques pour surveiller l'état de la connexion :
+
+- `connected` : Déclenché lorsque la connexion est établie avec succès.
+- `open` : Se déclenche lorsque la connexion est complètement ouverte et prête à être utilisée.
+- `disconnected` : Appelé lorsque la connexion est perdue.
+- `reconnected` : Invoqué lorsque la connexion est rétablie après avoir été déconnectée.
+- `disconnecting` : Se produit lorsque la connexion est en train de se fermer.
+
+Vous pouvez également incorporer la propriété `onConnectionCreate` dans les configurations asynchrones créées avec `MongooseModule.forRootAsync()` :
+
+```typescript
+MongooseModule.forRootAsync({
+  useFactory: () => ({
+    uri: 'mongodb://localhost/test',
+    onConnectionCreate: (connection: Connection) => {
+      // Register event listeners here
+      return connection;
+    },
+  }),
+}),
+```
+
+Il s'agit d'un moyen souple de gérer les événements de connexion, ce qui vous permet de gérer efficacement les changements d'état de la connexion.
+
+#### Sous-documents
+
+Pour imbriquer des sous-documents dans un document parent, vous pouvez définir vos schémas comme suit :
+
+```typescript
+@@filename(name.schema)
+@Schema()
+export class Name {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+}
+
+export const NameSchema = SchemaFactory.createForClass(Name);
+```
+
+Il faut ensuite référencer le sous-document dans le schéma parent :
+
+```typescript
+@@filename(person.schema)
+@Schema()
+export class Person {
+  @Prop(NameSchema)
+  name: Name;
+}
+
+export const PersonSchema = SchemaFactory.createForClass(Person);
+
+export type PersonDocumentOverride = {
+  name: Types.Subdocument<Types.ObjectId & Name>;
+};
+
+export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
+```
+
+Si vous souhaitez inclure plusieurs sous-documents, vous pouvez utiliser un tableau de sous-documents. Il est important de modifier le type de la propriété en conséquence :
+
+```typescript
+@@filename(name.schema)
+@Schema()
+export class Person {
+  @Prop([NameSchema])
+  name: Name[];
+}
+
+export const PersonSchema = SchemaFactory.createForClass(Person);
+
+export type PersonDocumentOverride = {
+  name: Types.DocumentArray<Name>;
+};
+
+export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
+```
+
+#### Propriétés virtuelles
+
+Dans Mongoose, une propriété **virtuelle** est une propriété qui existe sur un document mais qui n'est pas persistée dans MongoDB. Elle n'est pas stockée dans la base de données mais est calculée dynamiquement à chaque fois qu'on y accède. Les propriétés virtuelles sont généralement utilisées pour les valeurs dérivées ou calculées, comme la combinaison de champs (par exemple, la création d'une propriété `fullName` en concaténant `firstName` et `lastName`), ou pour la création de propriétés qui s'appuient sur des données existantes dans le document.
+
+```typescript
+class Person {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+
+  @Virtual({
+    get: function (this: Person) {
+      return `${this.firstName} ${this.lastName}`;
+    },
+  })
+  fullName: string;
+}
+```
+
+> info **Astuce**  
+Le décorateur `@Virtual()` est importé du paquetage `@nestjs/mongoose`.
+
+Dans cet exemple, la propriété virtuelle `fullName` est dérivée de `firstName` et `lastName`. Même si elle se comporte comme une propriété normale lorsqu'on y accède, elle n'est jamais sauvegardée dans le document MongoDB.
 
 #### Exemple
 
