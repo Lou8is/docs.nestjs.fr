@@ -14,7 +14,7 @@ const app = await NestFactory.create(AppModule);
 const httpAdapter = app.getHttpAdapter();
 ```
 
-#### Stratégie interne
+#### En tant qu'injectable
 
 Pour obtenir une référence au `HttpAdapterHost` depuis le contexte de l'application, injectez-le en utilisant la même technique que n'importe quel autre fournisseur existant (par exemple, en utilisant l'injection de constructeur).
 
@@ -47,4 +47,22 @@ L'objet adaptateur expose plusieurs méthodes utiles pour interagir avec le serv
 
 ```typescript
 const instance = httpAdapter.getInstance();
+```
+
+#### Événement de début d'écoute
+
+Pour exécuter une action lorsque le serveur commence à écouter les requêtes entrantes, vous pouvez vous abonner au flux `listen$`, comme illustré ci-dessous :
+
+```typescript
+this.httpAdapterHost.listen$.subscribe(() =>
+  console.log('HTTP server is listening'),
+);
+```
+
+De plus, le `HttpAdapterHost` fournit une propriété booléenne `listening` qui indique si le serveur est actuellement actif et à l'écoute :
+
+```typescript
+if (this.httpAdapterHost.listening) {
+  console.log('HTTP server is listening');
+}
 ```

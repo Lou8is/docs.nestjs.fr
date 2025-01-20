@@ -4,7 +4,7 @@
 
 Bien que Prisma puisse être utilisé avec du JavaScript simple, il embrasse TypeScript et fournit un niveau de sécurité de type qui va au-delà des garanties d'autres ORMs dans l'écosystème TypeScript. Vous pouvez trouver une comparaison approfondie des garanties de sécurité de type de Prisma et TypeORM [ici](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm#type-safety).
 
-> info **Note** Si vous voulez avoir un aperçu rapide du fonctionnement de Prisma, vous pouvez suivre le [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) ou lire l'[Introduction](https://www.prisma.io/docs/understand-prisma/introduction) dans la [documentation](https://www.prisma.io/docs/). Il existe également des exemples prêts à l'emploi pour [REST](https://github.com/prisma/prisma-examples/tree/latest/typescript/rest-nestjs) et [GraphQL](https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-nestjs) dans le répertoire [`prisma-examples`](https://github.com/prisma/prisma-examples/).
+> info **Note** Si vous voulez avoir un aperçu rapide du fonctionnement de Prisma, vous pouvez suivre le [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) ou lire l'[Introduction](https://www.prisma.io/docs/understand-prisma/introduction) dans la [documentation](https://www.prisma.io/docs/). Il existe également des exemples prêts à l'emploi pour [REST](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest) et [GraphQL](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest-graphql) dans le répertoire [`prisma-examples`](https://github.com/prisma/prisma-examples/).
 
 #### Pour commencer
 

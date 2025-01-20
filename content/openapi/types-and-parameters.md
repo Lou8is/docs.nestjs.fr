@@ -345,7 +345,7 @@ pets: Pet[];
 
 Les deux modèles `Cat` et `Dog` doivent être définis comme des modèles supplémentaires en utilisant le décorateur `@ApiExtraModels()` (au niveau de la classe).
 
-#### Nom du schéma
+#### Nom et description du schéma
 
 Comme vous avez pu le remarquer, le nom du schéma généré est basé sur le nom de la classe du modèle original (par exemple, le modèle `CreateCatDto` génère un schéma `CreateCatDto`). Si vous souhaitez changer le nom du schéma, vous pouvez utiliser le décorateur `@ApiSchema()`.
 
@@ -357,3 +357,19 @@ class CreateCatDto {}
 ```
 
 Le modèle ci-dessus sera traduit dans le schéma en `CreateCatRequest`.
+
+Par défaut, aucune description n'est ajoutée au schéma généré. Vous pouvez en ajouter une en utilisant l'attribut `description` :
+
+```typescript
+@ApiSchema({ description: 'Description of the CreateCatDto schema' })
+class CreateCatDto {}
+```
+
+De cette manière, la description sera incluse dans le schéma, comme suit :
+
+```yaml
+schemas:
+  CreateCatDto:
+    type: object
+    description: Description of the CreateCatDto schema
+```

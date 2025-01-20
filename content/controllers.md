@@ -223,7 +223,7 @@ Pour spécifier un en-tête de réponse personnalisé, vous pouvez utiliser un d
 
 ```typescript
 @Post()
-@Header('Cache-Control', 'none')
+@Header('Cache-Control', 'no-store')
 create() {
   return 'This action adds a new cat';
 }

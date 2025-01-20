@@ -418,6 +418,10 @@ header {
     @media (max-width: 1300px) {
         width: 190px;
     }
+    
+    @media (max-width: 680px) {
+        width: 190px;
+    }
 }
 
 ::ng-deep .DocSearch-Button:hover,

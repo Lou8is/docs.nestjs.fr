@@ -263,6 +263,8 @@ module.exports.factory = (cs) => {
 
 Avec ceci en place, importez le transformateur AST dans votre fichier de configuration `jest`. Par défaut (dans l'application de démarrage), le fichier de configuration des tests e2e est situé dans le dossier `test` et est nommé `jest-e2e.json`.
 
+Si vous utilisez `jest@<29`, alors utilisez l'extrait ci-dessous.
+
 ```json
 {
   ... // autres configurations

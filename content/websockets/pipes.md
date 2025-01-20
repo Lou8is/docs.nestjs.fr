@@ -10,14 +10,14 @@ L'exemple suivant utilise une pipe à portée de méthode instanciée manuelleme
 
 ```typescript
 @@filename()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }))
 @SubscribeMessage('events')
 handleEvent(client: Client, data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }))
 @SubscribeMessage('events')
 handleEvent(client, data) {
   const event = 'events';
