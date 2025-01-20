@@ -4,7 +4,7 @@ Les fournisseurs sont un concept fondamental de Nest. De nombreuses classes de b
 
 <figure><img class="illustrative-image" src="/assets/Components_1.png" /></figure>
 
-Dans le chapitre précédent, nous avons construit un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples qui sont déclarées comme `providers` dans un [module](/modules).
+Dans le chapitre précédent, nous avons construit un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples qui sont déclarées comme `providers` dans un module NestJS. Pour plus d'informations, lisez le chapitre ["Modules"](/modules).
 
 > info **Astuce** Étant donné que Nest offre la possibilité de concevoir et d'organiser les dépendances d'une manière plus OO, nous recommandons vivement de suivre les principes [SOLID](https://en.wikipedia.org/wiki/SOLID).
 
@@ -122,13 +122,13 @@ constructor(private catsService: CatsService) {}
 
 #### Portées
 
-Les fournisseurs ont normalement une durée de vie ("portée") synchronisée avec le cycle de vie de l'application. Lorsque l'application est démarrée, chaque dépendance doit être résolue et, par conséquent, chaque fournisseur doit être instancié. De même, lorsque l'application s'arrête, chaque fournisseur est détruit. Cependant, il existe des moyens de rendre la durée de vie de votre fournisseur **limitée à une requête**. Vous pouvez en savoir plus sur ces techniques [ici](/fundamentals/injection-scopes).
+Les fournisseurs ont normalement une durée de vie ("portée") synchronisée avec le cycle de vie de l'application. Lorsque l'application est démarrée, chaque dépendance doit être résolue et, par conséquent, chaque fournisseur doit être instancié. De même, lorsque l'application s'arrête, chaque fournisseur est détruit. Cependant, il existe des moyens de rendre la durée de vie de votre fournisseur **limitée à une requête**. Vous pouvez en savoir plus sur ces techniques dans le chapitre [Portées d'injection](/fundamentals/injection-scopes).
 
 <app-banner-courses></app-banner-courses>
 
 #### Fournisseurs personnalisés
 
-Nest dispose d'un conteneur d'inversion de contrôle ("IoC") intégré qui résout les relations entre les fournisseurs. Cette fonction sous-tend la fonction d'injection de dépendance décrite ci-dessus, mais elle est en fait beaucoup plus puissante que ce que nous avons décrit jusqu'à présent. Il existe plusieurs façons de définir un fournisseur : vous pouvez utiliser des valeurs simples, des classes et des factories asynchrones ou synchrones. D'autres exemples sont fournis [ici](/fundamentals/dependency-injection).
+Nest dispose d'un conteneur d'inversion de contrôle ("IoC") intégré qui résout les relations entre les fournisseurs. Cette fonction sous-tend la fonction d'injection de dépendance décrite ci-dessus, mais elle est en fait beaucoup plus puissante que ce que nous avons décrit jusqu'à présent. Il existe plusieurs façons de définir un fournisseur : vous pouvez utiliser des valeurs simples, des classes et des factories asynchrones ou synchrones. D'autres exemples au sujet de la définition de fournisseurs peuvent être trouvés dans le chapitre sur les [Injections de dépendances](/fundamentals/dependency-injection).
 
 #### Fournisseurs optionnels
 
@@ -145,7 +145,7 @@ export class HttpService<T> {
 }
 ```
 
-Notez que dans l'exemple ci-dessus, nous utilisons un fournisseur personnalisé, ce qui est la raison pour laquelle nous incluons le **jeton** personnalisé `HTTP_OPTIONS`. Les exemples précédents montraient une injection basée sur un constructeur, indiquant une dépendance à travers une classe dans le constructeur. Pour en savoir plus sur les fournisseurs personnalisés et leurs jetons associés, cliquez [ici](/fundamentals/custom-providers).
+Notez que dans l'exemple ci-dessus, nous utilisons un fournisseur personnalisé, ce qui est la raison pour laquelle nous incluons le **jeton** personnalisé `HTTP_OPTIONS`. Les exemples précédents montraient une injection basée sur un constructeur, indiquant une dépendance à travers une classe dans le constructeur. Pour en savoir plus sur les fournisseurs personnalisés et leurs jetons associés, lisez le chapitre  [Fournisseurs personnalisés](/fundamentals/custom-providers).
 
 #### Injection basée sur les propriétés
 

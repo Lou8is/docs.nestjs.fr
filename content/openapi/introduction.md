@@ -119,16 +119,30 @@ export interface SwaggerDocumentOptions {
 
   /**
    * OperationIdFactory personnalisé qui sera utilisé pour générer le `operationId`
-   * basé sur `controllerKey` et `methodKey`.
-   * @default () => controllerKey_methodKey
+   * basé sur `controllerKey`, `methodKey` et la version.
+   * @default () => controllerKey_methodKey_version
    */
-  operationIdFactory?: (controllerKey: string, methodKey: string) => string;
+  operationIdFactory?: OperationIdFactory;
+
+  /**
+   * linkNameFactory personnalisée qui sera utilisée pour générer le nom des liens
+   * dans le champ `links` des réponses
+   *
+   * @see [Link objects](https://swagger.io/docs/specification/links/)
+   *
+   * @default () => `${controllerKey}_${methodKey}_from_${fieldKey}`
+   */
+  linkNameFactory?: (
+    controllerKey: string,
+    methodKey: string,
+    fieldKey: string
+  ) => string;
+
 
   /*
    * Génère automatiquement des balises basées sur le nom du contrôleur.
    * Si `false`, vous devez utiliser le décorateur `@ApiTags()` pour définir les balises.
    * Sinon, le nom du contrôleur sans le suffixe `Controller` sera utilisé.
-   *
    * @default true
    */
   autoTagControllers?: boolean;
@@ -197,10 +211,6 @@ export interface SwaggerCustomOptions {
   /**
    * Si `true`, le sélecteur de définitions OpenAPI est affiché dans l'interface Swagger UI.
    * Par défaut : `false`.
-   *
-   * Quand `true` et que `swaggerOptions.urls` est fourni, une liste déroulante intitulée « Select a definition » (sélectionner une définition)
-   * est affichée dans l'interface utilisateur Swagger, permettant aux utilisateurs de choisir parmi les définitions d'API disponibles
-   * spécifiées dans le tableau `urls`. 
    */
   explorer?: boolean;
 

@@ -12,6 +12,10 @@ Bien que vous puissiez mettre à jour vos packages manuellement, nous vous recom
 
 Le `CacheModule` a été supprimé du package `@nestjs/common` et est maintenant disponible en tant que package autonome - `@nestjs/cache-manager`. Ce changement a été fait pour éviter des dépendances inutiles dans le package `@nestjs/common`. Vous pouvez en savoir plus sur le package `@nestjs/cache-manager` [ici](/techniques/caching).
 
+#### Niveaux de journalisation
+
+Les valeurs des niveaux de log `verbose` et `debug` ont été échangées (voir [[PR](https://github.com/nestjs/nest/pull/11036/files)](https://github.com/nestjs/nest/pull/11036/files)). Le niveau `debug` est maintenant fixé à `1`, tandis que `verbose` est fixé à `0`.
+
 #### Dépréciations
 
 Toutes les méthodes et modules obsolètes ont été supprimés.
