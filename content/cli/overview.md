@@ -48,15 +48,15 @@ Hormis quelques considérations spécifiques sur le fonctionnement du processus 
 
 Vous pouvez utiliser l'un ou l'autre mode pour gérer plusieurs projets. Voici un résumé rapide des différences :
 
-| Fonctionnalité                                        | Mode standard                                                      | Mode Monorepo                                              |
-| ----------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Projets multiples                                     | Structure de système de fichiers séparée                           | Structure de système de fichiers unique                    |
-| `node_modules` & `package.json`                       | Instances distinctes                                               | Partagés au sein du monorepo                             |
-| Compilateur par défaut                                | `tsc`                                                              | webpack                                                    |
-| Paramètres du compilateur                             | Spécifiés séparément                                               | Valeurs par défaut de Monorepo qui peuvent être modifiées par projet |
-| Fichiers de configuration tels `.eslintrc.js`, `.prettierrc`, etc. | Spécifiés séparément                                               | Partagés au sein du monorepo                  |
-| commandes `nest build` et `nest start`                | La cible est automatiquement définie par défaut comme étant le (seul) projet dans le contexte | La cible est par défaut le **projet par défaut** dans le monorepo |
-| Bibliothèques                                         | Géré manuellement, généralement via npm packaging                  | Support intégré, y compris la gestion des routes et le bundling |
+| Fonctionnalité                                                            | Mode standard                                                                                 | Mode Monorepo                                                 |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Projets multiples                                                         | Structure de système de fichiers séparée                                                      | Structure de système de fichiers unique                       |
+| `node_modules` & `package.json`                                           | Instances distinctes                                                                          | Partagés au sein du monorepo                                  |
+| Compilateur par défaut                                                    | `tsc`                                                                                         | webpack                                                       |
+| Paramètres du compilateur                                                 | Spécifiés séparément                                                                          | Valeurs par défaut de Monorepo qui peuvent être modifiées par projet |
+| Fichiers de configuration tels `.eslint.config.mjs`, `.prettierrc`, etc.  | Spécifiés séparément                                                                          | Partagés au sein du monorepo                                  |
+| commandes `nest build` et `nest start`                                    | La cible est automatiquement définie par défaut comme étant le (seul) projet dans le contexte | La cible est par défaut le **projet par défaut** dans le monorepo |
+| Bibliothèques                                                             | Géré manuellement, généralement via npm packaging                                             | Support intégré, y compris la gestion des routes et le bundling   |
 
 Lisez les sections [Espaces de travail](/cli/monorepo) et [Bibliothèques](/cli/libraries) pour obtenir des informations plus détaillées qui vous aideront à choisir le mode qui vous convient le mieux.
 

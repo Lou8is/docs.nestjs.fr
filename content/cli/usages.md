@@ -47,32 +47,32 @@ $ nest g <schéma> <nom> [options]
 
 ##### Arguments
 
-| Argument  | Description                                                                                        |
-|-----------|----------------------------------------------------------------------------------------------------|
+| Argument  | Description                                                                                         |
+|-----------|---------------------------------------------------------------------------------------------------- |
 | `<schéma>` | Le `schéma` ou la `collection:schéma` à générer. Veuillez consulter le tableau ci-dessous pour voir les schémas disponibles. |
 | `<nom>`   | Le nom du composant généré.                                                                        |
 
 ##### Schémas
 
-| Nom          | Alias | Description                                                                                                                    |
-|--------------| ----- |--------------------------------------------------------------------------------------------------------------------------------|
-| `app`        |       | Génère une nouvelle application au sein d'un monorépo (conversion en monorépo si c'est une structure standard)..               |
-| `library`    | `lib` | Génère une nouvelle bibliothèque au sein d'un monorépo (conversion en monorépo si c'est une structure standard).               |
-| `class`      | `cl`  | Génère une nouvelle classe.                                                                                                    |
-| `controller` | `co`  | Génère une déclaration de contrôleur.                                                                                          |
-| `decorator`  | `d`   | Génère un décorateur personnalisé.                                                                                             |
-| `filter`     | `f`   | Génère une déclaration de filtre.                                                                                              |
-| `gateway`    | `ga`  | Génère une déclaration de passerelle.                                                                                          |
-| `guard`      | `gu`  | Génère une déclaration de garde.                                                                                               |
-| `interface`  | `itf` | Génère un interface.                                                                                                           |
-| `interceptor` | `itc` | Génère une déclaration d'intercepteur.                                                                                        |
-| `middleware` | `mi`  | Génère une déclaration de middleware.                                                                                          |
-| `module`     | `mo`  | Génère une déclaration de module.                                                                                              |
-| `pipe`       | `pi`  | Génère une déclaration de pipe.                                                                                                |
-| `provider`   | `pr`  | Génère une déclaration de fournisseur.                                                                                         |
-| `resolver`   | `r`   | Génère une déclaration de résolveur.                                                                                           |
+| Nom          | Alias | Description                                                                                                                     |
+|--------------| ----- |-------------------------------------------------------------------------------------------------------------------------------- |
+| `app`        |       | Génère une nouvelle application au sein d'un monorépo (conversion en monorépo si c'est une structure standard)..                |
+| `library`    | `lib` | Génère une nouvelle bibliothèque au sein d'un monorépo (conversion en monorépo si c'est une structure standard).                |
+| `class`      | `cl`  | Génère une nouvelle classe.                                                                                                     |
+| `controller` | `co`  | Génère une déclaration de contrôleur.                                                                                           |
+| `decorator`  | `d`   | Génère un décorateur personnalisé.                                                                                              |
+| `filter`     | `f`   | Génère une déclaration de filtre.                                                                                               |
+| `gateway`    | `ga`  | Génère une déclaration de passerelle.                                                                                           |
+| `guard`      | `gu`  | Génère une déclaration de garde.                                                                                                |
+| `interface`  | `itf` | Génère un interface.                                                                                                            |
+| `interceptor` | `itc` | Génère une déclaration d'intercepteur.                                                                                         |
+| `middleware` | `mi`  | Génère une déclaration de middleware.                                                                                           |
+| `module`     | `mo`  | Génère une déclaration de module.                                                                                               |
+| `pipe`       | `pi`  | Génère une déclaration de pipe.                                                                                                 |
+| `provider`   | `pr`  | Génère une déclaration de fournisseur.                                                                                          |
+| `resolver`   | `r`   | Génère une déclaration de résolveur.                                                                                            |
 | `resource`   | `res` | Génère une nouvelle ressource CRUD. Pour plus de détails veuillez voir: [CRUD (resource) generator](/recipes/crud-generator). (TS seulement) |
-| `service`    | `s`   | Génère une déclaration de service.                                                                                             |
+| `service`    | `s`   | Génère une déclaration de service.                                                                                              |
 
 ##### Options
 
@@ -107,15 +107,19 @@ $ nest build <nom> [options]
 
 ##### Options
 
-| Option            | Description                                                                                                                                                                                                         |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `--path [path]`   | Chemin vers le fichier `tsconfig`. <br/>Alias `-p`                                                                                                                                                                  |
-| `--config [path]` | Chemin vers le fichier de configuration `nest-cli`. <br/>Alias `-c`                                                                                                                                                 |
-| `--watch`         | Exécute en mode "watch" (reload en direct).<br /> Si vous utilisez `tsc` pour compiler, vous pouvez écrire `rs` pour redémarrer l'application (si l'option `manualRestart` est défini avec `true`). <br/>Alias `-w` |
-| `--builder [nom]` | Spécifie le générateur à utiliser pour la compilation. (`tsc`, `swc`, ou `webpack`). <br/>Alias `-b`                                                                                                                |
-| `--webpack`       | Utilise webpack pour la compilation (Obsolète: utilisez `--builder webpack` à la place).                                                                                                                            |
-| `--webpackPath`   | Chemin vers la configuration de webpack.                                                                                                                                                                            |
-| `--tsc`           | Force l'utilisation de `tsc` pour la compilation.                                                                                                                                                                   |
+| Option                    | Description                                                                                                                                                                                                           |
+|-------------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--path [path]`           | Chemin vers le fichier `tsconfig`. <br/>Alias `-p`                                                                                                                                                                    |
+| `--config [path]`         | Chemin vers le fichier de configuration `nest-cli`. <br/>Alias `-c`                                                                                                                                                   |
+| `--watch`                 | Exécute en mode "watch" (reload en direct).<br /> Si vous utilisez `tsc` pour compiler, vous pouvez écrire `rs` pour redémarrer l'application (si l'option `manualRestart` est défini avec `true`). <br/>Alias `-w`   |
+| `--builder [nom]`         | Spécifie le générateur à utiliser pour la compilation. (`tsc`, `swc`, ou `webpack`). <br/>Alias `-b`                                                                                                                  |
+| `--webpack`               | Utilise webpack pour la compilation (Obsolète: utilisez `--builder webpack` à la place).                                                                                                                              |
+| `--webpackPath`           | Chemin vers la configuration de webpack.                                                                                                                                                                              |
+| `--tsc`                   | Force l'utilisation de `tsc` pour la compilation.                                                                                                                                                                     |
+| `--watchAssets`           | Surveille les fichiers non-TS (les assets comme `.graphql` etc.). Voir [Assets](cli/monorepo#assets) pour plus de détails.                                                                                            |
+| `--type-check`            | Active la vérification du type (lorsque SWC est utilisé).                                                                                                                                                             |
+| `--all`                   | Construire tous les projets dans un monorepo.                                                                                                                                                                         |
+| `--preserveWatchOutput`   | Conserver la sortie console dépassée dans le mode watch au lieu d'effacer l'écran. (mode de surveillance `tsc` uniquement)                                                                                            |
 
 #### nest start
 
@@ -145,8 +149,10 @@ $ nest start <nom> [options]
 | `--webpack`            | (Obsolète: utilisez `--builder webpack` à la place).                                                                                         |
 | `--webpackPath`        | Chemin vers la configuration de webpack.                                                                                                     |
 | `--tsc`                | FForce l'utilisation de `tsc` pour la compilation.                                                                                           |
-| `--exec [binary]`      | Exécutable à utiliser (par défaut: `node`). <br/>Alias `-e`                                                                                          |
-| `-- [key=value]`        | Arguments de la ligne de commande qui peuvent être référencés avec `process.argv`.                                                   |
+| `--exec [binary]`      | Exécutable à utiliser (par défaut: `node`). <br/>Alias `-e`                                                                                            |
+| `--no-shell`            | Ne crée pas de processus enfant dans un shell (voir la documentation de la méthode `child_process.spawn()` de node).                                  |
+| `--env-file`            | Charge les variables d'environnement à partir d'un fichier relatif au répertoire courant, les rendant disponibles aux applications sur `process.env`. |
+| `-- [key=value]`        | Arguments de la ligne de commande qui peuvent être référencés avec `process.argv`.                                                                    |
 
 #### nest add
 
@@ -180,7 +186,7 @@ $ nest info
 
 [System Information]
 OS Version : macOS High Sierra
-NodeJS Version : v16.18.0
+NodeJS Version : v20.18.0
 [Nest Information]
 microservices version : 10.0.0
 websockets version : 10.0.0
