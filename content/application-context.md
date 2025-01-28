@@ -60,7 +60,7 @@ Par exemple, même si vous enregistrez un intercepteur global dans votre applica
 
 #### Récupérer les fournisseurs à partir de modules dynamiques
 
-Lorsqu'il s'agit de [modules dynamiques](/fundamentals/dynamic-modules.md), nous devons fournir à `app.select` le même objet qui représente le module dynamique enregistré dans l'application. Par exemple :
+Lorsqu'il s'agit de [modules dynamiques](/fundamentals/dynamic-modules), nous devons fournir à `app.select` le même objet qui représente le module dynamique enregistré dans l'application. Par exemple :
 
 ```typescript
 @@filename()
@@ -93,7 +93,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Et comme indiqué dans le chapitre [Événements du cycle de vie](/fundamentals/lifecycle-events.md), cela déclenchera des hooks de cycle de vie.
+Et comme indiqué dans le chapitre [Événements du cycle de vie](/fundamentals/lifecycle-events), cela déclenchera des hooks de cycle de vie.
 
 #### Exemple
 

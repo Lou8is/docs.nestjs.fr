@@ -19,7 +19,7 @@ Nest est livré avec un certain nombre de pipes intégrés que vous pouvez utili
 
 #### Pipes intégrés
 
-Nest est livré avec neuf pipes prêtes à l'emploi :
+Nest est livré avec plusieurs pipes prêtes à l'emploi :
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -30,10 +30,11 @@ Nest est livré avec neuf pipes prêtes à l'emploi :
 - `ParseEnumPipe`
 - `DefaultValuePipe`
 - `ParseFilePipe`
+- `ParseDatePipe`
 
 Ils sont exportés depuis le package `@nestjs/common`.
 
-Jetons un coup d'oeil rapide à l'utilisation de `ParseIntPipe`. C'est un exemple du cas d'utilisation **transformation**, où le pipe s'assure que le paramètre d'une méthode est converti en un entier JavaScript (ou lève une exception si la conversion échoue). Plus loin dans ce chapitre, nous montrerons une implémentation personnalisée simple pour un `ParseIntPipe`. Les techniques d'exemple ci-dessous s'appliquent également aux autres pipes de transformation intégrés (`ParseBoolPipe`, `ParseFloatPipe`, `ParseEnumPipe`, `ParseArrayPipe` et `ParseUUIDPipe`, auxquels nous nous référerons comme les pipes `Parse*` dans ce chapitre).
+Jetons un coup d'oeil rapide à l'utilisation de `ParseIntPipe`. C'est un exemple du cas d'utilisation **transformation**, où le pipe s'assure que le paramètre d'une méthode est converti en un entier JavaScript (ou lève une exception si la conversion échoue). Plus loin dans ce chapitre, nous montrerons une implémentation personnalisée simple pour un `ParseIntPipe`. Les techniques d'exemple ci-dessous s'appliquent également aux autres pipes de transformation intégrés (`ParseBoolPipe`, `ParseFloatPipe`, `ParseEnumPipe`, `ParseArrayPipe`, `ParseDatePipe` et `ParseUUIDPipe`, auxquels nous nous référerons comme les pipes `Parse*` dans ce chapitre).
 
 #### Liaison de pipes
 

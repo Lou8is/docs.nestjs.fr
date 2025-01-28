@@ -83,7 +83,7 @@ SWC builder est préconfiguré pour répondre aux exigences des applications Nes
 
 ```json
 {
-  "$schema": "https://json.schemastore.org/swcrc",
+  "$schema": "https://swc.rs/schema.json",
   "sourceMaps": true,
   "jsc": {
     "parser": {
@@ -228,7 +228,7 @@ De plus, vous devrez ajouter les propriétés `transform` suivantes à votre fic
 
 ```json
 {
-  "$schema": "https://json.schemastore.org/swcrc",
+  "$schema": "https://swc.rs/schema.json",
   "sourceMaps": true,
   "jsc": {
     "parser": {

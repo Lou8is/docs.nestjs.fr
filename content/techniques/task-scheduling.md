@@ -145,6 +145,12 @@ Vous pouvez également fournir des options supplémentaires en tant que second p
       </td>
     </tr>
     <tr>
+      <td><code>waitForCompletion</code></td>
+      <td>
+        Si <code>true</code>, aucune instance supplémentaire de la tâche cron ne sera exécutée tant que le callback onTick actuel n'aura pas été exécuté. Toutes les nouvelles exécutions programmées qui se produisent pendant que la tâche cron actuelle est en cours d'exécution seront entièrement ignorées.
+      </td>
+    </tr>
+    <tr>
       <td><code>disabled</code></td>
       <td>
        Ceci indique si la tâche sera exécutée ou non.

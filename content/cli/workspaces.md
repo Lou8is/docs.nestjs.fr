@@ -43,7 +43,7 @@ Nous avons construit une structure en _mode standard_, avec une structure de dos
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">.eslintrc.js</div>
+  <div class="item">.eslint.config.mjs</div>
 </div>
 
 Nous pouvons convertir cette structure en mode monorepo de la manière suivante :
@@ -84,7 +84,7 @@ A ce stade, `nest` convertit la structure existante en une structure **en mode m
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">.eslintrc.js</div>
+  <div class="item">.eslint.config.mjs</div>
 </div>
 
 Le schéma `generate app` a réorganisé le code - en déplaçant chaque projet **application** dans le dossier `apps`, et en ajoutant un fichier `tsconfig.app.json` spécifique au projet dans le dossier racine de chaque projet. Notre application originale `mon-projet` est devenue le **projet par défaut** pour le monorepo, et est maintenant un pair de l'application `mon-app` qui vient d'être ajoutée, située dans le dossier `apps`. Nous couvrirons les projets par défaut plus loin.
@@ -118,7 +118,7 @@ $ nest start mon-app
 
 Les projets de type application, ou ce que nous pourrions simplement appeler de manière informelle "applications", sont des applications Nest complètes que vous pouvez exécuter et déployer. Vous générez un projet de type application avec `nest generate app`.
 
-Cette commande génère automatiquement un squelette de projet, incluant les dossiers standards `src` et `test` du [typescript starter](https://github.com/nestjs/typescript-starter). Contrairement au mode standard, un projet d'application dans un monorepo n'a aucune dépendance de paquetage (`package.json`) ou d'autres artefacts de configuration de projet comme `.prettierrc` et `.eslintrc.js`. A la place, les dépendances et les fichiers de configuration de la monorepo sont utilisés.
+Cette commande génère automatiquement un squelette de projet, incluant les dossiers standards `src` et `test` du [typescript starter](https://github.com/nestjs/typescript-starter). Contrairement au mode standard, un projet d'application dans un monorepo n'a aucune dépendance de paquetage (`package.json`) ou d'autres artefacts de configuration de projet comme `.prettierrc` et `.eslint.config.mjs`. A la place, les dépendances et les fichiers de configuration de la monorepo sont utilisés.
 
 Cependant, le schéma génère un fichier `tsconfig.app.json` spécifique au projet dans le dossier racine du projet. Ce fichier de configuration définit automatiquement les options de compilation appropriées, y compris le dossier de sortie de la compilation. Le fichier étend le fichier `tsconfig.json` de niveau supérieur (monorepo), de sorte que vous pouvez gérer les paramètres globaux à l'échelle du monorepo, mais les remplacer si nécessaire au niveau du projet.
 

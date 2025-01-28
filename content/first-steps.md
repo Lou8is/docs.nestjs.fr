@@ -10,7 +10,7 @@ Nous utiliserons principalement TypeScript dans les exemples que nous fournisson
 
 #### Prérequis
 
-Veuillez vous assurer que [Node.js](https://nodejs.org) (version >= 16) est installé sur votre système d'exploitation.
+Veuillez vous assurer que [Node.js](https://nodejs.org) (version >= 20) est installé sur votre système d'exploitation.
 
 #### Mise en place
 

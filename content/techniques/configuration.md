@@ -44,6 +44,12 @@ DATABASE_USER=test
 DATABASE_PASSWORD=test
 ```
 
+Si vous avez besoin que certaines variables env soient disponibles avant même que le `ConfigModule` ne soit chargé et que l'application Nest ne soit bootstrapée (par exemple, pour passer la configuration du microservice à la méthode `NestFactory#createMicroservice`), vous pouvez utiliser l'option `--env-file` de la CLI de Nest. Cette option vous permet de spécifier le chemin vers le fichier `.env` qui doit être chargé avant le démarrage de l'application. Le support de l'option `--env-file` a été introduit dans Node v20, voir [la documentation](https://nodejs.org/dist/v20.18.1/docs/api/cli.html#--env-fileconfig) pour plus de détails.
+
+```bash
+$ nest start --env-file .env
+```
+
 #### Chemin d'accès personnalisé au fichier env
 
 Par défaut, le package recherche un fichier `.env` dans le répertoire racine de l'application. Pour spécifier un autre chemin pour le fichier `.env`, définissez la propriété `envFilePath` d'un objet d'options (optionnel) que vous passez à `forRoot()`, comme suit :
@@ -275,6 +281,8 @@ constructor(private configService: ConfigService<{ PORT: number }, true>) {
 }
 ```
 
+> info **Astuce** Pour s'assurer que la méthode `ConfigService#get` récupère les valeurs exclusivement à partir des fichiers de configuration personnalisés et ignore les variables `process.env`, mettez l'option `skipProcessEnv` à `true` dans l'objet options de la méthode `forRoot()` du `ConfigModule`.
+
 #### Espaces de noms de configuration
 
 Le module `ConfigModule` vous permet de définir et de charger plusieurs fichiers de configuration personnalisés, comme indiqué dans <a href="techniques/configuration#fichiers-de-configuration-personnalisés">Fichiers de configuration personnalisés</a> ci-dessus. Vous pouvez gérer des hiérarchies d'objets de configuration complexes avec des objets de configuration imbriqués, comme indiqué dans cette section. Vous pouvez également renvoyer un objet de configuration "à espace de noms" avec la fonction `registerAs()` comme suit :
@@ -444,6 +452,8 @@ Le package `@nestjs/config` utilise les paramètres par défaut de :
 - `abortEarly` : si true, arrête la validation à la première erreur ; si false, retourne toutes les erreurs. La valeur par défaut est `false`.
 
 Notez qu'une fois que vous avez décidé de passer un objet `validationOptions`, tous les paramètres que vous ne passez pas explicitement prendront par défaut les valeurs standard de `Joi` (et non les valeurs par défaut de `@nestjs/config`). Par exemple, si vous laissez `allowUnknowns` non spécifié dans votre objet `validationOptions` personnalisé, il aura la valeur par défaut `Joi` de `false`. Il est donc probablement plus sûr de spécifier **ces deux** paramètres dans votre objet personnalisé.
+
+> info **Astuce** Pour désactiver la validation des variables d'environnement prédéfinies, mettez l'attribut `validatePredefined` à `false` dans l'objet options de la méthode `forRoot()`. Les variables d'environnement prédéfinies sont des variables de processus (variables `process.env`) qui ont été définies avant l'importation du module. Par exemple, si vous démarrez votre application avec `PORT=3000 node main.js`, alors `PORT` est une variable d'environnement prédéfinie.
 
 #### Fonction de validation personnalisée
 
