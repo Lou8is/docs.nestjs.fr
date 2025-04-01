@@ -100,8 +100,8 @@ Ce nouvel algorithme peut avoir un impact sur vos tests d'intégration si vous u
 
 - Dédupliquer le module dynamique que vous souhaitez bloquer
 - Utilisez `module.select(ParentModule).get(Target)` pour trouver la bonne instance
-- Supprimez toutes les instances en utilisant `module.get(Target, {{ '{' }} each : true &#125 ;)`
-- Ou retournez votre test à l'ancien algorithme en utilisant `Test.createTestingModule({{ '{' }}&#125 ;, {{ '{' }} moduleIdGeneratorAlgorithm : 'deep-hash' &#125 ;)`
+- Supprimez toutes les instances en utilisant `module.get(Target, {{ '{' }} each : true &#125;)`
+- Ou retournez votre test à l'ancien algorithme en utilisant `Test.createTestingModule({{ '{' }}&#125;, {{ '{' }} moduleIdGeneratorAlgorithm : 'deep-hash' &#125;)`
 
 #### Inférence du type de réflecteur
 

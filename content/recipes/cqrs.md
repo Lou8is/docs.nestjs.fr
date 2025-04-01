@@ -100,7 +100,7 @@ export class KillDragonCommand extends Command {
 }
 ```
 
-Comme vous pouvez le voir, la classe `KillDragonCommand` étend la classe `Command`. La classe `Command` est une simple classe utilitaire exportée du paquetage `@nestjs/cqrs` qui vous permet de définir le type de retour de la commande. Dans ce cas, le type de retour est un objet avec une propriété `actionId`. Maintenant, chaque fois que la commande `KillDragonCommand` est lancée, le type de retour de la méthode `CommandBus#execute()` sera déduit comme `Promise<{{} '{' }} actionId : string {{ '}' }}>`. Ceci est utile lorsque vous souhaitez renvoyer des données depuis le gestionnaire de commande.
+Comme vous pouvez le voir, la classe `KillDragonCommand` étend la classe `Command`. La classe `Command` est une simple classe utilitaire exportée du paquetage `@nestjs/cqrs` qui vous permet de définir le type de retour de la commande. Dans ce cas, le type de retour est un objet avec une propriété `actionId`. Maintenant, chaque fois que la commande `KillDragonCommand` est lancée, le type de retour de la méthode `CommandBus#execute()` sera déduit comme `Promise<{{ '{' }} actionId : string {{ '}' }}>`. Ceci est utile lorsque vous souhaitez renvoyer des données depuis le gestionnaire de commande.
 
 > info **Astuce** L'héritage de la classe `Command` est optionnel. Il n'est nécessaire que si vous souhaitez définir le type de retour de la commande.
 
