@@ -10,7 +10,7 @@ Commencez par installer le package requis :
 $ npm i csrf-csrf
 ```
 
-> warning **Attention** Comme indiqué dans la [documentation csrf-csrf] (https://github.com/Psifi-Solutions/csrf-csrf?tab=readme-ov-file#getting-started), ce middleware nécessite que le middleware de session ou `cookie-parser` soit initialisé au préalable. Veuillez vous référer à la documentation pour plus de détails.
+> warning **Attention** Comme indiqué dans la [documentation csrf-csrf](https://github.com/Psifi-Solutions/csrf-csrf?tab=readme-ov-file#getting-started), ce middleware nécessite que le middleware de session ou `cookie-parser` soit initialisé au préalable. Veuillez vous référer à la documentation pour plus de détails.
 
 Une fois l'installation terminée, appliquez le middleware `csrf-csrf` en tant que middleware global.
 
