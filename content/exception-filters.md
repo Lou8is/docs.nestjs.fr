@@ -90,6 +90,14 @@ En utilisant ce qui précède, voici à quoi ressemblerait la réponse :
 }
 ```
 
+#### Journalisation des exceptions
+
+Par défaut, le filtre d'exception n'enregistre pas les exceptions intégrées comme `HttpException` (et toutes les exceptions qui en héritent). Lorsque ces exceptions sont levées, elles n'apparaissent pas dans la console, car elles sont traitées comme faisant partie du flux normal de l'application. Le même comportement s'applique aux autres exceptions intégrées telles que `WsException` et `RpcException`.
+
+Ces exceptions héritent toutes de la classe de base `IntrinsicException`, qui est exportée depuis le paquetage `@nestjs/common`. Cette classe permet de différencier les exceptions qui font partie du fonctionnement normal de l'application de celles qui n'en font pas partie.
+
+Si vous voulez enregistrer ces exceptions, vous pouvez créer un filtre d'exception personnalisé. Nous expliquerons comment le faire dans la section suivante.
+
 #### Exceptions personnalisées
 
 Dans la plupart des cas, vous n'aurez pas besoin d'écrire des exceptions personnalisées, et vous pourrez utiliser l'exception HTTP Nest intégrée, comme décrit dans la section suivante. Si vous avez besoin de créer des exceptions personnalisées, c'est une bonne pratique de créer votre propre **hiérarchie d'exceptions**, où vos exceptions personnalisées héritent de la classe de base `HttpException`. Avec cette approche, Nest reconnaîtra vos exceptions, et s'occupera automatiquement des réponses d'erreur. Implémentons une telle exception personnalisée :

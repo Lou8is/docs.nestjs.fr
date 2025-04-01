@@ -115,7 +115,7 @@ D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`
 
 #### Contexte
 
-Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur RabbitMQ, vous pouvez accéder à l'objet `RmqContext`.
+Dans des scénarios plus complexes, vous pouvez avoir besoin d'accéder à des informations supplémentaires sur la requête entrante. Lorsque vous utilisez le transporteur RabbitMQ, vous pouvez accéder à l'objet `RmqContext`.
 
 ```typescript
 @@filename()
@@ -240,4 +240,63 @@ replaceEmoji(data, context) {
   const { properties: { headers } } = context.getMessage();
   return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
 }
+```
+
+#### Mises à jour de l'état de l'instance
+
+Pour obtenir des mises à jour en temps réel sur la connexion et l'état de l'instance du pilote sous-jacent, vous pouvez vous abonner au flux `status`. Ce flux fournit des mises à jour d'état spécifiques au pilote choisi. Pour le pilote RMQ, le flux `status` émet les événements `connected` et `disconnected`.
+
+```typescript
+this.client.status.subscribe((status: RmqStatus) => {
+  console.log(status);
+});
+```
+
+> info **Astuce** Le type `RmqStatus` est importé du paquetage `@nestjs/microservices`.
+
+De même, vous pouvez vous abonner au flux `status` du serveur pour recevoir des notifications sur le statut du serveur.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: RmqStatus) => {
+  console.log(status);
+});
+```
+
+#### Écoute des événements RabbitMQ
+
+Dans certains cas, vous pouvez vouloir écouter les événements internes émis par le microservice. Par exemple, vous pourriez écouter l'événement `error` pour déclencher des opérations supplémentaires lorsqu'une erreur se produit. Pour ce faire, utilisez la méthode `on()`, comme montré ci-dessous :
+
+```typescript
+this.client.on('error', (err) => {
+  console.error(err);
+});
+```
+
+De même, vous pouvez écouter les événements internes du serveur :
+
+```typescript
+server.on<RmqEvents>('error', (err) => {
+  console.error(err);
+});
+```
+
+> info **Astuce** Le type `RmqEvents` est importé du paquetage `@nestjs/microservices`.
+
+#### Accès au pilote sous-jacent
+
+Pour des cas d'utilisation plus avancés, vous pouvez avoir besoin d'accéder à l'instance du pilote sous-jacent. Cela peut être utile pour des scénarios tels que la fermeture manuelle de la connexion ou l'utilisation de méthodes spécifiques au pilote. Cependant, gardez à l'esprit que dans la plupart des cas, vous **ne devriez pas avoir besoin** d'accéder directement au pilote.
+
+Pour ce faire, vous pouvez utiliser la méthode `unwrap()`, qui renvoie l'instance du pilote sous-jacent. Le paramètre de type générique doit spécifier le type d'instance de pilote que vous attendez.
+
+```typescript
+const managerRef =
+  this.client.unwrap<import('amqp-connection-manager').AmqpConnectionManager>();
+```
+
+De même, vous pouvez accéder à l'instance de pilote sous-jacente du serveur :
+
+```typescript
+const managerRef =
+  server.unwrap<import('amqp-connection-manager').AmqpConnectionManager>();
 ```

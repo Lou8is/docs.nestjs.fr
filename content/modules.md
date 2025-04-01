@@ -1,12 +1,12 @@
 ### Modules
 
-Un module est une classe annotée avec un décorateur `@Module()`. Le décorateur `@Module()` fournit des métadonnées que **Nest** utilise pour organiser la structure de l'application.
+Un module est une classe annotée avec le décorateur `@Module()`. Ce décorateur fournit des métadonnées que **Nest** utilise pour organiser et gérer efficacement la structure de l'application.
 
 <figure><img class="illustrative-image" src="/assets/Modules_1.png" /></figure>
 
-Chaque application possède au moins un module, un **module racine**. Le module racine est le point de départ que Nest utilise pour construire le **graphe de l'application** - la structure de données interne que Nest utilise pour résoudre les relations et les dépendances entre les modules et les fournisseurs. Bien que de très petites applications puissent théoriquement n'avoir qu'un module racine, ce n'est pas le cas typique. Nous tenons à souligner que les modules sont **fortement** recommandés comme moyen efficace d'organiser vos composants. Ainsi, pour la plupart des applications, l'architecture résultante utilisera plusieurs modules, chacun encapsulant un ensemble de **capacités** étroitement liées.
+Chaque application Nest possède au moins un module, le **module racine**, qui sert de point de départ à Nest pour construire le **graphique d'application**. Ce graphe est une structure interne que Nest utilise pour résoudre les relations et les dépendances entre les modules et les fournisseurs. Si les petites applications peuvent n'avoir qu'un module racine, ce n'est généralement pas le cas. Les modules sont **hautement recommandés** comme moyen efficace d'organiser vos composants. Pour la plupart des applications, vous aurez probablement plusieurs modules, chacun encapsulant un ensemble de **capacités** étroitement liées.
 
-Le décorateur `@Module()` prend un objet unique dont les propriétés décrivent le module :
+Le décorateur `@Module()` prend un objet unique avec des propriétés qui décrivent le module :
 
 |               |                                                                                                                                                                                                          |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -15,13 +15,13 @@ Le décorateur `@Module()` prend un objet unique dont les propriétés décriven
 | `imports`     | la liste des modules importés qui exportent les fournisseurs requis dans ce module                                                                                                                 |
 | `exports`     | le sous-ensemble de `providers` qui sont fournis par ce module et devraient être disponibles dans d'autres modules qui importent ce module. Vous pouvez utiliser le fournisseur lui-même ou seulement son jeton (valeur `provide`) |
 
-Le module **encapsule** les fournisseurs par défaut. Cela signifie qu'il est impossible d'injecter des fournisseurs qui ne font pas directement partie du module actuel ou qui ne sont pas exportés par les modules importés. Ainsi, vous pouvez considérer les fournisseurs exportés d'un module comme l'interface publique du module, ou API.
+Le module **encapsule** les fournisseurs par défaut, ce qui signifie que vous ne pouvez injecter que des fournisseurs qui font partie du module actuel ou qui sont explicitement exportés à partir d'autres modules importés. Les fournisseurs exportés d'un module servent essentiellement d'interface publique ou d'API pour le module.
 
 #### Modules de fonctionnalités
 
-Le `CatsController` et le `CatsService` appartiennent au même domaine d'application. Comme ils sont étroitement liés, il est logique de les déplacer dans un module de fonctionnalité. Un module de fonctionnalité organise simplement le code pertinent pour une fonctionnalité spécifique, en gardant le code organisé et en établissant des limites claires. Cela nous aide à gérer la complexité et à développer selon les principes [SOLID](https://en.wikipedia.org/wiki/SOLID), en particulier lorsque la taille de l'application et/ou de l'équipe augmente.
+Dans notre exemple, le `CatsController` et le `CatsService` sont étroitement liés et servent le même domaine d'application. Il est donc logique de les regrouper dans un module de fonctionnalité. Un module de fonctionnalité organise le code qui est pertinent pour une fonctionnalité spécifique, aidant à maintenir des limites claires et une meilleure organisation. Ceci est particulièrement important au fur et à mesure que l'application ou l'équipe grandit, et s'aligne avec les principes de [SOLID](https://en.wikipedia.org/wiki/SOLID).
 
-Pour le démontrer, nous allons créer le `CatsModule`.
+Ensuite, nous allons créer le `CatsModule` pour montrer comment grouper le contrôleur et le service.
 
 ```typescript
 @@filename(cats/cats.module)
@@ -175,13 +175,11 @@ export class CatsModule {}
 
 Le décorateur `@Global()` rend le module global. Les modules globaux ne devraient être enregistrés **qu'une seule fois**, généralement par le module racine ou le module principal. Dans l'exemple ci-dessus, le fournisseur `CatsService` sera omniprésent, et les modules qui souhaitent injecter le service n'auront pas besoin d'importer le `CatsModule` dans leur liste d'importations.
 
-> info **Hint** Rendre tout global n'est pas une bonne décision de conception. Les modules globaux sont disponibles pour réduire la quantité d'éléments de base nécessaires. La liste `imports` est généralement le moyen préféré pour rendre l'API du module disponible aux consommateurs.
+> info **Astuce** Rendre tout global n'est pas une pratique de conception recommandée. Bien que les modules globaux puissent aider à réduire la « boilerplate », il est généralement préférable d'utiliser le tableau `imports` pour rendre l'API d'un module disponible à d'autres modules d'une manière contrôlée et claire. Cette approche fournit une meilleure structure et une meilleure maintenabilité, en s'assurant que seules les parties nécessaires du module sont partagées avec d'autres, tout en évitant un couplage inutile entre des parties de l'application qui ne sont pas liées entre elles.
 
 #### Modules dynamiques
 
-Le système de modules Nest comprend une fonction puissante appelée **modules dynamiques**. Cette fonction vous permet de créer facilement des modules personnalisables qui peuvent enregistrer et configurer les fournisseurs de manière dynamique. Les modules dynamiques sont traités en détail [ici](/fundamentals/dynamic-modules). Dans ce chapitre, nous donnerons un bref aperçu pour compléter l'introduction aux modules.
-
-Voici un exemple de définition de module dynamique pour un `DatabaseModule` :
+Les modules dynamiques de Nest vous permettent de créer des modules qui peuvent être configurés au moment de l'exécution. Ceci est particulièrement utile lorsque vous avez besoin de fournir des modules flexibles et personnalisables où les fournisseurs peuvent être créés sur la base de certaines options ou configurations. Voici un bref aperçu du fonctionnement des **modules dynamiques**.
 
 ```typescript
 @@filename()
