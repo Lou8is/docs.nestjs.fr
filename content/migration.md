@@ -12,7 +12,7 @@ Après des années de développement, Express v5 a été officiellement publié 
 
 L'une des mises à jour les plus notables d'Express v5 est la révision de l'algorithme de correspondance des routes. Les changements suivants ont été introduits dans la manière dont les chaînes de chemin sont mises en correspondance avec les demandes entrantes :
 
-- Le joker `*` doit avoir un nom, correspondant au comportement des paramètres : utilisez `/*splat` ou `/{ '{' }}*splat&#125;` au lieu de `/*`. `splat` est simplement le nom du paramètre joker et n'a pas de signification particulière. Vous pouvez le nommer comme vous le souhaitez, par exemple, `*wildcard`
+- Le joker `*` doit avoir un nom, correspondant au comportement des paramètres : utilisez `/*splat` ou `/{{ '{' }}*splat&#125;` au lieu de `/*`. `splat` est simplement le nom du paramètre joker et n'a pas de signification particulière. Vous pouvez le nommer comme vous le souhaitez, par exemple, `*wildcard`
 - Le caractère optionnel `?` n'est plus supporté, utilisez les accolades à la place : `/:file{{ '{' }}.:ext&#125;`.
 - Les caractères Regexp ne sont pas pris en charge.
 - Certains caractères ont été réservés pour éviter toute confusion lors de la mise à jour : `(()[]?+ !)`, utilisez `\` pour les échapper.
