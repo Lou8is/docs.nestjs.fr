@@ -4,7 +4,7 @@ Les fournisseurs sont un concept central de Nest. De nombreuses classes de base 
 
 <figure><img class="illustrative-image" src="/assets/Components_1.png" /></figure>
 
-Dans le chapitre précédent, nous avons créé un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples déclarées comme `providers` dans un [module](/modules).
+Dans le chapitre précédent, nous avons construit un simple `CatsController`. Les contrôleurs doivent gérer les requêtes HTTP et déléguer les tâches plus complexes à des **fournisseurs**. Les fournisseurs sont des classes JavaScript simples qui sont déclarées comme `providers` dans un module NestJS. Pour plus d'informations, lisez le chapitre ["Modules"](/modules).
 
 > info **Astuce** Étant donné que Nest permet de concevoir et d'organiser les dépendances d'une manière plus orientée-objet, nous recommandons vivement de suivre les principes [SOLID](https://en.wikipedia.org/wiki/SOLID).
 
