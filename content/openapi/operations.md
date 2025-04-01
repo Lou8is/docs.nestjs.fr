@@ -157,7 +157,7 @@ Pour ajouter une extension à une requête, utilisez le décorateur `@ApiExtensi
 
 #### Avancé : Générique `ApiResponse`
 
-Avec la possibilité de fournir des [définitions brutes] (/openapi/types-and-parameters#définitions-brutes), nous pouvons définir un schéma générique pour l'interface utilisateur de Swagger. Supposons que nous ayons le DTO suivant :
+Avec la possibilité de fournir des [définitions brutes](/openapi/types-and-parameters#définitions-brutes), nous pouvons définir un schéma générique pour l'interface utilisateur de Swagger. Supposons que nous ayons le DTO suivant :
 
 ```ts
 export class PaginatedDto<TData> {

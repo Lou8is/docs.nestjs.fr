@@ -84,7 +84,7 @@ bootstrap();
 
 #### Fastify v5
 
-`@nestjs/platform-fastify` v11 supporte enfin Fastify v5. Cette mise à jour devrait être transparente pour la plupart des utilisateurs ; cependant, Fastify v5 introduit quelques ruptures, bien qu'il soit peu probable qu'elles affectent la majorité des utilisateurs de NestJS. Pour plus d'informations, reportez-vous au [Guide de migration vers Fastify v5] (https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
+`@nestjs/platform-fastify` v11 supporte enfin Fastify v5. Cette mise à jour devrait être transparente pour la plupart des utilisateurs ; cependant, Fastify v5 introduit quelques ruptures, bien qu'il soit peu probable qu'elles affectent la majorité des utilisateurs de NestJS. Pour plus d'informations, reportez-vous au [Guide de migration vers Fastify v5](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
 
 > info **Astuce** Il n'y a pas eu de changement dans la correspondance des chemins dans Fastify v5, vous pouvez donc continuer à utiliser la syntaxe des caractères génériques comme vous le faisiez auparavant. Le comportement reste le même, et les routes définies avec des jokers (comme `*`) fonctionneront toujours comme prévu.
 

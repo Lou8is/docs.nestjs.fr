@@ -476,7 +476,7 @@ export class EventsModule {}
 
 Lors des tests unitaires d'une application, nous souhaitons généralement éviter toute connexion à la base de données, afin de simplifier la mise en place de nos suites de tests et d'en accélérer l'exécution. Mais nos classes peuvent dépendre de modèles tirés de l'instance de connexion. Comment résoudre ces classes ? La solution consiste à créer des modèles fictifs.
 
-Pour rendre cela plus facile, le package `@nestjs/mongoose` expose une fonction `getModelToken()` qui retourne un [jeton d'injection préparé](/fundamentals/custom-providers#principes-de-base-de-lid) basé sur un nom de jeton. En utilisant ce jeton, vous pouvez facilement fournir une implémentation fictive en utilisant n'importe laquelle des techniques standard de [fournisseurs personnalisés] (/fundamentals/custom-providers), y compris `useClass`, `useValue`, et `useFactory`. Par exemple :
+Pour rendre cela plus facile, le package `@nestjs/mongoose` expose une fonction `getModelToken()` qui retourne un [jeton d'injection préparé](/fundamentals/custom-providers#principes-de-base-de-lid) basé sur un nom de jeton. En utilisant ce jeton, vous pouvez facilement fournir une implémentation fictive en utilisant n'importe laquelle des techniques standard de [fournisseurs personnalisés](/fundamentals/custom-providers), y compris `useClass`, `useValue`, et `useFactory`. Par exemple :
 
 ```typescript
 @Module({
