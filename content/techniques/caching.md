@@ -1,25 +1,20 @@
 ### Gestion du cache
 
-La mise en cache est une **technique** simple et efficace qui permet d'améliorer les performances de votre application. Elle agit comme un stockage temporaire de données qui permet un accès performant aux données.
+La mise en cache est une **technique** puissante et simple pour améliorer les performances de votre application. En agissant comme une couche de stockage temporaire, elle permet un accès plus rapide aux données fréquemment utilisées, réduisant ainsi la nécessité d'aller chercher ou de calculer la même information à plusieurs reprises. Il en résulte des temps de réponse plus rapides et une efficacité globale accrue.
 
 #### Installation
 
-Installez d'abord les packages nécessaires :
+Pour commencer à utiliser la mise en cache dans Nest, vous devez installer le paquet `@nestjs/cache-manager` ainsi que le paquet `cache-manager`.
 
 ```bash
 $ npm install @nestjs/cache-manager cache-manager
 ```
 
-> warning **Attention** La version 4 de `cache-manager` utilise les secondes pour le `TTL (Time-To-Live)`. La version actuelle de `cache-manager` (v5) utilise des millisecondes à la place. NestJS ne convertit pas la valeur, et transmet simplement le ttl que vous fournissez à la bibliothèque. En d'autres termes :
-> - Si vous utilisez `cache-manager` v4, fournissez le ttl en secondes
-> - Si vous utilisez `cache-manager` v5, fournissez le ttl en millisecondes.
-> - La documentation se réfère à des secondes, puisque NestJS a été publié avec la version 4 du gestionnaire de cache.
+Par défaut, tout est stocké en mémoire ; Comme `cache-manager` utilise [Keyv](https://keyv.org/docs/) en interne, vous pouvez facilement passer à une solution de stockage plus avancée, comme Redis, en installant le paquetage approprié. Nous couvrirons cela plus en détail plus tard.
 
 #### Cache en mémoire
 
-Nest fournit une API unifiée pour différents fournisseurs de stockage de cache. Celui qui est intégré est un stockage de données en mémoire. Cependant, vous pouvez facilement passer à une solution plus complète, comme Redis.
-
-Pour activer la mise en cache, importez le module `CacheModule` et appelez sa méthode `register()`.
+Pour activer la mise en cache dans votre application, importez le module `CacheModule` et configurez-le en utilisant la méthode `register()` :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -32,6 +27,8 @@ import { AppController } from './app.controller';
 })
 export class AppModule {}
 ```
+
+Cette configuration initialise la mise en cache en mémoire avec les paramètres par défaut, ce qui vous permet de commencer à mettre en cache les données immédiatement.
 
 #### Interagir avec le stockage de données dans le cache
 
@@ -57,13 +54,13 @@ await this.cacheManager.set('key', 'value');
 
 > warning **Note** La mémoire cache en mémoire ne peut stocker que des valeurs de types pris en charge par [l'algorithme de clonage structuré](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
 
-Le délai d'expiration par défaut du cache est de 5 secondes.
-
-Vous pouvez spécifier manuellement un TTL (délai d'expiration en secondes) pour cette clé spécifique, comme suit :
+Vous pouvez spécifier manuellement un TTL (délai d'expiration en millisecondes) pour cette clé spécifique, comme suit :
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
 ```
+
+Où `1000` est le TTL en millisecondes - dans ce cas, l'élément de cache expirera après une seconde.
 
 Pour désactiver l'expiration du cache, mettez la propriété de configuration `ttl` à `0` :
 
@@ -124,14 +121,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class AppModule {}
 ```
 
-#### Personnalisation de la mise en cache
+#### Time-to-live (TTL)
 
-Toutes les données mises en cache ont leur propre délai d'expiration ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). Pour personnaliser les valeurs par défaut, passez l'objet options à la méthode `register()`.
+La valeur par défaut de `ttl` est `0`, ce qui signifie que le cache n'expirera jamais. Pour spécifier un [TTL](https://en.wikipedia.org/wiki/Time_to_live) personnalisé, vous pouvez fournir l'option `ttl` dans la méthode `register()`, comme démontré ci-dessous :
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // secondes
-  max: 10, // nombre maximum d'éléments dans le cache
+  ttl: 5000, // milliseconds
 });
 ```
 
@@ -226,30 +222,35 @@ class HttpCacheInterceptor extends CacheInterceptor {
 }
 ```
 
-#### Différents stockages
+#### Utilisation d'autres stockages
 
-Le paquetage `cache-manager` offre une variété d'options de stockage utiles, y compris le [Redis store](https://www.npmjs.com/package/cache-manager-redis-yet), qui est le package officiel pour l'intégration de Redis avec cache-manager. Vous pouvez trouver une liste complète des stores supportés [ici](https://github.com/jaredwray/cacheable/blob/main/packages/cache-manager/READMEv5.md#store-engines). Pour configurer le store Redis, utilisez la méthode `registerAsync()` pour l'initialiser, comme indiqué ci-dessous :
+Le passage à un magasin de cache différent est simple. Tout d'abord, installez le paquetage approprié. Par exemple, pour utiliser Redis, installez le paquet `@keyv/redis` :
+
+```bash
+$ npm install @keyv/redis
+```
+
+Avec ceci en place, vous pouvez enregistrer le `CacheModule` avec plusieurs magasins comme indiqué ci-dessous :
 
 ```typescript
-import { redisStore } from 'cache-manager-redis-yet';
 import { Module } from '@nestjs/common';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
+import KeyvRedis from '@keyv/redis';
+import { Keyv } from 'keyv';
+import { CacheableMemory } from 'cacheable';
 
 @Module({
   imports: [
     CacheModule.registerAsync({
       useFactory: async () => {
-        const store = await redisStore({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-        });
-
         return {
-          store: store as unknown as CacheStore,
-          ttl: 3 * 60000, // 3 minutes (milliseconds)
+          stores: [
+            new Keyv({
+              store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
+            }),
+            new KeyvRedis('redis://localhost:6379'),
+          ],
         };
       },
     }),
@@ -259,7 +260,8 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-> warning **Attention** Le paquet `cache-manager-redis-yet` requiert que le paramètre `ttl` (time-to-live) soit spécifié directement plutôt que dans les options du module.
+Dans cet exemple, nous avons enregistré deux stockages : `CacheableMemory` et `KeyvRedis`. Le magasin `CacheableMemory` est un simple stockage en mémoire, tandis que `KeyvRedis` est un magasin Redis. Le tableau `stores` est utilisé pour spécifier les stockages que vous voulez utiliser. Le premier magasin du tableau est le stockage par défaut, et les autres sont des stockages de repli.
+Consultez la [documentation Keyv](https://keyv.org/docs/) pour plus d'informations sur les stockages disponibles.
 
 #### Configuration asynchrone
 

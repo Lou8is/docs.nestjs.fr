@@ -129,18 +129,25 @@ export class AppModule {
 
 #### Jokers de route
 
-Les itinéraires basés sur des motifs sont également pris en charge. Par exemple, l'astérisque est utilisé comme **caractère générique**, et correspondra à n'importe quelle combinaison de caractères :
+Les routes basées sur des motifs sont également supportées dans le middleware NestJS. Par exemple, le joker nommé (`*splat`) peut être utilisé comme joker pour correspondre à n'importe quelle combinaison de caractères dans une route. Dans l'exemple suivant, l'intergiciel sera exécuté pour toute route commençant par `abcd/`, quel que soit le nombre de caractères qui suivent.
 
 ```typescript
 forRoutes({
-    path: 'ab*cd',
+    path: 'abcd/*splat',
     method: RequestMethod.ALL,
 });
 ```
 
-Le chemin d'accès `'ab*cd'` correspondra à `abcd`, `ab_cd`, `abecd`, et ainsi de suite. Les caractères `?`, `+`, `*`, et `()` peuvent être utilisés dans un chemin d'accès, et sont des sous-ensembles de leurs expressions régulières correspondantes. Le trait d'union ( `-`) et le point (`.`) sont interprétés littéralement par les chemins basés sur des chaînes de caractères.
+> info **Astuce** `splat` est simplement le nom du paramètre joker et n'a pas de signification particulière. Vous pouvez le nommer comme vous le souhaitez, par exemple, `*wildcard`.
 
-> warning **Attention** Le paquet `fastify` utilise la dernière version du paquet `path-to-regexp`, qui ne supporte plus les astérisques `*`. A la place, vous devez utiliser des paramètres (par exemple, `(.*)`, `:splat*`).
+Le chemin d'accès `'abcd/*'` correspondra à `abcd/1`, `abcd/123`, `abcd/abc`, et ainsi de suite. Le trait d'union ( `-`) et le point (`.`) sont interprétés littéralement par les chemins d'accès basés sur des chaînes de caractères. Cependant, `abcd/` sans caractères supplémentaires ne correspondra pas à l'itinéraire. Pour cela, vous devez mettre le joker entre accolades pour le rendre optionnel :
+
+```typescript
+forRoutes({
+  path: 'abcd/{*splat}',
+  method: RequestMethod.ALL,
+});
+```
 
 #### Consommateur de middleware
 
@@ -193,7 +200,7 @@ consumer
   .exclude(
     { path: 'cats', method: RequestMethod.GET },
     { path: 'cats', method: RequestMethod.POST },
-    'cats/(.*)',
+    'cats/{*splat}',
   )
   .forRoutes(CatsController);
 ```
@@ -201,6 +208,8 @@ consumer
 > info **Astuce** La méthode `exclude()` prend en charge les paramètres joker en utilisant le paquet [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters).
 
 Dans l'exemple ci-dessus, `LoggerMiddleware` sera lié à toutes les routes définies dans `CatsController` **excepté** les trois passées à la méthode `exclude()`.
+
+Cette approche offre une certaine souplesse dans l'application ou l'exclusion d'un logiciel intermédiaire en fonction d'itinéraires ou de modèles d'itinéraires spécifiques.
 
 #### Middleware fonctionnel
 

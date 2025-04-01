@@ -64,7 +64,7 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 
 #### Contexte
 
-Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur MQTT, vous pouvez accéder à l'objet `MqttContext`.
+ans des scénarios plus complexes, vous pouvez avoir besoin d'accéder à des informations supplémentaires sur la requête entrante. Lorsque vous utilisez le transporteur MQTT, vous pouvez accéder à l'objet `MqttContext`.
 
 ```typescript
 @@filename()
@@ -200,4 +200,61 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
   ],
 })
 export class ApiModule {}
+```
+
+#### Mises à jour de l'état de l'instance
+
+Pour obtenir des mises à jour en temps réel sur la connexion et l'état de l'instance du pilote sous-jacent, vous pouvez vous abonner au flux `status`. Ce flux fournit des mises à jour d'état spécifiques au pilote choisi. Pour le pilote MQTT, le flux `status` émet les événements `connected`, `disconnected`, `reconnecting`, et `closed`.
+
+```typescript
+this.client.status.subscribe((status: MqttStatus) => {
+  console.log(status);
+});
+```
+
+> info **Astuce** Le type `MqttStatus` est importé du package `@nestjs/microservices`.
+
+De même, vous pouvez vous abonner au flux `status` du serveur pour recevoir des notifications sur le statut du serveur.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: MqttStatus) => {
+  console.log(status);
+});
+```
+
+#### Écoute des événements MQTT
+
+Dans certains cas, vous pouvez vouloir écouter les événements internes émis par le microservice. Par exemple, vous pourriez écouter l'événement `error` pour déclencher des opérations supplémentaires lorsqu'une erreur se produit. Pour ce faire, utilisez la méthode `on()`, comme montré ci-dessous :
+
+```typescript
+this.client.on('error', (err) => {
+  console.error(err);
+});
+```
+
+De même, vous pouvez écouter les événements internes du serveur :
+
+```typescript
+server.on<MqttEvents>('error', (err) => {
+  console.error(err);
+});
+```
+
+> info **Astuce** Le type `MqttEvents` est importé du paquetage `@nestjs/microservices`.
+
+#### Accès au pilote sous-jacent
+
+Pour des cas d'utilisation plus avancés, vous pouvez avoir besoin d'accéder à l'instance du pilote sous-jacent. Cela peut être utile pour des scénarios tels que la fermeture manuelle de la connexion ou l'utilisation de méthodes spécifiques au pilote. Cependant, gardez à l'esprit que dans la plupart des cas, vous **ne devriez pas avoir besoin** d'accéder directement au pilote.
+
+Pour ce faire, vous pouvez utiliser la méthode `unwrap()`, qui renvoie l'instance du pilote sous-jacent. Le paramètre de type générique doit spécifier le type d'instance de pilote que vous attendez.
+
+```typescript
+const mqttClient = this.client.unwrap<import('mqtt').MqttClient>();
+```
+
+De même, vous pouvez accéder à l'instance de pilote sous-jacente du serveur :
+
+```typescript
+const mqttClient = server.unwrap<import('mqtt').MqttClient>();
 ```

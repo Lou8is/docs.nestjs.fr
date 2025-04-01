@@ -4,6 +4,7 @@ Nest est livré avec un logger textuel intégré qui est utilisé pendant le dé
 
 - désactiver complètement la journalisation
 - spécifier le niveau de détail du journal (par exemple, afficher les erreurs, les avertissements, les informations de débogage, etc.)
+- configurer le formatage des messages de log (brut, json, colorisé, etc.)
 - remplacer l'horodatage dans le logger par défaut (par exemple, utiliser la norme ISO8601 comme format de date)
 - remplacer complètement le logger par défaut
 - personnaliser le logger par défaut en l'étendant
@@ -11,7 +12,7 @@ Nest est livré avec un logger textuel intégré qui est utilisé pendant le dé
 
 Vous pouvez également utiliser le logger intégré, ou créer votre propre implémentation personnalisée, pour enregistrer vos propres événements et messages au niveau de l'application.
 
-Pour des fonctionnalités de journalisation plus avancées, vous pouvez utiliser n'importe quel package de journalisation Node.js, tel que [Winston](https://github.com/winstonjs/winston), pour mettre en œuvre un système de journalisation entièrement personnalisé et de qualité production.
+Si votre application nécessite une intégration avec des systèmes de journalisation externes, une journalisation automatique basée sur des fichiers, ou la transmission des journaux à un service de journalisation centralisé, vous pouvez mettre en œuvre une solution de journalisation entièrement personnalisée en utilisant une bibliothèque de journalisation Node.js. Un choix populaire est [Pino](https://github.com/pinojs/pino), connu pour ses hautes performances et sa flexibilité.
 
 #### Personnalisation de base
 
@@ -35,7 +36,134 @@ await app.listen(process.env.PORT ?? 3000);
 
 Les valeurs du tableau peuvent être n'importe quelle combinaison de `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, et `'verbose'`.
 
-> info **Astuce** Pour désactiver la couleur dans les messages de l'enregistreur par défaut, définissez la variable d'environnement `NO_COLOR` avec une chaîne de caractères non vide.
+Pour désactiver la sortie colorée, passez l'objet `ConsoleLogger` avec la propriété `colors` fixée à `false` comme valeur de la propriété `logger`.
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    colors: false,
+  }),
+});
+```
+
+Pour configurer un préfixe pour chaque message de log, passez l'objet `ConsoleLogger` avec l'attribut `prefix` :
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    prefix: 'MyApp', // La valeur par défaut est "Nest"
+  }),
+});
+```
+
+Voici toutes les options disponibles énumérées dans le tableau ci-dessous :
+
+| Option            | Description                                                                                                                                                                                                                                                                                                                                                                                                                  | Par défaut                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `logLevels`       | Niveaux d'enregistrement activés.                                                                                                                                                                                                                                                                                                                                                                                            | `['log', 'error', 'warn', 'debug', 'verbose']` |
+| `timestamp`       | Si cette option est activée, elle affichera le timestamp (différence de temps) entre le message courant et le message précédent. Note : Cette option n'est pas utilisée lorsque l'option `json` est activée.                                                                                                                                                                                                                 | `false`                                        |
+| `prefix`          | Un préfixe à utiliser pour chaque message de log. Note : Cette option n'est pas utilisée lorsque l'option `json` est activée.                                                                                                                                                                                                                                                                                                | `Nest`                                         |
+| `json`            | Si cette option est activée, le message de journal sera imprimé au format JSON.                                                                                                                                                                                                                                                                                                                                              | `false`                                        |
+| `colors`          | Si cette option est activée, le message de log sera imprimé en couleur. Par défaut, true si json est désactivé, false sinon.                                                                                                                                                                                                                                                                                                 | `true`                                         |
+| `context`         | Le contexte du logger.                                                                                                                                                                                                                                                                                                                                                                                                       | `undefined`                                    |
+| `compact`         | Si cette option est activée, le message de journal sera imprimé sur une seule ligne, même s'il s'agit d'un objet ayant plusieurs propriétés. S'il s'agit d'un nombre, les n éléments intérieurs les plus nombreux sont réunis sur une seule ligne tant que toutes les propriétés sont comprises dans breakLength. Les éléments de tableau courts sont également regroupés.                                                   | `true`                                         |
+| `maxArrayLength`  | Spécifie le nombre maximum d'éléments Array, TypedArray, Map, Set, WeakMap et WeakSet à inclure lors du formatage. La valeur null ou Infinity permet d'afficher tous les éléments. Définir à 0 ou négatif pour n'afficher aucun élément. Ignoré lorsque `json` est activé, que les couleurs sont désactivées et que `compact` est fixé à true car il produit une sortie JSON analysable.                                     | `100`                                          |
+| `maxStringLength` | Spécifie le nombre maximum de caractères à inclure dans le formatage. La valeur null ou Infinity permet d'afficher tous les éléments. Défini à 0 ou négatif pour n'afficher aucun caractère. Ignoré lorsque `json` est activé, que les couleurs sont désactivées et que `compact` est fixé à true car il produit une sortie JSON analysable.                                                                                 | `10000`                                        |
+| `sorted`          | Si cette option est activée, les clés seront triées lors du formatage des objets. Peut aussi être une fonction de tri personnalisée. Ignoré lorsque `json` est activé, que les couleurs sont désactivées et que `compact` est fixé à true car il produit une sortie JSON analysable.                                                                                                                                         | `false`                                        |
+| `depth`           | Spécifie le nombre de fois qu'il faut effectuer une récursivité lors du formatage de l'objet. Cette fonction est utile pour inspecter des objets de grande taille. Pour revenir à la taille maximale de la pile d'appels, passez Infinity ou null. Ignoré lorsque `json` est activé, que les couleurs sont désactivées et que `compact` est fixé à true car il produit une sortie JSON analysable.                           | `5`                                            |
+| `showHidden`      | Si true, les symboles et propriétés non énumérables de l'objet sont inclus dans le résultat formaté. Les entrées WeakMap et WeakSet sont également incluses, ainsi que les propriétés prototypes définies par l'utilisateur.                                                                                                                                                                                                 | `false`                                        |
+| `breakLength`     | Longueur à laquelle les valeurs saisies sont réparties sur plusieurs lignes. La valeur Infinity permet de formater les données d'entrée sur une seule ligne (en combinaison avec la valeur true de « compact »). Par défaut Infinity lorsque « compact » est vrai, 80 sinon. Ignoré lorsque `json` est activé, que les couleurs sont désactivées et que `compact` est fixé à true car il produit une sortie JSON analysable. | `Infinity`                                     |
+
+#### Journalisation JSON
+
+La journalisation JSON est essentielle pour l'observabilité des applications modernes et l'intégration avec les systèmes de gestion des logs. Pour activer la journalisation JSON dans votre application NestJS, configurez l'objet `ConsoleLogger` avec sa propriété `json` fixée à `true`. Ensuite, fournissez cette configuration du logger comme valeur pour la propriété `logger` lors de la création de l'instance de l'application.
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    json: true,
+  }),
+});
+```
+
+Cette configuration produit des journaux dans un format JSON structuré, ce qui facilite l'intégration avec des systèmes externes tels que les agrégateurs de journaux et les plateformes en nuage. Par exemple, des plateformes comme **AWS ECS** (Elastic Container Service) supportent nativement les logs JSON, permettant des fonctionnalités avancées comme :
+
+- **Filtrage des journaux** : Le filtrage des logs** : il permet de réduire facilement les logs en fonction de champs tels que le niveau de log, l'horodatage ou des métadonnées personnalisées.
+- Recherche et analyse** : Utilisez des outils de requête pour analyser et suivre les tendances du comportement de votre application.
+
+De plus, si vous utilisez [NestJS Mau](https://mau.nestjs.com), la journalisation JSON simplifie le processus de visualisation des journaux dans un format bien organisé et structuré, ce qui est particulièrement utile pour le débogage et le contrôle des performances.
+
+> info **Note** Quand `json` est défini à `true`, le `ConsoleLogger` désactive automatiquement la colorisation du texte en définissant la propriété `colors` à `false`. Ceci assure que la sortie reste du JSON valide, sans artefacts de formatage. Cependant, à des fins de développement, vous pouvez surcharger ce comportement en mettant explicitement `colors` à `true`. Cela ajoute des logs JSON colorés, ce qui peut rendre les entrées de logs plus lisibles pendant le débogage local.
+
+Lorsque la journalisation JSON est activée, la sortie de la journalisation se présente comme suit (sur une seule ligne) :
+
+```json
+{
+  "level": "log",
+  "pid": 19096,
+  "timestamp": 1607370779834,
+  "message": "Starting Nest application...",
+  "context": "NestFactory"
+}
+```
+
+Vous pouvez voir différentes variantes dans cette [Pull Request](https://github.com/nestjs/nest/pull/14121).
+
+#### Utilisation de du logger pour la journalisation d'applications
+
+Nous pouvons combiner plusieurs des techniques ci-dessus pour fournir un comportement et un formatage cohérents à la fois pour la journalisation du système Nest et pour la journalisation des événements/messages de nos propres applications.
+
+Une bonne pratique est d'instancier la classe `Logger` de `@nestjs/common` dans chacun de nos services. Nous pouvons fournir le nom de notre service comme argument `context` dans le constructeur de `Logger`, comme ceci :
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name);
+
+  doSomething() {
+    this.logger.log('Doing something...');
+  }
+}
+```
+
+Dans l'implémentation par défaut du logger, `context` est imprimé entre crochets, comme `NestFactory` dans l'exemple ci-dessous :
+
+```bash
+[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
+```
+
+Si nous fournissons un logger personnalisé via `app.useLogger()`, il sera en fait utilisé par Nest en interne. Cela signifie que notre code reste agnostique quant à l'implémentation, alors que nous pouvons facilement remplacer le logger par défaut par notre logger personnalisé en appelant `app.useLogger()`.
+
+De cette façon, si nous suivons les étapes de la section précédente et appelons `app.useLogger(app.get(MyLogger))`, les appels suivants à `this.logger.log()` depuis `MyService` résulteront en des appels à la méthode `log` depuis l'instance `MyLogger`.
+
+Cela devrait convenir à la plupart des cas. Mais si vous avez besoin de plus de personnalisation (comme l'ajout et l'appel de méthodes personnalisées), passez à la section suivante.
+
+#### Journaux avec horodatage
+
+Pour activer l'enregistrement de l'horodatage pour chaque message enregistré, vous pouvez utiliser le paramètre optionnel `timestamp : true` lors de la création de l'instance du logger.
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name, { timestamp: true });
+
+  doSomething() {
+    this.logger.log('Faire quelque chose avec l horodatage ici ->');
+  }
+}
+```
+
+Cela produira un résultat dans le format suivant :
+
+```bash
+[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Faire quelque chose avec l horodatage ici +5ms
+```
+
+Notez le `+5ms` à la fin de la ligne. Pour chaque déclaration, la différence de temps par rapport au message précédent est calculée et affichée à la fin de la ligne.
 
 #### Implémentation personnalisée
 
@@ -156,62 +284,6 @@ await app.listen(process.env.PORT ?? 3000);
 Ici, nous utilisons la méthode `get()` sur l'instance `NestApplication` pour récupérer l'instance singleton de l'objet `MyLogger`. Cette technique est essentiellement un moyen d'"injecter" une instance d'un logger pour qu'il soit utilisé par Nest. L'appel à `app.get()` récupère l'instance singleton de `MyLogger`, et dépend de l'injection préalable de cette instance dans un autre module, comme décrit ci-dessus.
 
 Vous pouvez également injecter ce fournisseur `MyLogger` dans vos classes de fonctionnalités, assurant ainsi un comportement de journalisation cohérent à travers la journalisation du système Nest et la journalisation de l'application. Voir <a href="techniques/logger#utilisation-du-logger-pour-la-journalisation-des-applications">Utilisation du logger pour la journalisation des applications</a> et <a href="techniques/logger#injection-dun-logger-personnalisé">Injection d'un logger personnalisé</a> ci-dessous pour plus d'informations.
-
-#### Utilisation du logger pour la journalisation des applications
-
-Nous pouvons combiner plusieurs des techniques ci-dessus pour fournir un comportement et un formatage cohérents à la fois pour la journalisation du système Nest et pour la journalisation des événements/messages de nos propres applications.
-
-Une bonne pratique est d'instancier la classe `Logger` de `@nestjs/common` dans chacun de nos services. Nous pouvons fournir le nom de notre service comme argument `context` dans le constructeur de `Logger`, comme ceci :
-
-```typescript
-import { Logger, Injectable } from '@nestjs/common';
-
-@Injectable()
-class MyService {
-  private readonly logger = new Logger(MyService.name);
-
-  doSomething() {
-    this.logger.log('Doing something...');
-  }
-}
-```
-
-Dans l'implémentation par défaut du logger, `context` est imprimé entre crochets, comme `NestFactory` dans l'exemple ci-dessous :
-
-```bash
-[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
-```
-
-Si nous fournissons un logger personnalisé via `app.useLogger()`, il sera en fait utilisé par Nest en interne. Cela signifie que notre code reste agnostique en matière d'implémentation, alors que nous pouvons facilement remplacer le logger par défaut par notre logger personnalisé en appelant `app.useLogger()`.
-
-Ainsi, si nous suivons les étapes de la section précédente et appelons `app.useLogger(app.get(MyLogger))`, les appels suivants à `this.logger.log()` depuis `MyService` résulteront en des appels à la méthode `log` depuis l'instance `MyLogger`.
-
-Cela devrait convenir dans la plupart des cas. Mais si vous avez besoin de plus de personnalisation (comme l'ajout et l'appel de méthodes personnalisées), passez à la section suivante.
-
-#### Logs avec timestamps
-
-Pour activer l'enregistrement de l'horodatage pour chaque message enregistré, vous pouvez utiliser le paramètre optionnel `timestamp : true` lors de la création de l'instance du logger.
-
-```typescript
-import { Logger, Injectable } from '@nestjs/common';
-
-@Injectable()
-class MyService {
-  private readonly logger = new Logger(MyService.name, { timestamp: true });
-
-  doSomething() {
-    this.logger.log('Doing something with timestamp here ->');
-  }
-}
-```
-
-Cela produira un résultat dans le format suivant :
-
-```bash
-[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
-```
-
-Notez le `+5ms` à la fin de la ligne. Pour chaque déclaration, la différence de temps par rapport au message précédent est calculée et affichée à la fin de la ligne.
 
 #### Injection d'un logger personnalisé
 

@@ -35,8 +35,23 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Options
 
-L'objet `options` est spécifique au transporteur choisi. Le transporteur **NATS** expose les propriétés décrites [ici](https://github.com/nats-io/node-nats#connection-options).
-De plus, il y a une propriété `queue` qui vous permet de spécifier le nom de la file d'attente à laquelle votre serveur doit s'abonner (laissez `undefined` pour ignorer ce paramètre). Pour en savoir plus sur les groupes de files d'attente NATS, voir [ci-dessous](/microservices/nats#groupes-de-files-dattente).
+L'objet `options` est spécifique au transporteur choisi. Le transporteur **NATS** expose les propriétés décrites [ici](https://github.com/nats-io/node-nats#connection-options) ainsi que les propriétés suivantes :
+
+<table>
+  <tr>
+    <td><code>queue</code></td>
+    <td>File d'attente à laquelle votre serveur doit s'abonner (laissez <code>undefined</code> pour ignorer ce paramètre). Lisez en plus sur les groupes de files d'attente NATS <a href="/microservices/nats#groupes-de-files-dattente">ci-dessous</a>.
+    </td> 
+  </tr>
+  <tr>
+    <td><code>gracefulShutdown</code></td>
+    <td>Permet d'activer l'arrêt progressif (graceful shutdown). Lorsque cette option est activée, le serveur se désabonne d'abord de tous les canaux avant de fermer la connexion. La valeur par défaut est <code>false</code>.
+  </tr>
+  <tr>
+    <td><code>gracePeriod</code></td>
+    <td>Temps en millisecondes pour attendre le serveur après s'être désabonné de tous les canaux. La valeur par défaut est <code>10000</code> ms.
+  </tr>
+</table>
 
 #### Client
 
@@ -88,7 +103,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 
 #### Contexte
 
-Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur NATS, vous pouvez accéder à l'objet `NatsContext`.
+Dans des scénarios plus complexes, vous pouvez avoir besoin d'accéder à des informations supplémentaires sur la requête entrante. Lorsque vous utilisez le transporteur NATS, vous pouvez accéder à l'objet `NatsContext`.
 
 ```typescript
 @@filename()
@@ -184,3 +199,58 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 })
 export class ApiModule {}
 ```
+
+#### Mises à jour de l'état de l'instance
+
+Pour obtenir des mises à jour en temps réel sur la connexion et l'état de l'instance du pilote sous-jacent, vous pouvez vous abonner au flux `status`. Ce flux fournit des mises à jour d'état spécifiques au pilote choisi. Pour le pilote NATS, le flux `status` émet les événements `connected`, `disconnected`, et `reconnecting`.
+
+```typescript
+this.client.status.subscribe((status: NatsStatus) => {
+  console.log(status);
+});
+```
+
+> info **Astuce** Le type `NatsStatus` est importé du paquet `@nestjs/microservices`.
+
+De même, vous pouvez vous abonner au flux `status` du serveur pour recevoir des notifications sur le statut du serveur.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: NatsStatus) => {
+  console.log(status);
+});
+```
+
+#### Écouter les événements Nats
+
+Dans certains cas, vous pouvez vouloir écouter les événements internes émis par le microservice. Par exemple, vous pourriez écouter l'événement `error` pour déclencher des opérations supplémentaires lorsqu'une erreur se produit. Pour ce faire, utilisez la méthode `on()`, comme montré ci-dessous :
+
+```typescript
+this.client.on('error', (err) => {
+  console.error(err);
+});
+```
+
+De même, vous pouvez écouter les événements internes du serveur :
+
+```typescript
+server.on<NatsEvents>('error', (err) => {
+  console.error(err);
+});
+```
+
+#### Accès au pilote sous-jacent
+
+Pour des cas d'utilisation plus avancés, vous pouvez avoir besoin d'accéder à l'instance du pilote sous-jacent. Cela peut être utile pour des scénarios tels que la fermeture manuelle de la connexion ou l'utilisation de méthodes spécifiques au pilote. Cependant, gardez à l'esprit que dans la plupart des cas, vous **ne devriez pas avoir besoin** d'accéder directement au pilote.
+
+Pour ce faire, vous pouvez utiliser la méthode `unwrap()`, qui renvoie l'instance du pilote sous-jacent. Le paramètre de type générique doit spécifier le type d'instance de pilote que vous attendez.
+
+```typescript
+const natsConnection = this.client.unwrap<import('nats').NatsConnection>();
+```
+
+De même, vous pouvez accéder à l'instance de pilote sous-jacente du serveur :
+
+```typescript
+const natsConnection = server.unwrap<import('nats').NatsConnection>();
+``

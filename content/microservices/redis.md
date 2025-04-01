@@ -94,7 +94,7 @@ D'autres options pour créer un client (soit `ClientProxyFactory` ou `@Client()`
 
 #### Contexte
 
-Dans des scénarios plus sophistiqués, vous pouvez vouloir accéder à plus d'informations sur la requête entrante. Lorsque vous utilisez le transporteur Redis, vous pouvez accéder à l'objet `RedisContext`.
+Dans des scénarios plus complexes, vous pouvez avoir besoin d'accéder à des informations supplémentaires sur la requête entrante. Lorsque vous utilisez le transporteur Redis, vous pouvez accéder à l'objet `RedisContext`.
 
 ```typescript
 @@filename()
@@ -111,3 +111,86 @@ getNotifications(data, context) {
 ```
 
 > info **Astuce** `@Payload()`, `@Ctx()` et `RedisContext` sont importés du package `@nestjs/microservices`.
+
+#### Jokers
+
+Pour activer le support des jokers, mettez l'option `wildcards` à `true`. Cela indique au transporteur d'utiliser `psubscribe` et `pmessage` en interne.
+
+```typescript
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.REDIS,
+  options: {
+    // Other options
+    wildcards: true,
+  },
+});
+```
+
+Veillez également à passer l'option `wildcards` lors de la création d'une instance de client.
+
+Si cette option est activée, vous pouvez utiliser des caractères génériques dans vos modèles de messages et d'événements. Par exemple, pour s'abonner à tous les canaux commençant par `notifications`, vous pouvez utiliser le modèle suivant :
+
+```typescript
+@EventPattern('notifications.*')
+```
+
+#### Mises à jour de l'état de l'instance
+
+Pour obtenir des mises à jour en temps réel sur la connexion et l'état de l'instance du pilote sous-jacent, vous pouvez vous abonner au flux `status`. Ce flux fournit des mises à jour d'état spécifiques au pilote choisi. Pour le pilote Redis, le flux `status` émet les événements `connected`, `disconnected`, et `reconnecting`.
+
+```typescript
+this.client.status.subscribe((status: RedisStatus) => {
+  console.log(status);
+});
+```
+
+> info **Astuce** Le type `RedisStatus` est importé du paquet `@nestjs/microservices`.
+
+De même, vous pouvez vous abonner au flux `status` du serveur pour recevoir des notifications sur le statut du serveur.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: RedisStatus) => {
+  console.log(status);
+});
+```
+
+#### Écouter les événements Redis
+
+Dans certains cas, vous pouvez vouloir écouter les événements internes émis par le microservice. Par exemple, vous pourriez écouter l'événement `error` pour déclencher des opérations supplémentaires lorsqu'une erreur se produit. Pour ce faire, utilisez la méthode `on()`, comme montré ci-dessous :
+
+```typescript
+this.client.on('error', (err) => {
+  console.error(err);
+});
+```
+
+De même, vous pouvez écouter les événements internes du serveur :
+
+```typescript
+server.on<RedisEvents>('error', (err) => {
+  console.error(err);
+});
+```
+
+> info **Astuce** The `RedisEvents` type is imported from the `@nestjs/microservices` package.
+
+#### Accès au pilote sous-jacent
+
+Pour des cas d'utilisation plus avancés, vous pouvez avoir besoin d'accéder à l'instance du pilote sous-jacent. Cela peut être utile pour des scénarios tels que la fermeture manuelle de la connexion ou l'utilisation de méthodes spécifiques au pilote. Cependant, gardez à l'esprit que dans la plupart des cas, vous **ne devriez pas avoir besoin** d'accéder directement au pilote.
+
+Pour ce faire, vous pouvez utiliser la méthode `unwrap()`, qui renvoie l'instance du pilote sous-jacent. Le paramètre de type générique doit spécifier le type d'instance de pilote que vous attendez.
+
+```typescript
+const [pub, sub] =
+  this.client.unwrap<[import('ioredis').Redis, import('ioredis').Redis]>();
+```
+
+De même, vous pouvez accéder à l'instance de pilote sous-jacente du serveur :
+
+```typescript
+const [pub, sub] =
+  server.unwrap<[import('ioredis').Redis, import('ioredis').Redis]>();
+```
+
+Notez que, contrairement aux autres transporteurs, le transporteur Redis renvoie un tuple de deux instances `ioredis` : la première est utilisée pour publier des messages, et la seconde est utilisée pour s'abonner à des messages.
