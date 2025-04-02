@@ -433,6 +433,108 @@ throw new KafkaRetriableException('...');
 
 > info **Astuce** La classe `KafkaRetriableException` est exportée depuis le package `@nestjs/microservices`.
 
+### Gestion personnalisée des exceptions
+
+Outre les mécanismes de gestion des erreurs par défaut, vous pouvez créer un filtre d'exception personnalisé pour les événements Kafka afin de gérer la logique de réessai. Par exemple, l'exemple ci-dessous montre comment ignorer un événement problématique après un nombre configurable de tentatives :
+
+```typescript
+import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
+import { KafkaContext } from '../ctx-host';
+
+@Catch()
+export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
+  private readonly logger = new Logger(KafkaMaxRetryExceptionFilter.name);
+
+  constructor(
+    private readonly maxRetries: number,
+    // Optional custom function executed when max retries are exceeded
+    private readonly skipHandler?: (message: any) => Promise<void>,
+  ) {
+    super();
+  }
+
+  async catch(exception: unknown, host: ArgumentsHost) {
+    const kafkaContext = host.switchToRpc().getContext<KafkaContext>();
+    const message = kafkaContext.getMessage();
+    const currentRetryCount = this.getRetryCountFromContext(kafkaContext);
+
+    if (currentRetryCount >= this.maxRetries) {
+      this.logger.warn(
+        `Max retries (${
+          this.maxRetries
+        }) exceeded for message: ${JSON.stringify(message)}`,
+      );
+
+      if (this.skipHandler) {
+        try {
+          await this.skipHandler(message);
+        } catch (err) {
+          this.logger.error('Error in skipHandler:', err);
+        }
+      }
+
+      try {
+        await this.commitOffset(kafkaContext);
+      } catch (commitError) {
+        this.logger.error('Failed to commit offset:', commitError);
+      }
+      return; // Arrêter la propagation de l'exception
+    }
+
+    // Si le nombre de tentatives est inférieur au maximum, la logique du filtre d'exception par défaut est appliquée.
+    super.catch(exception, host);
+  }
+
+  private getRetryCountFromContext(context: KafkaContext): number {
+    const headers = context.getMessage().headers || {};
+    const retryHeader = headers['retryCount'] || headers['retry-count'];
+    return retryHeader ? Number(retryHeader) : 0;
+  }
+
+  private async commitOffset(context: KafkaContext): Promise<void> {
+    const consumer = context.getConsumer && context.getConsumer();
+    if (!consumer) {
+      throw new Error('Consumer instance is not available from KafkaContext.');
+    }
+
+    const topic = context.getTopic && context.getTopic();
+    const partition = context.getPartition && context.getPartition();
+    const message = context.getMessage();
+    const offset = message.offset;
+
+    if (!topic || partition === undefined || offset === undefined) {
+      throw new Error(
+        'Incomplete Kafka message context for committing offset.',
+      );
+    }
+
+    await consumer.commitOffsets([
+      {
+        topic,
+        partition,
+        // Lors de la validation d'un décalage, il faut valider le numéro suivant (c'est-à-dire le décalage actuel + 1).
+        offset: (Number(offset) + 1).toString(),
+      },
+    ]);
+  }
+}
+```
+
+Ce filtre offre un moyen de réessayer le traitement d'un événement Kafka jusqu'à un nombre configurable de fois. Une fois que le nombre maximum de tentatives est atteint, il déclenche un `skipHandler` personnalisé (s'il est fourni) et valide le décalage, en sautant effectivement l'événement problématique. Cela permet aux événements suivants d'être traités sans interruption.
+
+Vous pouvez intégrer ce filtre en l'ajoutant à vos gestionnaires d'événements :
+
+```typescript
+@UseFilters(new KafkaMaxRetryExceptionFilter(5))
+export class MyEventHandler {
+  @EventPattern('your-topic')
+  async handleEvent(@Payload() data: any, @Ctx() context: KafkaContext) {
+    // Votre logique de traitement des événements...
+  }
+}
+```
+
 #### Validation des décalages
 
 La validation des décalages est essentielle lorsque l'on travaille avec Kafka. Par défaut, les messages sont automatiquement validés après un certain temps. Pour plus d'informations, visitez [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `KafkaContext` offre un moyen d'accèder au consommateur actif pour valider manuellement les décalages. Ce consommateur est le consomamteur KafkaJS et fonctionne comme [l'implémentation native de KafkaJS](https://kafka.js.org/docs/consuming#manual-committing).

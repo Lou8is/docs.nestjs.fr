@@ -11,7 +11,7 @@ Utilisez le package middleware [compression](https://github.com/expressjs/compre
 Installez d'abord le package requis :
 
 ```bash
-$ npm i --save compression
+$ npm i --save-dev @types/compression
 ```
 
 Une fois l'installation terminée, appliquez le middleware de compression en tant que middleware global.

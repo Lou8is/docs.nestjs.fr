@@ -141,12 +141,11 @@ export class AppModule {}
 
 #### Définition des rôles par gestionnaire
 
-Notre `RolesGuard` fonctionne, mais elle n'est pas encore très intelligente. Nous ne profitons pas encore de la caractéristique la plus importante de la garde - le [contexte d'exécution] (/fundamentals/execution-context). Elle ne connaît pas encore les rôles, ni quels rôles sont autorisés pour chaque gestionnaire. Le `CatsController`, par exemple, pourrait avoir différents schémas de permission pour différentes routes. Certaines pourraient n'être accessibles qu'à un utilisateur administrateur, et d'autres pourraient être ouvertes à tout le monde. Comment pouvons-nous faire correspondre les rôles aux routes d'une manière flexible et réutilisable ?
+Notre `RolesGuard` fonctionne, mais elle n'est pas encore très intelligente. Nous ne profitons pas encore de la caractéristique la plus importante de la garde - le [contexte d'exécution](/fundamentals/execution-context). Elle ne connaît pas encore les rôles, ni quels rôles sont autorisés pour chaque gestionnaire. Le `CatsController`, par exemple, pourrait avoir différents schémas de permission pour différentes routes. Certaines pourraient n'être accessibles qu'à un utilisateur administrateur, et d'autres pourraient être ouvertes à tout le monde. Comment pouvons-nous faire correspondre les rôles aux routes d'une manière flexible et réutilisable ?
 
+C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](/fundamentals/execution-context#réflexion-et-métadonnées)). Nest fournit la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes à travers des décorateurs créés via la méthode statique `Reflector.createDecorator`, ou le décorateur intégré `@SetMetadata()`.
 
-C'est là que les **métadonnées personnalisées** entrent en jeu (en savoir plus [ici](/fundamentals/execution-context#réflexion-et-métadonnées)). Nest fournit la possibilité d'attacher des **métadonnées** personnalisées aux gestionnaires de routes à travers des décorateurs créés via la méthode statique `Reflector#createDecorator`, ou le décorateur intégré `@SetMetadata()`.
-
-Par exemple, créons un décorateur `@Roles()` en utilisant la méthode `Reflector#createDecorator` qui attachera les métadonnées au handler. Le `Reflector` est fourni par le framework et exposé dans le package `@nestjs/core`.
+Par exemple, créons un décorateur `@Roles()` en utilisant la méthode `Reflector.createDecorator` qui attachera les métadonnées au handler. Le `Reflector` est fourni par le framework et exposé dans le package `@nestjs/core`.
 
 ```ts
 @@filename(roles.decorator)
@@ -177,7 +176,7 @@ async create(createCatDto) {
 
 Ici, nous avons attaché les métadonnées du décorateur `Roles` à la méthode `create()`, indiquant que seuls les utilisateurs ayant le rôle `admin` devraient être autorisés à accéder à cette route.
 
-Alternativement, au lieu d'utiliser la méthode `Reflector#createDecorator`, nous pourrions utiliser le décorateur intégré `@SetMetadata()`. En savoir plus [ici](/fundamentals/execution-context#approche-bas-niveau).
+Alternativement, au lieu d'utiliser la méthode `Reflector.createDecorator`, nous pourrions utiliser le décorateur intégré `@SetMetadata()`. En savoir plus [ici](/fundamentals/execution-context#approche-bas-niveau).
 
 #### Mettre en place l'ensemble
 

@@ -14,13 +14,30 @@ const document = SwaggerModule.createDocument(app, options, {
 
 #### Paramètres globaux
 
-Vous pouvez ajouter des définitions de paramètres à toutes les routes en utilisant `DocumentBuilder` :
+Vous pouvez définir des paramètres pour toutes les routes en utilisant `DocumentBuilder`, comme indiqué ci-dessous :
 
 ```typescript
-const options = new DocumentBuilder().addGlobalParameters({
-  name: 'tenantId',
-  in: 'header',
-});
+const config = new DocumentBuilder()
+  .addGlobalParameters({
+    name: 'tenantId',
+    in: 'header',
+  })
+  // autres configurations
+  .build();
+```
+
+#### Réponses globales
+
+Vous pouvez définir des réponses globales pour toutes les routes en utilisant `DocumentBuilder`. Ceci est utile pour mettre en place des réponses cohérentes à travers tous les endpoints de votre application, comme des codes d'erreur tels que `401 Unauthorized` (non autorisé) ou `500 Internal Server Error` (erreur interne du serveur).
+
+```typescript
+const config = new DocumentBuilder()
+  .addGlobalResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  // autres configurations
+  .build();
 ```
 
 #### Spécifications multiples

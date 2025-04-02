@@ -57,7 +57,7 @@ export class AppModule {}
 
 > info **Hint** For `mercurius` integration, you should be using the `MercuriusDriver` and `MercuriusDriverConfig` instead. Both are exported from the `@nestjs/mercurius` package.
 
-The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance (read more about available settings here: [Apollo](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt) and [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)). For example, if you want to disable the `playground` and turn off `debug` mode (for Apollo), pass the following options:
+The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance (read more about available settings here: [Apollo](https://www.apollographql.com/docs/apollo-server/api/apollo-server) and [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)). For example, if you want to disable the `playground` and turn off `debug` mode (for Apollo), pass the following options:
 
 ```typescript
 @@filename()
@@ -207,11 +207,11 @@ definitionsFactory.generate({
 });
 ```
 
-To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option:
 
 ```typescript
 definitionsFactory.generate({
-  // ...,
+  // ...
   emitTypenameField: true,
 });
 ```
@@ -220,8 +220,17 @@ To generate resolvers (queries, mutations, subscriptions) as plain fields withou
 
 ```typescript
 definitionsFactory.generate({
-  // ...,
+  // ...
   skipResolverArgs: true,
+});
+```
+
+To generate enums as TypeScript union types instead of regular TypeScript enums, set the `enumsAsTypes` option to `true`:
+
+```typescript
+definitionsFactory.generate({
+  // ...
+  enumsAsTypes: true,
 });
 ```
 

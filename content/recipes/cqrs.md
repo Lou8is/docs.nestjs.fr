@@ -112,7 +112,7 @@ Créons un gestionnaire pour la commande `KillDragonCommand`.
 @@filename(kill-dragon.handler)
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
-  constructor(private repository: HeroRepository) {}
+  constructor(private repository: HeroesRepository) {}
 
   async execute(command: KillDragonCommand) {
     const { heroId, dragonId } = command;
@@ -129,7 +129,7 @@ export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
 }
 @@switch
 @CommandHandler(KillDragonCommand)
-@Dependencies(HeroRepository)
+@Dependencies(HeroesRepository)
 export class KillDragonHandler {
   constructor(repository) {
     this.repository = repository;
@@ -180,7 +180,7 @@ Pour récupérer le héros, nous devons créer un gestionnaire de requêtes :
 @@filename(get-hero.handler)
 @QueryHandler(GetHeroQuery)
 export class GetHeroHandler implements IQueryHandler<GetHeroQuery> {
-  constructor(private repository: HeroRepository) {}
+  constructor(private repository: HeroesRepository) {}
 
   async execute(query: GetHeroQuery) {
     return this.repository.findOneById(query.hero);
@@ -188,7 +188,7 @@ export class GetHeroHandler implements IQueryHandler<GetHeroQuery> {
 }
 @@switch
 @QueryHandler(GetHeroQuery)
-@Dependencies(HeroRepository)
+@Dependencies(HeroesRepository)
 export class GetHeroHandler {
   constructor(repository) {
     this.repository = repository;
@@ -273,7 +273,7 @@ La méthode `apply()` est utilisée pour distribuer les événements. Elle accep
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
   constructor(
-    private repository: HeroRepository,
+    private repository: HeroesRepository,
     private publisher: EventPublisher,
   ) {}
 
@@ -288,7 +288,7 @@ export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
 }
 @@switch
 @CommandHandler(KillDragonCommand)
-@Dependencies(HeroRepository, EventPublisher)
+@Dependencies(HeroesRepository, EventPublisher)
 export class KillDragonHandler {
   constructor(repository, publisher) {
     this.repository = repository;
@@ -342,7 +342,7 @@ Chaque événement peut avoir plusieurs **gestionnaires d'événements**.
 @@filename(hero-killed-dragon.handler)
 @EventsHandler(HeroKilledDragonEvent)
 export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEvent> {
-  constructor(private repository: HeroRepository) {}
+  constructor(private repository: HeroesRepository) {}
 
   handle(event: HeroKilledDragonEvent) {
     // Logique métier

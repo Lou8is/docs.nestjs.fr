@@ -115,6 +115,18 @@ Ouvrons le navigateur et vérifions le modèle `Cat` généré :
 
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
+Au lieu de définir des réponses pour chaque endpoint ou contrôleur individuellement, vous pouvez définir une réponse globale pour tous les endpoints en utilisant la classe `DocumentBuilder`. Cette approche est utile lorsque vous souhaitez définir une réponse globale pour tous les endpoints de votre application (par exemple, pour des erreurs telles que `401 Unauthorized` ou `500 Internal Server Error`).
+
+```typescript
+const config = new DocumentBuilder()
+  .addGlobalResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  // autres configurations
+  .build();
+```
+
 #### Téléchargement de fichiers
 
 Vous pouvez activer le téléchargement de fichiers pour une méthode spécifique avec le décorateur `@ApiBody` et `@ApiConsumes()`. Voici un exemple complet utilisant la technique de [Téléchargement de fichiers](/techniques/file-upload) :
@@ -157,7 +169,7 @@ Pour ajouter une extension à une requête, utilisez le décorateur `@ApiExtensi
 
 #### Avancé : Générique `ApiResponse`
 
-Avec la possibilité de fournir des [définitions brutes] (/openapi/types-and-parameters#définitions-brutes), nous pouvons définir un schéma générique pour l'interface utilisateur de Swagger. Supposons que nous ayons le DTO suivant :
+Avec la possibilité de fournir des [définitions brutes](/openapi/types-and-parameters#définitions-brutes), nous pouvons définir un schéma générique pour l'interface utilisateur de Swagger. Supposons que nous ayons le DTO suivant :
 
 ```ts
 export class PaginatedDto<TData> {
@@ -299,7 +311,9 @@ findAll(): Observable<{ total: number, limit: number, offset: number, results: C
 Comme vous pouvez le voir, le **Type de retour** ici est ambigu. Pour contourner ce problème, vous pouvez ajouter une propriété `title` au `schema` pour `ApiPaginatedResponse` :
 
 ```typescript
-export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+    model: TModel,
+) => {
   return applyDecorators(
     ApiOkResponse({
       schema: {

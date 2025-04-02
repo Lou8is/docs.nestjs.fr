@@ -16,7 +16,7 @@ $ npm i --save @grpc/grpc-js @grpc/proto-loader
 
 #### Vue d'ensemble
 
-Comme pour les autres implémentations de la couche de transport des microservices Nest, vous sélectionnez le mécanisme de transport gRPC en utilisant la propriété `transport` de l'objet options passé à la méthode `createMicroservice()`. Dans l'exemple suivant, nous allons mettre en place un service "hero". La propriété `options` fournit des métadonnées sur ce service ; ses propriétés sont décrites [ci-dessous] (microservices/grpc#options).
+Comme pour les autres implémentations de la couche de transport des microservices Nest, vous sélectionnez le mécanisme de transport gRPC en utilisant la propriété `transport` de l'objet options passé à la méthode `createMicroservice()`. Dans l'exemple suivant, nous allons mettre en place un service "hero". La propriété `options` fournit des métadonnées sur ce service ; ses propriétés sont décrites [ci-dessous](microservices/grpc#options).
 
 ```typescript
 @@filename(main)
@@ -293,7 +293,7 @@ export class AppService implements OnModuleInit {
 }
 ```
 
-Enfin, pour des scénarios plus complexes, nous pouvons injecter un client configuré dynamiquement en utilisant la classe `ClientProxyFactory` comme décrit [ici] (/microservices/basics#client).
+Enfin, pour des scénarios plus complexes, nous pouvons injecter un client configuré dynamiquement en utilisant la classe `ClientProxyFactory` comme décrit [ici](/microservices/basics#client).
 
 Dans les deux cas, nous obtenons une référence à notre objet proxy `HeroesService`, qui expose le même ensemble de méthodes que celles définies dans le fichier `.proto`. Maintenant, quand nous accédons à cet objet proxy (c'est-à-dire `heroesService`), le système gRPC sérialise automatiquement les requêtes, les transmet au système distant, renvoie une réponse, et désérialise la réponse. Parce que gRPC nous protège de ces détails de communication réseau, `heroesService` ressemble et agit comme un fournisseur local.
 

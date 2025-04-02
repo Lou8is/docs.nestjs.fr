@@ -64,7 +64,7 @@ Comme vous pouvez le voir, le `SwaggerModule` reflète automatiquement tous vos 
 > Il est également possible de l'exposer sur une route de votre choix en utilisant uniquement la méthode setup de `@nestjs/swagger`, comme ceci :
 >
 > ```typescript
-> SwaggerModule.setup('swagger', app, document, {
+> SwaggerModule.setup('swagger', app, documentFactory, {
 >   jsonDocumentUrl: 'swagger/json',
 > });
 > ```
@@ -149,7 +149,7 @@ export interface SwaggerDocumentOptions {
 }
 ```
 
-Par exemple, si vous voulez vous assurer que la bibliothèque génère des noms d'opérations comme `createUser` au lieu de `UserController_createUser`, vous pouvez définir ce qui suit :
+Par exemple, si vous voulez vous assurer que la bibliothèque génère des noms d'opérations comme `createUser` au lieu de `UsersController_createUser`, vous pouvez définir ce qui suit :
 
 ```TypeScript
 const options: SwaggerDocumentOptions =  {
@@ -175,11 +175,28 @@ export interface SwaggerCustomOptions {
   useGlobalPrefix?: boolean;
 
   /**
-   * Si `false`, seules les définitions d'API (JSON et YAML) seront servies (sur `/{path}-json` et `/{path}-yaml`).
-   * Ceci est particulièrement utile si vous hébergez déjà une interface Swagger ailleurs et que vous souhaitez simplement servir des définitions d'API.
+   * Si `false`, l'interface Swagger ne sera pas servie. Seules les définitions d'API (JSON et YAML)
+   *  seront accessibles (sur `/{path}-json` et `/{path}-yaml`). Pour désactiver complètement l'interface Swagger et les définitions d'API, utilisez `raw: false`.
    * Par défaut : `true`.
+   * @deprecated Utiliser `ui` à la place.
    */
   swaggerUiEnabled?: boolean;
+
+  /**
+   * Si `false`, l'interface Swagger ne sera pas servie. Seules les définitions d'API (JSON et YAML)
+   *  seront accessibles (sur `/{path}-json` et `/{path}-yaml`). Pour désactiver complètement l'interface Swagger et les définitions d'API, utilisez `raw: false`.
+   * Par défaut : `true`.
+   */
+  ui?: boolean;
+
+  /**
+   * Si `true`, les définitions brutes de tous les formats seront servies.
+   * Alternativement, vous pouvez passer un tableau pour spécifier les formats à servir, par exemple, `raw: ['json']` pour ne servir que les définitions JSON.
+   * S'il est omis ou s'il est défini comme un tableau vide, aucune définition (JSON ou YAML) ne sera servie.
+   * Cette option permet de contrôler la disponibilité des points de terminaison liés à Swagger.
+   * Par défaut : `true`.
+   */
+  raw?: boolean | Array<'json' | 'yaml'>;
 
   /**
    * Url de la définition de l'API à charger dans Swagger UI.
@@ -268,9 +285,21 @@ export interface SwaggerCustomOptions {
    * @deprecated Cette propriété n'a aucun effet.
    */
   urls?: Record<'url' | 'name', string>[];
-
 }
 ```
+
+> info **Astuce** `ui` et `raw` sont des options indépendantes. Désactiver l'interface Swagger (`ui: false`) ne désactive pas les définitions d'API (JSON/YAML).  Inversement, la désactivation des définitions d'API (`raw: []`) ne désactive pas l'interface Swagger.
+>
+> Par exemple, la configuration suivante désactive l'interface utilisateur Swagger mais permet d'accéder aux définitions d'API :
+> ```typescript
+>const options: SwaggerCustomOptions = {
+>    ui: false, // L'interface Swagger est désactivée
+>    raw: ['json'], // La définition JSON de l'API est toujours accessible (YAML est désactivé)
+>};
+>SwaggerModule.setup('api', app, options);
+> ```
+>
+> Dans ce cas, http://localhost:3000/api-json sera toujours accessible, mais http://localhost:3000/api (Swagger UI) ne le sera pas.
 
 #### Exemple
 

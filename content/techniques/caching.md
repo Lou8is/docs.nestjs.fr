@@ -74,10 +74,10 @@ Pour supprimer un élément du cache, utilisez la méthode `del` :
 await this.cacheManager.del('key');
 ```
 
-Pour effacer tout le cache, utilisez la méthode `reset` :
+Pour effacer tout le cache, utilisez la méthode `clear` :
 
 ```typescript
-await this.cacheManager.reset();
+await this.cacheManager.clear();
 ```
 
 #### Mise en cache automatique des réponses
@@ -234,9 +234,9 @@ Avec ceci en place, vous pouvez enregistrer le `CacheModule` avec plusieurs maga
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CacheModule, CacheStore } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
-import KeyvRedis from '@keyv/redis';
+import { createKeyv } from '@keyv/redis';
 import { Keyv } from 'keyv';
 import { CacheableMemory } from 'cacheable';
 
@@ -249,7 +249,7 @@ import { CacheableMemory } from 'cacheable';
             new Keyv({
               store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
             }),
-            new KeyvRedis('redis://localhost:6379'),
+            createKeyv('redis://localhost:6379'),
           ],
         };
       },

@@ -46,6 +46,7 @@ La méthode `forRoot()` est utilisée pour enregistrer un objet de configuration
 - `prefix : string` - Préfixe pour toutes les clés de file d'attente. Facultatif.
 - `defaultJobOptions : JobOpts` - Options pour contrôler les paramètres par défaut des nouveaux travaux. Voir [JobOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd) pour plus d'informations. Facultatif.
 - `settings : AdvancedSettings` - Paramètres de configuration avancée de la file d'attente. Ces paramètres ne doivent généralement pas être modifiés. Voir [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) pour plus d'informations. Facultatif.
+- `extraOptions` - Options supplémentaires pour l'initialisation du module. Voir [Enregistrement manuel](/techniques/queues#enregistrement-manuel)
 
 Toutes les options sont optionnelles, fournissant un contrôle détaillé sur le comportement de la file d'attente. Elles sont passées directement au constructeur de BullMQ `Queue`. Pour en savoir plus sur ces options et d'autres [ici](https://api.docs.bullmq.io/interfaces/v4.QueueOptions.html).
 
@@ -216,10 +217,10 @@ import { Job } from 'bullmq';
 export class AudioConsumer extends WorkerHost {
   async process(job: Job<any, any, string>): Promise<any> {
     let progress = 0;
-    for (i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
       await doSomething(job.data);
       progress += 1;
-      await job.progress(progress);
+      await job.updateProgress(progress);
     }
     return {};
   }
@@ -463,6 +464,38 @@ BullModule.registerQueueAsync({
   }),
 });
 ```
+
+#### Enregistrement manuel
+
+Par défaut, `BullModule` enregistre automatiquement les composants BullMQ (files d'attente, processeurs et services d'écoute d'événements) dans la fonction de cycle de vie `onModuleInit`. Cependant, dans certains cas, ce comportement peut ne pas être idéal. Pour empêcher l'enregistrement automatique, activez `manualRegistration` dans `BullModule` comme ceci :
+
+```typescript
+BullModule.forRoot({
+  extraOptions: {
+    manualRegistration: true,
+  },
+});
+```
+
+Pour enregistrer ces composants manuellement, injectez `BullRegistrar` et appelez la fonction `register`, idéalement dans `OnModuleInit` ou `OnApplicationBootstrap`.
+
+```typescript
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BullRegistrar } from '@nestjs/bullmq';
+
+@Injectable()
+export class AudioService implements OnModuleInit {
+  constructor(private bullRegistrar: BullRegistrar) {}
+
+  onModuleInit() {
+    if (yourConditionHere) {
+      this.bullRegistrar.register();
+    }
+  }
+}
+```
+
+Si vous n'appelez pas la fonction `BullRegistrar#register`, aucun composant BullMQ ne fonctionnera, ce qui signifie qu'aucun travail ne sera traité.
 
 #### Installation Bull 
 
