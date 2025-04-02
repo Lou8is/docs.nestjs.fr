@@ -37,11 +37,13 @@ Au lieu de passer le drapeau `-b`, vous pouvez également définir la propriét�
 Pour personnaliser le comportement du constructeur, vous pouvez lui passer un objet contenant deux attributs, `type` (`"swc"`) et `options`, comme suit :
 
 ```json
-"compilerOptions": {
-  "builder": {
-    "type": "swc",
-    "options": {
-      "swcrcPath": "infrastructure/.swcrc",
+{
+  "compilerOptions": {
+    "builder": {
+      "type": "swc",
+      "options": {
+        "swcrcPath": "infrastructure/.swcrc",
+      }
     }
   }
 }
@@ -196,7 +198,7 @@ Pour toutes les [injections de dépendances circulaires](/fundamentals/circular-
 
 ```typescript
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @Inject(forwardRef(() => ProfileService))
     private readonly profileService: WrapperType<ProfileService>,
@@ -280,6 +282,12 @@ export default defineConfig({
       module: { type: 'es6' },
     }),
   ],
+  resolve: {
+    alias: {
+      // Assure que Vitest résout correctement les alias de chemin TypeScript
+      'src': resolve(__dirname, './src'),
+    },
+  },
 });
 ```
 
@@ -324,6 +332,24 @@ export default defineConfig({
   plugins: [swc.vite()],
 });
 ```
+
+### Alias de chemin
+
+Contrairement à Jest, Vitest ne résout pas automatiquement les alias de chemin TypeScript comme `src/`. Cela peut conduire à des erreurs de résolution de dépendances pendant les tests. Pour résoudre ce problème, ajoutez la configuration `resolve.alias` suivante dans votre fichier `vitest.config.ts` :
+
+```ts
+import { resolve } from 'path';
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      'src': resolve(__dirname, './src'),
+    },
+  },
+});
+```
+
+Cela permet de s'assurer que Vitest résout correctement les importations de modules, évitant ainsi les erreurs liées à des dépendances manquantes.
 
 #### Mise à jour des imports dans les tests E2E
 

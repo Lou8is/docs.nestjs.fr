@@ -275,6 +275,7 @@ Dans l'exemple ci-dessus, le `HttpExceptionFilter` est appliqué uniquement au g
 
 ```typescript
 @@filename(cats.controller)
+@Controller()
 @UseFilters(new HttpExceptionFilter())
 export class CatsController {}
 ```

@@ -21,4 +21,4 @@ Vous pouvez également spécifier la route sous la forme d'une chaîne (elle s'a
 app.setGlobalPrefix('v1', { exclude: ['cats'] });
 ```
 
-> info **Astuce** La propriété `path` supporte les paramètres joker en utilisant le package [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters). Note : ceci n'accepte pas les astérisques `*`. A la place, vous devez utiliser des paramètres (par exemple, `(.*)`, `:splat*`).
+> info **Astuce** La propriété `path` supporte les paramètres joker en utilisant le package [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters). Note : ceci n'accepte pas les astérisques `*`. A la place, vous devez utiliser des paramètres (`:param`) ou des jokers nommés (`*splat`).

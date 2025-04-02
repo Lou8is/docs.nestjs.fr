@@ -43,6 +43,7 @@ Vous pouvez définir le chemin de rendu de votre application statique, spécifie
 > warning **Remarque** Le `renderPath` par défaut de l'application statique est `*` (tous les chemins), et le module enverra des fichiers "index.html" en réponse.
 > Il vous permet de créer un routage côté client pour votre SPA. Les chemins d'accès spécifiés dans vos contrôleurs seront renvoyés vers le serveur.
 > Vous pouvez modifier ce comportement en paramétrant `serveRoot`, `renderPath` en les combinant avec d'autres options.
+> > De plus, l'option `serveStaticOptions.fallthrough` a été implémentée dans l'adaptateur Fastify pour imiter le comportement de "fallthrough" d'Express et doit être mise à `true` pour envoyer `index.html` au lieu d'une erreur 404 pour les routes non existantes.
 
 #### Exemple
 

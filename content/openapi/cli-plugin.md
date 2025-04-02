@@ -143,15 +143,22 @@ Pour activer le plugin, ouvrez `nest-cli.json` (si vous utilisez [Nest CLI](/cli
 Vous pouvez utiliser la propriété `options` pour personnaliser le comportement du plugin.
 
 ```javascript
-"plugins": [
-  {
-    "name": "@nestjs/swagger",
-    "options": {
-      "classValidatorShim": false,
-      "introspectComments": true
-    }
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "classValidatorShim": false,
+          "introspectComments": true,
+          "skipAutoHttpCode": true
+        }
+      }
+    ]
   }
-]
+}
 ```
 
 La propriété `options` doit remplir l'interface suivante :
@@ -164,6 +171,7 @@ export interface PluginOptions {
   dtoKeyOfComment?: string;
   controllerKeyOfComment?: string;
   introspectComments?: boolean;
+  skipAutoHttpCode?: boolean;
 }
 ```
 
@@ -202,6 +210,11 @@ export interface PluginOptions {
   <td><code>introspectComments</code></td>
     <td><code>false</code></td>
     <td>Si la valeur est fixée à true, le plugin génère des descriptions et des exemples de valeurs pour les propriétés en se basant sur les commentaires.</td>
+  </tr>
+  <tr>
+    <td><code>skipAutoHttpCode</code></td>
+    <td><code>false</code></td>
+    <td>Désactive l'ajout automatique de <code>@HttpCode()</code> dans les contrôleurs</td>
   </tr>
 </table>
 

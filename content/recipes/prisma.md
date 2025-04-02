@@ -295,7 +295,7 @@ import { PrismaService } from './prisma.service';
 import { User, Prisma } from '@prisma/client';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async user(
@@ -360,7 +360,7 @@ import { PrismaService } from './prisma.service';
 import { Post, Prisma } from '@prisma/client';
 
 @Injectable()
-export class PostService {
+export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async post(
@@ -413,7 +413,7 @@ export class PostService {
 }
 ```
 
-Vos `UserService` et `PostService` contiennent actuellement les requêtes CRUD disponibles dans Prisma Client. Dans une application réelle, le service serait également l'endroit où ajouter de la logique métier à votre application. Par exemple, vous pourriez avoir une méthode appelée `updatePassword` dans le `UserService` qui serait responsable de la mise à jour du mot de passe d'un utilisateur.
+Vos `UsersService` et `PostsService` contiennent actuellement les requêtes CRUD disponibles dans Prisma Client. Dans une application réelle, le service serait également l'endroit où ajouter de la logique métier à votre application. Par exemple, vous pourriez avoir une méthode appelée `updatePassword` dans le `UsersService` qui serait responsable de la mise à jour du mot de passe d'un utilisateur.
 
 N'oubliez pas d'enregistrer les nouveaux services dans le module d'application.
 
@@ -433,15 +433,15 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { PostService } from './post.service';
+import { UsersService } from './user.service';
+import { PostsService } from './post.service';
 import { User as UserModel, Post as PostModel } from '@prisma/client';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly userService: UserService,
-    private readonly postService: PostService,
+    private readonly userService: UsersService,
+    private readonly postService: PostsService,
   ) {}
 
   @Get('post/:id')

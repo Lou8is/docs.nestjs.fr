@@ -89,6 +89,27 @@ S'il y a plusieurs owners, la configuration de votre propriété doit être la s
 owners: Owner[];
 ```
 
+Cela permet de s'assurer que Vitest résout correctement les importations de modules, évitant ainsi les erreurs liées à des dépendances manquantes.
+
+```typescript
+@Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner' } })
+// Cela permet de s'assurer que le champ n'est pas confondu avec une référence remplie.
+owner: mongoose.Types.ObjectId;
+```
+
+Ensuite, lorsque vous devez l'alimenter de manière sélective, vous pouvez utiliser une fonction de dépôt qui spécifie le type correct :
+
+```typescript
+import { Owner } from './schemas/owner.schema';
+
+// par exemple, à l'intérieur d'un service ou d'un référentiel
+async findAllPopulated() {
+  return this.catModel.find().populate<{ owner: Owner }>("owner");
+}
+```
+
+> info **Astuce** S'il n'y a pas de document étranger à remplir, le type peut être `Owner | null`, en fonction de votre [configuration Mongoose](https://mongoosejs.com/docs/populate.html#doc-not-found). Alternativement, il peut y avoir une erreur, dans ce cas le type sera `Owner`.
+
 Enfin, la définition **brute** du schéma peut également être transmise au décorateur. Ceci est utile lorsque, par exemple, une propriété représente un objet imbriqué qui n'est pas défini comme une classe. Pour cela, utilisez la fonction `raw()` du package `@nestjs/mongoose`, comme suit :
 
 ```typescript
@@ -624,7 +645,7 @@ export class Person {
 export const PersonSchema = SchemaFactory.createForClass(Person);
 
 export type PersonDocumentOverride = {
-  name: Types.Subdocument<Types.ObjectId & Name>;
+  name: Types.Subdocument<Types.ObjectId> & Name;
 };
 
 export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
